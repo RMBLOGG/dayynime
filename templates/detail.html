@@ -109,9 +109,9 @@ const KOLEKSI_KEY = 'dayynime_koleksi';
 const ANIME_SLUG = '{{ slug }}';
 const ANIME_DATA = {
   slug: '{{ slug }}',
-  title: {{ d.title | tojson }},
-  poster: {{ d.poster | tojson }},
-  status: {{ (info.status or '') | tojson }}
+  title: {{ (data.detail.title if data and data.detail else '') | tojson }},
+  poster: {{ (data.detail.poster if data and data.detail else '') | tojson }},
+  status: {{ (data.detail.info.status if data and data.detail and data.detail.info else '') | tojson }}
 };
 
 function getKoleksi() {
