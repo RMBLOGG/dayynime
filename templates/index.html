@@ -97,15 +97,13 @@
     <div class="section-title"><span class="badge">NEW</span> BARU DITAMBAHKAN</div>
     <a href="/completed" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div class="scroll-row">
-    {% for anime in data.recent[:10] %}
+  <div class="ncard-grid">
+    {% for anime in data.recent[:6] %}
     <a href="/anime/{{ anime.slug }}" class="ncard">
-      <!-- Banner 16:9 atas -->
       <div class="ncard-banner">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
         {% if anime.type %}<div class="ncard-typebadge">{{ anime.type }}</div>{% endif %}
       </div>
-      <!-- Poster potret + info bawah -->
       <div class="ncard-bottom">
         <div class="ncard-poster">
           <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
