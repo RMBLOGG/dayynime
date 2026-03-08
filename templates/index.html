@@ -100,18 +100,23 @@
   <div class="scroll-row">
     {% for anime in data.recent[:10] %}
     <a href="/anime/{{ anime.slug }}" class="ncard">
+      <!-- Banner 16:9 atas -->
       <div class="ncard-banner">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        <div class="ncard-overlay">
-          <div class="ncard-play"><i class="fas fa-play"></i></div>
-        </div>
         {% if anime.type %}<div class="ncard-typebadge">{{ anime.type }}</div>{% endif %}
       </div>
+      <!-- Poster potret + info bawah -->
       <div class="ncard-bottom">
-        <div class="ncard-genre">{{ anime.type or 'Anime' }}</div>
-        <div class="ncard-title">{{ anime.title }}</div>
-        <div class="ncard-meta">
-          <span><i class="fas fa-circle-play" style="color:#ff6600;font-size:9px;"></i> {{ anime.status_or_day or 'Update' }}</span>
+        <div class="ncard-poster">
+          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        </div>
+        <div class="ncard-info">
+          <div class="ncard-genre">{{ anime.type or 'Anime' }}</div>
+          <div class="ncard-title">{{ anime.title }}</div>
+          <div class="ncard-meta">
+            <i class="fas fa-circle-play" style="color:#ff6600;font-size:9px;"></i>
+            <span>{{ anime.status_or_day or 'Update' }}</span>
+          </div>
         </div>
       </div>
     </a>
