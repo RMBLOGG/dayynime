@@ -46,6 +46,18 @@
     {% if info.season %}<div class="detail-meta-item"><div class="detail-meta-label">Season</div><div class="detail-meta-val">{{ info.season }}</div></div>{% endif %}
   </div>
 
+  <!-- Bookmark Button -->
+  <button id="bookmarkBtn" onclick="toggleKoleksi()" style="
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,102,0,0.12);border:1.5px solid rgba(255,102,0,0.35);
+    color:#ff6600;padding:9px 18px;border-radius:20px;
+    font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;
+    -webkit-tap-highlight-color:transparent;transition:all 0.2s;
+  ">
+    <i class="fas fa-bookmark" id="bookmarkIcon"></i>
+    <span id="bookmarkLabel">Tambah Koleksi</span>
+  </button>
+
   <!-- Synopsis -->
   {% if d.synopsis %}
   <div class="synopsis">{{ d.synopsis }}</div>
@@ -93,6 +105,63 @@
 
 {% block scripts %}
 <script>
+const KOLEKSI_KEY = 'dayynime_koleksi';
+const ANIME_SLUG = '{{ slug }}';
+const ANIME_DATA = {
+  slug: '{{ slug }}',
+  title: {{ d.title | tojson }},
+  poster: {{ d.poster | tojson }},
+  status: {{ (info.status or '') | tojson }}
+};
+
+function getKoleksi() {
+  try { return JSON.parse(localStorage.getItem(KOLEKSI_KEY)) || []; }
+  catch { return []; }
+}
+
+function isInKoleksi() {
+  return getKoleksi().some(a => a.slug === ANIME_SLUG);
+}
+
+function updateBookmarkUI() {
+  const btn = document.getElementById('bookmarkBtn');
+  const icon = document.getElementById('bookmarkIcon');
+  const label = document.getElementById('bookmarkLabel');
+  if (!btn) return;
+  if (isInKoleksi()) {
+    btn.style.background = 'rgba(255,102,0,0.25)';
+    btn.style.borderColor = '#ff6600';
+    icon.className = 'fas fa-bookmark';
+    label.textContent = 'Tersimpan';
+  } else {
+    btn.style.background = 'rgba(255,102,0,0.12)';
+    btn.style.borderColor = 'rgba(255,102,0,0.35)';
+    icon.className = 'far fa-bookmark';
+    label.textContent = 'Tambah Koleksi';
+  }
+}
+
+function toggleKoleksi() {
+  let data = getKoleksi();
+  if (isInKoleksi()) {
+    data = data.filter(a => a.slug !== ANIME_SLUG);
+    showToast('Dihapus dari koleksi');
+  } else {
+    data.unshift(ANIME_DATA);
+    showToast('Ditambahkan ke koleksi!');
+  }
+  localStorage.setItem(KOLEKSI_KEY, JSON.stringify(data));
+  updateBookmarkUI();
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#ff6600;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:99999;white-space:nowrap;pointer-events:none;';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+
 function toggleEps() {
   const hidden = document.querySelectorAll('#epGrid [data-hidden]');
   const btn = document.getElementById('epToggleBtn');
@@ -100,5 +169,7 @@ function toggleEps() {
   hidden.forEach(el => el.style.display = isHidden ? '' : 'none');
   if (btn) btn.textContent = isHidden ? 'Sembunyikan' : 'Tampilkan Semua';
 }
+
+document.addEventListener('DOMContentLoaded', updateBookmarkUI);
 </script>
 {% endblock %}
