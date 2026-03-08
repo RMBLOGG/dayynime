@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} Anime - Dayynime{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <h1>
+    {% if title == 'Ongoing' %}<i class="fas fa-circle" style="color:#4ade80;font-size:0.8em;"></i>
+    {% elif title == 'Completed' %}<i class="fas fa-check-circle" style="color:#60a5fa;font-size:0.8em;"></i>
+    {% elif title == 'Movie' %}<i class="fas fa-film" style="color:#ff6600;font-size:0.8em;"></i>
+    {% else %}<i class="fas fa-fire" style="color:#fb923c;font-size:0.8em;"></i>{% endif %}
+    {{ title }} Anime
+  </h1>
+  {% if data and data.pagination %}
+  <p>Halaman {{ data.pagination.currentPage }}</p>
+  {% endif %}
+</div>
+
+{% if data and data.animes %}
+<div class="anime-grid">
+  {% for anime in data.animes %}
+  <a href="/anime/{{ anime.slug }}" class="acard">
+    <div class="acard-poster">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+      {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+      {% if anime.episode %}<div class="acard-ep">Ep {{ anime.episode }}</div>{% endif %}
+    </div>
+    <div class="acard-genre">{{ anime.type or '' }}</div>
+    <div class="acard-title">{{ anime.title }}</div>
+    {% if anime.score %}<div class="acard-stat"><i class="fas fa-star" style="color:#ffd700;font-size:9px"></i> {{ anime.score }}</div>{% endif %}
+  </a>
+  {% endfor %}
+</div>
+
+{% if data.pagination %}
+<div class="pagination">
+  {% if data.pagination.hasPrev %}
+  <a href="{{ base_url }}?page={{ page - 1 }}" class="pag-btn"><i class="fas fa-chevron-left"></i> Prev</a>
+  {% endif %}
+  <div class="pag-current">{{ data.pagination.currentPage }}</div>
+  {% if data.pagination.hasNext %}
+  <a href="{{ base_url }}?page={{ page + 1 }}" class="pag-btn">Next <i class="fas fa-chevron-right"></i></a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty"><i class="fas fa-film"></i><h3>Tidak ada data</h3></div>
+{% endif %}
+{% endblock %}

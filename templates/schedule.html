@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Jadwal Anime - Dayynime{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1><i class="fas fa-calendar-alt" style="color:#ff6600;"></i> Jadwal Rilis</h1>
+  <p>Anime yang tayang minggu ini</p>
+</div>
+{% if data and data.schedule %}
+<div class="day-tabs">
+  {% for day in data.schedule.keys() %}
+  <button class="day-tab" data-tab="{{ day }}">{{ day }}</button>
+  {% endfor %}
+</div>
+{% for day, animes in data.schedule.items() %}
+<div class="tab-panel" id="panel-{{ day }}">
+  {% if animes %}
+  <div class="anime-grid" style="padding:0 16px;">
+    {% for anime in animes %}
+    <a href="/anime/{{ anime.slug }}" class="acard">
+      <div class="acard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.time %}<div class="acard-ep"><i class="fas fa-clock fa-xs"></i> {{ anime.time }}</div>{% endif %}
+      </div>
+      <div class="acard-title">{{ anime.title }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty" style="padding:40px 0;"><p style="color:#555;">Tidak ada anime</p></div>
+  {% endif %}
+</div>
+{% endfor %}
+{% else %}
+<div class="empty"><i class="fas fa-calendar"></i><h3>Jadwal tidak tersedia</h3></div>
+{% endif %}
+<div style="height:20px;"></div>
+{% endblock %}

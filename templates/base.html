@@ -1,1 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>{% block title %}Dayynime{% endblock %}</title>
+  <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia di Dayynime{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6">
+  {% block head %}{% endblock %}
+</head>
+<body>
 
+<!-- SIDEBAR OVERLAY -->
+<div id="sidebarOverlay" onclick="closeSidebar()" style="
+  display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,0.6); backdrop-filter:blur(2px);
+  -webkit-tap-highlight-color:transparent;
+"></div>
+
+<!-- SIDEBAR PANEL -->
+<aside id="sidebarPanel" style="
+  position:fixed; top:0; right:-280px; width:260px; height:100vh;
+  z-index:10001; background:#161616;
+  border-left:1px solid rgba(255,102,0,0.2);
+  transition:right 0.3s cubic-bezier(0.4,0,0.2,1);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+">
+  <!-- Sidebar Header -->
+  <div style="padding:20px 18px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:32px;height:32px;background:#ff6600;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;">D</div>
+      <div>
+        <div style="font-size:15px;font-weight:800;color:#fff;">Dayynime</div>
+        <div style="font-size:10px;color:#666;">Nonton anime sub indo</div>
+      </div>
+    </div>
+    <button onclick="closeSidebar()" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <nav style="flex:1; overflow-y:auto; padding:12px 0;">
+
+    <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1.5px;padding:8px 18px 6px;">JELAJAHI</div>
+
+    <a href="/ongoing" onclick="closeSidebar()" class="sb-item">
+      <span class="sb-dot" style="background:#4ade80;"></span>
+      <span>Ongoing</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/completed" onclick="closeSidebar()" class="sb-item">
+      <span class="sb-dot" style="background:#60a5fa;"></span>
+      <span>Completed</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/movies" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-film sb-icon" style="color:#f97316;"></i>
+      <span>Movie</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/genres" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-tag sb-icon" style="color:#a78bfa;"></i>
+      <span>Genre</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/animelist" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-list sb-icon" style="color:#fb923c;"></i>
+      <span>A-Z List</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/popular" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-fire sb-icon" style="color:#ff6600;"></i>
+      <span>Populer</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/jadwal" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-calendar-alt sb-icon" style="color:#34d399;"></i>
+      <span>Jadwal</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+
+    <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 18px;"></div>
+    <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1.5px;padding:8px 18px 6px;">AKUN</div>
+
+    <a href="/profile" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-user sb-icon" style="color:#888;"></i>
+      <span>Profile</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/koleksi" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-bookmark sb-icon" style="color:#888;"></i>
+      <span>Koleksi</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+
+    <!-- Source switcher di sidebar -->
+    <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 18px;"></div>
+    <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1.5px;padding:8px 18px 6px;">ENDPOINT</div>
+    {% for key, src in all_sources.items() %}
+    <button onclick="switchSource('{{ key }}')" id="srcBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
+      <i class="fas fa-server" style="font-size:12px;opacity:0.6;"></i>
+      <span>{{ src.label }}</span>
+      {% if active_source == key %}<span style="width:7px;height:7px;border-radius:50%;background:#ff6600;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
+    </button>
+    {% endfor %}
+  </nav>
+
+  <!-- Sidebar Footer -->
+  <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:#444;text-align:center;">
+    Aktif: <span id="srcActiveLabel" style="color:#ff6600;font-weight:600;">{{ active_source_label }}</span>
+  </div>
+</aside>
+
+<!-- TOP HEADER -->
+<header class="top-header">
+  <a href="/home" class="header-logo">D</a>
+  <form class="header-search" action="/search" method="get">
+    <i class="fas fa-search"></i>
+    <input type="text" name="q" placeholder="cari anime.." value="{{ request.args.get('q','') }}" autocomplete="off">
+  </form>
+</header>
+
+<!-- PAGE CONTENT -->
+{% block content %}{% endblock %}
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="/home" class="bnav-item" data-href="/home">
+    <i class="fas fa-home"></i><span>Home</span>
+  </a>
+  <a href="/jadwal" class="bnav-item" data-href="/jadwal">
+    <i class="fas fa-calendar-alt"></i><span>Jadwal</span>
+  </a>
+  <a href="/search" class="bnav-item" data-href="/search">
+    <i class="fas fa-search"></i><span>Cari</span>
+  </a>
+  <a href="/genres" class="bnav-item" data-href="/genres">
+    <i class="fas fa-tag"></i><span>Genre</span>
+  </a>
+  <!-- List → buka sidebar -->
+  <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+    <i class="fas fa-bars"></i><span>List</span>
+  </button>
+</nav>
+
+<script src="{{ url_for('static', filename='js/main.js') }}?v=6"></script>
+{% block scripts %}{% endblock %}
+
+<script>
+// ── Sidebar ──────────────────────────────────────────────────────────
+var sidebarOpen = false;
+
+function openSidebar() {
+  sidebarOpen = true;
+  document.getElementById('sidebarOverlay').style.display = 'block';
+  document.getElementById('sidebarPanel').style.right = '0';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+  sidebarOpen = false;
+  document.getElementById('sidebarOverlay').style.display = 'none';
+  document.getElementById('sidebarPanel').style.right = '-280px';
+  document.body.style.overflow = '';
+}
+
+// Swipe kanan untuk tutup sidebar
+(function() {
+  var startX = 0;
+  var panel = document.getElementById('sidebarPanel');
+  panel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
+  panel.addEventListener('touchend', function(e){
+    if (e.changedTouches[0].clientX - startX > 60) closeSidebar();
+  }, {passive:true});
+})();
+
+// ── Source Switcher ──────────────────────────────────────────────────
+function switchSource(key) {
+  var btns = document.querySelectorAll('.sb-src-btn');
+  btns.forEach(function(b){ b.style.opacity='0.5'; b.disabled=true; });
+
+  fetch('/api/source/switch', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({source: key})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      var lbl = document.getElementById('srcActiveLabel');
+      if (lbl) lbl.textContent = data.label;
+      setTimeout(function(){ location.reload(); }, 400);
+    } else {
+      btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
+    }
+  })
+  .catch(function() {
+    btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
+  });
+}
+
+// ── Bottom nav active ────────────────────────────────────────────────
+(function(){
+  var path = location.pathname;
+  document.querySelectorAll('.bnav-item[data-href]').forEach(function(item) {
+    var href = item.getAttribute('data-href') || '';
+    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
+      item.classList.add('active');
+    }
+  });
+  // List button active jika di halaman sidebar pages
+  var sidebarPages = ['/ongoing','/completed','/movies','/popular','/animelist','/genres','/genre','/profile','/koleksi'];
+  var trigger = document.getElementById('sidebarTrigger');
+  if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) {
+    trigger.classList.add('active');
+  }
+})();
+</script>
+</body>
+</html>

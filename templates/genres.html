@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Genre Anime - Dayynime{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1><i class="fas fa-tag" style="color:#ff6600;"></i> Genre Anime</h1>
+  <p>Jelajahi anime berdasarkan genre favorit</p>
+</div>
+{% if data and data.genres %}
+<div class="genre-grid">
+  {% for g in data.genres %}
+  <a href="/genre/{{ g.slug }}" class="genre-pill">{{ g.name }}</a>
+  {% endfor %}
+</div>
+<div style="height:20px;"></div>
+{% else %}
+<div class="empty"><i class="fas fa-tag"></i><h3>Genre tidak tersedia</h3></div>
+{% endif %}
+{% endblock %}

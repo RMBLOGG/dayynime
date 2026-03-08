@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Dayynime - Home{% endblock %}
+{% block content %}
+
+<!-- BANNER SLIDER - pakai poster anime dari ongoing/popular -->
+{% set banner_animes = [] %}
+{% if popular and popular.animes %}
+  {% for a in popular.animes[:5] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+{% endif %}
+{% if banner_animes|length < 3 and data and data.ongoing %}
+  {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+{% endif %}
+
+<div class="banner-slider" style="margin-top:12px;">
+  <div class="banner-track">
+    {% if banner_animes %}
+      {% for anime in banner_animes[:5] %}
+      <a href="/anime/{{ anime.slug }}" class="banner-slide">
+        <!-- Background blur poster -->
+        <img src="{{ anime.poster }}" alt=""
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(2px) brightness(0.45);transform:scale(1.08);">
+        <!-- Foreground: poster kecil + info -->
+        <div style="position:absolute;inset:0;display:flex;align-items:center;gap:14px;padding:16px;background:linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);">
+          <img src="{{ anime.poster }}" alt="{{ anime.title }}"
+               style="width:80px;height:112px;object-fit:cover;border-radius:8px;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,0.8);border:2px solid rgba(255,102,0,0.5);">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:10px;font-weight:700;color:#ff6600;letter-spacing:1px;margin-bottom:5px;text-transform:uppercase;">
+              {% if loop.index == 1 %}🔥 Trending{% elif loop.index == 2 %}⭐ Populer{% else %}🎌 Unggulan{% endif %}
+            </div>
+            <div style="font-size:1.05rem;font-weight:800;line-height:1.2;margin-bottom:6px;color:#fff;
+                        display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+              {{ anime.title }}
+            </div>
+            {% if anime.type %}
+            <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-bottom:8px;">{{ anime.type }}{% if anime.episode %} • Ep {{ anime.episode }}{% endif %}</div>
+            {% endif %}
+            <span style="display:inline-flex;align-items:center;gap:5px;background:#ff6600;padding:5px 12px;border-radius:50px;font-size:11px;font-weight:700;color:#fff;">
+              <i class="fas fa-play fa-xs"></i> Tonton
+            </span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    {% else %}
+      <!-- Fallback kalau data belum ada -->
+      <div class="banner-slide" style="background:linear-gradient(135deg,#ff6600,#cc3300);">
+        <div style="padding:20px;display:flex;flex-direction:column;justify-content:center;height:100%;gap:6px;position:relative;">
+          <div style="font-size:11px;font-weight:600;opacity:0.8;">🔥 Trending Sekarang</div>
+          <div style="font-size:1.4rem;font-weight:800;line-height:1.1;">Anime Terbaru<br>Sub Indonesia</div>
+          <div style="font-size:11px;opacity:0.8;">Update setiap hari!</div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  <button class="banner-arrow left"><i class="fas fa-chevron-left"></i></button>
+  <button class="banner-arrow right"><i class="fas fa-chevron-right"></i></button>
+  <div style="display:flex;gap:5px;justify-content:center;padding:8px 0 0;" id="bannerDots">
+    {% set count = banner_animes|length if banner_animes else 1 %}
+    {% for i in range([count, 5]|min) %}
+    <button class="banner-dot {% if loop.first %}active{% endif %}"></button>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- SEDANG HANGAT -->
+{% if data and data.ongoing %}
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">🔥 SEDANG HANGAT</div>
+    <a href="/ongoing" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="scroll-row">
+    {% for anime in data.ongoing[:12] %}
+    <a href="/anime/{{ anime.slug }}" class="acard">
+      <div class="acard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+        {% if anime.episode %}<div class="acard-ep"><i class="fas fa-play-circle fa-xs"></i> Ep {{ anime.episode }}</div>{% endif %}
+      </div>
+      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
+      <div class="acard-title">{{ anime.title }}</div>
+      {% if anime.score %}
+      <div class="acard-stats">
+        <div class="acard-stat"><i class="fas fa-star" style="color:#ffd700"></i> {{ anime.score }}</div>
+      </div>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- BARU DITAMBAHKAN -->
+{% if data and data.recent %}
+<div class="section">
+  <div class="section-head">
+    <div class="section-title"><span class="badge">NEW</span> BARU DITAMBAHKAN</div>
+    <a href="/completed" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="scroll-row">
+    {% for anime in data.recent[:10] %}
+    <a href="/anime/{{ anime.slug }}" class="wcard">
+      <div class="wcard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+      </div>
+      <div class="wcard-info">
+        <div class="wcard-genre">{{ anime.type or 'Anime' }}</div>
+        <div class="wcard-title">{{ anime.title }}</div>
+        <div class="wcard-ep">{{ anime.status_or_day or 'Update' }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- POPULER -->
+{% if popular and popular.animes %}
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">⭐ POPULER</div>
+    <a href="/popular" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="scroll-row">
+    {% for anime in popular.animes[:12] %}
+    <a href="/anime/{{ anime.slug }}" class="acard">
+      <div class="acard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.rank %}<div class="acard-type">#{{ anime.rank }}</div>{% elif anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+        {% if anime.score %}<div class="acard-ep"><i class="fas fa-star" style="color:#ffd700;font-size:9px"></i> {{ anime.score }}</div>{% endif %}
+      </div>
+      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
+      <div class="acard-title">{{ anime.title }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- JADWAL RILIS -->
+{% if schedule and schedule.schedule %}
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">📅 JADWAL RILIS</div>
+    <a href="/jadwal" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="day-tabs">
+    {% for day in schedule.schedule.keys() %}
+    <button class="day-tab" data-tab="{{ day }}">{{ day }}</button>
+    {% endfor %}
+  </div>
+  {% for day, animes in schedule.schedule.items() %}
+  <div class="tab-panel" id="panel-{{ day }}">
+    <div class="scroll-row">
+      {% for anime in animes[:10] %}
+      <a href="/anime/{{ anime.slug }}" class="acard">
+        <div class="acard-poster">
+          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+          {% if anime.time %}<div class="acard-ep"><i class="fas fa-clock fa-xs"></i> {{ anime.time }}</div>{% endif %}
+        </div>
+        <div class="acard-title">{{ anime.title }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div style="height:8px;"></div>
+
+{% endblock %}
