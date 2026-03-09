@@ -237,15 +237,16 @@ button { font-family:inherit; cursor:pointer; }
    NEW CARD (animeinweb style: 16:9 banner + portrait + info)
 ═══════════════════════════════════════════ */
 /* ═══════════════════════════════════════════
-   NEW CARD (animeinweb style: 2-col grid, 16:9 banner + portrait + info)
+   NEW CARD (animeinweb style: large horizontal scroll)
 ═══════════════════════════════════════════ */
-.ncard-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 0 16px;
+.ncard-row {
+  gap: 12px !important;
 }
 .ncard {
+  flex-shrink: 0;
+  width: 78vw;
+  max-width: 320px;
+  scroll-snap-align: start;
   background: var(--bg2);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -253,7 +254,7 @@ button { font-family:inherit; cursor:pointer; }
   display: block;
   transition: transform 0.2s;
 }
-.ncard:active { transform: scale(0.97); }
+.ncard:active { transform: scale(0.98); }
 .ncard-banner {
   position: relative; width: 100%; aspect-ratio: 16/9;
   overflow: hidden; background: var(--bg3);
@@ -262,39 +263,39 @@ button { font-family:inherit; cursor:pointer; }
   width: 100%; height: 100%; object-fit: cover;
   transition: transform 0.3s;
 }
-.ncard:hover .ncard-banner img { transform: scale(1.05); }
+.ncard:hover .ncard-banner img { transform: scale(1.04); }
 .ncard-typebadge {
-  position: absolute; top: 5px; left: 5px;
+  position: absolute; top: 6px; left: 6px;
   background: var(--accent); color: #fff;
   font-size: 9px; font-weight: 700;
-  padding: 2px 6px; border-radius: 4px;
+  padding: 2px 7px; border-radius: 4px;
   text-transform: uppercase;
 }
 .ncard-bottom {
-  display: flex; gap: 7px;
-  padding: 7px 8px 9px; align-items: flex-start;
+  display: flex; gap: 10px;
+  padding: 10px 12px 12px; align-items: flex-start;
 }
 .ncard-poster {
-  flex-shrink: 0; width: 40px; aspect-ratio: 2/3;
-  border-radius: 4px; overflow: hidden; background: var(--bg3);
+  flex-shrink: 0; width: 56px; aspect-ratio: 2/3;
+  border-radius: 5px; overflow: hidden; background: var(--bg3);
 }
 .ncard-poster img { width: 100%; height: 100%; object-fit: cover; }
 .ncard-info {
   flex: 1; min-width: 0;
-  display: flex; flex-direction: column; gap: 2px;
+  display: flex; flex-direction: column; gap: 3px;
 }
 .ncard-genre {
-  font-size: 9px; color: var(--accent); font-weight: 700;
+  font-size: 10px; color: var(--accent); font-weight: 700;
   text-transform: uppercase;
 }
 .ncard-title {
-  font-size: 11px; font-weight: 700; color: var(--text);
+  font-size: 13px; font-weight: 700; color: var(--text);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden; line-height: 1.4;
 }
 .ncard-meta {
-  font-size: 10px; color: var(--text2);
-  display: flex; align-items: center; gap: 3px; margin-top: 2px;
+  font-size: 11px; color: var(--text2);
+  display: flex; align-items: center; gap: 4px; margin-top: 2px;
 }
 
 
