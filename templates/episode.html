@@ -89,131 +89,55 @@
       {% if data %}{{ data.title }}{% else %}Episode{% endif %}
     </div>
 
-    <!-- SERVER SELECTOR (Quality First) -->
+    <!-- SERVER SELECTOR: Pilih Kualitas → Pilih Server -->
     {% if data and data.streams %}
     <div class="server-section">
-
-      <!-- Step 1: Pilih Kualitas -->
       <div class="server-label"><i class="fas fa-film fa-xs"></i> Pilih Kualitas:</div>
-      <div class="server-list" id="qualityList"></div>
-
-      <!-- Step 2: Pilih Server -->
-      <div id="serverStep" style="display:none;margin-top:12px;">
-        <div class="server-label"><i class="fas fa-server fa-xs"></i> Pilih Server:</div>
-        <div class="server-list" id="serverList"></div>
+      <div class="server-tabs" id="qualityTabs">
+        {% set seen_q = namespace(list=[]) %}
+        {% for stream in data.streams %}
+          {% set q = stream.name.split()[-1] if stream.name.split() else '' %}
+          {% if q not in seen_q.list %}
+            {% set _ = seen_q.list.append(q) %}
+            <button class="server-btn {% if loop.first %}active{% endif %}"
+              data-quality="{{ q }}"
+              onclick="selectQuality(this, '{{ q }}')">
+              {{ q }}
+            </button>
+          {% endif %}
+        {% endfor %}
       </div>
 
+      <div class="server-label" style="margin-top:12px"><i class="fas fa-server fa-xs"></i> Pilih Server:</div>
+      {% set first_q = namespace(val='') %}
+      {% for stream in data.streams %}
+        {% if loop.first %}{% set first_q.val = stream.name.split()[-1] %}{% endif %}
+      {% endfor %}
+      {% set seen_q2 = namespace(list=[]) %}
+      {% for stream in data.streams %}
+        {% set q = stream.name.split()[-1] if stream.name.split() else '' %}
+        {% if q not in seen_q2.list %}
+          {% set _ = seen_q2.list.append(q) %}
+          <div class="server-tabs server-group"
+               id="group-{{ q }}"
+               style="{{ '' if q == first_q.val else 'display:none' }}">
+            {% for s in data.streams %}
+              {% set sq = s.name.split()[-1] if s.name.split() else '' %}
+              {% if sq == q %}
+              <button class="server-btn"
+                data-server-id="{{ s.serverId }}"
+                data-url="{{ s.url if s.url else '' }}"
+                onclick="switchServer(this)">
+                {{ s.name.split()[:-1] | join(' ') if s.name.split()|length > 1 else s.name }}
+              </button>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <div id="serverLoading" style="display:none;color:#aaa;font-size:13px;margin-top:8px">⏳ Memuat server...</div>
     </div>
-
-    <script>
-    (function() {
-      const streams = {{ data.streams | tojson }};
-
-      const defaultStream = streams.find(s => s.name === 'Default Auto');
-      const otherStreams  = streams.filter(s => s.name !== 'Default Auto');
-
-      const qualityOrder = ['360p','480p','720p','1080p'];
-      const qualityMap = {};
-
-      otherStreams.forEach(s => {
-        const match = s.name.match(/(\d{3,4}p)/i);
-        const q = match ? match[1].toLowerCase() : 'lainnya';
-        if (!qualityMap[q]) qualityMap[q] = [];
-        qualityMap[q].push(s);
-      });
-
-      const qualities = Object.keys(qualityMap).sort((a, b) => {
-        const ia = qualityOrder.indexOf(a), ib = qualityOrder.indexOf(b);
-        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-      });
-
-      const qualityList = document.getElementById('qualityList');
-      const serverStep  = document.getElementById('serverStep');
-      const serverList  = document.getElementById('serverList');
-
-      // Tombol Default Auto
-      if (defaultStream) {
-        const btn = document.createElement('button');
-        btn.className = 'server-btn quality-btn';
-        btn.textContent = 'Default Auto';
-        btn.dataset.quality = 'default';
-        btn.addEventListener('click', () => selectQuality('default', btn));
-        qualityList.appendChild(btn);
-      }
-
-      // Tombol kualitas
-      qualities.forEach(q => {
-        const btn = document.createElement('button');
-        btn.className = 'server-btn quality-btn';
-        btn.textContent = q.toUpperCase();
-        btn.dataset.quality = q;
-        btn.addEventListener('click', () => selectQuality(q, btn));
-        qualityList.appendChild(btn);
-      });
-
-      function selectQuality(q, activeBtn) {
-        document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
-        activeBtn.classList.add('active');
-        serverList.innerHTML = '';
-
-        if (q === 'default' && defaultStream) {
-          serverStep.style.display = 'none';
-          loadStream(defaultStream);
-          return;
-        }
-
-        const servers = qualityMap[q] || [];
-        servers.forEach((s, i) => {
-          const btn = document.createElement('button');
-          btn.className = 'server-btn';
-          btn.textContent = s.name.replace(/\d{3,4}p/i, '').trim() || ('Server ' + (i + 1));
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('#serverList .server-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            loadStream(s);
-          });
-          serverList.appendChild(btn);
-        });
-
-        serverStep.style.display = 'block';
-
-        // Auto-pilih server pertama
-        if (servers.length > 0) {
-          serverList.firstChild.classList.add('active');
-          loadStream(servers[0]);
-        }
-      }
-
-      function loadStream(s) {
-        const frame   = document.getElementById('playerFrame');
-        const loading = document.getElementById('playerLoading');
-        if (s.url) {
-          frame.style.display = 'none';
-          loading.style.display = 'flex';
-          frame.src = s.url;
-          frame.onload = () => { loading.style.display = 'none'; frame.style.display = 'block'; };
-        } else if (s.serverId) {
-          fetch('/api/stream-url?serverId=' + encodeURIComponent(s.serverId))
-            .then(r => r.json()).then(d => {
-              if (d.url) {
-                frame.style.display = 'none';
-                loading.style.display = 'flex';
-                frame.src = d.url;
-                frame.onload = () => { loading.style.display = 'none'; frame.style.display = 'block'; };
-              }
-            });
-        }
-      }
-
-      // Auto-pilih kualitas tertinggi
-      const best = qualities[qualities.length - 1];
-      if (best) {
-        qualityList.querySelector(`[data-quality="${best}"]`).click();
-      } else if (defaultStream) {
-        qualityList.querySelector('[data-quality="default"]').click();
-      }
-    })();
-    </script>
     {% endif %}
 
     <!-- PREV / NEXT NAV -->
@@ -342,5 +266,58 @@ function skipAd() {
   adOverlay.style.transition = 'opacity 0.4s';
   setTimeout(() => { adOverlay.style.display = 'none'; }, 400);
 }
+
+// Quality & Server selector
+function selectQuality(btn, quality) {
+  document.querySelectorAll('#qualityTabs .server-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.server-group').forEach(g => g.style.display = 'none');
+  const group = document.getElementById('group-' + quality);
+  if (group) {
+    group.style.display = 'flex';
+    const firstSrv = group.querySelector('.server-btn');
+    if (firstSrv) switchServer(firstSrv);
+  }
+}
+
+async function switchServer(btn) {
+  document.querySelectorAll('.server-group .server-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const iframe = document.getElementById('playerFrame');
+  if (!iframe) return;
+
+  const directUrl = btn.dataset.url;
+  if (directUrl) {
+    iframe.style.display = 'block';
+    document.getElementById('playerLoading').style.display = 'none';
+    iframe.src = directUrl;
+    return;
+  }
+
+  const serverId = btn.dataset.serverId;
+  if (!serverId) return;
+  const loading = document.getElementById('serverLoading');
+  if (loading) loading.style.display = 'block';
+  try {
+    const res  = await fetch(`/api/server/${serverId}`);
+    const json = await res.json();
+    if (json.url) {
+      iframe.style.display = 'block';
+      document.getElementById('playerLoading').style.display = 'none';
+      iframe.src = json.url;
+      btn.dataset.url = json.url;
+    }
+  } catch(e) {
+    console.error('Failed to fetch server URL', e);
+  } finally {
+    if (loading) loading.style.display = 'none';
+  }
+}
+
+// Auto-load server pertama saat halaman siap
+document.addEventListener('DOMContentLoaded', function() {
+  const firstBtn = document.querySelector('.server-group:not([style*="display:none"]) .server-btn');
+  if (firstBtn) switchServer(firstBtn);
+});
 </script>
 {% endblock %}
