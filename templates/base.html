@@ -121,7 +121,7 @@
 
 <!-- TOP HEADER -->
 <header class="top-header">
-  <a href="/home" class="header-logo"><img src="/static/icon.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></a>
+  <a href="/home" class="header-logo"><img src="/static/icon2.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></a>
   <form class="header-search" action="/search" method="get">
     <i class="fas fa-search"></i>
     <input type="text" name="q" placeholder="cari anime.." value="{{ request.args.get('q','') }}" autocomplete="off">
@@ -230,9 +230,7 @@ function switchSource(key) {
   <div style="background:#1a1a1a;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:24px 20px 32px;box-shadow:0 -4px 30px rgba(0,0,0,0.5);animation:slideUp 0.3s ease;">
     <!-- Header -->
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-      <div style="width:54px;height:54px;background:#f97316;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <img src="/static/icon.png" style="width:38px;height:38px;object-fit:contain;border-radius:8px;">
-      </div>
+      <img src="/static/icon.png" style="width:54px;height:54px;object-fit:contain;border-radius:14px;flex-shrink:0;">
       <div style="flex:1;">
         <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:2px;">Pakai Dayynime APK di Android</div>
         <div style="font-size:13px;color:#aaa;line-height:1.4;">Nikmati pengalaman streaming anime lebih lancar & optimal.</div>
@@ -284,9 +282,8 @@ function switchSource(key) {
   var isAndroid = /Android/i.test(navigator.userAgent);
   if (!isAndroid) return;
 
-  // Jangan tampilkan kalau sudah pernah ditutup (simpan 3 hari)
-  var dismissed = localStorage.getItem('apkPopupDismissed');
-  if (dismissed && Date.now() < parseInt(dismissed)) return;
+  // Jangan tampilkan kalau sudah ditutup di session ini
+  if (sessionStorage.getItem('apkPopupDismissed')) return;
 
   // Tampilkan setelah 2 detik
   setTimeout(function() {
@@ -299,7 +296,7 @@ function closeApkPopup() {
   var popup = document.getElementById('apkPopup');
   if (popup) popup.style.display = 'none';
   // Simpan dismiss selama 3 hari
-  localStorage.setItem('apkPopupDismissed', Date.now() + (3 * 24 * 60 * 60 * 1000));
+  sessionStorage.setItem('apkPopupDismissed', '1');
 }
 </script>
 </body>
