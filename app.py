@@ -561,13 +561,11 @@ def home():
 
     if source == "animasu":
         raw      = fetch(f"{pfx}/home")
-        pop_raw  = fetch(f"{pfx}/latest")
+        pop_raw  = fetch(f"{pfx}/popular")
         schedule = fetch(f"{pfx}/schedule")
         data     = animasu_norm_home(raw)
-        # populer dari latest animasu
-        pop_norm = animasu_norm_paginated(pop_raw, 1) if pop_raw else None
-        if pop_norm:
-            pop_norm = {"animes": pop_norm.get("animes", [])}
+        # populer dari endpoint /popular animasu (response: {animes: [...]})
+        pop_norm = {"animes": animasu_norm_list(pop_raw.get("animes", []))} if pop_raw and pop_raw.get("animes") else None
         sched    = animasu_norm_schedule(schedule)
     elif source == "otakudesu":
         raw      = fetch(f"{pfx}/home")
