@@ -105,7 +105,7 @@
     <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 18px;"></div>
     <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1.5px;padding:8px 18px 6px;">ENDPOINT</div>
     {% for key, src in all_sources.items() %}
-    <button onclick="switchSource('{{ key }}')" id="sbBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
+    <button onclick="switchSource('{{ key }}')" id="srcBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
       <i class="fas fa-server" style="font-size:12px;opacity:0.6;"></i>
       <span>{{ src.label }}</span>
       {% if active_source == key %}<span style="width:7px;height:7px;border-radius:50%;background:#ff6600;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
@@ -147,7 +147,7 @@
   </a>
   <!-- List → buka sidebar -->
   <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-    <i class="fas fa-bars"></i><span>Menu</span>
+    <i class="fas fa-bars"></i><span>List</span>
   </button>
 </nav>
 
@@ -184,7 +184,7 @@ function closeSidebar() {
 
 // ── Source Switcher ──────────────────────────────────────────────────
 function switchSource(key) {
-  var btns = document.querySelectorAll('.sb-src-btn, [id^="srcBtn-"]');
+  var btns = document.querySelectorAll('.sb-src-btn');
   btns.forEach(function(b){ b.style.opacity='0.5'; b.disabled=true; });
 
   fetch('/api/source/switch', {
@@ -195,9 +195,8 @@ function switchSource(key) {
   .then(function(r){ return r.json(); })
   .then(function(data) {
     if (data.ok) {
-      document.querySelectorAll('#srcActiveLabel').forEach(function(el){
-        el.textContent = data.label;
-      });
+      var lbl = document.getElementById('srcActiveLabel');
+      if (lbl) lbl.textContent = data.label;
       setTimeout(function(){ location.reload(); }, 400);
     } else {
       btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
@@ -227,7 +226,7 @@ function switchSource(key) {
 </script>
 
 <!-- APK Download Popup -->
-<div id="apkPopup" style="display:none;position:fixed;inset:0;z-index:9999;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);padding-bottom:0;">
+<div id="apkPopup" style="display:none;position:fixed;inset:0;z-index:999999;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);padding-bottom:0;">
   <div style="background:#1a1a1a;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:24px 20px 32px;box-shadow:0 -4px 30px rgba(0,0,0,0.5);animation:slideUp 0.3s ease;">
     <!-- Header -->
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
@@ -290,95 +289,18 @@ function switchSource(key) {
   setTimeout(function() {
     var popup = document.getElementById('apkPopup');
     if (popup) popup.style.display = 'flex';
+    var fab = document.getElementById('srcTrigger');
+    if (fab) fab.style.display = 'none';
   }, 2000);
 })();
 
 function closeApkPopup() {
   var popup = document.getElementById('apkPopup');
   if (popup) popup.style.display = 'none';
-  // Simpan dismiss selama 3 hari
+  var fab = document.getElementById('srcTrigger');
+  if (fab) fab.style.display = 'flex';
   sessionStorage.setItem('apkPopupDismissed', '1');
 }
-</script>
-
-<!-- ═══ SOURCE SWITCHER FAB ═══ -->
-<div id="srcPanel" style="
-  display:none;
-  position:fixed; bottom:130px; right:16px; z-index:99999;
-  background:#1c1c1c; border:1px solid rgba(255,102,0,0.5);
-  border-radius:16px; padding:14px 12px; min-width:190px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.8);
-">
-  <div style="font-size:10px;color:#555;font-weight:700;letter-spacing:1.5px;margin-bottom:10px;text-align:center;">GANTI ENDPOINT</div>
-  {% for key, src in all_sources.items() %}
-  <button id="srcBtn-{{ key }}"
-    style="width:100%;margin-bottom:6px;padding:11px 14px;border-radius:10px;
-           border:1px solid {% if active_source == key %}#ff6600{% else %}rgba(255,255,255,0.1){% endif %};
-           background:{% if active_source == key %}rgba(255,102,0,0.18){% else %}rgba(255,255,255,0.04){% endif %};
-           color:{% if active_source == key %}#ff6600{% else %}#999{% endif %};
-           font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
-           display:flex;align-items:center;justify-content:space-between;gap:8px;
-           -webkit-tap-highlight-color:transparent;touch-action:manipulation;">
-    <span>{{ src.label }}</span>
-    {% if active_source == key %}
-    <span style="width:8px;height:8px;border-radius:50%;background:#ff6600;flex-shrink:0;display:inline-block;"></span>
-    {% endif %}
-  </button>
-  {% endfor %}
-  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:10px;color:#444;text-align:center;">
-    Aktif: <span id="srcActiveLabel" style="color:#ff6600;">{{ active_source_label }}</span>
-  </div>
-</div>
-
-<button id="srcTrigger" title="Ganti endpoint"
-  style="position:fixed;bottom:76px;right:16px;z-index:99998;
-         background:#ff6600;color:#fff;border:none;
-         width:46px;height:46px;border-radius:50%;
-         display:flex;align-items:center;justify-content:center;
-         font-size:17px;box-shadow:0 4px 20px rgba(255,102,0,0.55);
-         cursor:pointer;-webkit-tap-highlight-color:transparent;
-         touch-action:manipulation;user-select:none;">
-  <i class="fas fa-server" id="srcIcon"></i>
-</button>
-
-<script>
-(function(){
-  var open = false;
-  var panel = document.getElementById('srcPanel');
-  var btn   = document.getElementById('srcTrigger');
-  var icon  = document.getElementById('srcIcon');
-
-  function togglePanel(e) {
-    e.preventDefault(); e.stopPropagation();
-    open = !open;
-    panel.style.display = open ? 'block' : 'none';
-    icon.className = open ? 'fas fa-times' : 'fas fa-server';
-  }
-
-  btn.addEventListener('click', togglePanel);
-  btn.addEventListener('touchend', togglePanel, {passive:false});
-
-  document.addEventListener('click', function(e) {
-    if (open && !panel.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
-      open = false;
-      panel.style.display = 'none';
-      icon.className = 'fas fa-server';
-    }
-  });
-
-  {% for key, src in all_sources.items() %}
-  (function() {
-    var b = document.getElementById('srcBtn-{{ key }}');
-    if (!b) return;
-    function doSwitch(e) {
-      e.preventDefault(); e.stopPropagation();
-      switchSource('{{ key }}');
-    }
-    b.addEventListener('click', doSwitch);
-    b.addEventListener('touchend', doSwitch, {passive:false});
-  })();
-  {% endfor %}
-})();
 </script>
 </body>
 </html>
