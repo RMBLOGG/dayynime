@@ -240,27 +240,37 @@ button { font-family:inherit; cursor:pointer; }
    NEW CARD (animeinweb style: large horizontal scroll)
 ═══════════════════════════════════════════ */
 .ncard-row {
-  gap: 12px !important;
+  gap: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
 }
 .ncard {
   flex-shrink: 0;
-  width: 78vw;
-  max-width: 320px;
+  width: 75vw;
+  max-width: 300px;
   scroll-snap-align: start;
-  background: var(--bg2);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
   cursor: pointer;
   display: block;
   transition: transform 0.2s;
 }
 .ncard:active { transform: scale(0.98); }
+
+/* Banner 16:9 — standalone dengan rounded corner */
 .ncard-banner {
-  position: relative; width: 100%; aspect-ratio: 16/9;
-  overflow: hidden; background: var(--bg3);
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: var(--bg3);
+  border-radius: 12px;
 }
 .ncard-banner img {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
   transition: transform 0.3s;
 }
 .ncard:hover .ncard-banner img { transform: scale(1.04); }
@@ -271,18 +281,23 @@ button { font-family:inherit; cursor:pointer; }
   padding: 2px 7px; border-radius: 4px;
   text-transform: uppercase;
 }
+
+/* Bawah transparan — poster potret + info */
 .ncard-bottom {
   display: flex; gap: 10px;
-  padding: 10px 12px 12px; align-items: flex-start;
+  padding: 10px 2px 4px;
+  align-items: flex-start;
+  background: transparent;
 }
 .ncard-poster {
-  flex-shrink: 0; width: 56px; aspect-ratio: 2/3;
-  border-radius: 5px; overflow: hidden; background: var(--bg3);
+  flex-shrink: 0; width: 60px; aspect-ratio: 2/3;
+  border-radius: 6px; overflow: hidden; background: var(--bg3);
 }
 .ncard-poster img { width: 100%; height: 100%; object-fit: cover; }
 .ncard-info {
   flex: 1; min-width: 0;
   display: flex; flex-direction: column; gap: 3px;
+  padding-top: 2px;
 }
 .ncard-genre {
   font-size: 10px; color: var(--accent); font-weight: 700;
