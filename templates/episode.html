@@ -12,37 +12,67 @@
         position:absolute;inset:0;z-index:100;
         background:#000;
         display:flex;flex-direction:column;align-items:center;justify-content:center;
-        gap:10px;
       ">
-        <!-- Iklan Adsterra -->
-        <div style="width:300px;height:250px;overflow:hidden;border-radius:8px;flex-shrink:0;">
-          <script>
-            atOptions = {
-              'key' : 'ab1caf329002ea60537069c534a9f8dd',
-              'format' : 'iframe',
-              'height' : 250,
-              'width' : 300,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highperformanceformat.com/ab1caf329002ea60537069c534a9f8dd/invoke.js"></script>
+        <!-- Iklan Adsterra - centered, scaled to fit 16:9 -->
+        <div style="
+          position:absolute;inset:0;
+          display:flex;align-items:center;justify-content:center;
+          overflow:hidden;
+        ">
+          <div style="transform:scale(1.15);transform-origin:center;">
+            <script>
+              atOptions = {
+                'key' : 'ab1caf329002ea60537069c534a9f8dd',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/ab1caf329002ea60537069c534a9f8dd/invoke.js"></script>
+          </div>
         </div>
-        <!-- Skip countdown -->
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:12px;color:#aaa;">Video dimulai dalam</span>
-          <span id="adCountdown" style="
-            min-width:32px;height:32px;border-radius:50%;
-            border:2px solid #ff6600;color:#ff6600;
-            font-size:13px;font-weight:700;
-            display:flex;align-items:center;justify-content:center;
-          ">15</span>
+
+        <!-- Top bar: label iklan -->
+        <div style="
+          position:absolute;top:0;left:0;right:0;
+          padding:8px 12px;
+          background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent);
+          display:flex;align-items:center;gap:6px;
+          font-size:11px;color:rgba(255,255,255,0.6);
+        ">
+          <span style="background:rgba(255,255,255,0.15);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;">IKLAN</span>
+          <span>Dukung kami dengan menonton iklan ini</span>
         </div>
-        <button id="skipBtn" onclick="skipAd()" disabled style="
-          background:#333;border:none;color:#777;
-          padding:7px 18px;border-radius:20px;
-          font-size:12px;font-weight:600;cursor:not-allowed;
-          transition:all 0.3s;
-        ">Lewati Iklan</button>
+
+        <!-- Bottom bar: countdown + skip -->
+        <div style="
+          position:absolute;bottom:0;left:0;right:0;
+          padding:10px 14px;
+          background:linear-gradient(to top,rgba(0,0,0,0.85),transparent);
+          display:flex;align-items:center;justify-content:space-between;
+        ">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div id="adCountdown" style="
+              width:34px;height:34px;border-radius:50%;
+              border:2px solid #ff6600;color:#ff6600;
+              font-size:14px;font-weight:800;
+              display:flex;align-items:center;justify-content:center;
+              flex-shrink:0;
+            ">15</div>
+            <span id="adLabel" style="font-size:12px;color:rgba(255,255,255,0.7);">Video dimulai dalam 15 detik</span>
+          </div>
+          <button id="skipBtn" onclick="skipAd()" disabled style="
+            background:rgba(255,255,255,0.15);
+            border:1px solid rgba(255,255,255,0.2);
+            color:rgba(255,255,255,0.4);
+            padding:7px 16px;border-radius:20px;
+            font-size:12px;font-weight:700;
+            cursor:not-allowed;
+            transition:all 0.3s;
+            white-space:nowrap;
+          ">Lewati Iklan ›</button>
+        </div>
       </div>
 
       <div class="player-loading" id="playerLoading">
@@ -65,11 +95,9 @@
 
       <!-- Step 1: Pilih Kualitas -->
       <div class="server-label"><i class="fas fa-film fa-xs"></i> Pilih Kualitas:</div>
-      <div class="server-list" id="qualityList">
-        <!-- Diisi JS -->
-      </div>
+      <div class="server-list" id="qualityList"></div>
 
-      <!-- Step 2: Pilih Server (muncul setelah pilih kualitas) -->
+      <!-- Step 2: Pilih Server -->
       <div id="serverStep" style="display:none;margin-top:12px;">
         <div class="server-label"><i class="fas fa-server fa-xs"></i> Pilih Server:</div>
         <div class="server-list" id="serverList"></div>
@@ -81,11 +109,9 @@
     (function() {
       const streams = {{ data.streams | tojson }};
 
-      // Pisahkan "Default Auto" dan stream lain
       const defaultStream = streams.find(s => s.name === 'Default Auto');
-      const otherStreams = streams.filter(s => s.name !== 'Default Auto');
+      const otherStreams  = streams.filter(s => s.name !== 'Default Auto');
 
-      // Extract kualitas unik dari nama stream (360p, 480p, 720p, dll)
       const qualityOrder = ['360p','480p','720p','1080p'];
       const qualityMap = {};
 
@@ -102,11 +128,10 @@
       });
 
       const qualityList = document.getElementById('qualityList');
-      const serverStep = document.getElementById('serverStep');
-      const serverList = document.getElementById('serverList');
+      const serverStep  = document.getElementById('serverStep');
+      const serverList  = document.getElementById('serverList');
 
-      // Render tombol kualitas
-      // Tambahkan "Default Auto" di awal jika ada
+      // Tombol Default Auto
       if (defaultStream) {
         const btn = document.createElement('button');
         btn.className = 'server-btn quality-btn';
@@ -116,6 +141,7 @@
         qualityList.appendChild(btn);
       }
 
+      // Tombol kualitas
       qualities.forEach(q => {
         const btn = document.createElement('button');
         btn.className = 'server-btn quality-btn';
@@ -126,14 +152,11 @@
       });
 
       function selectQuality(q, activeBtn) {
-        // Highlight tombol kualitas
         document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
         activeBtn.classList.add('active');
-
         serverList.innerHTML = '';
 
         if (q === 'default' && defaultStream) {
-          // Langsung load Default Auto
           serverStep.style.display = 'none';
           loadStream(defaultStream);
           return;
@@ -143,7 +166,7 @@
         servers.forEach((s, i) => {
           const btn = document.createElement('button');
           btn.className = 'server-btn';
-          btn.textContent = s.name.replace(/\d{3,4}p/i, '').trim() || ('Server ' + (i+1));
+          btn.textContent = s.name.replace(/\d{3,4}p/i, '').trim() || ('Server ' + (i + 1));
           btn.addEventListener('click', () => {
             document.querySelectorAll('#serverList .server-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -162,7 +185,7 @@
       }
 
       function loadStream(s) {
-        const frame = document.getElementById('playerFrame');
+        const frame   = document.getElementById('playerFrame');
         const loading = document.getElementById('playerLoading');
         if (s.url) {
           frame.style.display = 'none';
@@ -182,11 +205,10 @@
         }
       }
 
-      // Auto-pilih kualitas tertinggi yang tersedia
-      const bestQuality = qualities[qualities.length - 1];
-      if (bestQuality) {
-        const firstQBtn = qualityList.querySelector(`[data-quality="${bestQuality}"]`);
-        if (firstQBtn) firstQBtn.click();
+      // Auto-pilih kualitas tertinggi
+      const best = qualities[qualities.length - 1];
+      if (best) {
+        qualityList.querySelector(`[data-quality="${best}"]`).click();
       } else if (defaultStream) {
         qualityList.querySelector('[data-quality="default"]').click();
       }
@@ -289,33 +311,36 @@
 // Ad overlay countdown
 let adSecs = 15;
 const adCountdown = document.getElementById('adCountdown');
+const adLabel = document.getElementById('adLabel');
 const skipBtn = document.getElementById('skipBtn');
 const adOverlay = document.getElementById('adOverlay');
 
 const adTimer = setInterval(() => {
   adSecs--;
   adCountdown.textContent = adSecs;
+  adLabel.textContent = `Video dimulai dalam ${adSecs} detik`;
+
   if (adSecs <= 5) {
     adCountdown.style.borderColor = '#4ade80';
     adCountdown.style.color = '#4ade80';
+    skipBtn.disabled = false;
+    skipBtn.style.background = '#ff6600';
+    skipBtn.style.borderColor = '#ff6600';
+    skipBtn.style.color = '#fff';
+    skipBtn.style.cursor = 'pointer';
   }
+
   if (adSecs <= 0) {
     clearInterval(adTimer);
     skipAd();
-  } else if (adSecs <= 5) {
-    skipBtn.disabled = false;
-    skipBtn.style.background = '#ff6600';
-    skipBtn.style.color = '#fff';
-    skipBtn.style.cursor = 'pointer';
-    skipBtn.textContent = 'Lewati Iklan ›';
   }
 }, 1000);
 
 function skipAd() {
   clearInterval(adTimer);
   adOverlay.style.opacity = '0';
-  adOverlay.style.transition = 'opacity 0.3s';
-  setTimeout(() => { adOverlay.style.display = 'none'; }, 300);
+  adOverlay.style.transition = 'opacity 0.4s';
+  setTimeout(() => { adOverlay.style.display = 'none'; }, 400);
 }
 </script>
 {% endblock %}
