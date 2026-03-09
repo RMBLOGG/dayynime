@@ -145,8 +145,9 @@
   <a href="/genres" class="bnav-item" data-href="/genres">
     <i class="fas fa-tag"></i><span>Genre</span>
   </a>
+  <!-- List → buka sidebar -->
   <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-    <i class="fas fa-bars"></i><span>Menu</span>
+    <i class="fas fa-bars"></i><span>List</span>
   </button>
 </nav>
 
@@ -171,6 +172,7 @@ function closeSidebar() {
   document.body.style.overflow = '';
 }
 
+// Swipe kanan untuk tutup sidebar
 (function() {
   var startX = 0;
   var panel = document.getElementById('sidebarPanel');
@@ -180,9 +182,9 @@ function closeSidebar() {
   }, {passive:true});
 })();
 
-// ── Source Switcher (satu fungsi untuk sidebar + FAB) ─────────────────
+// ── Source Switcher ──────────────────────────────────────────────────
 function switchSource(key) {
-  var btns = document.querySelectorAll('.sb-src-btn, [id^="srcBtn-"]');
+  var btns = document.querySelectorAll('.sb-src-btn');
   btns.forEach(function(b){ b.style.opacity='0.5'; b.disabled=true; });
 
   fetch('/api/source/switch', {
@@ -193,9 +195,8 @@ function switchSource(key) {
   .then(function(r){ return r.json(); })
   .then(function(data) {
     if (data.ok) {
-      document.querySelectorAll('#srcActiveLabel').forEach(function(el){
-        el.textContent = data.label;
-      });
+      var lbl = document.getElementById('srcActiveLabel');
+      if (lbl) lbl.textContent = data.label;
       setTimeout(function(){ location.reload(); }, 400);
     } else {
       btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
@@ -215,6 +216,7 @@ function switchSource(key) {
       item.classList.add('active');
     }
   });
+  // List button active jika di halaman sidebar pages
   var sidebarPages = ['/ongoing','/completed','/movies','/popular','/animelist','/genres','/genre','/profile','/koleksi'];
   var trigger = document.getElementById('sidebarTrigger');
   if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) {
@@ -224,8 +226,9 @@ function switchSource(key) {
 </script>
 
 <!-- APK Download Popup -->
-<div id="apkPopup" style="display:none;position:fixed;inset:0;z-index:999999;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);padding-bottom:0;">
+<div id="apkPopup" style="display:none;position:fixed;inset:0;z-index:9999;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);padding-bottom:0;">
   <div style="background:#1a1a1a;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:24px 20px 32px;box-shadow:0 -4px 30px rgba(0,0,0,0.5);animation:slideUp 0.3s ease;">
+    <!-- Header -->
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
       <img src="/static/icon.png" style="width:54px;height:54px;object-fit:contain;border-radius:14px;flex-shrink:0;">
       <div style="flex:1;">
@@ -234,14 +237,28 @@ function switchSource(key) {
       </div>
       <button onclick="closeApkPopup()" style="background:none;border:none;color:#666;font-size:22px;cursor:pointer;padding:4px;line-height:1;">&times;</button>
     </div>
+    <!-- Features -->
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px;">
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;"><i class="fas fa-check" style="color:#f97316;width:16px;"></i>Tampilan UI optimal di perangkat Android</div>
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;"><i class="fas fa-check" style="color:#f97316;width:16px;"></i>Update anime terbaru lebih cepat & responsif</div>
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;"><i class="fas fa-check" style="color:#f97316;width:16px;"></i>Akses watchlist, jadwal, & pencarian mudah</div>
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;"><i class="fas fa-check" style="color:#f97316;width:16px;"></i>Streaming lebih stabil tanpa gangguan browser</div>
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Tampilan UI optimal di perangkat Android
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Update anime terbaru lebih cepat & responsif
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Akses watchlist, jadwal, & pencarian mudah
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Streaming lebih stabil tanpa gangguan browser
+      </div>
     </div>
+    <!-- Buttons -->
     <div style="display:flex;gap:10px;margin-bottom:14px;">
-      <a href="https://trakteer.id/Dayynime/reward/dayynime-bQIct" target="_blank" onclick="closeApkPopup()" style="flex:1;background:#f97316;color:#fff;text-align:center;padding:14px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <a href="https://www.mediafire.com/file/3wa0i5wkv2ap0ns/Dayynime.apk/file" target="_blank" onclick="closeApkPopup()" style="flex:1;background:#f97316;color:#fff;text-align:center;padding:14px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
         <i class="fas fa-download"></i> Download APK
       </a>
       <button onclick="closeApkPopup()" style="flex:0.6;background:#2a2a2a;color:#ccc;border:none;padding:14px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;">
@@ -261,22 +278,24 @@ function switchSource(key) {
 
 <script>
 (function() {
+  // Hanya tampilkan di Android
   var isAndroid = /Android/i.test(navigator.userAgent);
   if (!isAndroid) return;
+
+  // Jangan tampilkan kalau sudah ditutup di session ini
   if (sessionStorage.getItem('apkPopupDismissed')) return;
+
+  // Tampilkan setelah 2 detik
   setTimeout(function() {
     var popup = document.getElementById('apkPopup');
     if (popup) popup.style.display = 'flex';
-    var fab = document.getElementById('srcTrigger');
-    if (fab) fab.style.display = 'none';
   }, 2000);
 })();
 
 function closeApkPopup() {
   var popup = document.getElementById('apkPopup');
   if (popup) popup.style.display = 'none';
-  var fab = document.getElementById('srcTrigger');
-  if (fab) fab.style.display = 'flex';
+  // Simpan dismiss selama 3 hari
   sessionStorage.setItem('apkPopupDismissed', '1');
 }
 </script>
