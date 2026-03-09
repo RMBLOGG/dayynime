@@ -121,7 +121,7 @@
 
 <!-- TOP HEADER -->
 <header class="top-header">
-  <a href="/home" class="header-logo"><img src="/static/icon2.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></a>
+  <a href="/home" class="header-logo"><img src="/static/icon.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></a>
   <form class="header-search" action="/search" method="get">
     <i class="fas fa-search"></i>
     <input type="text" name="q" placeholder="cari anime.." value="{{ request.args.get('q','') }}" autocomplete="off">
@@ -223,6 +223,84 @@ function switchSource(key) {
     trigger.classList.add('active');
   }
 })();
+</script>
+
+<!-- APK Download Popup -->
+<div id="apkPopup" style="display:none;position:fixed;inset:0;z-index:9999;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);padding-bottom:0;">
+  <div style="background:#1a1a1a;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:24px 20px 32px;box-shadow:0 -4px 30px rgba(0,0,0,0.5);animation:slideUp 0.3s ease;">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+      <div style="width:54px;height:54px;background:#f97316;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <img src="/static/icon.png" style="width:38px;height:38px;object-fit:contain;border-radius:8px;">
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:2px;">Pakai Dayynime APK di Android</div>
+        <div style="font-size:13px;color:#aaa;line-height:1.4;">Nikmati pengalaman streaming anime lebih lancar & optimal.</div>
+      </div>
+      <button onclick="closeApkPopup()" style="background:none;border:none;color:#666;font-size:22px;cursor:pointer;padding:4px;line-height:1;">&times;</button>
+    </div>
+    <!-- Features -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px;">
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Tampilan UI optimal di perangkat Android
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Update anime terbaru lebih cepat & responsif
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Akses watchlist, jadwal, & pencarian mudah
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
+        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
+        Streaming lebih stabil tanpa gangguan browser
+      </div>
+    </div>
+    <!-- Buttons -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <a href="https://www.mediafire.com/file/3wa0i5wkv2ap0ns/Dayynime.apk/file" target="_blank" onclick="closeApkPopup()" style="flex:1;background:#f97316;color:#fff;text-align:center;padding:14px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <i class="fas fa-download"></i> Download APK
+      </a>
+      <button onclick="closeApkPopup()" style="flex:0.6;background:#2a2a2a;color:#ccc;border:none;padding:14px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;">
+        Lanjut ke Web
+      </button>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#666;">Tips: Simpan APK untuk update lebih cepat. Aman & gratis.</div>
+  </div>
+</div>
+
+<style>
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+</style>
+
+<script>
+(function() {
+  // Hanya tampilkan di Android
+  var isAndroid = /Android/i.test(navigator.userAgent);
+  if (!isAndroid) return;
+
+  // Jangan tampilkan kalau sudah pernah ditutup (simpan 3 hari)
+  var dismissed = localStorage.getItem('apkPopupDismissed');
+  if (dismissed && Date.now() < parseInt(dismissed)) return;
+
+  // Tampilkan setelah 2 detik
+  setTimeout(function() {
+    var popup = document.getElementById('apkPopup');
+    if (popup) popup.style.display = 'flex';
+  }, 2000);
+})();
+
+function closeApkPopup() {
+  var popup = document.getElementById('apkPopup');
+  if (popup) popup.style.display = 'none';
+  // Simpan dismiss selama 3 hari
+  localStorage.setItem('apkPopupDismissed', Date.now() + (3 * 24 * 60 * 60 * 1000));
+}
 </script>
 </body>
 </html>
