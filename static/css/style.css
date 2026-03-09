@@ -28,6 +28,7 @@ body {
   min-height: 100vh;
   padding-bottom: var(--bottom-h);
   padding-top: var(--nav-h);
+  overflow-x: hidden;
 }
 
 a { color:inherit; text-decoration:none; }
@@ -368,24 +369,21 @@ button { font-family:inherit; cursor:pointer; }
 ═══════════════════════════════════════════ */
 .detail-hero {
   position:relative; width:100%;
-  aspect-ratio:16/9;
+  aspect-ratio:16/9; overflow:hidden;
 }
 .detail-hero-bg {
-  position:absolute; inset:0;
   width:100%; height:100%; object-fit:cover;
   filter:blur(6px) brightness(0.4); transform:scale(1.1);
-  overflow:hidden;
 }
 .detail-hero-poster {
-  position:absolute; bottom:-70px; left:16px;
-  width:120px; border-radius:var(--radius-sm);
+  position:absolute; bottom:-20px; left:16px;
+  width:110px; border-radius:var(--radius-sm);
   box-shadow:0 8px 24px rgba(0,0,0,0.7);
   border:2px solid var(--bg);
-  z-index:2;
 }
-.detail-hero-poster img { width:100%; border-radius:var(--radius-sm); display:block; }
+.detail-hero-poster img { width:100%; border-radius:var(--radius-sm); }
 
-.detail-body { padding:84px 16px 16px; }
+.detail-body { padding:28px 16px 16px; }
 .detail-title { font-size:1.1rem; font-weight:800; margin-bottom:6px; }
 .detail-genres { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
 .detail-genre-tag {
