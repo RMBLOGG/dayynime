@@ -13,6 +13,11 @@
 
 <div class="banner-slider" style="margin-top:12px;">
   <div class="banner-track">
+    <!-- Banner Dukung Dayynime -->
+    <a href="https://trakteer.id/Dayynime" target="_blank" rel="noopener" class="banner-slide">
+      <img src="/static/banner.png" alt="Dukung Dayynime"
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+    </a>
     {% if banner_animes %}
       {% for anime in banner_animes[:5] %}
       <a href="/anime/{{ anime.slug }}" class="banner-slide">
@@ -55,8 +60,8 @@
   <button class="banner-arrow left"><i class="fas fa-chevron-left"></i></button>
   <button class="banner-arrow right"><i class="fas fa-chevron-right"></i></button>
   <div style="display:flex;gap:5px;justify-content:center;padding:8px 0 0;" id="bannerDots">
-    {% set count = banner_animes|length if banner_animes else 1 %}
-    {% for i in range([count, 5]|min) %}
+    {% set count = (banner_animes|length if banner_animes else 0) + 1 %}
+    {% for i in range([count, 6]|min) %}
     <button class="banner-dot {% if loop.first %}active{% endif %}"></button>
     {% endfor %}
   </div>
