@@ -5,7 +5,46 @@
   <div class="watch-main">
 
     <!-- PLAYER -->
-    <div class="player-box">
+    <div class="player-box" style="position:relative;">
+
+      <!-- AD OVERLAY -->
+      <div id="adOverlay" style="
+        position:absolute;inset:0;z-index:100;
+        background:#000;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:10px;
+      ">
+        <!-- Iklan Adsterra -->
+        <div style="width:300px;height:250px;overflow:hidden;border-radius:8px;flex-shrink:0;">
+          <script>
+            atOptions = {
+              'key' : 'ab1caf329002ea60537069c534a9f8dd',
+              'format' : 'iframe',
+              'height' : 250,
+              'width' : 300,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highperformanceformat.com/ab1caf329002ea60537069c534a9f8dd/invoke.js"></script>
+        </div>
+        <!-- Skip countdown -->
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:12px;color:#aaa;">Video dimulai dalam</span>
+          <span id="adCountdown" style="
+            min-width:32px;height:32px;border-radius:50%;
+            border:2px solid #ff6600;color:#ff6600;
+            font-size:13px;font-weight:700;
+            display:flex;align-items:center;justify-content:center;
+          ">15</span>
+        </div>
+        <button id="skipBtn" onclick="skipAd()" disabled style="
+          background:#333;border:none;color:#777;
+          padding:7px 18px;border-radius:20px;
+          font-size:12px;font-weight:600;cursor:not-allowed;
+          transition:all 0.3s;
+        ">Lewati Iklan</button>
+      </div>
+
       <div class="player-loading" id="playerLoading">
         <i class="fas fa-spinner fa-spin" style="font-size:1.8rem;color:#ff6600;"></i>
         <p>Memuat video...</p>
@@ -122,4 +161,40 @@
   {% endif %}
 
 </div><!-- /watch-layout -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Ad overlay countdown
+let adSecs = 15;
+const adCountdown = document.getElementById('adCountdown');
+const skipBtn = document.getElementById('skipBtn');
+const adOverlay = document.getElementById('adOverlay');
+
+const adTimer = setInterval(() => {
+  adSecs--;
+  adCountdown.textContent = adSecs;
+  if (adSecs <= 5) {
+    adCountdown.style.borderColor = '#4ade80';
+    adCountdown.style.color = '#4ade80';
+  }
+  if (adSecs <= 0) {
+    clearInterval(adTimer);
+    skipAd();
+  } else if (adSecs <= 5) {
+    skipBtn.disabled = false;
+    skipBtn.style.background = '#ff6600';
+    skipBtn.style.color = '#fff';
+    skipBtn.style.cursor = 'pointer';
+    skipBtn.textContent = 'Lewati Iklan ›';
+  }
+}, 1000);
+
+function skipAd() {
+  clearInterval(adTimer);
+  adOverlay.style.opacity = '0';
+  adOverlay.style.transition = 'opacity 0.3s';
+  setTimeout(() => { adOverlay.style.display = 'none'; }, 300);
+}
+</script>
 {% endblock %}
