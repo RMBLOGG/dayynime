@@ -146,39 +146,6 @@
 </div>
 {% endif %}
 
-<!-- ANIME SELESAI -->
-{% if completed and completed.animes %}
-<div class="section">
-  <div class="section-head">
-    <div class="section-title">✅ ANIME SELESAI</div>
-    <a href="/completed" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
-  </div>
-  <div class="scroll-row ncard-row">
-    {% for anime in completed.animes[:10] %}
-    <a href="/anime/{{ anime.slug }}" class="ncard">
-      <div class="ncard-banner">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.type %}<div class="ncard-typebadge">{{ anime.type }}</div>{% endif %}
-      </div>
-      <div class="ncard-bottom">
-        <div class="ncard-poster">
-          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        </div>
-        <div class="ncard-info">
-          <div class="ncard-genre">{{ anime.type or 'Anime' }}</div>
-          <div class="ncard-title">{{ anime.title }}</div>
-          <div class="ncard-meta">
-            <i class="fas fa-circle-check" style="color:#4ade80;font-size:9px;"></i>
-            <span>Selesai ✓</span>
-          </div>
-        </div>
-      </div>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-
 <!-- JADWAL RILIS -->
 {% if schedule and schedule.schedule %}
 <div class="section">
