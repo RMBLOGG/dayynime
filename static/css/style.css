@@ -28,7 +28,6 @@ body {
   min-height: 100vh;
   padding-bottom: var(--bottom-h);
   padding-top: var(--nav-h);
-  overflow-x: hidden;
 }
 
 a { color:inherit; text-decoration:none; }
