@@ -575,7 +575,7 @@ def home():
     elif source == "otakudesu":
         raw      = fetch(f"{pfx}/home")
         schedule = fetch(f"{pfx}/schedule")
-        comp_raw = fetch(f"{pfx}/completed")
+        comp_raw = fetch(f"{pfx}/complete-anime")
         data     = otakudesu_norm_home(raw)
         # populer dari ongoing (otakudesu tidak punya endpoint popular terpisah)
         pop_norm = {"animes": data["ongoing"][:10]} if data and data.get("ongoing") else None
