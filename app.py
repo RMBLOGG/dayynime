@@ -555,55 +555,69 @@ def landing():
 
 @app.route("/home")
 def home():
-    source = get_active_source()
-    pfx    = SOURCES[source]["prefix"]
+    source    = get_active_source()
+    pfx       = SOURCES[source]["prefix"]
+    comp_norm = None
 
-    if source == "animasu":
-        raw      = fetch(f"{pfx}/home")
-        pop_raw  = fetch(f"{pfx}/latest")
-        schedule = fetch(f"{pfx}/schedule")
-        comp_raw = fetch(f"{pfx}/completed")
-        data     = animasu_norm_home(raw)
-        # populer dari latest animasu
-        pop_norm = animasu_norm_paginated(pop_raw, 1) if pop_raw else None
-        if pop_norm:
-            pop_norm = {"animes": pop_norm.get("animes", [])}
-        comp_norm = animasu_norm_paginated(comp_raw, 1) if comp_raw else None
-        if comp_norm:
-            comp_norm = {"animes": comp_norm.get("animes", [])}
-        sched    = animasu_norm_schedule(schedule)
-    elif source == "otakudesu":
-        raw      = fetch(f"{pfx}/home")
-        schedule = fetch(f"{pfx}/schedule")
-        comp_raw = fetch(f"{pfx}/complete-anime")
-        data     = otakudesu_norm_home(raw)
-        # populer dari ongoing (otakudesu tidak punya endpoint popular terpisah)
-        pop_norm = {"animes": data["ongoing"][:10]} if data and data.get("ongoing") else None
-        comp_norm = None
-        if comp_raw and comp_raw.get("data"):
-            comp_norm = {"animes": otakudesu_norm_list(comp_raw["data"].get("animeList", [])[:10])}
-        sched    = otakudesu_norm_schedule(schedule)
-    else:
-        raw      = fetch(f"{pfx}/home")
-        popular  = fetch(f"{pfx}/popular")
-        schedule = fetch(f"{pfx}/schedule")
-        data = None
-        if raw and raw.get("data"):
-            d = raw["data"]
-            recent_list = d.get("recent", {}).get("animeList", [])
-            top10_list  = d.get("top10",  {}).get("animeList", [])
-            data = {
-                "ongoing": norm_list(recent_list),
-                "recent":  norm_list(top10_list),
-            }
-        pop_norm = None
-        if popular and popular.get("data"):
-            pop_norm = {"animes": norm_list(popular["data"].get("animeList", []))}
-        comp_raw = fetch(f"{pfx}/completed")
-        comp_norm = None
-        if comp_raw and comp_raw.get("data"):
-            comp_norm = {"animes": norm_list(comp_raw["data"].get("animeList", [])[:10])}
-        sched = norm_schedule(schedule)
+    try:
+        if source == "animasu":
+            raw      = fetch(f"{pfx}/home")
+            pop_raw  = fetch(f"{pfx}/latest")
+            schedule = fetch(f"{pfx}/schedule")
+            data     = animasu_norm_home(raw)
+            pop_norm = animasu_norm_paginated(pop_raw, 1) if pop_raw else None
+            if pop_norm:
+                pop_norm = {"animes": pop_norm.get("animes", [])}
+            sched = animasu_norm_schedule(schedule)
+            try:
+                comp_raw = fetch(f"{pfx}/completed")
+                tmp = animasu_norm_paginated(comp_raw, 1) if comp_raw else None
+                if tmp:
+                    comp_norm = {"animes": tmp.get("animes", [])}
+            except Exception:
+                pass
+
+        elif source == "otakudesu":
+            raw      = fetch(f"{pfx}/home")
+            schedule = fetch(f"{pfx}/schedule")
+            data     = otakudesu_norm_home(raw)
+            pop_norm = {"animes": data["ongoing"][:10]} if data and data.get("ongoing") else None
+            sched    = otakudesu_norm_schedule(schedule)
+            try:
+                comp_raw = fetch(f"{pfx}/complete-anime")
+                if comp_raw and comp_raw.get("data"):
+                    comp_norm = {"animes": otakudesu_norm_list(comp_raw["data"].get("animeList", [])[:10])}
+            except Exception:
+                pass
+
+        else:
+            raw      = fetch(f"{pfx}/home")
+            popular  = fetch(f"{pfx}/popular")
+            schedule = fetch(f"{pfx}/schedule")
+            data = None
+            if raw and raw.get("data"):
+                d = raw["data"]
+                recent_list = d.get("recent", {}).get("animeList", [])
+                top10_list  = d.get("top10",  {}).get("animeList", [])
+                data = {
+                    "ongoing": norm_list(recent_list),
+                    "recent":  norm_list(top10_list),
+                }
+            pop_norm = None
+            if popular and popular.get("data"):
+                pop_norm = {"animes": norm_list(popular["data"].get("animeList", []))}
+            sched = norm_schedule(schedule)
+            try:
+                comp_raw = fetch(f"{pfx}/completed")
+                if comp_raw and comp_raw.get("data"):
+                    comp_norm = {"animes": norm_list(comp_raw["data"].get("animeList", [])[:10])}
+            except Exception:
+                pass
+
+    except Exception as e:
+        print(f"[home] error: {e}")
+        return render_template("index.html", data=None, popular=None,
+                               completed=None, schedule=None)
 
     return render_template("index.html", data=data, popular=pop_norm,
                            completed=comp_norm, schedule=sched)
