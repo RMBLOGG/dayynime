@@ -309,24 +309,74 @@ function closeApkPopup() {
 </script>
 
 
-<!-- ═══ TRAKTEER FLOATING BUTTON ═══ -->
+<!-- ═══ FLOATING ACTION MENU ═══ -->
 <style>
-#trBtn {
-  position:fixed; bottom:76px; left:16px; z-index:99997;
-  background:#be1e2d; color:#fff;
-  border:none; border-radius:50px;
-  display:flex; align-items:center; gap:8px;
-  padding:10px 16px 10px 12px;
-  font-size:13px; font-weight:700; font-family:'Poppins',sans-serif;
-  cursor:pointer;
-  box-shadow:0 4px 20px rgba(190,30,45,0.5);
-  transition:transform 0.2s, box-shadow 0.2s;
-  -webkit-tap-highlight-color:transparent;
+/* FAB Container */
+#fabWrap {
+  position:fixed; bottom:76px; right:16px; z-index:99998;
+  display:flex; flex-direction:column; align-items:flex-end; gap:10px;
 }
-#trBtn:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(190,30,45,0.65); }
-#trBtn:active { transform:scale(0.95); }
-#trBtn img { width:22px; height:22px; border-radius:50%; object-fit:cover; }
 
+/* Tombol utama FAB */
+#fabMain {
+  width:46px; height:46px; border-radius:50%;
+  background:#ff6600; color:#fff; border:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; cursor:pointer;
+  box-shadow:0 4px 20px rgba(255,102,0,0.55);
+  transition:transform 0.3s, background 0.2s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  position:relative; z-index:2;
+}
+#fabMain.open { transform:rotate(45deg); background:#333; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+
+/* Menu items */
+#fabMenu {
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  pointer-events:none; opacity:0;
+  transform:translateY(10px) scale(0.95);
+  transition:opacity 0.25s, transform 0.25s;
+}
+#fabMenu.open {
+  pointer-events:all; opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+.fab-item {
+  display:flex; align-items:center; gap:8px;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.fab-item-label {
+  background:#1e1e1e; color:#fff;
+  font-size:12px; font-weight:700; font-family:'Poppins',sans-serif;
+  padding:6px 12px; border-radius:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.5);
+  white-space:nowrap;
+  border:1px solid rgba(255,255,255,0.08);
+}
+.fab-item-icon {
+  width:40px; height:40px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; color:#fff; border:none; cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);
+  -webkit-tap-highlight-color:transparent;
+  flex-shrink:0;
+}
+.fab-item-icon.tr  { background:#be1e2d; }
+.fab-item-icon.srv { background:#ff6600; }
+
+/* srcPanel posisi baru — di atas fabWrap */
+#srcPanel {
+  position:fixed; bottom:136px; right:16px; z-index:99999;
+  background:#1c1c1c; border:1px solid rgba(255,102,0,0.5);
+  border-radius:16px; padding:14px 12px; min-width:190px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.8);
+  display:none;
+}
+
+/* Trakteer modal */
 #trModal {
   display:none; position:fixed; inset:0; z-index:999999;
   background:rgba(0,0,0,0.85); align-items:flex-end; justify-content:center;
@@ -357,11 +407,36 @@ function closeApkPopup() {
 #trFrame { flex:1; border:none; width:100%; height:100%; }
 </style>
 
-<button id="trBtn" onclick="openTrakteer()">
-  <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="">
-  Support Dayynime
-</button>
+<!-- FAB WRAP -->
+<div id="fabWrap">
+  <!-- Menu items (muncul saat FAB diklik) -->
+  <div id="fabMenu">
 
+    <!-- Item: Trakteer -->
+    <div class="fab-item" onclick="openTrakteer(); closeFab();">
+      <span class="fab-item-label">Support Dayynime</span>
+      <button class="fab-item-icon tr">
+        <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" style="width:20px;height:20px;border-radius:50%;" alt="">
+      </button>
+    </div>
+
+    <!-- Item: Ganti Server -->
+    <div class="fab-item" onclick="toggleSrcPanel(); closeFab();">
+      <span class="fab-item-label">Ganti Server</span>
+      <button class="fab-item-icon srv">
+        <i class="fas fa-server" id="srcIcon"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Tombol utama -->
+  <button id="fabMain" onclick="toggleFab()">
+    <i class="fas fa-plus" id="fabIcon"></i>
+  </button>
+</div>
+
+<!-- Trakteer Modal -->
 <div id="trModal" onclick="closeTrakteer(event)">
   <div id="trModalBox">
     <div id="trModalHead">
@@ -373,27 +448,60 @@ function closeApkPopup() {
 </div>
 
 <script>
+// ── FAB ──
+var fabOpen = false;
+function toggleFab() {
+  fabOpen = !fabOpen;
+  document.getElementById('fabMain').classList.toggle('open', fabOpen);
+  document.getElementById('fabMenu').classList.toggle('open', fabOpen);
+  document.getElementById('fabIcon').className = fabOpen ? 'fas fa-times' : 'fas fa-plus';
+  // Tutup srcPanel kalau FAB ditutup
+  if (!fabOpen) {
+    document.getElementById('srcPanel').style.display = 'none';
+  }
+}
+function closeFab() {
+  fabOpen = false;
+  document.getElementById('fabMain').classList.remove('open');
+  document.getElementById('fabMenu').classList.remove('open');
+  document.getElementById('fabIcon').className = 'fas fa-plus';
+}
+
+// ── Trakteer ──
 function openTrakteer() {
   var modal = document.getElementById('trModal');
   var frame = document.getElementById('trFrame');
-  // Selalu reload iframe setiap buka supaya tidak blank setelah ditutup
   frame.src = '';
-  setTimeout(function() {
-    frame.src = 'https://trakteer.id/v1/Dayynimee/tip/embed/modal';
-  }, 50);
+  setTimeout(function() { frame.src = 'https://trakteer.id/v1/Dayynimee/tip/embed/modal'; }, 50);
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeTrakteer(e) {
   if (e && e.target !== document.getElementById('trModal') && e.target !== document.getElementById('trModalClose')) return;
-  var frame = document.getElementById('trFrame');
-  frame.src = ''; // Reset iframe saat tutup
+  document.getElementById('trFrame').src = '';
   document.getElementById('trModal').classList.remove('open');
   document.body.style.overflow = '';
 }
+
+// ── Source Panel ──
+var srcPanelOpen = false;
+function toggleSrcPanel() {
+  srcPanelOpen = !srcPanelOpen;
+  document.getElementById('srcPanel').style.display = srcPanelOpen ? 'block' : 'none';
+}
+
+// Tutup FAB & srcPanel kalau tap di luar
+document.addEventListener('click', function(e) {
+  var wrap = document.getElementById('fabWrap');
+  var panel = document.getElementById('srcPanel');
+  if (fabOpen && wrap && !wrap.contains(e.target)) closeFab();
+  if (srcPanelOpen && panel && !panel.contains(e.target) && wrap && !wrap.contains(e.target)) {
+    srcPanelOpen = false;
+    panel.style.display = 'none';
+  }
+});
 </script>
 
-<!-- ═══ SOURCE SWITCHER FAB ═══ -->
 <div id="srcPanel" style="
   display:none;
   position:fixed; bottom:130px; right:16px; z-index:99999;
@@ -471,6 +579,7 @@ function closeTrakteer(e) {
   })();
   {% endfor %}
 })();
+
 </script>
 
 </body>
