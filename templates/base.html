@@ -461,6 +461,10 @@ function closeFab() {
   document.getElementById('fabMain').classList.remove('open');
   document.getElementById('fabMenu').classList.remove('open');
   document.getElementById('fabIcon').className = 'fas fa-plus';
+  // Restore fabMenu visibility
+  var menu = document.getElementById('fabMenu');
+  menu.style.visibility = '';
+  menu.style.pointerEvents = '';
 }
 
 // ── Trakteer ──
@@ -484,6 +488,15 @@ var srcPanelOpen = false;
 function toggleSrcPanel() {
   srcPanelOpen = !srcPanelOpen;
   document.getElementById('srcPanel').style.display = srcPanelOpen ? 'block' : 'none';
+  // Sembunyikan fabMenu supaya labelnya tidak numpuk di atas srcPanel
+  var menu = document.getElementById('fabMenu');
+  if (srcPanelOpen) {
+    menu.style.visibility = 'hidden';
+    menu.style.pointerEvents = 'none';
+  } else {
+    menu.style.visibility = '';
+    menu.style.pointerEvents = '';
+  }
 }
 
 // Tutup FAB & srcPanel kalau tap di luar
