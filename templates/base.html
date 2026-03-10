@@ -508,6 +508,7 @@ document.addEventListener('click', function(e) {
   <div style="font-size:10px;color:#555;font-weight:700;letter-spacing:1.5px;margin-bottom:10px;text-align:center;">GANTI ENDPOINT</div>
   {% for key, src in all_sources.items() %}
   <button id="srcBtn-{{ key }}"
+    onclick="switchSource('{{ key }}')"
     style="width:100%;margin-bottom:6px;padding:11px 14px;border-radius:10px;
            border:1px solid {% if active_source == key %}#ff6600{% else %}rgba(255,255,255,0.1){% endif %};
            background:{% if active_source == key %}rgba(255,102,0,0.18){% else %}rgba(255,255,255,0.04){% endif %};
@@ -526,23 +527,7 @@ document.addEventListener('click', function(e) {
   </div>
 </div>
 
-<script>
-// Event listener srcBtn untuk switchSource
-(function(){
-  {% for key, src in all_sources.items() %}
-  (function() {
-    var b = document.getElementById('srcBtn-{{ key }}');
-    if (!b) return;
-    function doSwitch(e) {
-      e.preventDefault(); e.stopPropagation();
-      switchSource('{{ key }}');
-    }
-    b.addEventListener('click', doSwitch);
-    b.addEventListener('touchend', doSwitch, {passive:false});
-  })();
-  {% endfor %}
-})();
-</script>
+
 
 </body>
 </html>
