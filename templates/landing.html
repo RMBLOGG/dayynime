@@ -111,24 +111,24 @@
       to   { opacity:1; transform: scale(1) rotate(0deg); }
     }
 
-    /* spinning ring */
+    /* Spinning rings — ikuti bentuk rounded square logo */
     .logo-ring::before {
       content: '';
-      position: absolute; inset: -6px;
-      border-radius: 50%;
+      position: absolute; inset: -7px;
+      border-radius: 33px;
       border: 2px solid transparent;
       border-top-color: #ff6600;
-      border-right-color: rgba(255,102,0,0.3);
+      border-right-color: rgba(255,102,0,0.25);
       animation: ring-spin 3s linear infinite;
     }
     .logo-ring::after {
       content: '';
-      position: absolute; inset: -12px;
-      border-radius: 50%;
-      border: 1px solid transparent;
-      border-bottom-color: rgba(255,102,0,0.2);
-      border-left-color: rgba(255,102,0,0.1);
-      animation: ring-spin 6s linear infinite reverse;
+      position: absolute; inset: -13px;
+      border-radius: 39px;
+      border: 1.5px solid transparent;
+      border-bottom-color: rgba(255,102,0,0.3);
+      border-left-color: rgba(255,102,0,0.15);
+      animation: ring-spin 5s linear infinite reverse;
     }
     @keyframes ring-spin { to { transform: rotate(360deg); } }
 
@@ -136,9 +136,10 @@
       width: 110px; height: 110px;
       border-radius: 26px;
       object-fit: cover;
+      position: relative; z-index: 1;
       box-shadow:
         0 0 0 1px rgba(255,102,0,0.2),
-        0 8px 32px rgba(255,102,0,0.25),
+        0 8px 32px rgba(255,102,0,0.3),
         0 2px 8px rgba(0,0,0,0.8);
     }
 
