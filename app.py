@@ -824,7 +824,7 @@ def movies():
     source = get_active_source()
     pfx    = SOURCES[source]["prefix"]
     if source == "animasu":
-        data = animasu_norm_paginated(fetch(f"{pfx}/completed", {"page": page}), int(page))
+        data = animasu_norm_paginated(fetch(f"{pfx}/movies", {"page": page}), int(page))
     elif source == "otakudesu":
         # otakudesu tidak punya endpoint /movies, fallback ke complete-anime
         data = otakudesu_norm_paginated(fetch(f"{pfx}/complete-anime", {"page": page}), int(page))
