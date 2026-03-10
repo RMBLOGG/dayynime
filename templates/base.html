@@ -370,7 +370,7 @@ function closeApkPopup() {
 
 /* srcPanel posisi baru — di atas fabWrap */
 #srcPanel {
-  position:fixed; bottom:136px; right:72px; z-index:100000;
+  position:fixed; bottom:76px; left:16px; z-index:100000;
   background:#1c1c1c; border:1px solid rgba(255,102,0,0.5);
   border-radius:16px; padding:14px 12px; min-width:200px;
   box-shadow:0 8px 32px rgba(0,0,0,0.8);
@@ -415,6 +415,7 @@ function closeApkPopup() {
 
     <!-- Item: Trakteer -->
     <div class="fab-item" onclick="openTrakteer(); closeFab();">
+      <span class="fab-item-label">Support Dayynime</span>
       <button class="fab-item-icon tr" title="Support Dayynime">
         <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" style="width:20px;height:20px;border-radius:50%;" alt="">
       </button>
@@ -422,6 +423,7 @@ function closeApkPopup() {
 
     <!-- Item: Ganti Server -->
     <div class="fab-item" onclick="toggleSrcPanel(); closeFab();">
+      <span class="fab-item-label">Ganti Server</span>
       <button class="fab-item-icon srv" title="Ganti Server">
         <i class="fas fa-server" id="srcIcon"></i>
       </button>
