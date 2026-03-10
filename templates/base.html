@@ -289,14 +289,99 @@ function switchSource(key) {
   setTimeout(function() {
     var popup = document.getElementById('apkPopup');
     if (popup) popup.style.display = 'flex';
+    var trb = document.getElementById('trBtn');
+    var src = document.getElementById('srcTrigger');
+    if (trb) trb.style.display = 'none';
+    if (src) src.style.display = 'none';
   }, 2000);
 })();
 
 function closeApkPopup() {
   var popup = document.getElementById('apkPopup');
   if (popup) popup.style.display = 'none';
+  var trb = document.getElementById('trBtn');
+  var src = document.getElementById('srcTrigger');
+  if (trb) trb.style.display = 'flex';
+  if (src) src.style.display = 'flex';
   // Simpan dismiss selama 3 hari
   sessionStorage.setItem('apkPopupDismissed', '1');
+}
+</script>
+
+
+<!-- ═══ TRAKTEER FLOATING BUTTON ═══ -->
+<style>
+#trBtn {
+  position:fixed; bottom:76px; left:16px; z-index:99997;
+  background:#be1e2d; color:#fff;
+  border:none; border-radius:50px;
+  display:flex; align-items:center; gap:8px;
+  padding:10px 16px 10px 12px;
+  font-size:13px; font-weight:700; font-family:'Poppins',sans-serif;
+  cursor:pointer;
+  box-shadow:0 4px 20px rgba(190,30,45,0.5);
+  transition:transform 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+#trBtn:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(190,30,45,0.65); }
+#trBtn:active { transform:scale(0.95); }
+#trBtn img { width:22px; height:22px; border-radius:50%; object-fit:cover; }
+
+#trModal {
+  display:none; position:fixed; inset:0; z-index:999999;
+  background:rgba(0,0,0,0.75); align-items:center; justify-content:center;
+  padding:16px;
+}
+#trModal.open { display:flex; }
+#trModalBox {
+  background:#1a1a1a; border-radius:16px; overflow:hidden;
+  width:100%; max-width:420px; max-height:85vh;
+  display:flex; flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+}
+#trModalHead {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; background:#be1e2d;
+}
+#trModalHead span { font-size:14px; font-weight:700; color:#fff; }
+#trModalClose {
+  background:rgba(255,255,255,0.2); border:none; color:#fff;
+  width:28px; height:28px; border-radius:50%;
+  font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-family:inherit;
+}
+#trFrame { flex:1; border:none; min-height:400px; }
+</style>
+
+<button id="trBtn" onclick="openTrakteer()">
+  <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="">
+  Support Dayynime
+</button>
+
+<div id="trModal" onclick="closeTrakteer(event)">
+  <div id="trModalBox">
+    <div id="trModalHead">
+      <span>❤️ Support Dayynime</span>
+      <button id="trModalClose" onclick="closeTrakteer()">✕</button>
+    </div>
+    <iframe id="trFrame" src="" allow="payment" loading="lazy"></iframe>
+  </div>
+</div>
+
+<script>
+function openTrakteer() {
+  var modal = document.getElementById('trModal');
+  var frame = document.getElementById('trFrame');
+  if (!frame.src || frame.src === window.location.href) {
+    frame.src = 'https://trakteer.id/v1/Dayynimee/tip/embed/modal';
+  }
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTrakteer(e) {
+  if (e && e.target !== document.getElementById('trModal') && e.target !== document.getElementById('trModalClose')) return;
+  document.getElementById('trModal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 </script>
 
