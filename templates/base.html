@@ -376,14 +376,18 @@ function closeApkPopup() {
 function openTrakteer() {
   var modal = document.getElementById('trModal');
   var frame = document.getElementById('trFrame');
-  if (!frame.src || frame.src === window.location.href) {
+  // Selalu reload iframe setiap buka supaya tidak blank setelah ditutup
+  frame.src = '';
+  setTimeout(function() {
     frame.src = 'https://trakteer.id/v1/Dayynimee/tip/embed/modal';
-  }
+  }, 50);
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeTrakteer(e) {
   if (e && e.target !== document.getElementById('trModal') && e.target !== document.getElementById('trModalClose')) return;
+  var frame = document.getElementById('trFrame');
+  frame.src = ''; // Reset iframe saat tutup
   document.getElementById('trModal').classList.remove('open');
   document.body.style.overflow = '';
 }
