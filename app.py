@@ -235,8 +235,8 @@ def animasu_norm_anime(a):
         "slug":          a.get("slug", ""),
         "title":         a.get("title", ""),
         "poster":        a.get("poster", ""),
-        "episode":       str(a.get("episode", a.get("episode_count", ""))),
-        "status_or_day": a.get("status_or_day", a.get("status", "")),
+        "episode":       str(a.get("episode", "")),
+        "status_or_day": a.get("status_or_day", ""),
         "type":          a.get("type", ""),
         "score":         a.get("score", ""),
         "rank":          a.get("rank", None),
@@ -881,22 +881,8 @@ def animelist():
     source = get_active_source()
     pfx    = SOURCES[source]["prefix"]
     if source == "animasu":
-        page = request.args.get("page", 1, type=int)
-        raw  = fetch(f"{pfx}/animelist", {"page": page})
-        # Animasu animelist adalah paginated, tampilkan sebagai grid
-        if raw and raw.get("status") == "success":
-            animes = animasu_norm_list(raw.get("animes", []))
-            pag    = raw.get("pagination", {})
-            data   = {
-                "animes": animes,
-                "pagination": {
-                    "hasNext":     pag.get("hasNext", False),
-                    "hasPrev":     pag.get("hasPrev", False),
-                    "currentPage": pag.get("currentPage", page),
-                }
-            }
-            return render_template("list.html", data=data, title="Daftar", page=page, base_url="/animelist")
-        return render_template("list.html", data=None, title="Daftar", page=1, base_url="/animelist")
+        raw  = fetch(f"{pfx}/animelist")
+        data = animasu_norm_animelist(raw)
     elif source == "otakudesu":
         # otakudesu animelist ada di /anime/unlimited
         raw  = fetch(f"{pfx}/unlimited")
