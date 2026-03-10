@@ -290,9 +290,7 @@ function switchSource(key) {
     var popup = document.getElementById('apkPopup');
     if (popup) popup.style.display = 'flex';
     var trb = document.getElementById('trBtn');
-    var src = document.getElementById('srcTrigger');
     if (trb) trb.style.display = 'none';
-    if (src) src.style.display = 'none';
   }, 2000);
 })();
 
@@ -300,9 +298,7 @@ function closeApkPopup() {
   var popup = document.getElementById('apkPopup');
   if (popup) popup.style.display = 'none';
   var trb = document.getElementById('trBtn');
-  var src = document.getElementById('srcTrigger');
   if (trb) trb.style.display = 'flex';
-  if (src) src.style.display = 'flex';
   // Simpan dismiss selama 3 hari
   sessionStorage.setItem('apkPopupDismissed', '1');
 }
@@ -530,42 +526,9 @@ document.addEventListener('click', function(e) {
   </div>
 </div>
 
-<button id="srcTrigger" title="Ganti endpoint"
-  style="position:fixed;bottom:76px;right:16px;z-index:99998;
-         background:#ff6600;color:#fff;border:none;
-         width:46px;height:46px;border-radius:50%;
-         display:flex;align-items:center;justify-content:center;
-         font-size:17px;box-shadow:0 4px 20px rgba(255,102,0,0.55);
-         cursor:pointer;-webkit-tap-highlight-color:transparent;
-         touch-action:manipulation;user-select:none;">
-  <i class="fas fa-server" id="srcIcon"></i>
-</button>
-
 <script>
+// Event listener srcBtn untuk switchSource
 (function(){
-  var open  = false;
-  var panel = document.getElementById('srcPanel');
-  var btn   = document.getElementById('srcTrigger');
-  var icon  = document.getElementById('srcIcon');
-
-  function togglePanel(e) {
-    e.preventDefault(); e.stopPropagation();
-    open = !open;
-    panel.style.display = open ? 'block' : 'none';
-    icon.className = open ? 'fas fa-times' : 'fas fa-server';
-  }
-
-  btn.addEventListener('click', togglePanel);
-  btn.addEventListener('touchend', togglePanel, {passive:false});
-
-  document.addEventListener('click', function(e) {
-    if (open && !panel.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
-      open = false;
-      panel.style.display = 'none';
-      icon.className = 'fas fa-server';
-    }
-  });
-
   {% for key, src in all_sources.items() %}
   (function() {
     var b = document.getElementById('srcBtn-{{ key }}');
@@ -579,7 +542,6 @@ document.addEventListener('click', function(e) {
   })();
   {% endfor %}
 })();
-
 </script>
 
 </body>
