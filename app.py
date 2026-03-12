@@ -1821,26 +1821,29 @@ def trakteer_debug():
             "X-Requested-With": "XMLHttpRequest",
         }
         # Coba semua endpoint yang mungkin
-        endpoints = [
-            "supporter-history",
-            "support-history",
-            "supporters",
-            "transactions",
-            "transaction-history",
-            "donation-history",
-            "donations",
-        ]
+        # Coba transactions dengan berbagai parameter
         results = {}
-        for ep in endpoints:
+        test_params = [
+            {},
+            {"limit": 10},
+            {"per_page": 10},
+            {"page": 1, "limit": 10},
+            {"status": "success"},
+            {"status": "paid"},
+            {"type": "tip"},
+        ]
+        for i, params in enumerate(test_params):
             try:
-                r = requests.get(f"{TRAKTEER_BASE}/{ep}", headers=headers, params={"limit": 1}, timeout=5)
-                results[ep] = {
+                r = requests.get(f"{TRAKTEER_BASE}/transactions", headers=headers, params=params, timeout=5)
+                body = r.json()
+                results[f"try_{i}_{params}"] = {
                     "status": r.status_code,
-                    "ok": r.status_code == 200,
-                    "preview": str(r.text[:150]),
+                    "data_count": len(body.get("result",{}).get("data",[])),
+                    "result_keys": list(body.get("result",{}).keys()) if body.get("result") else [],
+                    "preview": str(r.text[:300]),
                 }
             except Exception as ex:
-                results[ep] = {"error": str(ex)}
+                results[f"try_{i}"] = {"error": str(ex)}
         return jsonify({"key_prefix": key[:6]+"...", "results": results})
     except Exception as e:
         return jsonify({"error": str(e), "trace": traceback.format_exc()})
@@ -1855,8 +1858,6 @@ def trakteer_supporters():
             return jsonify({"ok": False, "supporters": [], "reason": "fetch returned None"})
 
         items = data.get("result", {}).get("data", []) or data.get("data", []) or []
-        # Debug: sertakan raw item pertama untuk cek field names
-        raw_first = items[0] if items else {}
         supporters = []
         for item in items[:10]:
             supporters.append({
@@ -1866,7 +1867,7 @@ def trakteer_supporters():
                 "message": item.get("supporter_message") or item.get("message") or item.get("note") or "",
                 "time":    item.get("created_at") or item.get("transaction_time") or item.get("paid_at") or "",
             })
-        return jsonify({"ok": True, "supporters": supporters, "_raw_first": raw_first})
+        return jsonify({"ok": True, "supporters": supporters})
     except Exception as e:
         return jsonify({"ok": False, "supporters": [], "error": str(e), "trace": traceback.format_exc()})
 
