@@ -1898,6 +1898,224 @@ def trakteer_latest():
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)})
 
+# ═══════════════════════════════════════════════════════════════════
+# ADMIN DASHBOARD
+# ═══════════════════════════════════════════════════════════════════
+
+import hashlib
+
+PRESENCE_TTL    = 300
+PRESENCE_PREFIX = "animeku:presence:"
+PAGE_VIEW_PREFIX = "animeku:pageview:"
+
+
+def _get_admin_ids():
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/site_config",
+            headers=supabase_service_headers(),
+            params={"key": "eq.admin_ids", "select": "value"},
+            timeout=3
+        )
+        if r.ok and r.json():
+            val = r.json()[0].get("value")
+            if isinstance(val, list):
+                return val
+            if isinstance(val, dict):
+                return val.get("ids", ["1a2c72de-e85c-4430-8e27-8c1c1fd0b8f1"])
+    except Exception:
+        pass
+    return ["1a2c72de-e85c-4430-8e27-8c1c1fd0b8f1"]
+
+
+def _require_admin():
+    user = session.get("user")
+    if not user:
+        return False
+    return user.get("id") in _get_admin_ids()
+
+
+def _session_id():
+    sid = request.cookies.get("_asid")
+    if sid:
+        return sid
+    raw = (request.remote_addr or "") + (request.headers.get("User-Agent", ""))
+    return hashlib.sha256(raw.encode()).hexdigest()[:20]
+
+
+@app.route("/admin")
+def admin_dashboard():
+    if not _require_admin():
+        return redirect("/")
+    return render_template("admin.html")
+
+
+@app.route("/api/admin/heartbeat", methods=["POST"])
+def admin_heartbeat():
+    data = request.get_json(silent=True) or {}
+    page = data.get("page", "/")
+    sid  = _session_id()
+    user = session.get("user")
+
+    now = datetime.now(timezone.utc).isoformat()
+    presence = {
+        "session_id": sid,
+        "user_id":    user.get("id")     if user else None,
+        "name":       user.get("name")   if user else None,
+        "email":      user.get("email")  if user else None,
+        "avatar":     user.get("avatar") if user else None,
+        "page":       page,
+        "last_seen":  now,
+        "is_premium": False,
+    }
+
+    if user:
+        try:
+            rp = requests.get(
+                f"{SUPABASE_URL}/rest/v1/user_premium",
+                headers=supabase_service_headers(),
+                params={"user_id": f"eq.{user['id']}", "select": "is_active,expires_at"},
+                timeout=2
+            )
+            if rp.ok and rp.json():
+                row = rp.json()[0]
+                exp = row.get("expires_at")
+                is_active = row.get("is_active", False)
+                not_expired = True
+                if exp:
+                    try:
+                        not_expired = datetime.fromisoformat(exp.replace("Z", "+00:00")) > datetime.now(timezone.utc)
+                    except Exception:
+                        pass
+                presence["is_premium"] = is_active and not_expired
+        except Exception:
+            pass
+
+    try:
+        redis.set(f"{PRESENCE_PREFIX}{sid}", json.dumps(presence), ex=PRESENCE_TTL)
+    except Exception as e:
+        print(f"[Heartbeat] Redis error: {e}")
+
+    try:
+        date_key = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        pv_key   = f"{PAGE_VIEW_PREFIX}{date_key}:{page}"
+        redis.incr(pv_key)
+        redis.expire(pv_key, 86400 * 2)
+    except Exception:
+        pass
+
+    resp = jsonify({"ok": True})
+    if not request.cookies.get("_asid"):
+        resp.set_cookie("_asid", sid, max_age=86400 * 365, samesite="Lax", httponly=True)
+    return resp
+
+
+@app.route("/api/admin/stats")
+def admin_stats():
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+
+    active_users  = []
+    active_guests = 0
+    active_logged = 0
+
+    try:
+        keys = redis.keys(f"{PRESENCE_PREFIX}*")
+        for key in (keys or []):
+            try:
+                raw = redis.get(key)
+                if not raw:
+                    continue
+                u = json.loads(raw)
+                active_users.append(u)
+                if u.get("user_id"):
+                    active_logged += 1
+                else:
+                    active_guests += 1
+            except Exception:
+                pass
+    except Exception as e:
+        print(f"[AdminStats] Redis keys error: {e}")
+
+    active_users.sort(key=lambda x: x.get("last_seen", ""), reverse=True)
+
+    premium_count = 0
+    comment_count = 0
+    premium_users = []
+
+    try:
+        rp = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_premium",
+            headers={**supabase_service_headers(), "Prefer": "count=exact"},
+            params={"is_active": "eq.true", "select": "count"},
+            timeout=5
+        )
+        premium_count = int(rp.headers.get("content-range", "*/0").split("/")[-1] or 0)
+    except Exception:
+        pass
+
+    try:
+        rp2 = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_premium",
+            headers=supabase_service_headers(),
+            params={"select": "user_id,is_active,expires_at,created_at", "order": "created_at.desc", "limit": "50"},
+            timeout=5
+        )
+        if rp2.ok:
+            rows = rp2.json()
+            for row in rows:
+                uid = row.get("user_id", "")
+                row["user_name"] = uid[:8] + "…" if uid else "Unknown"
+            premium_users = rows
+            if not premium_count:
+                premium_count = len([r for r in rows if r.get("is_active")])
+    except Exception:
+        pass
+
+    try:
+        rc = requests.get(
+            f"{SUPABASE_URL}/rest/v1/anime_comments",
+            headers={**supabase_service_headers(), "Prefer": "count=exact"},
+            params={"select": "count"},
+            timeout=5
+        )
+        comment_count = int(rc.headers.get("content-range", "*/0").split("/")[-1] or 0)
+    except Exception:
+        pass
+
+    top_pages = []
+    try:
+        date_key = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        pv_keys  = redis.keys(f"{PAGE_VIEW_PREFIX}{date_key}:*") or []
+        page_data = {}
+        for k in pv_keys:
+            try:
+                page_name = str(k).replace(f"{PAGE_VIEW_PREFIX}{date_key}:", "")
+                page_data[page_name] = int(redis.get(k) or 0)
+            except Exception:
+                pass
+        top_pages = sorted(
+            [{"page": p, "count": c} for p, c in page_data.items()],
+            key=lambda x: x["count"], reverse=True
+        )[:15]
+    except Exception as e:
+        print(f"[AdminStats] Top pages error: {e}")
+
+    return jsonify({
+        "stats": {
+            "active_total":  len(active_users),
+            "active_guests": active_guests,
+            "active_logged": active_logged,
+            "premium_count": premium_count,
+            "comment_count": comment_count,
+            "member_count":  max(premium_count, active_logged),
+        },
+        "active_users":  active_users,
+        "top_pages":     top_pages,
+        "premium_users": premium_users,
+    })
+
+
 @app.route("/sitemap.xml")
 def sitemap():
     return send_from_directory("static", "sitemap.xml", mimetype="application/xml")
