@@ -310,17 +310,23 @@ body { background: var(--adm-bg) !important; }
     <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,102,0,0.12);border:1px solid rgba(255,102,0,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;">🔐</div>
     <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Login Dulu</div>
     <div style="font-size:13px;color:#666;margin-bottom:28px;line-height:1.6;">Kamu perlu login dengan akun Google untuk mengakses halaman admin.</div>
-    <a href="/auth/login?next=/admin" style="
+    <button onclick="loginAdmin()" style="
       display:inline-flex;align-items:center;gap:10px;
       background:#ff6600;color:#fff;font-weight:700;font-size:14px;
-      padding:12px 28px;border-radius:10px;text-decoration:none;
+      padding:12px 28px;border-radius:10px;border:none;cursor:pointer;
       transition:background 0.2s;
     ">
       <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
         <path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/>
       </svg>
       Login dengan Google
-    </a>
+    </button>
+    <script>
+    function loginAdmin() {
+      localStorage.setItem('auth_return_to', '/admin');
+      window.location.href = '/auth/login?next=/admin';
+    }
+    </script>
   </div>
 </div>
 
