@@ -1876,7 +1876,9 @@ def trakteer_latest():
                 "unit":    item.get("unit") or item.get("quantity") or 1,
                 "message": item.get("supporter_message") or item.get("message") or "",
             }
-    })
+        })
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)})
 
 @app.route("/sitemap.xml")
 def sitemap():
