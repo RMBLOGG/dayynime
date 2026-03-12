@@ -1046,8 +1046,6 @@ def api_switch_source():
 
 @app.route("/auth/login")
 def auth_login():
-    next_url = request.args.get("next", "/home")
-    session["login_next"] = next_url
     redirect_to = f"{SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to={request.host_url}auth/callback"
     return redirect(redirect_to)
 
@@ -1066,8 +1064,7 @@ def auth_session():
             "avatar": data.get("user", {}).get("user_metadata", {}).get("avatar_url", ""),
             "email":  data.get("user", {}).get("email", ""),
         }
-    next_url = session.pop("login_next", "/home")
-    return jsonify({"ok": True, "next": next_url})
+    return jsonify({"ok": True})
 
 @app.route("/auth/logout", methods=["POST"])
 def auth_logout():
@@ -1948,12 +1945,9 @@ def _session_id():
 
 @app.route("/admin")
 def admin_dashboard():
-    user = session.get("user")
-    if not user:
-        return render_template("admin.html", show_login=True)
     if not _require_admin():
-        return render_template("admin.html", show_login=False, not_admin=True)
-    return render_template("admin.html", show_login=False, not_admin=False)
+        return redirect("/")
+    return render_template("admin.html")
 
 
 @app.route("/api/admin/heartbeat", methods=["POST"])
@@ -1999,6 +1993,9 @@ def admin_heartbeat():
 
     try:
         redis.set(f"{PRESENCE_PREFIX}{sid}", json.dumps(presence), ex=PRESENCE_TTL)
+        # Daftarkan sid ke set supaya bisa di-scan tanpa keys()
+        redis.sadd("animeku:presence_index", sid)
+        redis.expire("animeku:presence_index", PRESENCE_TTL * 2)
     except Exception as e:
         print(f"[Heartbeat] Redis error: {e}")
 
@@ -2007,6 +2004,9 @@ def admin_heartbeat():
         pv_key   = f"{PAGE_VIEW_PREFIX}{date_key}:{page}"
         redis.incr(pv_key)
         redis.expire(pv_key, 86400 * 2)
+        # Track page keys di set
+        redis.sadd(f"animeku:pageview_index:{date_key}", pv_key)
+        redis.expire(f"animeku:pageview_index:{date_key}", 86400 * 2)
     except Exception:
         pass
 
@@ -2026,11 +2026,13 @@ def admin_stats():
     active_logged = 0
 
     try:
-        keys = redis.keys(f"{PRESENCE_PREFIX}*")
-        for key in (keys or []):
+        sids = redis.smembers("animeku:presence_index") or []
+        for sid in sids:
             try:
-                raw = redis.get(key)
+                raw = redis.get(f"{PRESENCE_PREFIX}{sid}")
                 if not raw:
+                    # Sudah expired, hapus dari index
+                    redis.srem("animeku:presence_index", sid)
                     continue
                 u = json.loads(raw)
                 active_users.append(u)
@@ -2041,7 +2043,7 @@ def admin_stats():
             except Exception:
                 pass
     except Exception as e:
-        print(f"[AdminStats] Redis keys error: {e}")
+        print(f"[AdminStats] Redis error: {e}")
 
     active_users.sort(key=lambda x: x.get("last_seen", ""), reverse=True)
 
@@ -2091,8 +2093,8 @@ def admin_stats():
 
     top_pages = []
     try:
-        date_key = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        pv_keys  = redis.keys(f"{PAGE_VIEW_PREFIX}{date_key}:*") or []
+        date_key  = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        pv_keys   = redis.smembers(f"animeku:pageview_index:{date_key}") or []
         page_data = {}
         for k in pv_keys:
             try:
