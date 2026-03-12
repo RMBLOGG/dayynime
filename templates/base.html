@@ -636,5 +636,21 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 
+<script>
+/* ── Admin Heartbeat: lapor kehadiran user ── */
+(function() {
+  function hb() {
+    fetch('/api/admin/heartbeat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ page: window.location.pathname }),
+      keepalive: true
+    }).catch(function(){});
+  }
+  hb();
+  setInterval(hb, 60000);
+})();
+</script>
+
 </body>
 </html>
