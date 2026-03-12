@@ -1850,21 +1850,23 @@ def trakteer_supporters():
     """Return 10 supporter terbaru untuk ditampilkan di home."""
     import traceback
     try:
-        data = fetch_trakteer("support-history", {"limit": 10})
+        data = fetch_trakteer("transactions", {"limit": 10})
         if not data:
             return jsonify({"ok": False, "supporters": [], "reason": "fetch returned None"})
 
-        supporters = []
         items = data.get("result", {}).get("data", []) or data.get("data", []) or []
+        # Debug: sertakan raw item pertama untuk cek field names
+        raw_first = items[0] if items else {}
+        supporters = []
         for item in items[:10]:
             supporters.append({
-                "name":    item.get("supporter_name") or item.get("name") or "Anonim",
-                "amount":  item.get("amount_raw") or item.get("amount") or 0,
+                "name":    item.get("supporter_name") or item.get("name") or item.get("supporter") or "Anonim",
+                "amount":  item.get("amount_raw") or item.get("amount") or item.get("total_amount") or 0,
                 "unit":    item.get("unit") or item.get("quantity") or 1,
-                "message": item.get("supporter_message") or item.get("message") or "",
-                "time":    item.get("created_at") or item.get("transaction_time") or "",
+                "message": item.get("supporter_message") or item.get("message") or item.get("note") or "",
+                "time":    item.get("created_at") or item.get("transaction_time") or item.get("paid_at") or "",
             })
-        return jsonify({"ok": True, "supporters": supporters})
+        return jsonify({"ok": True, "supporters": supporters, "_raw_first": raw_first})
     except Exception as e:
         return jsonify({"ok": False, "supporters": [], "error": str(e), "trace": traceback.format_exc()})
 
@@ -1873,7 +1875,7 @@ def trakteer_latest():
     """Return supporter terbaru saja (untuk polling notifikasi)."""
     import traceback
     try:
-        data = fetch_trakteer("support-history", {"limit": 1})
+        data = fetch_trakteer("transactions", {"limit": 1})
         if not data:
             return jsonify({"ok": False})
 
