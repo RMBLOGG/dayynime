@@ -1,9 +1,47 @@
-{% extends "base.html" %}
-{% block title %}auth_callback - Dayynime{% endblock %}
-{% block content %}
-<div class="placeholder-page">
-  <div class="icon"><i class="fas fa-tools"></i></div>
-  <h2>Halaman ini segera hadir</h2>
-  <a href="/home" style="display:inline-block;margin-top:16px;color:#ff6600;font-size:13px;">← Kembali ke Home</a>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head><title>Login...</title></head>
+<body>
+<script>
+const hash = window.location.hash.substring(1);
+const params = new URLSearchParams(hash);
+const access_token = params.get('access_token');
+
+if (access_token) {
+  const payload = JSON.parse(atob(access_token.split('.')[1]));
+  const user = {
+    id: payload.sub,
+    email: payload.email,
+    name: (payload.user_metadata && payload.user_metadata.full_name) || payload.email,
+    avatar: (payload.user_metadata && payload.user_metadata.avatar_url) || ''
+  };
+
+  localStorage.setItem('sb_access_token', access_token);
+  localStorage.setItem('sb_user', JSON.stringify(user));
+
+  // Kirim session ke Flask server
+  fetch('/auth/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ access_token: access_token, user: user })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    // Gunakan next dari server jika ada, fallback ke localStorage atau '/'
+    var next = (data && data.next) || localStorage.getItem('auth_return_to') || '/home';
+    localStorage.removeItem('auth_return_to');
+    window.location.href = next;
+  })
+  .catch(function() {
+    var next = localStorage.getItem('auth_return_to') || '/home';
+    localStorage.removeItem('auth_return_to');
+    window.location.href = next;
+  });
+
+} else {
+  window.location.href = '/';
+}
+</script>
+<p style="font-family:sans-serif;text-align:center;padding-top:100px;color:#666">Sedang login...</p>
+</body>
+</html>
