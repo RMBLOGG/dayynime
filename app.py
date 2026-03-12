@@ -1807,47 +1807,75 @@ def fetch_trakteer(endpoint, params=None):
     except Exception:
         return None
 
+@app.route("/api/trakteer/debug")
+def trakteer_debug():
+    """Debug: lihat raw response dari Trakteer API."""
+    import traceback
+    try:
+        key = os.environ.get("TRAKTEER_API_KEY", "")
+        if not key:
+            return jsonify({"error": "TRAKTEER_API_KEY tidak diset di environment variables"})
+        headers = {
+            "key": key,
+            "Accept": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+        }
+        r = requests.get(f"{TRAKTEER_BASE}/support-history", headers=headers, params={"limit": 3}, timeout=8)
+        return jsonify({
+            "status_code": r.status_code,
+            "raw": r.json() if r.headers.get("content-type","").startswith("application/json") else r.text[:500],
+            "key_exists": bool(key),
+            "key_prefix": key[:6] + "..." if key else "",
+        })
+    except Exception as e:
+        return jsonify({"error": str(e), "trace": traceback.format_exc()})
+
 @app.route("/api/trakteer/supporters")
 def trakteer_supporters():
     """Return 10 supporter terbaru untuk ditampilkan di home."""
-    data = fetch_trakteer("support-history", {"limit": 10})
-    if not data:
-        return jsonify({"ok": False, "supporters": []})
+    import traceback
+    try:
+        data = fetch_trakteer("support-history", {"limit": 10})
+        if not data:
+            return jsonify({"ok": False, "supporters": [], "reason": "fetch returned None"})
 
-    supporters = []
-    items = data.get("result", {}).get("data", []) or data.get("data", []) or []
-    for item in items[:10]:
-        supporters.append({
-            "name":    item.get("supporter_name") or item.get("name") or "Anonim",
-            "amount":  item.get("amount_raw") or item.get("amount") or 0,
-            "unit":    item.get("unit") or item.get("quantity") or 1,
-            "message": item.get("supporter_message") or item.get("message") or "",
-            "time":    item.get("created_at") or item.get("transaction_time") or "",
-        })
-    return jsonify({"ok": True, "supporters": supporters})
+        supporters = []
+        items = data.get("result", {}).get("data", []) or data.get("data", []) or []
+        for item in items[:10]:
+            supporters.append({
+                "name":    item.get("supporter_name") or item.get("name") or "Anonim",
+                "amount":  item.get("amount_raw") or item.get("amount") or 0,
+                "unit":    item.get("unit") or item.get("quantity") or 1,
+                "message": item.get("supporter_message") or item.get("message") or "",
+                "time":    item.get("created_at") or item.get("transaction_time") or "",
+            })
+        return jsonify({"ok": True, "supporters": supporters})
+    except Exception as e:
+        return jsonify({"ok": False, "supporters": [], "error": str(e), "trace": traceback.format_exc()})
 
 @app.route("/api/trakteer/latest")
 def trakteer_latest():
     """Return supporter terbaru saja (untuk polling notifikasi)."""
-    # Ambil dari cache dulu, bandingkan dengan last_id
-    data = fetch_trakteer("support-history", {"limit": 1})
-    if not data:
-        return jsonify({"ok": False})
+    import traceback
+    try:
+        data = fetch_trakteer("support-history", {"limit": 1})
+        if not data:
+            return jsonify({"ok": False})
 
-    items = data.get("result", {}).get("data", []) or data.get("data", []) or []
-    if not items:
-        return jsonify({"ok": True, "latest": None})
+        items = data.get("result", {}).get("data", []) or data.get("data", []) or []
+        if not items:
+            return jsonify({"ok": True, "latest": None})
 
-    item = items[0]
-    return jsonify({
-        "ok": True,
-        "latest": {
-            "id":      item.get("id") or item.get("transaction_id") or "",
-            "name":    item.get("supporter_name") or item.get("name") or "Anonim",
-            "amount":  item.get("amount_raw") or item.get("amount") or 0,
-            "unit":    item.get("unit") or item.get("quantity") or 1,
-            "message": item.get("supporter_message") or item.get("message") or "",
-        }
+        item = items[0]
+        return jsonify({
+            "ok": True,
+            "latest": {
+                "id":      item.get("id") or item.get("transaction_id") or "",
+                "name":    item.get("supporter_name") or item.get("name") or "Anonim",
+                "amount":  item.get("amount_raw") or item.get("amount") or 0,
+                "unit":    item.get("unit") or item.get("quantity") or 1,
+                "message": item.get("supporter_message") or item.get("message") or "",
+            }
     })
 
 @app.route("/sitemap.xml")
