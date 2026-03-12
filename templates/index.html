@@ -183,4 +183,77 @@
 
 <div style="height:8px;"></div>
 
+<!-- ═══ SUPPORTER TERBARU ═══ -->
+<div class="section" id="supporterSection" style="display:none;">
+  <div class="section-head">
+    <div class="section-title">❤️ SUPPORTER TERBARU</div>
+    <a href="javascript:void(0)" onclick="openTrakteer()" class="section-more">Dukung <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div id="supporterList" style="display:flex;flex-direction:column;gap:8px;padding:0 4px;"></div>
+</div>
+
+<style>
+.supporter-card {
+  display:flex; align-items:center; gap:12px;
+  background:#1a1a1a; border-radius:12px;
+  padding:12px 14px;
+  border:1px solid rgba(255,255,255,0.06);
+  animation:fadeInUp 0.4s ease both;
+}
+.supporter-avatar {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,#be1e2d,#ff6b6b);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:800; color:#fff;
+}
+.supporter-info { flex:1; min-width:0; }
+.supporter-name { font-size:14px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.supporter-msg  { font-size:12px; color:#888; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.supporter-amount { font-size:13px; font-weight:700; color:#ff6600; white-space:nowrap; flex-shrink:0; }
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+</style>
+
+<script>
+(function() {
+  function fmtAmount(v) {
+    var n = parseInt(v) || 0;
+    if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace('.0','') + 'jt';
+    if (n >= 1000)    return 'Rp ' + (n/1000).toFixed(0) + 'rb';
+    return 'Rp ' + n;
+  }
+  function loadSupporters() {
+    fetch('/api/trakteer/supporters')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (!d.ok || !d.supporters || !d.supporters.length) return;
+        var list = document.getElementById('supporterList');
+        var sec  = document.getElementById('supporterSection');
+        if (!list || !sec) return;
+        list.innerHTML = '';
+        d.supporters.slice(0,5).forEach(function(s, i) {
+          var card = document.createElement('div');
+          card.className = 'supporter-card';
+          card.style.animationDelay = (i * 0.07) + 's';
+          card.innerHTML =
+            '<div class="supporter-avatar">' + (s.name||'A')[0].toUpperCase() + '</div>' +
+            '<div class="supporter-info">' +
+              '<div class="supporter-name">' + (s.name||'Anonim') + '</div>' +
+              '<div class="supporter-msg">' + (s.message||'') + '</div>' +
+            '</div>' +
+            '<div class="supporter-amount">' + fmtAmount(s.amount) + '</div>';
+          list.appendChild(card);
+        });
+        sec.style.display = '';
+      }).catch(function(){});
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadSupporters);
+  else loadSupporters();
+})();
+</script>
+
+<div style="height:8px;"></div>
+
 {% endblock %}
