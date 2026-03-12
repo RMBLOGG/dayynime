@@ -1,9 +1,558 @@
 {% extends "base.html" %}
-{% block title %}admin - Dayynime{% endblock %}
+{% block title %}Admin Dashboard – Dayynime{% endblock %}
+
+{% block head %}
+<style>
+/* ── Admin Dashboard ─────────────────────────────────────── */
+:root {
+  --adm-bg:       #0a0a0f;
+  --adm-surface:  #111118;
+  --adm-border:   rgba(255,102,0,0.15);
+  --adm-accent:   #ff6600;
+  --adm-accent2:  #ff9933;
+  --adm-green:    #22c55e;
+  --adm-red:      #ef4444;
+  --adm-blue:     #3b82f6;
+  --adm-text:     #e2e2e2;
+  --adm-muted:    #555;
+  --adm-card:     #13131c;
+}
+
+body { background: var(--adm-bg) !important; }
+
+#adm-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.adm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.adm-header h1 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.adm-header h1 span.badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--adm-accent);
+  color: #000;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.adm-refresh-btn {
+  background: rgba(255,102,0,0.12);
+  border: 1px solid var(--adm-border);
+  color: var(--adm-accent);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: background 0.2s;
+}
+.adm-refresh-btn:hover { background: rgba(255,102,0,0.22); }
+.adm-refresh-btn i { font-size: 12px; }
+
+/* ── Live Dot ─────────────────────────────────────────────── */
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--adm-green);
+  display: inline-block;
+  animation: pulse-dot 1.6s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(34,197,94,0.6);
+}
+@keyframes pulse-dot {
+  0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+}
+
+/* ── Stat Cards ──────────────────────────────────────────── */
+.adm-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.adm-stat {
+  background: var(--adm-card);
+  border: 1px solid var(--adm-border);
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.adm-stat:hover {
+  border-color: rgba(255,102,0,0.35);
+  transform: translateY(-1px);
+}
+.adm-stat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: var(--adm-accent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.adm-stat:hover::before { opacity: 1; }
+.adm-stat-icon {
+  font-size: 22px;
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+.adm-stat-val {
+  font-size: 30px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 4px;
+  letter-spacing: -1px;
+}
+.adm-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--adm-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* ── Section title ───────────────────────────────────────── */
+.adm-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--adm-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.adm-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--adm-border);
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.adm-table-wrap {
+  background: var(--adm-card);
+  border: 1px solid var(--adm-border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.adm-table th {
+  background: rgba(255,255,255,0.03);
+  color: var(--adm-muted);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--adm-border);
+}
+.adm-table td {
+  padding: 12px 16px;
+  color: var(--adm-text);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+.adm-table tr:last-child td { border-bottom: none; }
+.adm-table tr:hover td { background: rgba(255,102,0,0.04); }
+.adm-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,102,0,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--adm-accent);
+  flex-shrink: 0;
+}
+.adm-avatar img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.adm-user-cell { display: flex; align-items: center; gap: 10px; }
+.adm-user-name { font-weight: 600; font-size: 13px; color: #fff; }
+.adm-user-email { font-size: 11px; color: var(--adm-muted); }
+.adm-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.adm-badge.active   { background: rgba(34,197,94,0.15); color: var(--adm-green); }
+.adm-badge.premium  { background: rgba(255,153,51,0.15); color: var(--adm-accent2); }
+.adm-badge.guest    { background: rgba(255,255,255,0.07); color: #888; }
+.adm-badge.expired  { background: rgba(239,68,68,0.12); color: var(--adm-red); }
+.adm-badge i        { font-size: 9px; }
+
+/* ── Page bars ──────────────────────────────────────────── */
+.adm-page-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.adm-page-row:last-child { border-bottom: none; }
+.adm-page-name {
+  font-size: 12px;
+  color: var(--adm-text);
+  width: 180px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.adm-page-bar-wrap {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+  height: 6px;
+  overflow: hidden;
+}
+.adm-page-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--adm-accent), var(--adm-accent2));
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.adm-page-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--adm-muted);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Loading skeleton ──────────────────────────────────── */
+.skel {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 400% 100%;
+  animation: skel-shine 1.4s ease infinite;
+  border-radius: 6px;
+  display: inline-block;
+}
+@keyframes skel-shine {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: -100% 50%; }
+}
+
+/* ── Empty state ──────────────────────────────────────── */
+.adm-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--adm-muted);
+  font-size: 13px;
+}
+.adm-empty i { font-size: 28px; margin-bottom: 10px; display: block; }
+
+/* ── Last updated ──────────────────────────────────────── */
+.adm-updated {
+  font-size: 11px;
+  color: var(--adm-muted);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .adm-table th:nth-child(3),
+  .adm-table td:nth-child(3),
+  .adm-table th:nth-child(4),
+  .adm-table td:nth-child(4) { display: none; }
+  .adm-stat-val { font-size: 26px; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="placeholder-page">
-  <div class="icon"><i class="fas fa-tools"></i></div>
-  <h2>Halaman ini segera hadir</h2>
-  <a href="/home" style="display:inline-block;margin-top:16px;color:#ff6600;font-size:13px;">← Kembali ke Home</a>
+<div id="adm-wrap">
+
+  <!-- Header -->
+  <div class="adm-header">
+    <h1>
+      <span class="live-dot"></span>
+      Dashboard Admin
+      <span class="badge">Live</span>
+    </h1>
+    <button class="adm-refresh-btn" onclick="loadStats()">
+      <i class="fas fa-sync-alt" id="refresh-icon"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Last updated -->
+  <div class="adm-updated" id="adm-updated">
+    <i class="far fa-clock"></i> <span>Memuat data…</span>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="adm-stats">
+    <div class="adm-stat">
+      <div class="adm-stat-icon">🟢</div>
+      <div class="adm-stat-val" id="stat-active">–</div>
+      <div class="adm-stat-label">Aktif Sekarang</div>
+    </div>
+    <div class="adm-stat">
+      <div class="adm-stat-icon">👁️</div>
+      <div class="adm-stat-val" id="stat-guests">–</div>
+      <div class="adm-stat-label">Guest / Anonim</div>
+    </div>
+    <div class="adm-stat">
+      <div class="adm-stat-icon">👤</div>
+      <div class="adm-stat-val" id="stat-logged">–</div>
+      <div class="adm-stat-label">User Login</div>
+    </div>
+    <div class="adm-stat">
+      <div class="adm-stat-icon">⭐</div>
+      <div class="adm-stat-val" id="stat-premium">–</div>
+      <div class="adm-stat-label">User Premium</div>
+    </div>
+    <div class="adm-stat">
+      <div class="adm-stat-icon">💬</div>
+      <div class="adm-stat-val" id="stat-comments">–</div>
+      <div class="adm-stat-label">Komentar Total</div>
+    </div>
+    <div class="adm-stat">
+      <div class="adm-stat-icon">🎌</div>
+      <div class="adm-stat-val" id="stat-members">–</div>
+      <div class="adm-stat-label">Total Member</div>
+    </div>
+  </div>
+
+  <!-- Active Users Table -->
+  <div class="adm-section-title">
+    <span class="live-dot" style="width:6px;height:6px;"></span>
+    User Aktif (5 Menit Terakhir)
+  </div>
+  <div class="adm-table-wrap" id="active-users-wrap">
+    <div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div>
+  </div>
+
+  <!-- Top Pages -->
+  <div class="adm-section-title" style="margin-top:24px;">
+    <i class="fas fa-fire" style="color:var(--adm-accent);font-size:11px;"></i>
+    Halaman Terpopuler (Hari Ini)
+  </div>
+  <div class="adm-table-wrap" id="top-pages-wrap">
+    <div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div>
+  </div>
+
+  <!-- Premium Users -->
+  <div class="adm-section-title" style="margin-top:24px;">
+    <i class="fas fa-star" style="color:var(--adm-accent2);font-size:11px;"></i>
+    Member Premium
+  </div>
+  <div class="adm-table-wrap" id="premium-users-wrap">
+    <div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div>
+  </div>
+
 </div>
+
+<script>
+// ── Auto-refresh ──────────────────────────────────────────────
+let refreshTimer;
+
+async function loadStats() {
+  const icon = document.getElementById('refresh-icon');
+  icon.style.animation = 'fa-spin 0.6s linear infinite';
+
+  try {
+    const res = await fetch('/api/admin/stats');
+    if (res.status === 401) {
+      document.getElementById('adm-wrap').innerHTML =
+        '<div style="text-align:center;padding:80px 20px;color:#ef4444;">' +
+        '<i class="fas fa-lock" style="font-size:40px;display:block;margin-bottom:12px;"></i>' +
+        '<b>Akses Ditolak</b><br><small>Kamu bukan admin.</small></div>';
+      return;
+    }
+    const data = await res.json();
+    renderStats(data);
+    const now = new Date();
+    document.getElementById('adm-updated').innerHTML =
+      '<i class="far fa-clock"></i> Update: ' + now.toLocaleTimeString('id-ID');
+  } catch(e) {
+    console.error(e);
+  } finally {
+    icon.style.animation = '';
+  }
+}
+
+function renderStats(d) {
+  const s = d.stats || {};
+  setText('stat-active',   s.active_total  ?? '–');
+  setText('stat-guests',   s.active_guests ?? '–');
+  setText('stat-logged',   s.active_logged ?? '–');
+  setText('stat-premium',  s.premium_count ?? '–');
+  setText('stat-comments', s.comment_count ?? '–');
+  setText('stat-members',  s.member_count  ?? '–');
+
+  renderActiveUsers(d.active_users || []);
+  renderTopPages(d.top_pages || []);
+  renderPremiumUsers(d.premium_users || []);
+}
+
+function renderActiveUsers(users) {
+  const wrap = document.getElementById('active-users-wrap');
+  if (!users.length) {
+    wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-user-slash"></i>Belum ada user aktif</div>';
+    return;
+  }
+  let html = '<table class="adm-table"><thead><tr>' +
+    '<th>User</th><th>Halaman</th><th>Terakhir Aktif</th><th>Status</th>' +
+    '</tr></thead><tbody>';
+  users.forEach(u => {
+    const initial = (u.name || u.email || '?')[0].toUpperCase();
+    const avatarHtml = u.avatar
+      ? `<img src="${esc(u.avatar)}" onerror="this.parentElement.textContent='${initial}'">`
+      : initial;
+    const badgeClass = u.is_premium ? 'premium' : (u.user_id ? 'active' : 'guest');
+    const badgeIcon  = u.is_premium ? '⭐' : (u.user_id ? '✓' : '👁');
+    const badgeText  = u.is_premium ? 'Premium' : (u.user_id ? 'Login' : 'Guest');
+    const ago = relTime(u.last_seen);
+    html += `<tr>
+      <td><div class="adm-user-cell">
+        <div class="adm-avatar">${avatarHtml}</div>
+        <div>
+          <div class="adm-user-name">${esc(u.name || 'Anonymous')}</div>
+          <div class="adm-user-email">${esc(u.email || u.session_id?.slice(0,12) + '…' || '')}</div>
+        </div>
+      </div></td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#aaa;font-size:12px;">${esc(u.page || '/')}</td>
+      <td style="color:#666;font-size:12px;">${ago}</td>
+      <td><span class="adm-badge ${badgeClass}">${badgeIcon} ${badgeText}</span></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function renderTopPages(pages) {
+  const wrap = document.getElementById('top-pages-wrap');
+  if (!pages.length) {
+    wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-chart-bar"></i>Belum ada data halaman</div>';
+    return;
+  }
+  const max = pages[0]?.count || 1;
+  let html = '';
+  pages.forEach(p => {
+    const pct = Math.round((p.count / max) * 100);
+    html += `<div class="adm-page-row">
+      <div class="adm-page-name">${esc(p.page)}</div>
+      <div class="adm-page-bar-wrap"><div class="adm-page-bar" style="width:${pct}%"></div></div>
+      <div class="adm-page-count">${p.count}</div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+  // animate bars
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.adm-page-bar').forEach(b => {
+      const w = b.style.width; b.style.width = '0'; 
+      requestAnimationFrame(() => { b.style.width = w; });
+    });
+  });
+}
+
+function renderPremiumUsers(users) {
+  const wrap = document.getElementById('premium-users-wrap');
+  if (!users.length) {
+    wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-star"></i>Belum ada member premium</div>';
+    return;
+  }
+  let html = '<table class="adm-table"><thead><tr>' +
+    '<th>User</th><th>Status</th><th>Expires</th><th>Sejak</th>' +
+    '</tr></thead><tbody>';
+  users.forEach(u => {
+    const expired = u.expires_at && new Date(u.expires_at) < new Date();
+    const badgeClass = !u.is_active ? 'guest' : (expired ? 'expired' : 'premium');
+    const badgeText  = !u.is_active ? 'Revoked' : (expired ? 'Expired' : 'Active');
+    const expiresStr = u.expires_at
+      ? new Date(u.expires_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'2-digit'})
+      : '∞ Selamanya';
+    const createdStr = u.created_at
+      ? new Date(u.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'2-digit'})
+      : '–';
+    html += `<tr>
+      <td><div class="adm-user-cell">
+        <div class="adm-avatar" style="background:rgba(255,153,51,0.15);color:#ff9933;">⭐</div>
+        <div>
+          <div class="adm-user-name">${esc(u.user_name || 'User')}</div>
+          <div class="adm-user-email">${esc(u.user_id?.slice(0,16) + '…')}</div>
+        </div>
+      </div></td>
+      <td><span class="adm-badge ${badgeClass}">${badgeText}</span></td>
+      <td style="font-size:12px;color:#aaa;">${expiresStr}</td>
+      <td style="font-size:12px;color:#666;">${createdStr}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+// ── Helpers ──────────────────────────────────────────────────
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function relTime(iso) {
+  if (!iso) return '–';
+  const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (diff < 60)  return diff + 'd yang lalu';
+  if (diff < 3600) return Math.floor(diff/60) + 'm yang lalu';
+  return Math.floor(diff/3600) + 'j yang lalu';
+}
+
+// ── Beacon: lapor page visit ke server ───────────────────────
+function reportVisit() {
+  const user = window._admUser || null;
+  fetch('/api/admin/heartbeat', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ page: window.location.pathname }),
+    keepalive: true
+  }).catch(() => {});
+}
+
+// ── Init ─────────────────────────────────────────────────────
+loadStats();
+refreshTimer = setInterval(loadStats, 30000); // auto refresh 30 detik
+</script>
 {% endblock %}
