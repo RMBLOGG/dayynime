@@ -1809,24 +1809,39 @@ def fetch_trakteer(endpoint, params=None):
 
 @app.route("/api/trakteer/debug")
 def trakteer_debug():
-    """Debug: lihat raw response dari Trakteer API."""
+    """Debug: coba semua kemungkinan endpoint Trakteer."""
     import traceback
     try:
         key = os.environ.get("TRAKTEER_API_KEY", "")
         if not key:
-            return jsonify({"error": "TRAKTEER_API_KEY tidak diset di environment variables"})
+            return jsonify({"error": "TRAKTEER_API_KEY tidak diset"})
         headers = {
             "key": key,
             "Accept": "application/json",
             "X-Requested-With": "XMLHttpRequest",
         }
-        r = requests.get(f"{TRAKTEER_BASE}/support-history", headers=headers, params={"limit": 3}, timeout=8)
-        return jsonify({
-            "status_code": r.status_code,
-            "raw": r.json() if r.headers.get("content-type","").startswith("application/json") else r.text[:500],
-            "key_exists": bool(key),
-            "key_prefix": key[:6] + "..." if key else "",
-        })
+        # Coba semua endpoint yang mungkin
+        endpoints = [
+            "supporter-history",
+            "support-history",
+            "supporters",
+            "transactions",
+            "transaction-history",
+            "donation-history",
+            "donations",
+        ]
+        results = {}
+        for ep in endpoints:
+            try:
+                r = requests.get(f"{TRAKTEER_BASE}/{ep}", headers=headers, params={"limit": 1}, timeout=5)
+                results[ep] = {
+                    "status": r.status_code,
+                    "ok": r.status_code == 200,
+                    "preview": str(r.text[:150]),
+                }
+            except Exception as ex:
+                results[ep] = {"error": str(ex)}
+        return jsonify({"key_prefix": key[:6]+"...", "results": results})
     except Exception as e:
         return jsonify({"error": str(e), "trace": traceback.format_exc()})
 
