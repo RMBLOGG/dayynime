@@ -1,130 +1,402 @@
 {% extends "base.html" %}
 {% block title %}{{ data.title if data else 'Episode' }} - Dayynime{% endblock %}
 {% block content %}
+
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── PLAYER SECTION ── */
+.ep-player-wrap {
+  position: relative;
+  width: 100%;
+  background: #000;
+}
+.ep-player-wrap .player-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  overflow: hidden;
+}
+.ep-player-wrap iframe#playerFrame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: none; display: none;
+}
+.player-loading {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px; background: #0a0a0a;
+  color: #444; font-size: 13px;
+}
+.player-loading-dots {
+  display: flex; gap: 6px;
+}
+.player-loading-dots span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #ff6600;
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+.player-loading-dots span:nth-child(2) { animation-delay: 0.2s; background: #ff8833; }
+.player-loading-dots span:nth-child(3) { animation-delay: 0.4s; background: #ffaa66; }
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ── AD OVERLAY ── */
+#adOverlay {
+  position: absolute; inset: 0; z-index: 100;
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+#adOverlay .ad-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 10px 14px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+}
+#adOverlay .ad-badge {
+  background: rgba(255,102,0,0.25);
+  color: #ff6600; border: 1px solid rgba(255,102,0,0.4);
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+}
+#adOverlay .ad-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 12px 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+#adCountdown {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid #ff6600; color: #ff6600;
+  font-size: 14px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.3s, color 0.3s;
+}
+#adLabel { font-size: 12px; color: rgba(255,255,255,0.6); }
+#skipBtn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.35);
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+  cursor: not-allowed; white-space: nowrap;
+  transition: all 0.3s; font-family: 'Poppins', sans-serif;
+}
+#skipBtn.ready {
+  background: #ff6600; border-color: #ff6600;
+  color: #fff; cursor: pointer;
+}
+
+/* ── INFO BAR ── */
+.ep-infobar {
+  padding: 12px 16px 0;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.ep-infobar-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,102,0,0.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.ep-infobar-icon i { color: #ff6600; font-size: 13px; }
+.ep-infobar-title {
+  font-size: 14px; font-weight: 700; color: #fff;
+  line-height: 1.4;
+}
+.ep-infobar-sub {
+  font-size: 11px; color: #555; margin-top: 2px;
+}
+
+/* ── SERVER SECTION ── */
+.ep-server-section {
+  padding: 14px 16px 0;
+}
+.ep-server-group-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; color: #555;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.ep-server-group-label i { color: #ff6600; font-size: 10px; }
+.ep-chips {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.ep-chip {
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: #666; cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Poppins', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.ep-chip:hover { border-color: rgba(255,102,0,0.4); color: #aaa; }
+.ep-chip.active {
+  background: rgba(255,102,0,0.15);
+  border-color: rgba(255,102,0,0.5);
+  color: #ff6600;
+  box-shadow: 0 0 12px rgba(255,102,0,0.15);
+}
+#serverLoading {
+  display: none; font-size: 12px; color: #555;
+  padding: 4px 0; align-items: center; gap: 6px;
+}
+
+/* ── NAV PREV/NEXT ── */
+.ep-nav {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 8px; padding: 14px 16px 0;
+}
+.ep-nav-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 14px; border-radius: 10px;
+  font-size: 12px; font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: #888; text-decoration: none;
+  transition: all 0.2s; font-family: 'Poppins', sans-serif;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.ep-nav-btn:not([disabled]):hover {
+  border-color: rgba(255,102,0,0.3);
+  color: #ccc; background: rgba(255,255,255,0.07);
+}
+.ep-nav-btn[disabled] { opacity: 0.3; cursor: not-allowed; }
+.ep-nav-btn.ep-list-btn {
+  background: rgba(255,102,0,0.1);
+  border-color: rgba(255,102,0,0.25);
+  color: #ff6600; width: 42px; padding: 10px;
+}
+
+/* ── EPISODE ACCORDION ── */
+.ep-accordion-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  background: none; border: none; border-top: 1px solid rgba(255,255,255,0.05);
+  color: #aaa; font-size: 13px; font-weight: 700;
+  width: 100%; cursor: pointer; font-family: 'Poppins', sans-serif;
+  margin-top: 14px; -webkit-tap-highlight-color: transparent;
+}
+.ep-accordion-trigger .ep-acc-left {
+  display: flex; align-items: center; gap: 8px;
+}
+.ep-acc-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(255,102,0,0.12);
+  display: flex; align-items: center; justify-content: center;
+}
+.ep-acc-icon i { color: #ff6600; font-size: 11px; }
+.ep-acc-chevron {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.3s;
+}
+.ep-acc-chevron i { font-size: 10px; color: #666; }
+.ep-accordion-trigger.open .ep-acc-chevron { transform: rotate(180deg); }
+
+.ep-accordion-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+  padding: 0 16px;
+}
+.ep-accordion-body.open {
+  max-height: 320px; overflow-y: auto;
+  padding: 0 16px 12px;
+}
+.ep-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 6px; padding-top: 10px;
+}
+.ep-grid-btn {
+  padding: 8px 4px; border-radius: 8px;
+  font-size: 11px; font-weight: 700; text-align: center;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+  color: #666; text-decoration: none;
+  transition: all 0.2s; display: block;
+  word-break: break-word;
+}
+.ep-grid-btn:hover { background: rgba(255,255,255,0.07); color: #ccc; }
+.ep-grid-btn.active {
+  background: rgba(255,102,0,0.15);
+  border-color: rgba(255,102,0,0.4);
+  color: #ff6600;
+}
+
+/* ── DOWNLOAD ── */
+.ep-download {
+  padding: 12px 16px 6px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.ep-download-label {
+  font-size: 11px; font-weight: 700; color: #444;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.ep-download-label i { color: #ff6600; }
+.ep-dl-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.ep-dl-chip {
+  padding: 6px 12px; border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 11px; font-weight: 600; color: #666;
+  text-decoration: none; display: flex; align-items: center; gap: 5px;
+  transition: all 0.2s;
+}
+.ep-dl-chip:hover { background: rgba(255,255,255,0.08); color: #aaa; }
+
+/* ── DESKTOP SIDEBAR ── */
+.watch-layout {
+  display: flex; align-items: flex-start;
+}
+.watch-main { flex: 1; min-width: 0; padding-bottom: 80px; }
+.watch-sidebar {
+  width: 260px; flex-shrink: 0;
+  position: sticky; top: 56px;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  border-left: 1px solid rgba(255,255,255,0.05);
+  background: #0f0f0f;
+}
+.sidebar-head {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+.sidebar-head-title {
+  font-size: 12px; font-weight: 700; color: #ccc;
+  line-height: 1.3; margin-bottom: 4px;
+}
+.sidebar-head-meta { font-size: 11px; color: #444; }
+.sidebar-ep-list {
+  flex: 1; overflow-y: auto;
+  padding: 8px;
+  scrollbar-width: thin; scrollbar-color: #222 transparent;
+}
+.sidebar-ep {
+  display: block; padding: 9px 10px;
+  border-radius: 8px; text-decoration: none;
+  font-size: 12px; color: #555; font-weight: 600;
+  transition: all 0.15s; margin-bottom: 2px;
+}
+.sidebar-ep:hover { background: rgba(255,255,255,0.05); color: #aaa; }
+.sidebar-ep.active {
+  background: rgba(255,102,0,0.12);
+  color: #ff6600; font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .watch-sidebar { display: none; }
+}
+</style>
+
 <div class="watch-layout">
   <div class="watch-main">
 
     <!-- PLAYER -->
-    <div class="player-box" style="position:relative;">
+    <div class="ep-player-wrap">
+      <div class="player-box">
 
-      <!-- AD OVERLAY -->
-      <div id="adOverlay" style="
-        position:absolute;inset:0;z-index:100;
-        background:#000;
-        display:flex;flex-direction:column;align-items:center;justify-content:center;
-      ">
-        <!-- Iklan Adsterra - centered, scaled to fit 16:9 -->
-        <div style="
-          position:absolute;inset:0;
-          display:flex;align-items:center;justify-content:center;
-          overflow:hidden;
-        ">
-          <div style="transform:scale(1.15);transform-origin:center;">
-            <script>
-              atOptions = {
-                'key' : 'ab1caf329002ea60537069c534a9f8dd',
-                'format' : 'iframe',
-                'height' : 250,
-                'width' : 300,
-                'params' : {}
-              };
-            </script>
-            <script src="https://www.highperformanceformat.com/ab1caf329002ea60537069c534a9f8dd/invoke.js"></script>
+        <!-- AD OVERLAY -->
+        <div id="adOverlay">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <div style="transform:scale(1.15);transform-origin:center;">
+              <script>
+                atOptions = {
+                  'key' : 'ab1caf329002ea60537069c534a9f8dd',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              </script>
+              <script src="https://www.highperformanceformat.com/ab1caf329002ea60537069c534a9f8dd/invoke.js"></script>
+            </div>
+          </div>
+          <div class="ad-top">
+            <span class="ad-badge">IKLAN</span>
+            <span>Dukung kami dengan menonton iklan</span>
+          </div>
+          <div class="ad-bottom">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div id="adCountdown">15</div>
+              <span id="adLabel" style="font-size:12px;color:rgba(255,255,255,0.5);">Video dimulai dalam 15 detik</span>
+            </div>
+            <button id="skipBtn" onclick="skipAd()" disabled>Lewati ›</button>
           </div>
         </div>
 
-        <!-- Top bar: label iklan -->
-        <div style="
-          position:absolute;top:0;left:0;right:0;
-          padding:8px 12px;
-          background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent);
-          display:flex;align-items:center;gap:6px;
-          font-size:11px;color:rgba(255,255,255,0.6);
-        ">
-          <span style="background:rgba(255,255,255,0.15);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;">IKLAN</span>
-          <span>Dukung kami dengan menonton iklan ini</span>
-        </div>
-
-        <!-- Bottom bar: countdown + skip -->
-        <div style="
-          position:absolute;bottom:0;left:0;right:0;
-          padding:10px 14px;
-          background:linear-gradient(to top,rgba(0,0,0,0.85),transparent);
-          display:flex;align-items:center;justify-content:space-between;
-        ">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div id="adCountdown" style="
-              width:34px;height:34px;border-radius:50%;
-              border:2px solid #ff6600;color:#ff6600;
-              font-size:14px;font-weight:800;
-              display:flex;align-items:center;justify-content:center;
-              flex-shrink:0;
-            ">15</div>
-            <span id="adLabel" style="font-size:12px;color:rgba(255,255,255,0.7);">Video dimulai dalam 15 detik</span>
+        <!-- LOADING -->
+        <div class="player-loading" id="playerLoading">
+          <div class="player-loading-dots">
+            <span></span><span></span><span></span>
           </div>
-          <button id="skipBtn" onclick="skipAd()" disabled style="
-            background:rgba(255,255,255,0.15);
-            border:1px solid rgba(255,255,255,0.2);
-            color:rgba(255,255,255,0.4);
-            padding:7px 16px;border-radius:20px;
-            font-size:12px;font-weight:700;
-            cursor:not-allowed;
-            transition:all 0.3s;
-            white-space:nowrap;
-          ">Lewati Iklan ›</button>
+          <span>Memuat video...</span>
         </div>
-      </div>
 
-      <div class="player-loading" id="playerLoading">
-        <i class="fas fa-spinner fa-spin" style="font-size:1.8rem;color:#ff6600;"></i>
-        <p>Memuat video...</p>
+        <iframe id="playerFrame" allowfullscreen
+          allow="autoplay; fullscreen; encrypted-media"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-popups-to-escape-sandbox">
+        </iframe>
       </div>
-      <iframe id="playerFrame" style="display:none;" allowfullscreen
-        allow="autoplay; fullscreen; encrypted-media"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-popups-to-escape-sandbox"></iframe>
     </div>
 
-    <!-- EPISODE TITLE -->
-    <div class="ep-title-bar">
-      {% if data %}{{ data.title }}{% else %}Episode{% endif %}
+    <!-- INFO BAR -->
+    <div class="ep-infobar">
+      <div class="ep-infobar-icon"><i class="fas fa-play"></i></div>
+      <div>
+        <div class="ep-infobar-title">{% if data %}{{ data.title }}{% else %}Episode{% endif %}</div>
+        {% if anime_data and anime_data.detail %}
+        <div class="ep-infobar-sub">{{ anime_data.detail.title }}</div>
+        {% endif %}
+      </div>
     </div>
 
-    <!-- SERVER SELECTOR: Pilih Kualitas → Pilih Server -->
+    <!-- SERVER SELECTOR -->
     {% if data and data.streams %}
-    <div class="server-section">
-      <div class="server-label"><i class="fas fa-film fa-xs"></i> Pilih Kualitas:</div>
-      <div class="server-tabs" id="qualityTabs">
+    <div class="ep-server-section">
+
+      <!-- Kualitas -->
+      <div class="ep-server-group-label"><i class="fas fa-film"></i> Kualitas</div>
+      <div class="ep-chips" id="qualityTabs">
         {% set seen_q = namespace(list=[]) %}
         {% for stream in data.streams %}
           {% set q = stream.name.split()[-1] if stream.name.split() else '' %}
           {% if q not in seen_q.list %}
             {% set _ = seen_q.list.append(q) %}
-            <button class="server-btn {% if loop.first %}active{% endif %}"
+            <button class="ep-chip {% if loop.first %}active{% endif %}"
               data-quality="{{ q }}"
-              onclick="selectQuality(this, '{{ q }}')">
-              {{ q }}
-            </button>
+              onclick="selectQuality(this, '{{ q }}')">{{ q }}</button>
           {% endif %}
         {% endfor %}
       </div>
 
-      <div class="server-label" style="margin-top:12px"><i class="fas fa-server fa-xs"></i> Pilih Server:</div>
+      <!-- Server -->
+      <div class="ep-server-group-label"><i class="fas fa-server"></i> Server</div>
       {% set first_q = namespace(val='') %}
-      {% for stream in data.streams %}
-        {% if loop.first %}{% set first_q.val = stream.name.split()[-1] %}{% endif %}
-      {% endfor %}
+      {% for stream in data.streams %}{% if loop.first %}{% set first_q.val = stream.name.split()[-1] %}{% endif %}{% endfor %}
       {% set seen_q2 = namespace(list=[]) %}
       {% for stream in data.streams %}
         {% set q = stream.name.split()[-1] if stream.name.split() else '' %}
         {% if q not in seen_q2.list %}
           {% set _ = seen_q2.list.append(q) %}
-          <div class="server-tabs server-group"
-               id="group-{{ q }}"
+          <div class="ep-chips server-group" id="group-{{ q }}"
                style="{{ '' if q == first_q.val else 'display:none' }}">
             {% for s in data.streams %}
               {% set sq = s.name.split()[-1] if s.name.split() else '' %}
               {% if sq == q %}
-              <button class="server-btn"
+              <button class="ep-chip"
                 data-server-id="{{ s.serverId }}"
                 data-url="{{ s.url if s.url else '' }}"
                 onclick="switchServer(this)">
@@ -136,12 +408,15 @@
         {% endif %}
       {% endfor %}
 
-      <div id="serverLoading" style="display:none;color:#aaa;font-size:13px;margin-top:8px">⏳ Memuat server...</div>
+      <div id="serverLoading" style="display:none;font-size:12px;color:#555;padding:4px 0;display:none;align-items:center;gap:6px;">
+        <div class="player-loading-dots" style="transform:scale(0.7);margin:0;"><span></span><span></span><span></span></div>
+        Memuat server...
+      </div>
     </div>
     {% endif %}
 
-    <!-- PREV / NEXT NAV -->
-    <div class="ep-nav-bar">
+    <!-- PREV / NEXT -->
+    <div class="ep-nav">
       {% set cur_idx = namespace(v=-1) %}
       {% if anime_data and anime_data.detail.episodes %}
         {% for ep in anime_data.detail.episodes %}
@@ -152,51 +427,56 @@
       {% if anime_data and cur_idx.v > 0 %}
         {% set prev = anime_data.detail.episodes[cur_idx.v - 1] %}
         <a href="/episode/{{ prev.slug }}?anime={{ anime_slug }}" class="ep-nav-btn">
-          <i class="fas fa-chevron-left"></i> Berikutnya
+          <i class="fas fa-chevron-left fa-xs"></i> Berikutnya
         </a>
       {% else %}
-        <button class="ep-nav-btn" disabled><i class="fas fa-chevron-left"></i> Berikutnya</button>
+        <button class="ep-nav-btn" disabled><i class="fas fa-chevron-left fa-xs"></i> Berikutnya</button>
       {% endif %}
 
       {% if anime_slug %}
-      <a href="/anime/{{ anime_slug }}" class="ep-nav-btn" style="background:rgba(255,102,0,0.15);border-color:rgba(255,102,0,0.3);color:#ff6600;">
-        <i class="fas fa-list"></i>
+      <a href="/anime/{{ anime_slug }}" class="ep-nav-btn ep-list-btn">
+        <i class="fas fa-list fa-xs"></i>
       </a>
       {% endif %}
 
       {% if anime_data and cur_idx.v >= 0 and cur_idx.v < anime_data.detail.episodes|length - 1 %}
         {% set nxt = anime_data.detail.episodes[cur_idx.v + 1] %}
         <a href="/episode/{{ nxt.slug }}?anime={{ anime_slug }}" class="ep-nav-btn">
-          Sebelumnya<i class="fas fa-chevron-right"></i>
+          Sebelumnya <i class="fas fa-chevron-right fa-xs"></i>
         </a>
       {% else %}
-        <button class="ep-nav-btn" disabled>Sebelumnya <i class="fas fa-chevron-right"></i></button>
+        <button class="ep-nav-btn" disabled>Sebelumnya <i class="fas fa-chevron-right fa-xs"></i></button>
       {% endif %}
     </div>
 
-    <!-- MOBILE EPISODE LIST (accordion) -->
+    <!-- EPISODE ACCORDION -->
     {% if anime_data and anime_data.detail.episodes %}
-    <button class="mob-ep-toggle">
-      <span><i class="fas fa-list fa-xs" style="color:#ff6600;margin-right:6px;"></i>Daftar Episode ({{ anime_data.detail.episodes|length }})</span>
-      <i class="fas fa-chevron-down"></i>
+    <button class="ep-accordion-trigger" id="epAccTrigger" onclick="toggleAcc()">
+      <div class="ep-acc-left">
+        <div class="ep-acc-icon"><i class="fas fa-list fa-xs"></i></div>
+        <span>Daftar Episode <span style="color:#ff6600;margin-left:4px;">{{ anime_data.detail.episodes|length }}</span></span>
+      </div>
+      <div class="ep-acc-chevron"><i class="fas fa-chevron-down"></i></div>
     </button>
-    <div class="mob-ep-list">
-      {% for ep in anime_data.detail.episodes %}
-      <a href="/episode/{{ ep.slug }}?anime={{ anime_slug }}" class="ep-btn {% if ep.slug == slug %}active{% endif %}">
-        {{ ep.name|replace('Episode','') }}
-      </a>
-      {% endfor %}
+    <div class="ep-accordion-body" id="epAccBody">
+      <div class="ep-grid">
+        {% for ep in anime_data.detail.episodes %}
+        <a href="/episode/{{ ep.slug }}?anime={{ anime_slug }}"
+           class="ep-grid-btn {% if ep.slug == slug %}active{% endif %}">
+          {{ ep.name|replace('Episode','Ep') }}
+        </a>
+        {% endfor %}
+      </div>
     </div>
     {% endif %}
 
     <!-- DOWNLOAD -->
     {% if data and data.downloads %}
-    <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06);">
-      <div style="font-size:12px;font-weight:700;color:#aaa;margin-bottom:8px;"><i class="fas fa-download" style="color:#ff6600;margin-right:5px;"></i>Download</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+    <div class="ep-download">
+      <div class="ep-download-label"><i class="fas fa-download fa-xs"></i> Download</div>
+      <div class="ep-dl-chips">
         {% for dl in data.downloads %}
-        <a href="{{ dl.url }}" target="_blank" rel="noopener"
-           style="padding:6px 12px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:6px;font-size:11px;font-weight:600;color:#aaa;display:flex;align-items:center;gap:5px;">
+        <a href="{{ dl.url }}" target="_blank" rel="noopener" class="ep-dl-chip">
           <i class="fas fa-download fa-xs"></i> {{ dl.name or 'Download' }}
         </a>
         {% endfor %}
@@ -210,11 +490,11 @@
   {% if anime_data and anime_data.detail %}
   <aside class="watch-sidebar">
     <div class="sidebar-head">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-        <img src="{{ anime_data.detail.poster }}" style="width:36px;height:50px;object-fit:cover;border-radius:5px;">
-        <div style="font-size:12px;font-weight:700;line-height:1.3;">{{ anime_data.detail.title }}</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <img src="{{ anime_data.detail.poster }}" style="width:34px;height:48px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+        <div class="sidebar-head-title">{{ anime_data.detail.title }}</div>
       </div>
-      <div style="font-size:11px;color:#666;">{{ anime_data.detail.episodes|length }} episode</div>
+      <div class="sidebar-head-meta">{{ anime_data.detail.episodes|length }} episode</div>
     </div>
     <div class="sidebar-ep-list">
       {% for ep in anime_data.detail.episodes %}
@@ -232,32 +512,24 @@
 
 {% block scripts %}
 <script>
-// Ad overlay countdown
+// ── Ad countdown ──
 let adSecs = 15;
 const adCountdown = document.getElementById('adCountdown');
-const adLabel = document.getElementById('adLabel');
-const skipBtn = document.getElementById('skipBtn');
-const adOverlay = document.getElementById('adOverlay');
+const adLabel     = document.getElementById('adLabel');
+const skipBtn     = document.getElementById('skipBtn');
+const adOverlay   = document.getElementById('adOverlay');
 
 const adTimer = setInterval(() => {
   adSecs--;
   adCountdown.textContent = adSecs;
   adLabel.textContent = `Video dimulai dalam ${adSecs} detik`;
-
   if (adSecs <= 5) {
     adCountdown.style.borderColor = '#4ade80';
     adCountdown.style.color = '#4ade80';
     skipBtn.disabled = false;
-    skipBtn.style.background = '#ff6600';
-    skipBtn.style.borderColor = '#ff6600';
-    skipBtn.style.color = '#fff';
-    skipBtn.style.cursor = 'pointer';
+    skipBtn.classList.add('ready');
   }
-
-  if (adSecs <= 0) {
-    clearInterval(adTimer);
-    skipAd();
-  }
+  if (adSecs <= 0) { clearInterval(adTimer); skipAd(); }
 }, 1000);
 
 function skipAd() {
@@ -267,21 +539,21 @@ function skipAd() {
   setTimeout(() => { adOverlay.style.display = 'none'; }, 400);
 }
 
-// Quality & Server selector
+// ── Quality & Server ──
 function selectQuality(btn, quality) {
-  document.querySelectorAll('#qualityTabs .server-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#qualityTabs .ep-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.server-group').forEach(g => g.style.display = 'none');
   const group = document.getElementById('group-' + quality);
   if (group) {
     group.style.display = 'flex';
-    const firstSrv = group.querySelector('.server-btn');
+    const firstSrv = group.querySelector('.ep-chip');
     if (firstSrv) switchServer(firstSrv);
   }
 }
 
 async function switchServer(btn) {
-  document.querySelectorAll('.server-group .server-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.server-group .ep-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const iframe = document.getElementById('playerFrame');
   if (!iframe) return;
@@ -297,7 +569,7 @@ async function switchServer(btn) {
   const serverId = btn.dataset.serverId;
   if (!serverId) return;
   const loading = document.getElementById('serverLoading');
-  if (loading) loading.style.display = 'block';
+  if (loading) loading.style.display = 'flex';
   try {
     const res  = await fetch(`/api/server/${serverId}`);
     const json = await res.json();
@@ -314,9 +586,24 @@ async function switchServer(btn) {
   }
 }
 
-// Auto-load server pertama saat halaman siap
+// ── Episode Accordion ──
+function toggleAcc() {
+  const trigger = document.getElementById('epAccTrigger');
+  const body    = document.getElementById('epAccBody');
+  trigger.classList.toggle('open');
+  body.classList.toggle('open');
+  // Scroll active episode into view
+  if (body.classList.contains('open')) {
+    setTimeout(() => {
+      const active = body.querySelector('.ep-grid-btn.active');
+      if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }, 350);
+  }
+}
+
+// ── Auto-load server on ready ──
 document.addEventListener('DOMContentLoaded', function() {
-  const firstBtn = document.querySelector('.server-group:not([style*="display:none"]) .server-btn');
+  const firstBtn = document.querySelector('.server-group:not([style*="display:none"]) .ep-chip');
   if (firstBtn) switchServer(firstBtn);
 });
 </script>
