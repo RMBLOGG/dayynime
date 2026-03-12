@@ -152,10 +152,10 @@
       {% if anime_data and cur_idx.v > 0 %}
         {% set prev = anime_data.detail.episodes[cur_idx.v - 1] %}
         <a href="/episode/{{ prev.slug }}?anime={{ anime_slug }}" class="ep-nav-btn">
-          <i class="fas fa-chevron-left"></i> Sebelumnya
+          <i class="fas fa-chevron-left"></i> Berikutnya
         </a>
       {% else %}
-        <button class="ep-nav-btn" disabled><i class="fas fa-chevron-left"></i> Sebelumnya</button>
+        <button class="ep-nav-btn" disabled><i class="fas fa-chevron-left"></i> Berikutnya</button>
       {% endif %}
 
       {% if anime_slug %}
@@ -167,10 +167,10 @@
       {% if anime_data and cur_idx.v >= 0 and cur_idx.v < anime_data.detail.episodes|length - 1 %}
         {% set nxt = anime_data.detail.episodes[cur_idx.v + 1] %}
         <a href="/episode/{{ nxt.slug }}?anime={{ anime_slug }}" class="ep-nav-btn">
-          Berikutnya <i class="fas fa-chevron-right"></i>
+          Sebelumnya<i class="fas fa-chevron-right"></i>
         </a>
       {% else %}
-        <button class="ep-nav-btn" disabled>Berikutnya <i class="fas fa-chevron-right"></i></button>
+        <button class="ep-nav-btn" disabled>Sebelumnya <i class="fas fa-chevron-right"></i></button>
       {% endif %}
     </div>
 
