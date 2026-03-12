@@ -547,5 +547,94 @@ document.addEventListener('click', function(e) {
 
 
 
+
+<!-- ═══ NOTIFIKASI DONASI TRAKTEER ═══ -->
+<div id="trNotif" style="
+  display:none; position:fixed; bottom:140px; left:16px; z-index:999998;
+  background:#1a1a1a; border:1px solid rgba(190,30,45,0.5);
+  border-radius:16px; padding:14px 16px;
+  max-width:280px; min-width:220px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.7);
+  animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;
+">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,#ff6b6b);
+      display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0;"
+      id="trNotifAvatar">?</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:11px;color:#be1e2d;font-weight:700;letter-spacing:0.5px;">❤️ DONASI MASUK!</div>
+      <div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="trNotifName">-</div>
+    </div>
+    <button onclick="hidetrNotif()" style="background:none;border:none;color:#555;font-size:16px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;">✕</button>
+  </div>
+  <div style="font-size:12px;color:#aaa;margin-bottom:6px;min-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:15px;font-weight:800;color:#ff6600;" id="trNotifAmount">-</div>
+    <button onclick="openTrakteer();hidetrNotif();" style="
+      background:#be1e2d;color:#fff;border:none;border-radius:20px;
+      padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">
+      Dukung juga
+    </button>
+  </div>
+</div>
+
+<style>
+@keyframes trNotifIn {
+  from { opacity:0; transform:translateX(-20px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+</style>
+
+<script>
+(function() {
+  var lastId = localStorage.getItem('trLastDonorId') || '';
+  var notifTimer = null;
+
+  function fmtAmount(v) {
+    var n = parseInt(v) || 0;
+    if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace('.0','') + 'jt';
+    if (n >= 1000)    return 'Rp ' + (n/1000).toFixed(0) + 'rb';
+    return 'Rp ' + n;
+  }
+
+  function showNotif(s) {
+    document.getElementById('trNotifAvatar').textContent = (s.name||'A')[0].toUpperCase();
+    document.getElementById('trNotifName').textContent   = s.name || 'Anonim';
+    document.getElementById('trNotifMsg').textContent    = s.message || '🎉 Terima kasih sudah mendukung!';
+    document.getElementById('trNotifAmount').textContent = fmtAmount(s.amount);
+    var el = document.getElementById('trNotif');
+    el.style.display = 'block';
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = '';
+    if (notifTimer) clearTimeout(notifTimer);
+    notifTimer = setTimeout(hidetrNotif, 8000);
+  }
+
+  window.hidetrNotif = function() {
+    document.getElementById('trNotif').style.display = 'none';
+    if (notifTimer) clearTimeout(notifTimer);
+  };
+
+  function checkLatest() {
+    fetch('/api/trakteer/latest')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (!d.ok || !d.latest) return;
+        var s = d.latest;
+        if (s.id && s.id !== lastId) {
+          lastId = s.id;
+          localStorage.setItem('trLastDonorId', lastId);
+          showNotif(s);
+        }
+      }).catch(function(){});
+  }
+
+  // Poll tiap 60 detik
+  setTimeout(checkLatest, 5000); // cek pertama 5 detik setelah load
+  setInterval(checkLatest, 60000);
+})();
+</script>
+
 </body>
 </html>
