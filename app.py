@@ -1046,6 +1046,8 @@ def api_switch_source():
 
 @app.route("/auth/login")
 def auth_login():
+    next_url = request.args.get("next", "/home")
+    session["login_next"] = next_url
     redirect_to = f"{SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to={request.host_url}auth/callback"
     return redirect(redirect_to)
 
@@ -1064,7 +1066,8 @@ def auth_session():
             "avatar": data.get("user", {}).get("user_metadata", {}).get("avatar_url", ""),
             "email":  data.get("user", {}).get("email", ""),
         }
-    return jsonify({"ok": True})
+    next_url = session.pop("login_next", "/home")
+    return jsonify({"ok": True, "next": next_url})
 
 @app.route("/auth/logout", methods=["POST"])
 def auth_logout():
@@ -1945,9 +1948,12 @@ def _session_id():
 
 @app.route("/admin")
 def admin_dashboard():
+    user = session.get("user")
+    if not user:
+        return render_template("admin.html", show_login=True)
     if not _require_admin():
-        return redirect("/")
-    return render_template("admin.html")
+        return render_template("admin.html", show_login=False, not_admin=True)
+    return render_template("admin.html", show_login=False, not_admin=False)
 
 
 @app.route("/api/admin/heartbeat", methods=["POST"])
