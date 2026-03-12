@@ -19,7 +19,7 @@ if (access_token) {
   localStorage.setItem('sb_access_token', access_token);
   localStorage.setItem('sb_user', JSON.stringify(user));
 
-  // Kirim session ke Flask server
+  // Kirim session ke Flask dulu, baru redirect
   fetch('/auth/session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -27,15 +27,12 @@ if (access_token) {
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    // Gunakan next dari server jika ada, fallback ke localStorage atau '/'
     var next = (data && data.next) || localStorage.getItem('auth_return_to') || '/home';
     localStorage.removeItem('auth_return_to');
     window.location.href = next;
   })
   .catch(function() {
-    var next = localStorage.getItem('auth_return_to') || '/home';
-    localStorage.removeItem('auth_return_to');
-    window.location.href = next;
+    window.location.href = localStorage.getItem('auth_return_to') || '/home';
   });
 
 } else {
