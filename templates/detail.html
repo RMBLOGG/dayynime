@@ -5,102 +5,188 @@
 {% set d = data.detail %}
 {% set info = d.info %}
 
-<!-- HERO -->
-<div class="detail-hero">
-  <img class="detail-hero-bg" src="{{ d.poster }}" alt="">
-  <div class="detail-hero-poster">
-    <img src="{{ d.poster }}" alt="{{ d.title }}" onerror="this.src='/static/no-image.svg'">
-  </div>
-</div>
-
-<!-- BODY -->
-<div class="detail-body">
-  <h1 class="detail-title">{{ d.title }}</h1>
-
-  <!-- Score -->
-  {% if info.score %}
-  <div class="detail-score">
-    <i class="fas fa-star"></i>
-    <span>{{ info.score }}</span>
-    <span style="font-size:11px;color:#aaa;font-weight:400;">/ 10</span>
-  </div>
-  {% endif %}
-
-  <!-- Genres -->
-  {% if d.genres %}
-  <div class="detail-genres">
-    {% for g in d.genres %}
-    <a href="/genre/{{ g.slug }}" class="detail-genre-tag">{{ g.name }}</a>
-    {% endfor %}
-  </div>
-  {% endif %}
-
-  <!-- Meta -->
-  <div class="detail-meta">
-    {% if info.status %}<div class="detail-meta-item"><div class="detail-meta-label">Status</div><div class="detail-meta-val">{{ info.status }}</div></div>{% endif %}
-    {% if info.type %}<div class="detail-meta-item"><div class="detail-meta-label">Tipe</div><div class="detail-meta-val">{{ info.type }}</div></div>{% endif %}
-    {% if info.total_episode %}<div class="detail-meta-item"><div class="detail-meta-label">Episode</div><div class="detail-meta-val">{{ info.total_episode }}</div></div>{% endif %}
-    {% if info.duration %}<div class="detail-meta-item"><div class="detail-meta-label">Durasi</div><div class="detail-meta-val">{{ info.duration }}</div></div>{% endif %}
-    {% if info.released %}<div class="detail-meta-item"><div class="detail-meta-label">Tayang</div><div class="detail-meta-val">{{ info.released }}</div></div>{% endif %}
-    {% if info.studio %}<div class="detail-meta-item"><div class="detail-meta-label">Studio</div><div class="detail-meta-val">{{ info.studio }}</div></div>{% endif %}
-    {% if info.season %}<div class="detail-meta-item"><div class="detail-meta-label">Season</div><div class="detail-meta-val">{{ info.season }}</div></div>{% endif %}
+<!-- ═══ HERO — Crunchyroll style ═══ -->
+<div style="position:relative;width:100%;min-height:260px;overflow:hidden;margin-bottom:0;">
+  <!-- Full blurred backdrop -->
+  <div style="position:absolute;inset:0;overflow:hidden;">
+    <img src="{{ d.poster }}" alt=""
+      style="width:100%;height:100%;object-fit:cover;filter:blur(18px) brightness(0.25);transform:scale(1.15);">
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(20,21,25,0.1) 0%,rgba(20,21,25,0.6) 60%,rgba(20,21,25,1) 100%);"></div>
   </div>
 
-  <!-- Bookmark Button -->
-  <button id="bookmarkBtn" onclick="toggleKoleksi()" style="
-    display:flex;align-items:center;gap:8px;
-    background:rgba(255,102,0,0.12);border:1.5px solid rgba(255,102,0,0.35);
-    color:#ff6600;padding:9px 18px;border-radius:20px;
-    font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;
-    -webkit-tap-highlight-color:transparent;transition:all 0.2s;
-  ">
-    <i class="fas fa-bookmark" id="bookmarkIcon"></i>
-    <span id="bookmarkLabel">Tambah Koleksi</span>
-  </button>
+  <!-- Content: poster left + info right -->
+  <div style="position:relative;z-index:2;display:flex;gap:14px;padding:20px 14px 0;align-items:flex-end;">
+    <!-- Poster -->
+    <div style="flex-shrink:0;width:110px;">
+      <div style="width:110px;border-radius:8px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.08);aspect-ratio:2/3;">
+        <img src="{{ d.poster }}" alt="{{ d.title }}"
+          style="width:100%;height:100%;object-fit:cover;display:block;"
+          onerror="this.src='/static/no-image.svg'">
+      </div>
+    </div>
 
-  <!-- Synopsis -->
-  {% if d.synopsis %}
-  <div class="synopsis">{{ d.synopsis }}</div>
-  {% endif %}
+    <!-- Info -->
+    <div style="flex:1;min-width:0;padding-bottom:16px;">
+      <!-- Badge row -->
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+        {% if info.type %}
+        <span style="padding:2px 8px;background:var(--accent);border-radius:3px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#fff;">{{ info.type }}</span>
+        {% endif %}
+        {% if info.status %}
+        <span style="padding:2px 8px;border-radius:3px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;
+          {% if 'ongoing' in info.status|lower or 'airing' in info.status|lower %}background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);{% else %}background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);{% endif %}">
+          {{ info.status }}
+        </span>
+        {% endif %}
+      </div>
 
-  <!-- Trailer -->
-  {% if d.trailer %}
-  <div style="margin-bottom:20px;">
-    <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#aaa;">▶ Trailer</div>
-    <div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;">
-      <iframe src="https://www.youtube.com/embed/{{ d.trailer.split('v=')[-1] if 'v=' in d.trailer else d.trailer.split('/')[-1] }}"
-        width="100%" height="100%" style="border:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <!-- Title -->
+      <h1 style="font-size:16px;font-weight:900;color:#fff;line-height:1.25;margin-bottom:8px;
+        display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">{{ d.title }}</h1>
+
+      <!-- Score + episode -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        {% if info.score %}
+        <div style="display:flex;align-items:center;gap:4px;">
+          <i class="fas fa-star" style="color:#F59E0B;font-size:11px;"></i>
+          <span style="font-size:13px;font-weight:900;color:#F59E0B;">{{ info.score }}</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.4);">/10</span>
+        </div>
+        {% endif %}
+        {% if info.total_episode %}
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:3px;">
+          <i class="fas fa-play-circle" style="font-size:10px;"></i> {{ info.total_episode }} Ep
+        </div>
+        {% endif %}
+        {% if info.released %}
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);">{{ info.released }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Genres -->
+      {% if d.genres %}
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        {% for g in d.genres[:4] %}
+        <a href="/genre/{{ g.slug }}" style="padding:3px 8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:3px;font-size:9px;font-weight:700;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.3px;">{{ g.name }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
   </div>
-  {% endif %}
 </div>
 
-<!-- EPISODE LIST -->
+<!-- ═══ ACTION BUTTONS ═══ -->
+<div style="padding:14px 14px 0;display:flex;gap:8px;flex-wrap:wrap;">
+  {% if d.episodes %}
+  {% set last_ep = d.episodes[0] %}
+  <a href="/episode/{{ last_ep.slug }}?anime={{ slug }}" style="
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent);color:#fff;
+    padding:11px 22px;border-radius:var(--radius-md);
+    font-size:13px;font-weight:900;flex-shrink:0;
+    letter-spacing:0.3px;
+  ">
+    <i class="fas fa-play" style="font-size:11px;"></i> Tonton Sekarang
+  </a>
+  {% endif %}
+  <button id="bookmarkBtn" onclick="toggleKoleksi()" style="
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+    color:rgba(255,255,255,0.7);padding:11px 18px;border-radius:var(--radius-md);
+    font-size:13px;font-weight:700;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:all 0.2s;
+  ">
+    <i class="far fa-bookmark" id="bookmarkIcon"></i>
+    <span id="bookmarkLabel">Simpan</span>
+  </button>
+</div>
+
+<!-- ═══ SYNOPSIS ═══ -->
+{% if d.synopsis %}
+<div style="padding:16px 14px 0;">
+  <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+    <span style="width:3px;height:12px;background:var(--accent);border-radius:2px;display:inline-block;flex-shrink:0;"></span>Sinopsis
+  </div>
+  <div id="synopsisText" style="font-size:13px;color:var(--text2);line-height:1.75;
+    display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">{{ d.synopsis }}</div>
+  <button id="synopsisToggle" onclick="toggleSynopsis()" style="
+    margin-top:6px;padding:0;background:none;border:none;
+    color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;gap:4px;font-family:inherit;">
+    Selengkapnya <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+  </button>
+</div>
+{% endif %}
+
+<!-- ═══ META INFO ═══ -->
+<div style="padding:14px 14px 0;">
+  <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+    <span style="width:3px;height:12px;background:var(--accent);border-radius:2px;display:inline-block;flex-shrink:0;"></span>Informasi
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    {% if info.studio %}<div class="detail-meta-item"><div class="detail-meta-label">Studio</div><div class="detail-meta-val">{{ info.studio }}</div></div>{% endif %}
+    {% if info.duration %}<div class="detail-meta-item"><div class="detail-meta-label">Durasi</div><div class="detail-meta-val">{{ info.duration }}</div></div>{% endif %}
+    {% if info.season %}<div class="detail-meta-item"><div class="detail-meta-label">Season</div><div class="detail-meta-val">{{ info.season }}</div></div>{% endif %}
+    {% if info.released %}<div class="detail-meta-item"><div class="detail-meta-label">Tayang</div><div class="detail-meta-val">{{ info.released }}</div></div>{% endif %}
+  </div>
+</div>
+
+<!-- ═══ TRAILER ═══ -->
+{% if d.trailer %}
+<div style="padding:16px 14px 0;">
+  <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+    <span style="width:3px;height:12px;background:#ef4444;border-radius:2px;display:inline-block;flex-shrink:0;"></span>Trailer
+  </div>
+  <div style="aspect-ratio:16/9;border-radius:var(--radius-md);overflow:hidden;">
+    <iframe src="https://www.youtube.com/embed/{{ d.trailer.split('v=')[-1] if 'v=' in d.trailer else d.trailer.split('/')[-1] }}"
+      width="100%" height="100%" style="border:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══ EPISODE LIST ═══ -->
 {% if d.episodes %}
-<div style="margin-bottom:24px;">
+<div style="padding:16px 0 0;">
   <div class="ep-section-title">
-    <span><i class="fas fa-list-ol" style="color:#ff6600;margin-right:6px;"></i>Episode ({{ d.episodes|length }})</span>
-    {% if d.episodes|length > 40 %}
-    <button onclick="toggleEps()" id="epToggleBtn" style="font-size:11px;color:#ff6600;background:none;border:none;cursor:pointer;padding:0;">Tampilkan Semua</button>
+    <span style="display:flex;align-items:center;gap:6px;">
+      <span style="width:3px;height:12px;background:var(--accent);border-radius:2px;display:inline-block;flex-shrink:0;"></span>
+      Episode <span style="color:var(--accent);margin-left:2px;">{{ d.episodes|length }}</span>
+    </span>
+    {% if d.episodes|length > 20 %}
+    <button onclick="toggleEps()" id="epToggleBtn" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;font-weight:700;">Tampilkan Semua</button>
     {% endif %}
   </div>
-  <div class="ep-grid" id="epGrid">
+  <div class="ep-thumb-grid" id="epGrid">
     {% for ep in d.episodes %}
-    <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="ep-btn" {% if loop.index > 40 %}data-hidden style="display:none"{% endif %}>
-      {{ ep.name|replace('Episode','') }}
+    <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="ep-thumb-item" {% if loop.index > 20 %}data-hidden style="display:none"{% endif %}>
+      <div class="ep-thumb-img">
+        <img src="{{ d.poster }}" alt="{{ ep.name }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        <div class="ep-thumb-play"><i class="fas fa-play"></i></div>
+      </div>
+      <div class="ep-thumb-info">
+        <div class="ep-thumb-num">{{ ep.name|replace('Episode','Ep') }}</div>
+        <div class="ep-thumb-title">{{ d.title }}</div>
+      </div>
+      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:11px;flex-shrink:0;"></i>
     </a>
     {% endfor %}
   </div>
 </div>
 {% endif %}
 
+<div style="height:24px;"></div>
+
 {% else %}
 <div class="empty" style="padding-top:80px;">
   <i class="fas fa-exclamation-triangle"></i>
   <h3>Anime tidak ditemukan</h3>
-  <a href="/home" style="display:inline-block;margin-top:16px;color:#ff6600;">← Home</a>
+  <a href="/home" style="display:inline-block;margin-top:16px;color:var(--accent);">← Home</a>
 </div>
 {% endif %}
+
+<style>
+#synopsisText.expanded { display:block !important; -webkit-line-clamp:unset !important; }
+</style>
 {% endblock %}
 
 {% block scripts %}
@@ -114,52 +200,51 @@ const ANIME_DATA = {
   status: {{ (data.detail.info.status if data and data.detail and data.detail.info else '') | tojson }}
 };
 
-function getKoleksi() {
-  try { return JSON.parse(localStorage.getItem(KOLEKSI_KEY)) || []; }
-  catch { return []; }
-}
-
-function isInKoleksi() {
-  return getKoleksi().some(a => a.slug === ANIME_SLUG);
-}
-
+function getKoleksi() { try { return JSON.parse(localStorage.getItem(KOLEKSI_KEY)) || []; } catch { return []; } }
+function isInKoleksi() { return getKoleksi().some(a => a.slug === ANIME_SLUG); }
 function updateBookmarkUI() {
   const btn = document.getElementById('bookmarkBtn');
   const icon = document.getElementById('bookmarkIcon');
   const label = document.getElementById('bookmarkLabel');
   if (!btn) return;
   if (isInKoleksi()) {
-    btn.style.background = 'rgba(255,102,0,0.25)';
-    btn.style.borderColor = '#ff6600';
+    btn.style.background = 'var(--accent-dim)';
+    btn.style.borderColor = 'rgba(244,117,33,0.5)';
+    btn.style.color = 'var(--accent)';
     icon.className = 'fas fa-bookmark';
     label.textContent = 'Tersimpan';
   } else {
-    btn.style.background = 'rgba(255,102,0,0.12)';
-    btn.style.borderColor = 'rgba(255,102,0,0.35)';
+    btn.style.background = 'rgba(255,255,255,0.08)';
+    btn.style.borderColor = 'rgba(255,255,255,0.12)';
+    btn.style.color = 'rgba(255,255,255,0.7)';
     icon.className = 'far fa-bookmark';
-    label.textContent = 'Tambah Koleksi';
+    label.textContent = 'Simpan';
   }
 }
-
 function toggleKoleksi() {
   let data = getKoleksi();
-  if (isInKoleksi()) {
-    data = data.filter(a => a.slug !== ANIME_SLUG);
-    showToast('Dihapus dari koleksi');
-  } else {
-    data.unshift(ANIME_DATA);
-    showToast('Ditambahkan ke koleksi!');
-  }
+  if (isInKoleksi()) { data = data.filter(a => a.slug !== ANIME_SLUG); showToast('Dihapus dari koleksi'); }
+  else { data.unshift(ANIME_DATA); showToast('Ditambahkan ke koleksi!'); }
   localStorage.setItem(KOLEKSI_KEY, JSON.stringify(data));
   updateBookmarkUI();
 }
-
 function showToast(msg) {
   const t = document.createElement('div');
   t.textContent = msg;
-  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#ff6600;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:99999;white-space:nowrap;pointer-events:none;';
+  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 20px;border-radius:50px;font-size:13px;font-weight:700;z-index:99999;white-space:nowrap;pointer-events:none;opacity:1;transition:opacity 0.3s;';
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2000);
+  setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 1800);
+}
+
+let synExpanded = false;
+function toggleSynopsis() {
+  const el = document.getElementById('synopsisText');
+  const btn = document.getElementById('synopsisToggle');
+  synExpanded = !synExpanded;
+  el.classList.toggle('expanded', synExpanded);
+  btn.innerHTML = synExpanded
+    ? 'Sembunyikan <i class="fas fa-chevron-up" style="font-size:10px;"></i>'
+    : 'Selengkapnya <i class="fas fa-chevron-down" style="font-size:10px;"></i>';
 }
 
 function toggleEps() {
@@ -170,6 +255,11 @@ function toggleEps() {
   if (btn) btn.textContent = isHidden ? 'Sembunyikan' : 'Tampilkan Semua';
 }
 
-document.addEventListener('DOMContentLoaded', updateBookmarkUI);
+document.addEventListener('DOMContentLoaded', function() {
+  updateBookmarkUI();
+  const syn = document.getElementById('synopsisText');
+  const btn = document.getElementById('synopsisToggle');
+  if (syn && btn && syn.scrollHeight <= syn.clientHeight + 5) btn.style.display = 'none';
+});
 </script>
 {% endblock %}

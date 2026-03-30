@@ -70,7 +70,10 @@
 {% if data and data.ongoing %}
 <div class="section">
   <div class="section-head">
-    <div class="section-title">Sedang Hangat</div>
+    <div class="section-title">
+      <span class="section-live-dot"></span>
+      Sedang Hangat
+    </div>
     <a href="/ongoing" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
   <div class="scroll-row">
@@ -93,7 +96,10 @@
 {% if data and data.recent %}
 <div class="section">
   <div class="section-head">
-    <div class="section-title"><span class="badge">NEW</span> Baru Ditambahkan</div>
+    <div class="section-title">
+      <span class="badge" style="background:#3b82f6;font-size:8px;">NEW</span>
+      Baru Ditambahkan
+    </div>
     <a href="/completed" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
   <div class="scroll-row ncard-row">
@@ -126,7 +132,10 @@
 {% if popular and popular.animes %}
 <div class="section">
   <div class="section-head">
-    <div class="section-title">Populer Minggu Ini</div>
+    <div class="section-title">
+      <i class="fas fa-fire" style="color:#fb923c;font-size:11px;"></i>
+      Populer Minggu Ini
+    </div>
     <a href="/popular" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
   <div class="scroll-row">
@@ -149,7 +158,10 @@
 {% if schedule and schedule.schedule %}
 <div class="section">
   <div class="section-head">
-    <div class="section-title">Jadwal Rilis</div>
+    <div class="section-title">
+      <i class="fas fa-calendar-week" style="color:var(--accent);font-size:11px;"></i>
+      Jadwal Rilis
+    </div>
     <a href="/jadwal" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
   <div class="day-tabs">
