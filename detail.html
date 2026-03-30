@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
+{% block content %}
+{% if data and data.detail %}
+{% set d = data.detail %}
+{% set info = d.info %}
+
+<!-- HERO -->
+<div class="detail-hero">
+  <img class="detail-hero-bg" src="{{ d.poster }}" alt="">
+  <div class="detail-hero-poster">
+    <img src="{{ d.poster }}" alt="{{ d.title }}" onerror="this.src='/static/no-image.svg'">
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="detail-body">
+  <h1 class="detail-title">{{ d.title }}</h1>
+
+  <!-- Score -->
+  {% if info.score %}
+  <div class="detail-score">
+    <i class="fas fa-star"></i>
+    <span>{{ info.score }}</span>
+    <span style="font-size:11px;color:#aaa;font-weight:400;">/ 10</span>
+  </div>
+  {% endif %}
+
+  <!-- Genres -->
+  {% if d.genres %}
+  <div class="detail-genres">
+    {% for g in d.genres %}
+    <a href="/genre/{{ g.slug }}" class="detail-genre-tag">{{ g.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Meta -->
+  <div class="detail-meta">
+    {% if info.status %}<div class="detail-meta-item"><div class="detail-meta-label">Status</div><div class="detail-meta-val">{{ info.status }}</div></div>{% endif %}
+    {% if info.type %}<div class="detail-meta-item"><div class="detail-meta-label">Tipe</div><div class="detail-meta-val">{{ info.type }}</div></div>{% endif %}
+    {% if info.total_episode %}<div class="detail-meta-item"><div class="detail-meta-label">Episode</div><div class="detail-meta-val">{{ info.total_episode }}</div></div>{% endif %}
+    {% if info.duration %}<div class="detail-meta-item"><div class="detail-meta-label">Durasi</div><div class="detail-meta-val">{{ info.duration }}</div></div>{% endif %}
+    {% if info.released %}<div class="detail-meta-item"><div class="detail-meta-label">Tayang</div><div class="detail-meta-val">{{ info.released }}</div></div>{% endif %}
+    {% if info.studio %}<div class="detail-meta-item"><div class="detail-meta-label">Studio</div><div class="detail-meta-val">{{ info.studio }}</div></div>{% endif %}
+    {% if info.season %}<div class="detail-meta-item"><div class="detail-meta-label">Season</div><div class="detail-meta-val">{{ info.season }}</div></div>{% endif %}
+  </div>
+
+  <!-- Bookmark Button -->
+  <button id="bookmarkBtn" onclick="toggleKoleksi()" style="
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,102,0,0.12);border:1.5px solid rgba(255,102,0,0.35);
+    color:#ff6600;padding:9px 18px;border-radius:20px;
+    font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;
+    -webkit-tap-highlight-color:transparent;transition:all 0.2s;
+  ">
+    <i class="fas fa-bookmark" id="bookmarkIcon"></i>
+    <span id="bookmarkLabel">Tambah Koleksi</span>
+  </button>
+
+  <!-- Synopsis -->
+  {% if d.synopsis %}
+  <div class="synopsis">{{ d.synopsis }}</div>
+  {% endif %}
+
+  <!-- Trailer -->
+  {% if d.trailer %}
+  <div style="margin-bottom:20px;">
+    <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#aaa;">▶ Trailer</div>
+    <div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;">
+      <iframe src="https://www.youtube.com/embed/{{ d.trailer.split('v=')[-1] if 'v=' in d.trailer else d.trailer.split('/')[-1] }}"
+        width="100%" height="100%" style="border:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- EPISODE LIST -->
+{% if d.episodes %}
+<div style="margin-bottom:24px;">
+  <div class="ep-section-title">
+    <span><i class="fas fa-list-ol" style="color:#ff6600;margin-right:6px;"></i>Episode ({{ d.episodes|length }})</span>
+    {% if d.episodes|length > 40 %}
+    <button onclick="toggleEps()" id="epToggleBtn" style="font-size:11px;color:#ff6600;background:none;border:none;cursor:pointer;padding:0;">Tampilkan Semua</button>
+    {% endif %}
+  </div>
+  <div class="ep-grid" id="epGrid">
+    {% for ep in d.episodes %}
+    <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="ep-btn" {% if loop.index > 40 %}data-hidden style="display:none"{% endif %}>
+      {{ ep.name|replace('Episode','') }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty" style="padding-top:80px;">
+  <i class="fas fa-exclamation-triangle"></i>
+  <h3>Anime tidak ditemukan</h3>
+  <a href="/home" style="display:inline-block;margin-top:16px;color:#ff6600;">← Home</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+const KOLEKSI_KEY = 'dayynime_koleksi';
+const ANIME_SLUG = '{{ slug }}';
+const ANIME_DATA = {
+  slug: '{{ slug }}',
+  title: {{ (data.detail.title if data and data.detail else '') | tojson }},
+  poster: {{ (data.detail.poster if data and data.detail else '') | tojson }},
+  status: {{ (data.detail.info.status if data and data.detail and data.detail.info else '') | tojson }}
+};
+
+function getKoleksi() {
+  try { return JSON.parse(localStorage.getItem(KOLEKSI_KEY)) || []; }
+  catch { return []; }
+}
+
+function isInKoleksi() {
+  return getKoleksi().some(a => a.slug === ANIME_SLUG);
+}
+
+function updateBookmarkUI() {
+  const btn = document.getElementById('bookmarkBtn');
+  const icon = document.getElementById('bookmarkIcon');
+  const label = document.getElementById('bookmarkLabel');
+  if (!btn) return;
+  if (isInKoleksi()) {
+    btn.style.background = 'rgba(255,102,0,0.25)';
+    btn.style.borderColor = '#ff6600';
+    icon.className = 'fas fa-bookmark';
+    label.textContent = 'Tersimpan';
+  } else {
+    btn.style.background = 'rgba(255,102,0,0.12)';
+    btn.style.borderColor = 'rgba(255,102,0,0.35)';
+    icon.className = 'far fa-bookmark';
+    label.textContent = 'Tambah Koleksi';
+  }
+}
+
+function toggleKoleksi() {
+  let data = getKoleksi();
+  if (isInKoleksi()) {
+    data = data.filter(a => a.slug !== ANIME_SLUG);
+    showToast('Dihapus dari koleksi');
+  } else {
+    data.unshift(ANIME_DATA);
+    showToast('Ditambahkan ke koleksi!');
+  }
+  localStorage.setItem(KOLEKSI_KEY, JSON.stringify(data));
+  updateBookmarkUI();
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#ff6600;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:99999;white-space:nowrap;pointer-events:none;';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+
+function toggleEps() {
+  const hidden = document.querySelectorAll('#epGrid [data-hidden]');
+  const btn = document.getElementById('epToggleBtn');
+  const isHidden = hidden[0]?.style.display === 'none';
+  hidden.forEach(el => el.style.display = isHidden ? '' : 'none');
+  if (btn) btn.textContent = isHidden ? 'Sembunyikan' : 'Tampilkan Semua';
+}
+
+document.addEventListener('DOMContentLoaded', updateBookmarkUI);
+</script>
+{% endblock %}
