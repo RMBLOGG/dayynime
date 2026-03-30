@@ -6,11 +6,11 @@
   <title>{% block title %}Dayynime{% endblock %}</title>
   <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia di Dayynime{% endblock %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" type="image/png" href="/static/icon2.png">
   <link rel="apple-touch-icon" href="/static/icon2.png">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10">
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -18,41 +18,40 @@
 <!-- SIDEBAR OVERLAY -->
 <div id="sidebarOverlay" onclick="closeSidebar()" style="
   display:none; position:fixed; inset:0; z-index:10000;
-  background:rgba(0,0,0,0.6); backdrop-filter:blur(2px);
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(3px);
   -webkit-tap-highlight-color:transparent;
 "></div>
 
-<!-- SIDEBAR PANEL -->
+<!-- SIDEBAR PANEL — Crunchyroll style: left side -->
 <aside id="sidebarPanel" style="
-  position:fixed; top:0; right:-280px; width:260px; height:100%;
-  max-height:100vh;
-  z-index:10001; background:#161616;
-  border-left:1px solid rgba(255,102,0,0.2);
-  transition:right 0.3s cubic-bezier(0.4,0,0.2,1);
-  display:flex; flex-direction:column;
-  overflow:hidden;
+  position:fixed; top:0; left:-280px; width:260px; height:100%;
+  max-height:100vh; z-index:10001;
+  background:#141519;
+  border-right:1px solid rgba(244,117,33,0.15);
+  transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
+  display:flex; flex-direction:column; overflow:hidden;
 ">
   <!-- Sidebar Header -->
-  <div style="padding:20px 18px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between;">
+  <div style="padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between; background:#1a1a23;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <img src="/static/icon.png" style="width:32px;height:32px;border-radius:8px;object-fit:cover;">
+      <img src="/static/icon.png" style="width:30px;height:30px;border-radius:6px;object-fit:cover;">
       <div>
-        <div style="font-size:15px;font-weight:800;color:#fff;">Dayynime</div>
-        <div style="font-size:10px;color:#666;">Nonton anime sub indo</div>
+        <div style="font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.3px;">Dayy<span style="color:#F47521;">nime</span></div>
+        <div style="font-size:9px;color:#5a5a72;text-transform:uppercase;letter-spacing:0.5px;">Nonton anime sub indo</div>
       </div>
     </div>
-    <button onclick="closeSidebar()" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;">
+    <button onclick="closeSidebar()" style="background:rgba(255,255,255,0.06);border:none;color:#A0A0B0;font-size:14px;cursor:pointer;padding:6px 8px;border-radius:6px;-webkit-tap-highlight-color:transparent;">
       <i class="fas fa-times"></i>
     </button>
   </div>
 
   <!-- Sidebar Menu -->
-  <nav style="flex:1; overflow-y:auto; overflow-x:hidden; padding:12px 0; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;">
+  <nav style="flex:1; overflow-y:auto; overflow-x:hidden; padding:8px 0; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;">
 
-    <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1.5px;padding:8px 18px 6px;">JELAJAHI</div>
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Jelajahi</div>
 
     <a href="/ongoing" onclick="closeSidebar()" class="sb-item">
-      <span class="sb-dot" style="background:#4ade80;"></span>
+      <span class="sb-dot" style="background:#10B981;"></span>
       <span>Ongoing</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
@@ -62,7 +61,7 @@
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/movies" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-film sb-icon" style="color:#f97316;"></i>
+      <i class="fas fa-film sb-icon" style="color:#F47521;"></i>
       <span>Movie</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
@@ -72,66 +71,75 @@
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/animelist" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-list sb-icon" style="color:#fb923c;"></i>
+      <i class="fas fa-list sb-icon" style="color:#F47521;"></i>
       <span>A-Z List</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/popular" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-fire sb-icon" style="color:#ff6600;"></i>
+      <i class="fas fa-fire sb-icon" style="color:#F47521;"></i>
       <span>Populer</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/jadwal" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-calendar-alt sb-icon" style="color:#34d399;"></i>
-      <span>Jadwal</span>
+      <i class="fas fa-calendar-alt sb-icon" style="color:#10B981;"></i>
+      <span>Jadwal Rilis</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
 
-    <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 18px;"></div>
-    <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1.5px;padding:8px 18px 6px;">AKUN</div>
+    <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Akun</div>
 
     <a href="/profile" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-user sb-icon" style="color:#888;"></i>
+      <i class="fas fa-user sb-icon" style="color:#A0A0B0;"></i>
       <span>Profile</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/koleksi" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-bookmark sb-icon" style="color:#888;"></i>
+      <i class="fas fa-bookmark sb-icon" style="color:#A0A0B0;"></i>
       <span>Koleksi</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
 
-    <!-- Source switcher di sidebar -->
-    <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 18px;"></div>
-    <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1.5px;padding:8px 18px 6px;">ENDPOINT</div>
+    <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Server</div>
     {% for key, src in all_sources.items() %}
     <button onclick="switchSource('{{ key }}')" id="sbBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
-      <i class="fas fa-server" style="font-size:12px;opacity:0.6;"></i>
+      <i class="fas fa-server" style="font-size:12px;opacity:0.5;"></i>
       <span>{{ src.label }}</span>
-      {% if active_source == key %}<span style="width:7px;height:7px;border-radius:50%;background:#ff6600;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
+      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
     </button>
     {% endfor %}
   </nav>
 
   <!-- Sidebar Footer -->
-  <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:#444;text-align:center;">
-    Aktif: <span id="srcActiveLabel" style="color:#ff6600;font-weight:600;">{{ active_source_label }}</span>
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.05);font-size:10px;color:#5a5a72;display:flex;align-items:center;justify-content:space-between;">
+    <span style="text-transform:uppercase;letter-spacing:0.3px;">Server Aktif</span>
+    <span id="srcActiveLabel" style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
   </div>
 </aside>
 
-<!-- TOP HEADER -->
+<!-- TOP HEADER — Crunchyroll style -->
 <header class="top-header">
-  <a href="/home" class="header-logo"><img src="/static/icon.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></a>
+  <!-- Hamburger / menu kiri -->
+  <button onclick="openSidebar()" style="background:none;border:none;color:#A0A0B0;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
+    <i class="fas fa-bars"></i>
+  </button>
+  <!-- Logo + Brand -->
+  <a href="/home" style="display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none;">
+    <img src="/static/icon.png" style="width:28px;height:28px;border-radius:6px;object-fit:cover;">
+    <span class="header-brand">Dayy<span>nime</span></span>
+  </a>
+  <!-- Search bar -->
   <form class="header-search" action="/search" method="get">
     <i class="fas fa-search"></i>
-    <input type="text" name="q" placeholder="cari anime.." value="{{ request.args.get('q','') }}" autocomplete="off">
+    <input type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off">
   </form>
 </header>
 
 <!-- PAGE CONTENT -->
 {% block content %}{% endblock %}
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV — Crunchyroll 5-tab -->
 <nav class="bottom-nav">
   <a href="/home" class="bnav-item" data-href="/home">
     <i class="fas fa-home"></i><span>Home</span>
@@ -145,48 +153,43 @@
   <a href="/genres" class="bnav-item" data-href="/genres">
     <i class="fas fa-tag"></i><span>Genre</span>
   </a>
-  <!-- List → buka sidebar -->
   <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-    <i class="fas fa-bars"></i><span>List</span>
+    <i class="fas fa-bars"></i><span>Menu</span>
   </button>
 </nav>
 
-<script src="{{ url_for('static', filename='js/main.js') }}?v=6"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=10"></script>
 {% block scripts %}{% endblock %}
 
 <script>
-// ── Sidebar ──────────────────────────────────────────────────────────
+// ── Sidebar ──────────────────────────────────────
 var sidebarOpen = false;
-
 function openSidebar() {
   sidebarOpen = true;
   document.getElementById('sidebarOverlay').style.display = 'block';
-  document.getElementById('sidebarPanel').style.right = '0';
+  document.getElementById('sidebarPanel').style.left = '0';
   document.body.style.overflow = 'hidden';
 }
-
 function closeSidebar() {
   sidebarOpen = false;
   document.getElementById('sidebarOverlay').style.display = 'none';
-  document.getElementById('sidebarPanel').style.right = '-280px';
+  document.getElementById('sidebarPanel').style.left = '-280px';
   document.body.style.overflow = '';
 }
-
-// Swipe kanan untuk tutup sidebar
+// Swipe kiri untuk tutup sidebar
 (function() {
   var startX = 0;
   var panel = document.getElementById('sidebarPanel');
   panel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
   panel.addEventListener('touchend', function(e){
-    if (e.changedTouches[0].clientX - startX > 60) closeSidebar();
+    if (startX - e.changedTouches[0].clientX > 60) closeSidebar();
   }, {passive:true});
 })();
 
-// ── Source Switcher ──────────────────────────────────────────────────
+// ── Source Switcher ──────────────────────────────
 function switchSource(key) {
   var btns = document.querySelectorAll('.sb-src-btn');
   btns.forEach(function(b){ b.style.opacity='0.5'; b.disabled=true; });
-
   fetch('/api/source/switch', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
@@ -207,7 +210,7 @@ function switchSource(key) {
   });
 }
 
-// ── Bottom nav active ────────────────────────────────────────────────
+// ── Bottom nav active ────────────────────────────
 (function(){
   var path = location.pathname;
   document.querySelectorAll('.bnav-item[data-href]').forEach(function(item) {
@@ -216,7 +219,6 @@ function switchSource(key) {
       item.classList.add('active');
     }
   });
-  // List button active jika di halaman sidebar pages
   var sidebarPages = ['/ongoing','/completed','/movies','/popular','/animelist','/genres','/genre','/profile','/koleksi'];
   var trigger = document.getElementById('sidebarTrigger');
   if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) {
@@ -226,218 +228,130 @@ function switchSource(key) {
 </script>
 
 <!-- APK Download Popup -->
-<div id="apkPopup" style="display:none;position:fixed;inset:0;z-index:9999;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);padding-bottom:0;">
-  <div style="background:#1a1a1a;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:24px 20px 32px;box-shadow:0 -4px 30px rgba(0,0,0,0.5);animation:slideUp 0.3s ease;">
-    <!-- Header -->
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-      <img src="/static/icon.png" style="width:54px;height:54px;object-fit:contain;border-radius:14px;flex-shrink:0;">
+<div id="apkPopup" style="display:none;position:fixed;inset:0;z-index:9999;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.7);padding-bottom:0;">
+  <div style="background:#1a1a23;width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:22px 18px 28px;box-shadow:0 -4px 30px rgba(0,0,0,0.6);animation:slideUp 0.3s ease;border-top:1px solid rgba(244,117,33,0.2);">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <img src="/static/icon.png" style="width:48px;height:48px;object-fit:contain;border-radius:10px;flex-shrink:0;">
       <div style="flex:1;">
-        <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:2px;">Pakai Dayynime APK di Android</div>
-        <div style="font-size:13px;color:#aaa;line-height:1.4;">Nikmati pengalaman streaming anime lebih lancar & optimal.</div>
+        <div style="font-size:15px;font-weight:900;color:#fff;margin-bottom:2px;">Pakai Dayynime APK</div>
+        <div style="font-size:12px;color:#A0A0B0;line-height:1.4;">Streaming lebih lancar di Android.</div>
       </div>
-      <button onclick="closeApkPopup()" style="background:none;border:none;color:#666;font-size:22px;cursor:pointer;padding:4px;line-height:1;">&times;</button>
+      <button onclick="closeApkPopup()" style="background:none;border:none;color:#5a5a72;font-size:20px;cursor:pointer;padding:4px;line-height:1;">&times;</button>
     </div>
-    <!-- Features -->
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px;">
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
-        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
-        Tampilan UI optimal di perangkat Android
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
-        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
-        Update anime terbaru lebih cepat & responsif
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
-        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
-        Akses watchlist, jadwal, & pencarian mudah
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;color:#ddd;font-size:14px;">
-        <i class="fas fa-check" style="color:#f97316;width:16px;"></i>
-        Streaming lebih stabil tanpa gangguan browser
-      </div>
-    </div>
-    <!-- Buttons -->
-    <div style="display:flex;gap:10px;margin-bottom:14px;">
-      <a href="https://trakteer.id/Dayynimee/reward/dayynime-aplikasi-nonton-anime-lengkap-tanpa-iklan-UMdgw" target="_blank" onclick="closeApkPopup()" style="flex:1;background:#f97316;color:#fff;text-align:center;padding:14px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <a href="https://trakteer.id/Dayynimee/reward/dayynime-aplikasi-nonton-anime-lengkap-tanpa-iklan-UMdgw" target="_blank" onclick="closeApkPopup()" style="flex:1;background:#F47521;color:#fff;text-align:center;padding:12px;border-radius:8px;font-weight:900;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px;text-transform:uppercase;letter-spacing:0.3px;">
         <i class="fas fa-download"></i> Download APK
       </a>
-      <button onclick="closeApkPopup()" style="flex:0.6;background:#2a2a2a;color:#ccc;border:none;padding:14px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;">
-        Lanjut ke Web
+      <button onclick="closeApkPopup()" style="flex:0.5;background:#22222e;color:#A0A0B0;border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;">
+        Nanti
       </button>
     </div>
-    <div style="text-align:center;font-size:12px;color:#666;">Tips: Simpan APK untuk update lebih cepat. Aman & gratis.</div>
+    <div style="text-align:center;font-size:11px;color:#5a5a72;">Gratis & aman untuk diunduh</div>
   </div>
 </div>
-
 <style>
-@keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+@keyframes slideUp { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
 </style>
-
 <script>
 (function() {
-  // Hanya tampilkan di Android
   var isAndroid = /Android/i.test(navigator.userAgent);
   if (!isAndroid) return;
-
-  // Jangan tampilkan kalau sudah ditutup di session ini
   if (sessionStorage.getItem('apkPopupDismissed')) return;
-
-  // Tampilkan setelah 2 detik
   setTimeout(function() {
     var popup = document.getElementById('apkPopup');
     if (popup) popup.style.display = 'flex';
-    var trb = document.getElementById('trBtn');
-    if (trb) trb.style.display = 'none';
   }, 2000);
 })();
-
 function closeApkPopup() {
   var popup = document.getElementById('apkPopup');
   if (popup) popup.style.display = 'none';
-  var trb = document.getElementById('trBtn');
-  if (trb) trb.style.display = 'flex';
-  // Simpan dismiss selama 3 hari
   sessionStorage.setItem('apkPopupDismissed', '1');
 }
 </script>
 
-
-<!-- ═══ FLOATING ACTION MENU ═══ -->
+<!-- FAB -->
 <style>
-/* FAB Container */
-#fabWrap {
-  position:fixed; bottom:76px; right:16px; z-index:99998;
-  display:flex; flex-direction:column; align-items:flex-end; gap:10px;
-  pointer-events:none;
-}
+#fabWrap { position:fixed; bottom:76px; right:14px; z-index:99998; display:flex; flex-direction:column; align-items:flex-end; gap:10px; pointer-events:none; }
 #fabMain, #fabMenu.open .fab-item { pointer-events:all; }
-
-/* Tombol utama FAB */
 #fabMain {
-  width:46px; height:46px; border-radius:50%;
-  background:#ff6600; color:#fff; border:none;
+  width:44px; height:44px; border-radius:50%;
+  background:#F47521; color:#fff; border:none;
   display:flex; align-items:center; justify-content:center;
-  font-size:18px; cursor:pointer;
-  box-shadow:0 4px 20px rgba(255,102,0,0.55);
+  font-size:17px; cursor:pointer;
+  box-shadow:0 4px 20px rgba(244,117,33,0.5);
   transition:transform 0.3s, background 0.2s;
   -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-  position:relative; z-index:2;
+  touch-action:manipulation; position:relative; z-index:2;
 }
-#fabMain.open { transform:rotate(45deg); background:#333; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
-
-/* Menu items */
+#fabMain.open { transform:rotate(45deg); background:#22222e; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
 #fabMenu {
   display:flex; flex-direction:column; align-items:flex-end; gap:8px;
   pointer-events:none; opacity:0;
   transform:translateY(10px) scale(0.95);
   transition:opacity 0.25s, transform 0.25s;
 }
-#fabMenu.open {
-  pointer-events:none; opacity:1;
-  transform:translateY(0) scale(1);
-}
-#fabMenu.open .fab-item {
-  pointer-events:all;
-}
-
-.fab-item {
-  display:flex; align-items:center; gap:8px;
-  cursor:pointer; -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
+#fabMenu.open { pointer-events:none; opacity:1; transform:translateY(0) scale(1); }
+#fabMenu.open .fab-item { pointer-events:all; }
+.fab-item { display:flex; align-items:center; gap:8px; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 .fab-item-label {
-  background:#1e1e1e; color:#fff;
-  font-size:12px; font-weight:700; font-family:'Poppins',sans-serif;
-  padding:6px 12px; border-radius:20px;
-  box-shadow:0 2px 12px rgba(0,0,0,0.5);
-  white-space:nowrap;
-  border:1px solid rgba(255,255,255,0.08);
+  background:#1a1a23; color:#fff; font-size:11px; font-weight:700; font-family:'Lato',sans-serif;
+  padding:6px 12px; border-radius:20px; box-shadow:0 2px 12px rgba(0,0,0,0.5);
+  white-space:nowrap; border:1px solid rgba(255,255,255,0.08);
+  text-transform:uppercase; letter-spacing:0.3px;
 }
 .fab-item-icon {
-  width:40px; height:40px; border-radius:50%;
+  width:38px; height:38px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-size:15px; color:#fff; border:none; cursor:pointer;
-  box-shadow:0 2px 12px rgba(0,0,0,0.4);
-  -webkit-tap-highlight-color:transparent;
-  flex-shrink:0;
+  font-size:14px; color:#fff; border:none; cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4); -webkit-tap-highlight-color:transparent; flex-shrink:0;
 }
 .fab-item-icon.tr  { background:#be1e2d; }
-.fab-item-icon.srv { background:#ff6600; }
+.fab-item-icon.srv { background:#F47521; }
 
-/* srcPanel posisi baru — di atas fabWrap */
 #srcPanel {
-  position:fixed; bottom:76px; left:16px; z-index:100000;
-  background:#1c1c1c; border:1px solid rgba(255,102,0,0.5);
-  border-radius:16px; padding:14px 12px; min-width:200px;
+  display:none; position:fixed; bottom:76px; right:14px; z-index:99999;
+  background:#1a1a23; border:1px solid rgba(244,117,33,0.4);
+  border-radius:12px; padding:12px 10px; min-width:190px;
   box-shadow:0 8px 32px rgba(0,0,0,0.8);
-  display:none; pointer-events:all;
 }
 
-/* Trakteer modal */
-#trModal {
-  display:none; position:fixed; inset:0; z-index:999999;
-  background:rgba(0,0,0,0.85); align-items:flex-end; justify-content:center;
-}
+#trModal { display:none; position:fixed; inset:0; z-index:999999; background:rgba(0,0,0,0.85); align-items:flex-end; justify-content:center; }
 #trModal.open { display:flex; }
 #trModalBox {
-  background:#1a1a1a; border-radius:20px 20px 0 0; overflow:hidden;
+  background:#1a1a23; border-radius:16px 16px 0 0; overflow:hidden;
   width:100%; max-width:480px; height:90vh;
   display:flex; flex-direction:column;
   box-shadow:0 -8px 40px rgba(0,0,0,0.8);
   animation:trSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
+  border-top:1px solid rgba(244,117,33,0.2);
 }
-@keyframes trSlideUp {
-  from { transform:translateY(100%); opacity:0; }
-  to   { transform:translateY(0); opacity:1; }
-}
-#trModalHead {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 16px; background:#be1e2d; flex-shrink:0;
-}
-#trModalHead span { font-size:14px; font-weight:700; color:#fff; }
-#trModalClose {
-  background:rgba(255,255,255,0.2); border:none; color:#fff;
-  width:28px; height:28px; border-radius:50%;
-  font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  font-family:inherit;
-}
+@keyframes trSlideUp { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
+#trModalHead { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#be1e2d; flex-shrink:0; }
+#trModalHead span { font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:0.3px; }
+#trModalClose { background:rgba(255,255,255,0.2); border:none; color:#fff; width:26px; height:26px; border-radius:50%; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
 #trFrame { flex:1; border:none; width:100%; height:100%; }
 </style>
 
-<!-- FAB WRAP -->
 <div id="fabWrap">
-  <!-- Menu items (muncul saat FAB diklik) -->
   <div id="fabMenu">
-
-    <!-- Item: Trakteer -->
     <div class="fab-item" onclick="openTrakteer(); closeFab();">
       <span class="fab-item-label">Support Dayynime</span>
-      <button class="fab-item-icon tr" title="Support Dayynime">
-        <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" style="width:20px;height:20px;border-radius:50%;" alt="">
+      <button class="fab-item-icon tr" title="Support">
+        <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" style="width:18px;height:18px;border-radius:50%;" alt="">
       </button>
     </div>
-
-    <!-- Item: Ganti Server -->
     <div class="fab-item" onclick="toggleSrcPanel(); closeFab();">
       <span class="fab-item-label">Ganti Server</span>
-      <button class="fab-item-icon srv" title="Ganti Server">
-        <i class="fas fa-server" id="srcIcon"></i>
+      <button class="fab-item-icon srv" title="Server">
+        <i class="fas fa-server" style="font-size:13px;"></i>
       </button>
     </div>
-
   </div>
-
-  <!-- Tombol utama -->
   <button id="fabMain" onclick="toggleFab()">
     <i class="fas fa-plus" id="fabIcon"></i>
   </button>
 </div>
 
-<!-- Trakteer Modal -->
 <div id="trModal" onclick="closeTrakteer(event)">
   <div id="trModalBox">
     <div id="trModalHead">
@@ -448,31 +362,44 @@ function closeApkPopup() {
   </div>
 </div>
 
+<div id="srcPanel">
+  <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;margin-bottom:10px;text-align:center;text-transform:uppercase;">Ganti Server</div>
+  {% for key, src in all_sources.items() %}
+  <button id="srcBtn-{{ key }}" onclick="switchSource('{{ key }}')" style="
+    width:100%;margin-bottom:5px;padding:9px 12px;border-radius:8px;
+    border:1px solid {% if active_source == key %}#F47521{% else %}rgba(255,255,255,0.08){% endif %};
+    background:{% if active_source == key %}rgba(244,117,33,0.15){% else %}rgba(255,255,255,0.03){% endif %};
+    color:{% if active_source == key %}#F47521{% else %}#A0A0B0{% endif %};
+    font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+    text-transform:uppercase;letter-spacing:0.3px;">
+    <span>{{ src.label }}</span>
+    {% if active_source == key %}
+    <span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;"></span>
+    {% endif %}
+  </button>
+  {% endfor %}
+  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);font-size:9px;color:#5a5a72;text-align:center;text-transform:uppercase;letter-spacing:0.3px;">
+    Aktif: <span style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
+  </div>
+</div>
+
 <script>
-// ── FAB ──
 var fabOpen = false;
 function toggleFab() {
   fabOpen = !fabOpen;
   document.getElementById('fabMain').classList.toggle('open', fabOpen);
   document.getElementById('fabMenu').classList.toggle('open', fabOpen);
   document.getElementById('fabIcon').className = fabOpen ? 'fas fa-times' : 'fas fa-plus';
-  // Tutup srcPanel kalau FAB ditutup
-  if (!fabOpen) {
-    document.getElementById('srcPanel').style.display = 'none';
-  }
+  if (!fabOpen) document.getElementById('srcPanel').style.display = 'none';
 }
 function closeFab() {
   fabOpen = false;
   document.getElementById('fabMain').classList.remove('open');
   document.getElementById('fabMenu').classList.remove('open');
   document.getElementById('fabIcon').className = 'fas fa-plus';
-  // Restore fabMenu visibility
-  var menu = document.getElementById('fabMenu');
-  menu.style.visibility = '';
-  menu.style.pointerEvents = '';
 }
-
-// ── Trakteer ──
 function openTrakteer() {
   var modal = document.getElementById('trModal');
   var frame = document.getElementById('trFrame');
@@ -487,24 +414,11 @@ function closeTrakteer(e) {
   document.getElementById('trModal').classList.remove('open');
   document.body.style.overflow = '';
 }
-
-// ── Source Panel ──
 var srcPanelOpen = false;
 function toggleSrcPanel() {
   srcPanelOpen = !srcPanelOpen;
   document.getElementById('srcPanel').style.display = srcPanelOpen ? 'block' : 'none';
-  // Sembunyikan fabMenu supaya labelnya tidak numpuk di atas srcPanel
-  var menu = document.getElementById('fabMenu');
-  if (srcPanelOpen) {
-    menu.style.visibility = 'hidden';
-    menu.style.pointerEvents = 'none';
-  } else {
-    menu.style.visibility = '';
-    menu.style.pointerEvents = '';
-  }
 }
-
-// Tutup FAB & srcPanel kalau tap di luar
 document.addEventListener('click', function(e) {
   var wrap = document.getElementById('fabWrap');
   var panel = document.getElementById('srcPanel');
@@ -516,123 +430,60 @@ document.addEventListener('click', function(e) {
 });
 </script>
 
-<div id="srcPanel" style="
-  display:none;
-  position:fixed; bottom:130px; right:16px; z-index:99999;
-  background:#1c1c1c; border:1px solid rgba(255,102,0,0.5);
-  border-radius:16px; padding:14px 12px; min-width:190px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.8);
-">
-  <div style="font-size:10px;color:#555;font-weight:700;letter-spacing:1.5px;margin-bottom:10px;text-align:center;">GANTI ENDPOINT</div>
-  {% for key, src in all_sources.items() %}
-  <button id="srcBtn-{{ key }}"
-    onclick="switchSource('{{ key }}')"
-    style="width:100%;margin-bottom:6px;padding:11px 14px;border-radius:10px;
-           border:1px solid {% if active_source == key %}#ff6600{% else %}rgba(255,255,255,0.1){% endif %};
-           background:{% if active_source == key %}rgba(255,102,0,0.18){% else %}rgba(255,255,255,0.04){% endif %};
-           color:{% if active_source == key %}#ff6600{% else %}#999{% endif %};
-           font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
-           display:flex;align-items:center;justify-content:space-between;gap:8px;
-           -webkit-tap-highlight-color:transparent;touch-action:manipulation;">
-    <span>{{ src.label }}</span>
-    {% if active_source == key %}
-    <span style="width:8px;height:8px;border-radius:50%;background:#ff6600;flex-shrink:0;display:inline-block;"></span>
-    {% endif %}
-  </button>
-  {% endfor %}
-  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:10px;color:#444;text-align:center;">
-    Aktif: <span style="color:#ff6600;">{{ active_source_label }}</span>
-  </div>
-</div>
-
-
-
-
-<!-- ═══ NOTIFIKASI DONASI TRAKTEER ═══ -->
-<div id="trNotif" style="
-  display:none; position:fixed; bottom:140px; left:16px; z-index:999998;
-  background:#1a1a1a; border:1px solid rgba(190,30,45,0.5);
-  border-radius:16px; padding:14px 16px;
-  max-width:280px; min-width:220px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.7);
-  animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;
-">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,#ff6b6b);
-      display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0;"
-      id="trNotifAvatar">?</div>
+<!-- Trakteer Donation Notif -->
+<div id="trNotif" style="display:none;position:fixed;bottom:76px;right:14px;z-index:99997;background:#1a1a23;border:1px solid rgba(190,30,45,0.4);border-radius:12px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.7);animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;">
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px;">
+    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,#ff6b6b);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;" id="trNotifAvatar">?</div>
     <div style="flex:1;min-width:0;">
-      <div style="font-size:11px;color:#be1e2d;font-weight:700;letter-spacing:0.5px;">❤️ DONASI MASUK!</div>
-      <div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="trNotifName">-</div>
+      <div style="font-size:9px;color:#be1e2d;font-weight:900;letter-spacing:0.5px;text-transform:uppercase;">❤️ Donasi Masuk!</div>
+      <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="trNotifName">-</div>
     </div>
-    <button onclick="hidetrNotif()" style="background:none;border:none;color:#555;font-size:16px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;">✕</button>
+    <button onclick="hidetrNotif()" style="background:none;border:none;color:#5a5a72;font-size:14px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;">✕</button>
   </div>
-  <div style="font-size:12px;color:#aaa;margin-bottom:6px;min-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
+  <div style="font-size:11px;color:#A0A0B0;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div style="font-size:15px;font-weight:800;color:#ff6600;" id="trNotifAmount">-</div>
-    <button onclick="openTrakteer();hidetrNotif();" style="
-      background:#be1e2d;color:#fff;border:none;border-radius:20px;
-      padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">
-      Dukung juga
-    </button>
+    <div style="font-size:14px;font-weight:900;color:#F47521;" id="trNotifAmount">-</div>
+    <button onclick="openTrakteer();hidetrNotif();" style="background:#be1e2d;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.3px;">Dukung</button>
   </div>
 </div>
-
 <style>
-@keyframes trNotifIn {
-  from { opacity:0; transform:translateX(-20px); }
-  to   { opacity:1; transform:translateX(0); }
-}
+@keyframes trNotifIn { from{opacity:0;transform:translateX(20px);} to{opacity:1;transform:translateX(0);} }
 </style>
-
 <script>
 (function() {
   var lastId = localStorage.getItem('trLastDonorId') || '';
   var notifTimer = null;
-
   function fmtAmount(v) {
     var n = parseInt(v) || 0;
     if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace('.0','') + 'jt';
-    if (n >= 1000)    return 'Rp ' + (n/1000).toFixed(0) + 'rb';
+    if (n >= 1000) return 'Rp ' + (n/1000).toFixed(0) + 'rb';
     return 'Rp ' + n;
   }
-
   function showNotif(s) {
     document.getElementById('trNotifAvatar').textContent = (s.name||'A')[0].toUpperCase();
-    document.getElementById('trNotifName').textContent   = s.name || 'Anonim';
-    document.getElementById('trNotifMsg').textContent    = s.message || '🎉 Terima kasih sudah mendukung!';
+    document.getElementById('trNotifName').textContent = s.name || 'Anonim';
+    document.getElementById('trNotifMsg').textContent = s.message || '🎉 Terima kasih!';
     document.getElementById('trNotifAmount').textContent = fmtAmount(s.amount);
     var el = document.getElementById('trNotif');
     el.style.display = 'block';
-    el.style.animation = 'none';
-    el.offsetHeight; // reflow
-    el.style.animation = '';
+    el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
     if (notifTimer) clearTimeout(notifTimer);
     notifTimer = setTimeout(hidetrNotif, 8000);
   }
-
   window.hidetrNotif = function() {
     document.getElementById('trNotif').style.display = 'none';
     if (notifTimer) clearTimeout(notifTimer);
   };
-
   function checkLatest() {
-    fetch('/api/trakteer/latest')
-      .then(function(r){ return r.json(); })
-      .then(function(d) {
-        if (!d.ok || !d.latest) return;
-        var s = d.latest;
-        if (s.id && s.id !== lastId) {
-          lastId = s.id;
-          localStorage.setItem('trLastDonorId', lastId);
-          showNotif(s);
-        }
-      }).catch(function(){});
+    fetch('/api/trakteer/latest').then(function(r){ return r.json(); }).then(function(d) {
+      if (!d.ok || !d.latest) return;
+      var s = d.latest;
+      if (s.id && s.id !== lastId) {
+        lastId = s.id; localStorage.setItem('trLastDonorId', lastId); showNotif(s);
+      }
+    }).catch(function(){});
   }
-
-  // Poll tiap 60 detik
-  setTimeout(checkLatest, 5000); // cek pertama 5 detik setelah load
-  setInterval(checkLatest, 60000);
+  setTimeout(checkLatest, 5000); setInterval(checkLatest, 60000);
 })();
 </script>
 
