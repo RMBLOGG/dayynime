@@ -1,28 +1,60 @@
 {% extends "base.html" %}
-{% block title %}Daftar Anime - Dayynime{% endblock %}
+{% block title %}Daftar Anime A-Z - Dayynime{% endblock %}
 {% block content %}
+
 <div class="page-head">
-  <h1><i class="fas fa-list" style="color:#ff6600;"></i> Daftar Anime</h1>
+  <h1><i class="fas fa-list-ul" style="color:var(--accent);"></i> Daftar Anime</h1>
   <p>Semua anime dari A sampai Z</p>
 </div>
+
 {% if data and data.anime_list %}
-<div class="az-letter-nav">
-  {% for group in data.anime_list %}
-  <a href="#az-{{ group.letter }}" class="az-letter-btn">{{ group.letter }}</a>
-  {% endfor %}
+
+<!-- Letter nav -->
+<div style="padding:0 14px 14px;">
+  <div style="display:flex;gap:4px;flex-wrap:wrap;">
+    {% for group in data.anime_list %}
+    <a href="#az-{{ group.letter }}" style="
+      width:30px;height:30px;border-radius:var(--radius);
+      background:var(--bg2);border:1px solid var(--border);
+      font-size:11px;font-weight:900;color:var(--accent);
+      display:flex;align-items:center;justify-content:center;
+      transition:all 0.2s;flex-shrink:0;
+    " onmousedown="this.style.background='var(--accent)';this.style.color='#fff';">{{ group.letter }}</a>
+    {% endfor %}
+  </div>
 </div>
+
+<!-- Sections -->
 {% for group in data.anime_list %}
-<div class="az-section" id="az-{{ group.letter }}">
-  <div class="az-letter-head">{{ group.letter }}</div>
-  <div class="az-list">
+<div id="az-{{ group.letter }}" style="margin-bottom:6px;">
+  <!-- Letter header -->
+  <div style="
+    font-size:12px;font-weight:900;color:var(--accent);
+    padding:7px 14px;background:var(--bg2);
+    border-left:3px solid var(--accent);
+    text-transform:uppercase;letter-spacing:0.5px;
+    margin-bottom:4px;
+  ">{{ group.letter }}</div>
+  <!-- Anime list -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:0 14px;">
     {% for anime in group.animes %}
-    <a href="/anime/{{ anime.slug }}" class="az-item">{{ anime.title }}</a>
+    <a href="/anime/{{ anime.slug }}" style="
+      font-size:12px;font-weight:600;color:var(--text2);
+      padding:7px 10px;border-radius:var(--radius);
+      background:var(--bg2);border:1px solid transparent;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      transition:all 0.15s;-webkit-tap-highlight-color:transparent;
+      display:block;
+    " onmousedown="this.style.color='var(--accent)';this.style.borderColor='rgba(244,117,33,0.3)';"
+       ontouchstart="this.style.color='var(--accent)';this.style.borderColor='rgba(244,117,33,0.3)';">{{ anime.title }}</a>
     {% endfor %}
   </div>
 </div>
 {% endfor %}
+
 {% else %}
 <div class="empty"><i class="fas fa-list"></i><h3>Daftar tidak tersedia</h3></div>
 {% endif %}
+
 <div style="height:20px;"></div>
 {% endblock %}

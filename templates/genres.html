@@ -1,18 +1,63 @@
 {% extends "base.html" %}
 {% block title %}Genre Anime - Dayynime{% endblock %}
 {% block content %}
+
 <div class="page-head">
-  <h1><i class="fas fa-tag" style="color:#ff6600;"></i> Genre Anime</h1>
-  <p>Jelajahi anime berdasarkan genre favorit</p>
+  <h1><i class="fas fa-layer-group" style="color:var(--accent);"></i> Genre Anime</h1>
+  <p>Temukan anime sesuai genre favorit kamu</p>
 </div>
+
 {% if data and data.genres %}
-<div class="genre-grid">
+
+<!-- Genre grid with icons -->
+<div style="padding:0 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+  {% set genre_icons = {
+    'action': 'fa-fist-raised', 'adventure': 'fa-map-marked-alt',
+    'comedy': 'fa-laugh', 'drama': 'fa-theater-masks',
+    'fantasy': 'fa-dragon', 'horror': 'fa-skull',
+    'mystery': 'fa-user-secret', 'romance': 'fa-heart',
+    'sci-fi': 'fa-rocket', 'sci fi': 'fa-rocket',
+    'slice of life': 'fa-coffee', 'sports': 'fa-running',
+    'supernatural': 'fa-magic', 'thriller': 'fa-bolt',
+    'school': 'fa-graduation-cap', 'military': 'fa-shield-alt',
+    'music': 'fa-music', 'psychological': 'fa-brain',
+    'mecha': 'fa-robot', 'isekai': 'fa-portal', 'game': 'fa-gamepad',
+    'historical': 'fa-landmark', 'kids': 'fa-child',
+    'seinen': 'fa-male', 'shounen': 'fa-user-ninja',
+    'shoujo': 'fa-female', 'josei': 'fa-user-tie',
+    'ecchi': 'fa-fire', 'harem': 'fa-users',
+    'magic': 'fa-hat-wizard', 'vampire': 'fa-tooth',
+    'martial arts': 'fa-yin-yang', 'space': 'fa-meteor',
+    'demons': 'fa-fire-alt', 'cars': 'fa-car', 'parody': 'fa-mask',
+    'super power': 'fa-hands', 'samurai': 'fa-khanda'
+  } %}
+  {% set genre_colors = [
+    '#F47521','#e05d5d','#5b8af5','#4ade80',
+    '#a78bfa','#f59e0b','#06b6d4','#ec4899',
+    '#84cc16','#f97316','#8b5cf6','#10b981',
+    '#ef4444','#3b82f6','#d946ef','#14b8a6'
+  ] %}
   {% for g in data.genres %}
-  <a href="/genre/{{ g.slug }}" class="genre-pill">{{ g.name }}</a>
+  {% set icon = genre_icons.get(g.name|lower, 'fa-film') %}
+  {% set color = genre_colors[loop.index0 % genre_colors|length] %}
+  <a href="/genre/{{ g.slug }}" style="
+    display:flex;align-items:center;gap:10px;
+    background:var(--bg2);border:1px solid var(--border);
+    border-radius:var(--radius-md);padding:12px 14px;
+    transition:border-color 0.2s;-webkit-tap-highlight-color:transparent;
+  " onmousedown="this.style.borderColor='{{ color }}';" ontouchstart="this.style.borderColor='{{ color }}';">
+    <div style="width:34px;height:34px;border-radius:8px;background:{{ color }}1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <i class="fas {{ icon }}" style="color:{{ color }};font-size:14px;"></i>
+    </div>
+    <div style="font-size:12px;font-weight:800;color:var(--text);letter-spacing:-0.1px;">{{ g.name }}</div>
+  </a>
   {% endfor %}
 </div>
+
 <div style="height:20px;"></div>
+
 {% else %}
-<div class="empty"><i class="fas fa-tag"></i><h3>Genre tidak tersedia</h3></div>
+<div class="empty"><i class="fas fa-layer-group"></i><h3>Genre tidak tersedia</h3></div>
 {% endif %}
+
 {% endblock %}

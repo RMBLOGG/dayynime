@@ -1,9 +1,182 @@
 {% extends "base.html" %}
-{% block title %}premium - Dayynime{% endblock %}
+{% block title %}Premium - Dayynime{% endblock %}
 {% block content %}
-<div class="placeholder-page">
-  <div class="icon"><i class="fas fa-tools"></i></div>
-  <h2>Halaman ini segera hadir</h2>
-  <a href="/home" style="display:inline-block;margin-top:16px;color:#ff6600;font-size:13px;">← Kembali ke Home</a>
+
+<div style="padding:20px 14px 100px;">
+
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:24px;">
+    <div style="width:64px;height:64px;border-radius:50%;background:rgba(251,191,36,0.15);border:1.5px solid rgba(251,191,36,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+      <i class="fas fa-crown" style="font-size:26px;color:#fbbf24;"></i>
+    </div>
+    <h1 style="font-size:20px;font-weight:900;color:var(--text);margin-bottom:6px;">Dayynime Premium</h1>
+    <p style="font-size:12px;color:var(--text3);line-height:1.6;max-width:240px;margin:0 auto;">
+      Nikmati pengalaman nonton anime tanpa gangguan
+    </p>
+  </div>
+
+  <!-- Current Status Card -->
+  <div id="statusCard" style="background:var(--bg2);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:16px;text-align:center;">
+    <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:8px;">Status Kamu</div>
+    <div id="statusBadge" style="display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:50px;font-size:13px;font-weight:800;background:var(--bg3);color:var(--text3);border:1px solid var(--border);">
+      <i class="fas fa-spinner fa-spin" style="font-size:11px;"></i> Mengecek...
+    </div>
+    <div id="expiryNote" style="font-size:11px;color:var(--text3);margin-top:8px;display:none;"></div>
+  </div>
+
+  <!-- Benefits -->
+  <div style="background:var(--bg2);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:16px;">
+    <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:14px;">Keuntungan Premium</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(74,222,128,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-infinity" style="color:#4ade80;font-size:13px;"></i>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Akses Episode Tak Terbatas</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:1px;">Tonton semua episode tanpa batas</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(244,117,33,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-ban" style="color:var(--accent);font-size:13px;"></i>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Bebas Iklan</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:1px;">Nonton tanpa gangguan iklan</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(96,165,250,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-bolt" style="color:#60a5fa;font-size:13px;"></i>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Akses Prioritas</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:1px;">Episode terbaru tersedia lebih cepat</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(167,139,250,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-crown" style="color:#a78bfa;font-size:13px;"></i>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Badge Premium</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:1px;">Tampil spesial di profil kamu</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voucher Section -->
+  <div style="background:var(--bg2);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:16px;">
+    <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:14px;">
+      <i class="fas fa-ticket-alt" style="color:var(--accent);margin-right:5px;"></i>Punya Kode Voucher?
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="voucherInput" placeholder="Masukkan kode voucher..." style="
+        flex:1;background:var(--bg3);border:1.5px solid var(--border);
+        border-radius:var(--radius-md);padding:10px 14px;
+        color:var(--text);font-size:13px;font-family:inherit;
+        outline:none;transition:border-color 0.2s;
+        text-transform:uppercase;letter-spacing:1px;
+      " oninput="this.value=this.value.toUpperCase()">
+      <button onclick="redeemVoucher()" style="
+        padding:10px 16px;background:var(--accent);color:#fff;
+        border:none;border-radius:var(--radius-md);font-size:13px;
+        font-weight:700;cursor:pointer;flex-shrink:0;
+        font-family:inherit;transition:opacity 0.2s;
+      ">Tukar</button>
+    </div>
+    <div id="voucherMsg" style="font-size:11px;margin-top:8px;display:none;"></div>
+  </div>
+
+  <!-- Contact -->
+  <div style="text-align:center;">
+    <p style="font-size:11px;color:var(--text3);margin-bottom:10px;">Mau beli premium? Hubungi kami:</p>
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+      <a href="https://wa.me/yourcontact" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:50px;font-size:12px;font-weight:700;color:#22c55e;">
+        <i class="fab fa-whatsapp" style="font-size:14px;"></i> WhatsApp
+      </a>
+      <a href="https://t.me/yourcontact" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(14,165,233,0.15);border:1px solid rgba(14,165,233,0.3);border-radius:50px;font-size:12px;font-weight:700;color:#0ea5e9;">
+        <i class="fab fa-telegram" style="font-size:14px;"></i> Telegram
+      </a>
+    </div>
+  </div>
+
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/api/premium/status')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var badge = document.getElementById('statusBadge');
+      var expiry = document.getElementById('expiryNote');
+      if(d.premium) {
+        badge.innerHTML = '<i class="fas fa-crown" style="color:#fbbf24;font-size:11px;"></i> Premium Aktif';
+        badge.style.background = 'rgba(251,191,36,0.15)';
+        badge.style.color = '#fbbf24';
+        badge.style.borderColor = 'rgba(251,191,36,0.3)';
+        if(d.expires_at) {
+          var dt = new Date(d.expires_at);
+          expiry.textContent = 'Berlaku hingga: ' + dt.toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+          expiry.style.display = 'block';
+          expiry.style.color = '#fbbf24';
+        }
+      } else if(d.reason === 'not_logged_in') {
+        badge.innerHTML = '<i class="fas fa-user" style="font-size:11px;"></i> Belum Login';
+      } else {
+        badge.innerHTML = '<i class="fas fa-user" style="font-size:11px;"></i> Akun Gratis';
+      }
+    })
+    .catch(function(){
+      document.getElementById('statusBadge').innerHTML = '<i class="fas fa-user" style="font-size:11px;"></i> Akun Gratis';
+    });
+});
+
+function redeemVoucher() {
+  var code = document.getElementById('voucherInput').value.trim();
+  var msg = document.getElementById('voucherMsg');
+  if(!code) {
+    showMsg('Masukkan kode voucher terlebih dahulu', '#ef4444');
+    return;
+  }
+  fetch('/api/premium/redeem', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({code: code})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok || d.success) {
+      showMsg('✅ Voucher berhasil! Premium aktif.', '#4ade80');
+      document.getElementById('voucherInput').value = '';
+      setTimeout(function(){ location.reload(); }, 1500);
+    } else {
+      showMsg('❌ ' + (d.error || d.message || 'Kode voucher tidak valid'), '#ef4444');
+    }
+  })
+  .catch(function(){
+    showMsg('❌ Gagal menghubungi server', '#ef4444');
+  });
+}
+
+function showMsg(text, color) {
+  var el = document.getElementById('voucherMsg');
+  el.textContent = text;
+  el.style.color = color;
+  el.style.fontWeight = '700';
+  el.style.display = 'block';
+}
+
+document.getElementById('voucherInput').addEventListener('focus', function(){
+  this.style.borderColor = 'var(--accent)';
+});
+document.getElementById('voucherInput').addEventListener('blur', function(){
+  this.style.borderColor = 'var(--border)';
+});
+document.getElementById('voucherInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') redeemVoucher();
+});
+</script>
 {% endblock %}

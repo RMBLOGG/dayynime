@@ -1,37 +1,92 @@
 {% extends "base.html" %}
 {% block title %}Jadwal Anime - Dayynime{% endblock %}
 {% block content %}
+
+<!-- Page Header -->
 <div class="page-head">
-  <h1><i class="fas fa-calendar-alt" style="color:#ff6600;"></i> Jadwal Rilis</h1>
+  <h1><i class="fas fa-calendar-week" style="color:var(--accent);"></i> Jadwal Rilis</h1>
   <p>Anime yang tayang minggu ini</p>
 </div>
+
 {% if data and data.schedule %}
+
+<!-- Day Tabs -->
 <div class="day-tabs">
   {% for day in data.schedule.keys() %}
   <button class="day-tab" data-tab="{{ day }}">{{ day }}</button>
   {% endfor %}
 </div>
+
+<!-- Tab Panels -->
 {% for day, animes in data.schedule.items() %}
 <div class="tab-panel" id="panel-{{ day }}">
   {% if animes %}
-  <div class="anime-grid" style="padding:0 16px;">
+  <div style="padding:0 14px;display:flex;flex-direction:column;gap:8px;">
     {% for anime in animes %}
-    <a href="/anime/{{ anime.slug }}" class="acard">
-      <div class="acard-poster">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.time %}<div class="acard-ep"><i class="fas fa-clock fa-xs"></i> {{ anime.time }}</div>{% endif %}
+    <a href="/anime/{{ anime.slug }}" style="display:flex;gap:12px;align-items:center;background:var(--bg2);border-radius:var(--radius-md);border:1px solid var(--border);padding:10px 12px;transition:border-color 0.2s;-webkit-tap-highlight-color:transparent;">
+      <!-- Poster thumbnail -->
+      <div style="width:44px;height:62px;border-radius:6px;overflow:hidden;flex-shrink:0;background:var(--bg3);">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='/static/no-image.svg'" loading="lazy">
       </div>
-      <div class="acard-title">{{ anime.title }}</div>
+      <!-- Info -->
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">{{ anime.title }}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          {% if anime.time %}
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:50px;">
+            <i class="fas fa-clock" style="font-size:9px;"></i> {{ anime.time }}
+          </span>
+          {% endif %}
+          {% if anime.type %}
+          <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.3px;">{{ anime.type }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:11px;flex-shrink:0;"></i>
     </a>
     {% endfor %}
   </div>
   {% else %}
-  <div class="empty" style="padding:40px 0;"><p style="color:#555;">Tidak ada anime</p></div>
+  <div style="text-align:center;padding:40px 20px;">
+    <i class="fas fa-moon" style="font-size:2rem;color:var(--text3);display:block;margin-bottom:12px;"></i>
+    <p style="font-size:12px;color:var(--text3);">Tidak ada anime hari ini</p>
+  </div>
   {% endif %}
 </div>
 {% endfor %}
+
 {% else %}
 <div class="empty"><i class="fas fa-calendar"></i><h3>Jadwal tidak tersedia</h3></div>
 {% endif %}
+
 <div style="height:20px;"></div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.day-tab');
+  var panels = document.querySelectorAll('.tab-panel');
+  var days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+  var today = new Date().toLocaleDateString('id-ID',{weekday:'long'});
+
+  function activate(tab) {
+    tabs.forEach(function(t){ t.classList.remove('active'); });
+    panels.forEach(function(p){ p.classList.remove('active'); });
+    tab.classList.add('active');
+    var panel = document.getElementById('panel-' + tab.dataset.tab);
+    if(panel) panel.classList.add('active');
+    tab.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  }
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){ activate(tab); });
+  });
+
+  // Auto-select today
+  var activated = false;
+  tabs.forEach(function(tab){
+    if(tab.dataset.tab === today) { activate(tab); activated = true; }
+  });
+  if(!activated && tabs.length > 0) activate(tabs[0]);
+})();
+</script>
 {% endblock %}
