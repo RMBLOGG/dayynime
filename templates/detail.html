@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
 {% block content %}
+
+<script>
+  atOptions = {
+    'key' : '49b66fd4a15bc23683f26a1c8eed2930',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js"></script>
+
 {% if data and data.detail %}
 {% set d = data.detail %}
 {% set info = d.info %}
