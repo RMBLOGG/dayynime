@@ -62,19 +62,7 @@ button { font-family:inherit; cursor:pointer; }
   letter-spacing: -0.3px; color: #fff; flex-shrink: 0;
 }
 .header-brand span { color: var(--accent); }
-.header-search {
-  flex:1; display:flex; align-items:center;
-  background: var(--bg3); border-radius: var(--radius);
-  padding: 0 12px; gap:8px; height:36px;
-  border: 1px solid var(--border); transition: border-color 0.2s;
-}
-.header-search:focus-within { border-color: var(--accent); }
-.header-search i { color:var(--text3); font-size:13px; }
-.header-search input {
-  flex:1; background:none; border:none; outline:none;
-  color:var(--text); font-size:13px; font-family:inherit;
-}
-.header-search input::placeholder { color:var(--text3); }
+/* header search moved to overlay — no static bar */
 
 /* ── BOTTOM NAV ──────────────────────────────────── */
 .bottom-nav {
