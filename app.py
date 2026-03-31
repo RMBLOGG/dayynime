@@ -26,7 +26,7 @@ SOURCES = {
         "type": "otakudesu",
     },
 }
-DEFAULT_SOURCE = "samehadaku"
+DEFAULT_SOURCE = "animasu"
 
 def get_active_source():
     """Baca source aktif: cookie user → Redis cache → site_config Supabase → default."""
