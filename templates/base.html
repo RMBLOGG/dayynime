@@ -152,8 +152,11 @@
     <i class="fas fa-search"></i>
   </button>
 
+  <!-- Blur backdrop -->
+  <div id="searchBackdrop" onclick="closeHeaderSearch()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:298;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity 0.25s ease;"></div>
+
   <!-- Search overlay -->
-  <div id="searchOverlay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:300;background:var(--bg);border-bottom:1px solid var(--border);height:var(--nav-h);align-items:center;padding:0 12px;gap:10px;">
+  <div id="searchOverlay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:299;background:var(--bg);border-bottom:1px solid var(--border);height:var(--nav-h);align-items:center;padding:0 12px;gap:10px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s ease;">
     <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--radius);padding:0 12px;height:36px;border:1px solid var(--accent);">
       <i class="fas fa-search" style="color:var(--accent);font-size:13px;"></i>
       <input id="searchOverlayInput" type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;">
@@ -197,11 +200,26 @@
 // ── Header Search ────────────────────────────────
 function openHeaderSearch() {
   var overlay = document.getElementById('searchOverlay');
+  var backdrop = document.getElementById('searchBackdrop');
   overlay.style.display = 'flex';
-  setTimeout(function() { document.getElementById('searchOverlayInput').focus(); }, 50);
+  backdrop.style.display = 'block';
+  requestAnimationFrame(function() {
+    overlay.style.opacity = '1';
+    overlay.style.transform = 'translateY(0)';
+    backdrop.style.opacity = '1';
+  });
+  setTimeout(function() { document.getElementById('searchOverlayInput').focus(); }, 100);
 }
 function closeHeaderSearch() {
-  document.getElementById('searchOverlay').style.display = 'none';
+  var overlay = document.getElementById('searchOverlay');
+  var backdrop = document.getElementById('searchBackdrop');
+  overlay.style.opacity = '0';
+  overlay.style.transform = 'translateY(-8px)';
+  backdrop.style.opacity = '0';
+  setTimeout(function() {
+    overlay.style.display = 'none';
+    backdrop.style.display = 'none';
+  }, 250);
 }
 // Close on Escape key
 document.addEventListener('keydown', function(e) {
