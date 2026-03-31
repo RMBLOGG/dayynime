@@ -940,9 +940,7 @@ def admin():
 @app.route("/api/admin/cache/flush", methods=["POST"])
 def admin_flush_cache():
     """Hapus semua cache Redis animeku. Admin only."""
-    auth_header = request.headers.get("Authorization", "")
-    access_token = auth_header.replace("Bearer ", "").strip()
-    if not _is_admin(access_token):
+    if not _is_admin():
         return jsonify({"error": "Forbidden"}), 403
     try:
         keys = redis.keys("animeku:*")
@@ -1042,29 +1040,159 @@ def api_switch_source():
     return resp
 
 
-# ── Auth ───────────────────────────────────────────────────────────────────────
+# ── Auth (Manual Login/Register) ───────────────────────────────────────────────
+import hashlib
 
-@app.route("/auth/login")
+def hash_password(password):
+    """Hash password pakai SHA-256."""
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+def _verify_admin_token(token):
+    """Cek apakah token valid di tabel admin_tokens Supabase."""
+    if not token:
+        return False
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/admin_tokens",
+            headers=supabase_service_headers(),
+            params={"token": f"eq.{token}", "is_active": "eq.true", "select": "id,label"},
+            timeout=5
+        )
+        return r.ok and len(r.json()) > 0
+    except Exception:
+        return False
+
+@app.route("/auth/login", methods=["GET", "POST"])
 def auth_login():
-    redirect_to = f"{SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to={request.host_url}auth/callback"
-    return redirect(redirect_to)
+    if request.method == "GET":
+        return render_template("login.html")
 
-@app.route("/auth/callback")
-def auth_callback():
-    return render_template("auth_callback.html")
+    data = request.get_json() or {}
+    email_or_user = (data.get("email") or "").strip().lower()
+    password      = data.get("password", "")
 
-@app.route("/auth/session", methods=["POST"])
-def auth_session():
-    data = request.get_json()
-    if data and data.get("access_token"):
-        session["access_token"] = data["access_token"]
-        session["user"] = {
-            "id":     data.get("user", {}).get("id"),
-            "name":   data.get("user", {}).get("user_metadata", {}).get("full_name", "User"),
-            "avatar": data.get("user", {}).get("user_metadata", {}).get("avatar_url", ""),
-            "email":  data.get("user", {}).get("email", ""),
-        }
-    return jsonify({"ok": True})
+    if not email_or_user or not password:
+        return jsonify({"error": "Email/username dan password wajib diisi."}), 400
+
+    # Cari user by email atau username
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={
+                "or": f"(email.eq.{email_or_user},username.eq.{email_or_user})",
+                "select": "id,username,email,password,avatar,is_banned"
+            },
+            timeout=5
+        )
+        users = r.json() if r.ok else []
+    except Exception:
+        return jsonify({"error": "Gagal menghubungi server."}), 500
+
+    if not users:
+        return jsonify({"error": "Akun tidak ditemukan."}), 401
+
+    user = users[0]
+    if user.get("is_banned"):
+        return jsonify({"error": "Akun kamu telah diblokir."}), 403
+
+    if user["password"] != hash_password(password):
+        return jsonify({"error": "Password salah."}), 401
+
+    session["user"] = {
+        "id":       user["id"],
+        "name":     user["username"],
+        "email":    user["email"],
+        "avatar":   user.get("avatar", ""),
+        "is_admin": False,
+    }
+    return jsonify({"ok": True, "redirect": "/home"})
+
+@app.route("/auth/login/admin", methods=["POST"])
+def auth_login_admin():
+    """Login admin pakai token dari Supabase admin_tokens."""
+    data  = request.get_json() or {}
+    token = (data.get("token") or "").strip()
+
+    if not _verify_admin_token(token):
+        return jsonify({"error": "Token admin tidak valid."}), 401
+
+    session["user"] = {
+        "id":       "admin",
+        "name":     "Admin",
+        "email":    "admin@dayynime",
+        "avatar":   "",
+        "is_admin": True,
+    }
+    session["admin_token"] = token
+    return jsonify({"ok": True, "redirect": "/admin"})
+
+@app.route("/auth/register", methods=["GET", "POST"])
+def auth_register():
+    if request.method == "GET":
+        return render_template("register.html")
+
+    data     = request.get_json() or {}
+    username = (data.get("username") or "").strip()
+    email    = (data.get("email") or "").strip().lower()
+    password = data.get("password", "")
+
+    # Validasi
+    if not username or not email or not password:
+        return jsonify({"error": "Semua field wajib diisi."}), 400
+    if len(username) < 3:
+        return jsonify({"error": "Username minimal 3 karakter."}), 400
+    if len(password) < 6:
+        return jsonify({"error": "Password minimal 6 karakter."}), 400
+    if "@" not in email:
+        return jsonify({"error": "Format email tidak valid."}), 400
+
+    # Cek duplikat
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={"or": f"(email.eq.{email},username.eq.{username})", "select": "email,username"},
+            timeout=5
+        )
+        existing = r.json() if r.ok else []
+    except Exception:
+        return jsonify({"error": "Gagal menghubungi server."}), 500
+
+    for u in existing:
+        if u.get("email") == email:
+            return jsonify({"error": "Email sudah terdaftar."}), 409
+        if u.get("username") == username:
+            return jsonify({"error": "Username sudah dipakai."}), 409
+
+    # Insert user baru
+    payload = {
+        "username": username,
+        "email":    email,
+        "password": hash_password(password),
+        "avatar":   "",
+    }
+    try:
+        r = requests.post(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers={**supabase_service_headers(), "Prefer": "return=representation"},
+            json=payload,
+            timeout=5
+        )
+        if not r.ok:
+            return jsonify({"error": "Gagal mendaftar, coba lagi."}), 500
+        new_user = r.json()[0]
+    except Exception:
+        return jsonify({"error": "Gagal mendaftar, coba lagi."}), 500
+
+    session["user"] = {
+        "id":       new_user["id"],
+        "name":     new_user["username"],
+        "email":    new_user["email"],
+        "avatar":   "",
+        "is_admin": False,
+    }
+    return jsonify({"ok": True, "redirect": "/home"})
 
 @app.route("/auth/logout", methods=["POST"])
 def auth_logout():
@@ -1085,27 +1213,15 @@ def premium_status():
     """Cek apakah user yang sedang login punya akses premium."""
     from datetime import datetime, timezone
 
-    # Ambil user_id: coba dari Authorization header dulu, fallback ke session
-    user_id = None
-    auth_header = request.headers.get("Authorization", "")
-    access_token = auth_header.replace("Bearer ", "").strip() if auth_header else ""
+    user = session.get("user")
+    if not user:
+        return jsonify({"premium": False, "reason": "not_logged_in"})
 
-    if access_token:
-        # Verifikasi token ke Supabase untuk dapat user_id
-        r_user = requests.get(
-            f"{SUPABASE_URL}/auth/v1/user",
-            headers=supabase_headers(access_token)
-        )
-        if r_user.ok:
-            user_id = r_user.json().get("id")
+    # Admin selalu premium
+    if user.get("is_admin"):
+        return jsonify({"premium": True, "reason": "admin"})
 
-    # Fallback ke session (untuk login server-side)
-    if not user_id:
-        user = session.get("user")
-        if not user:
-            return jsonify({"premium": False, "reason": "not_logged_in"})
-        user_id = user.get("id")
-
+    user_id = user.get("id")
     if not user_id:
         return jsonify({"premium": False, "reason": "not_logged_in"})
 
@@ -1209,46 +1325,45 @@ def get_comments(anime_slug):
 
 @app.route("/api/comments", methods=["POST"])
 def post_comment():
-    auth_header  = request.headers.get("Authorization", "")
-    access_token = auth_header.replace("Bearer ", "").strip()
-    if not access_token:
+    user = session.get("user")
+    if not user:
         return jsonify({"error": "Login dulu ya!"}), 401
-    user_resp = requests.get(f"{SUPABASE_URL}/auth/v1/user", headers=supabase_headers(access_token))
-    if not user_resp.ok:
-        return jsonify({"error": "Login dulu ya!"}), 401
-    user_data = user_resp.json()
-    user = {
-        "id":     user_data.get("id"),
-        "name":   user_data.get("user_metadata", {}).get("full_name", "User"),
-        "avatar": user_data.get("user_metadata", {}).get("avatar_url", ""),
-    }
     data       = request.get_json()
     content    = (data.get("content") or "").strip()
     anime_slug = data.get("anime_slug", "")
     if not content or len(content) < 2:
         return jsonify({"error": "Komentar terlalu pendek"}), 400
-    payload = {"anime_slug": anime_slug, "user_id": user["id"],
-               "user_name": user["name"], "user_avatar": user["avatar"], "content": content}
-    r = requests.post(f"{SUPABASE_URL}/rest/v1/anime_comments",
-                      headers={**supabase_headers(access_token), "Prefer": "return=representation"},
-                      json=payload)
+    payload = {
+        "anime_slug":  anime_slug,
+        "user_id":     user["id"],
+        "user_name":   user["name"],
+        "user_avatar": user.get("avatar", ""),
+        "content":     content,
+    }
+    r = requests.post(
+        f"{SUPABASE_URL}/rest/v1/anime_comments",
+        headers={**supabase_service_headers(), "Prefer": "return=representation"},
+        json=payload,
+    )
     if r.ok:
         return jsonify(r.json()[0] if r.json() else {})
     return jsonify({"error": "Gagal kirim komentar", "detail": r.text}), 500
 
 @app.route("/api/comments/<comment_id>", methods=["DELETE"])
 def delete_comment(comment_id):
-    auth_header  = request.headers.get("Authorization", "")
-    access_token = auth_header.replace("Bearer ", "").strip()
-    if not access_token:
+    user = session.get("user")
+    if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    user_resp = requests.get(f"{SUPABASE_URL}/auth/v1/user", headers=supabase_headers(access_token))
-    if not user_resp.ok:
-        return jsonify({"error": "Unauthorized"}), 401
-    user_id = user_resp.json().get("id")
-    r = requests.delete(f"{SUPABASE_URL}/rest/v1/anime_comments",
-                        headers=supabase_headers(access_token),
-                        params={"id": f"eq.{comment_id}", "user_id": f"eq.{user_id}"})
+    user_id = user["id"]
+    params = {"id": f"eq.{comment_id}"}
+    # Admin bisa hapus komentar siapapun
+    if not user.get("is_admin"):
+        params["user_id"] = f"eq.{user_id}"
+    r = requests.delete(
+        f"{SUPABASE_URL}/rest/v1/anime_comments",
+        headers=supabase_service_headers(),
+        params=params,
+    )
     return jsonify({"ok": r.ok})
 
 
@@ -1421,47 +1536,34 @@ def api_donations():
 
 # ── Admin: User Monitoring ─────────────────────────────────────────────────────
 
-def _is_admin(access_token):
-    """Cek apakah token milik admin."""
-    if not access_token:
-        return False
-    ADMIN_IDS = ["c5ec3983-dbec-4e23-b6f6-2196fb4d5265"]
-    # Cek dari site_config dulu
-    try:
-        cfg = requests.get(f"{SUPABASE_URL}/rest/v1/site_config",
-                           headers=supabase_headers(),
-                           params={"key": "eq.admin_ids", "select": "value"})
-        if cfg.ok and cfg.json():
-            val = cfg.json()[0]["value"]
-            ADMIN_IDS = val if isinstance(val, list) else val.get("ids", ADMIN_IDS)
-    except Exception:
-        pass
-    user_resp = requests.get(f"{SUPABASE_URL}/auth/v1/user", headers=supabase_headers(access_token))
-    if not user_resp.ok:
-        return False
-    return user_resp.json().get("id") in ADMIN_IDS
+def _is_admin(access_token=None):
+    """Cek apakah user yang sedang login adalah admin (via Flask session)."""
+    user = session.get("user")
+    if user and user.get("is_admin"):
+        # Verifikasi ulang token di Supabase untuk keamanan
+        token = session.get("admin_token", "")
+        return _verify_admin_token(token)
+    return False
 
 @app.route("/api/admin/users")
 def admin_users():
-    """Daftar semua user Google + status premium. Admin only."""
-    auth_header = request.headers.get("Authorization", "")
-    access_token = auth_header.replace("Bearer ", "").strip()
-    if not _is_admin(access_token):
+    """Daftar semua user + status premium. Admin only."""
+    if not _is_admin():
         return jsonify({"error": "Forbidden"}), 403
 
     if not SUPABASE_SERVICE_KEY:
         return jsonify({"error": "Service key tidak dikonfigurasi"}), 500
 
-    # Ambil semua user dari Supabase Auth
+    # Ambil semua user dari tabel app_users
     users_resp = requests.get(
-        f"{SUPABASE_URL}/auth/v1/admin/users",
+        f"{SUPABASE_URL}/rest/v1/app_users",
         headers=supabase_service_headers(),
-        params={"per_page": 200}
+        params={"select": "id,username,email,avatar,created_at,is_banned", "order": "created_at.desc", "limit": "200"}
     )
     if not users_resp.ok:
         return jsonify({"error": "Gagal ambil data user", "detail": users_resp.text}), 500
 
-    users_data = users_resp.json().get("users", [])
+    users_data = users_resp.json()
 
     # Ambil semua data premium
     prem_resp = requests.get(
@@ -1479,8 +1581,7 @@ def admin_users():
 
     result = []
     for u in users_data:
-        uid = u.get("id")
-        meta = u.get("user_metadata", {})
+        uid  = u.get("id")
         prem = prem_map.get(uid)
 
         premium_status = "none"
@@ -1503,28 +1604,26 @@ def admin_users():
                     expires_at = exp
 
         result.append({
-            "id":            uid,
-            "name":          meta.get("full_name", u.get("email", "")),
-            "email":         u.get("email", ""),
-            "avatar":        meta.get("avatar_url", ""),
-            "provider":      (u.get("app_metadata", {}).get("provider", "email")),
-            "created_at":    u.get("created_at", ""),
-            "last_sign_in":  u.get("last_sign_in_at", ""),
-            "premium":       premium_status,
-            "expires_at":    expires_at,
+            "id":           uid,
+            "name":         u.get("username", ""),
+            "email":        u.get("email", ""),
+            "avatar":       u.get("avatar", ""),
+            "provider":     "manual",
+            "created_at":   u.get("created_at", ""),
+            "last_sign_in": u.get("created_at", ""),
+            "premium":      premium_status,
+            "expires_at":   expires_at,
+            "is_banned":    u.get("is_banned", False),
         })
 
-    # Urutkan: premium aktif dulu, lalu by last_sign_in
-    result.sort(key=lambda x: (x["premium"] != "active", x["last_sign_in"] or ""), reverse=False)
+    result.sort(key=lambda x: (x["premium"] != "active", x["created_at"] or ""), reverse=False)
     return jsonify({"users": result, "total": len(result)})
 
 
 @app.route("/api/admin/premium", methods=["POST"])
 def admin_toggle_premium():
     """Grant/revoke premium langsung dari admin panel."""
-    auth_header = request.headers.get("Authorization", "")
-    access_token = auth_header.replace("Bearer ", "").strip()
-    if not _is_admin(access_token):
+    if not _is_admin():
         return jsonify({"error": "Forbidden"}), 403
 
     data = request.get_json()
@@ -1555,9 +1654,7 @@ def admin_toggle_premium():
 @app.route("/api/admin/premium/extend", methods=["POST"])
 def admin_extend_premium():
     """Extend atau set custom durasi premium."""
-    auth_header = request.headers.get("Authorization", "")
-    access_token = auth_header.replace("Bearer ", "").strip()
-    if not _is_admin(access_token):
+    if not _is_admin():
         return jsonify({"error": "Forbidden"}), 403
 
     data = request.get_json()
