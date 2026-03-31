@@ -1055,7 +1055,7 @@ def _verify_admin_token(token):
         r = requests.get(
             f"{SUPABASE_URL}/rest/v1/admin_tokens",
             headers=supabase_service_headers(),
-            params={"token": f"eq.{token}", "is_active": "eq.true", "select": "id,label"},
+            params={"token": f"eq.{token}", "is_active": "is.true", "select": "id,label"},
             timeout=5
         )
         return r.ok and len(r.json()) > 0
