@@ -1559,15 +1559,34 @@ def premium_redeem():
 
     expires_at = (base + timedelta(days=voucher["days"])).isoformat()
 
-    # Upsert premium user
-    r_grant = requests.post(
+    # Cek apakah sudah ada row user_premium
+    r_existing = requests.get(
         f"{SUPABASE_URL}/rest/v1/user_premium",
-        headers={**supabase_service_headers(), "Prefer": "resolution=merge-duplicates,return=representation"},
-        json={"user_id": user_id, "is_active": True, "expires_at": expires_at},
+        headers=supabase_service_headers(),
+        params={"user_id": f"eq.{user_id}", "select": "user_id"},
         timeout=5
     )
+    existing = r_existing.ok and len(r_existing.json()) > 0
+
+    if existing:
+        # UPDATE
+        r_grant = requests.patch(
+            f"{SUPABASE_URL}/rest/v1/user_premium",
+            headers={**supabase_service_headers(), "Prefer": "return=representation"},
+            params={"user_id": f"eq.{user_id}"},
+            json={"is_active": True, "expires_at": expires_at},
+            timeout=5
+        )
+    else:
+        # INSERT
+        r_grant = requests.post(
+            f"{SUPABASE_URL}/rest/v1/user_premium",
+            headers={**supabase_service_headers(), "Prefer": "return=representation"},
+            json={"user_id": user_id, "is_active": True, "expires_at": expires_at},
+            timeout=5
+        )
     if not r_grant.ok:
-        return jsonify({"error": "Gagal mengaktifkan premium."}), 500
+        return jsonify({"error": "Gagal mengaktifkan premium. Detail: " + r_grant.text}), 500
 
     # Catat pemakaian voucher
     requests.post(
