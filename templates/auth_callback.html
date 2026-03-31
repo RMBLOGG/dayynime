@@ -1,44 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head><title>Login...</title></head>
+<head><title>Redirect...</title></head>
 <body>
 <script>
-const hash = window.location.hash.substring(1);
-const params = new URLSearchParams(hash);
-const access_token = params.get('access_token');
-
-if (access_token) {
-  const payload = JSON.parse(atob(access_token.split('.')[1]));
-  const user = {
-    id: payload.sub,
-    email: payload.email,
-    name: (payload.user_metadata && payload.user_metadata.full_name) || payload.email,
-    avatar: (payload.user_metadata && payload.user_metadata.avatar_url) || ''
-  };
-
-  localStorage.setItem('sb_access_token', access_token);
-  localStorage.setItem('sb_user', JSON.stringify(user));
-
-  // Kirim session ke Flask dulu, baru redirect
-  fetch('/auth/session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ access_token: access_token, user: user })
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    var next = (data && data.next) || localStorage.getItem('auth_return_to') || '/home';
-    localStorage.removeItem('auth_return_to');
-    window.location.href = next;
-  })
-  .catch(function() {
-    window.location.href = localStorage.getItem('auth_return_to') || '/home';
-  });
-
-} else {
-  window.location.href = '/';
-}
+  // Callback Google OAuth sudah tidak dipakai.
+  window.location.href = '/auth/login';
 </script>
-<p style="font-family:sans-serif;text-align:center;padding-top:100px;color:#666">Sedang login...</p>
+<p style="font-family:sans-serif;text-align:center;padding-top:100px;color:#666">Mengalihkan...</p>
 </body>
 </html>

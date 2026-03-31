@@ -89,16 +89,33 @@
     <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
     <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Akun</div>
 
-    <a href="/profile" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-user sb-icon" style="color:#A0A0B0;"></i>
-      <span>Profile</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/koleksi" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-bookmark sb-icon" style="color:#A0A0B0;"></i>
-      <span>Koleksi</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
+    <!-- Jika sudah login -->
+    <div id="sbLoggedIn" style="display:none;">
+      <a href="/profile" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-user sb-icon" style="color:#A0A0B0;"></i>
+        <span id="sbUsername">Profile</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
+      <a href="/koleksi" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-bookmark sb-icon" style="color:#A0A0B0;"></i>
+        <span>Koleksi</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
+    </div>
+
+    <!-- Jika belum login -->
+    <div id="sbLoggedOut" style="display:none;">
+      <a href="/auth/login" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-sign-in-alt sb-icon" style="color:#f47521;"></i>
+        <span style="color:#f47521;font-weight:700;">Masuk</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
+      <a href="/auth/register" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-user-plus sb-icon" style="color:#A0A0B0;"></i>
+        <span>Daftar</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
+    </div>
 
     <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
     <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Server</div>
@@ -495,20 +512,40 @@ document.addEventListener('click', function(e) {
 
 
 <script>
-// ── Header user avatar ───────────────────────────
+// ── Header user avatar + sidebar auth state ───────────────────────────
 (function() {
   fetch('/api/me').then(function(r){ return r.json(); }).then(function(d) {
     var user = d.user;
-    if (!user) return;
+    var btn = document.getElementById('headerUserBtn');
+
+    if (!user) {
+      // Belum login: arahkan icon user ke halaman login
+      if(btn) btn.href = '/auth/login';
+      var sbOut = document.getElementById('sbLoggedOut');
+      var sbIn  = document.getElementById('sbLoggedIn');
+      if(sbOut) sbOut.style.display = 'block';
+      if(sbIn)  sbIn.style.display  = 'none';
+      return;
+    }
+
+    // Sudah login: tampilkan avatar & username di sidebar
+    var sbOut = document.getElementById('sbLoggedOut');
+    var sbIn  = document.getElementById('sbLoggedIn');
+    if(sbOut) sbOut.style.display = 'none';
+    if(sbIn)  sbIn.style.display  = 'block';
+
+    var sbName = document.getElementById('sbUsername');
+    if(sbName) sbName.textContent = user.name || 'Profile';
+
     var avatar = document.getElementById('headerAvatar');
     var fallback = document.getElementById('headerAvatarFallback');
-    var btn = document.getElementById('headerUserBtn');
     if (user.avatar && avatar) {
       avatar.src = user.avatar;
       avatar.style.display = 'block';
       if(fallback) fallback.style.display = 'none';
       if(btn) btn.style.border = '1.5px solid var(--accent)';
     }
+
     // Check premium for dot
     fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(p) {
       if(p.premium) {
@@ -517,7 +554,13 @@ document.addEventListener('click', function(e) {
         if(btn) btn.style.border = '1.5px solid #fbbf24';
       }
     }).catch(function(){});
-  }).catch(function(){});
+  }).catch(function(){
+    // Error fetch: fallback ke tampilkan tombol login
+    var sbOut = document.getElementById('sbLoggedOut');
+    if(sbOut) sbOut.style.display = 'block';
+    var btn = document.getElementById('headerUserBtn');
+    if(btn) btn.href = '/auth/login';
+  });
 })();
 </script>
 </body>
