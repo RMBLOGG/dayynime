@@ -1423,6 +1423,13 @@ def _generate_code(length=10):
     chars = string.ascii_uppercase + string.digits
     return ''.join(random.choices(chars, k=length))
 
+@app.route("/voucher-admin")
+def voucher_admin_page():
+    user = session.get("user")
+    if not user or not user.get("is_admin"):
+        return redirect("/auth/login")
+    return render_template("voucher_admin.html")
+
 @app.route("/api/admin/voucher/generate", methods=["POST"])
 def admin_generate_voucher():
     """Admin generate voucher baru."""
