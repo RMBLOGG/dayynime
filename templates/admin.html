@@ -121,6 +121,38 @@ body { background: var(--adm-bg) !important; }
 
   <div class="adm-section-title" style="margin-top:24px;"><i class="fas fa-star" style="color:var(--adm-accent2);font-size:11px;"></i> Member Premium</div>
   <div class="adm-table-wrap" id="premium-users-wrap"><div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div></div>
+
+  <!-- VOUCHER SECTION -->
+  <div class="adm-section-title" style="margin-top:28px;"><i class="fas fa-ticket-alt" style="color:#f47521;font-size:11px;"></i> Generate Voucher</div>
+  <div style="background:var(--adm-bg2);border:1px solid var(--adm-border);border-radius:12px;padding:16px;margin-bottom:12px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Durasi (hari)</label>
+        <input type="number" id="vDays" value="30" min="1" max="365" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Max Pemakai</label>
+        <input type="number" id="vMaxUses" value="1" min="1" max="999" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Jumlah Voucher</label>
+        <input type="number" id="vCount" value="1" min="1" max="50" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Label (opsional)</label>
+        <input type="text" id="vLabel" placeholder="contoh: Promo Lebaran" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+      </div>
+    </div>
+    <button onclick="generateVoucher()" style="width:100%;padding:10px;background:#f47521;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;">
+      <i class="fas fa-plus"></i> Generate Voucher
+    </button>
+    <div id="voucherResult" style="margin-top:12px;display:none;"></div>
+  </div>
+
+  <div class="adm-section-title" style="margin-top:20px;"><i class="fas fa-list" style="color:#a78bfa;font-size:11px;"></i> Daftar Voucher
+    <button onclick="loadVouchers()" style="margin-left:8px;padding:3px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text2);font-size:11px;cursor:pointer;font-family:inherit;">Refresh</button>
+  </div>
+  <div class="adm-table-wrap" id="voucher-list-wrap"><div class="adm-empty">Klik Refresh untuk memuat...</div></div>
 </div>
 
 <script>
@@ -200,6 +232,84 @@ function relTime(iso) {
 
 loadStats();
 setInterval(loadStats, 30000);
+
+// ── Voucher ──────────────────────────────────────
+async function generateVoucher() {
+  const days    = parseInt(document.getElementById('vDays').value) || 30;
+  const maxUses = parseInt(document.getElementById('vMaxUses').value) || 1;
+  const count   = parseInt(document.getElementById('vCount').value) || 1;
+  const label   = document.getElementById('vLabel').value.trim();
+  const resultEl = document.getElementById('voucherResult');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+  try {
+    const r = await fetch('/api/admin/voucher/generate', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({days, max_uses:maxUses, count, label})
+    });
+    const d = await r.json();
+    if (d.ok && d.vouchers.length > 0) {
+      let html = '<div style="display:flex;flex-direction:column;gap:6px;">';
+      d.vouchers.forEach(function(v) {
+        html += '<div style="background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">'
+          + '<div><div style="font-size:15px;font-weight:900;color:#f47521;letter-spacing:2px;">'+v.code+'</div>'
+          + '<div style="font-size:10px;color:var(--adm-text2);margin-top:2px;">'+v.days+' hari &middot; max '+v.max_uses+'x'+(v.label?' &middot; '+v.label:'')+'</div></div>'
+          + '<button onclick="copyCode(''+v.code+'')" style="padding:5px 10px;background:var(--adm-bg2);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text);font-size:11px;cursor:pointer;font-family:inherit;"><i class="fas fa-copy"></i> Copy</button>'
+          + '</div>';
+      });
+      html += '</div>';
+      resultEl.innerHTML = html;
+      loadVouchers();
+    } else {
+      resultEl.innerHTML = '<span style="color:#ef4444;">Gagal generate voucher.</span>';
+    }
+  } catch(e) {
+    resultEl.innerHTML = '<span style="color:#ef4444;">Error: '+e.message+'</span>';
+  }
+}
+
+function copyCode(code) {
+  navigator.clipboard.writeText(code).then(function(){
+    alert('Kode '+code+' berhasil dicopy!');
+  }).catch(function(){ prompt('Copy kode ini:', code); });
+}
+
+async function loadVouchers() {
+  const wrap = document.getElementById('voucher-list-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div>';
+  try {
+    const r = await fetch('/api/admin/voucher/list');
+    const data = await r.json();
+    if (!data.length) { wrap.innerHTML = '<div class="adm-empty">Belum ada voucher.</div>'; return; }
+    let html = '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+      + '<tr style="color:var(--adm-text2);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--adm-border);">'
+      + '<th style="padding:8px;text-align:left;">Kode</th><th style="padding:8px;text-align:center;">Hari</th>'
+      + '<th style="padding:8px;text-align:center;">Pakai</th><th style="padding:8px;text-align:center;">Status</th>'
+      + '<th style="padding:8px;text-align:center;">Aksi</th></tr>';
+    data.forEach(function(v) {
+      const active = v.is_active && v.used < v.max_uses;
+      html += '<tr style="border-bottom:1px solid var(--adm-border);">'
+        + '<td style="padding:8px;font-weight:800;color:#f47521;letter-spacing:1px;">'+v.code+'</td>'
+        + '<td style="padding:8px;text-align:center;">'+v.days+'h</td>'
+        + '<td style="padding:8px;text-align:center;">'+v.used+'/'+v.max_uses+'</td>'
+        + '<td style="padding:8px;text-align:center;"><span style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;background:'+(active?'rgba(74,222,128,0.15)':'rgba(239,68,68,0.15)')+';color:'+(active?'#4ade80':'#ef4444')+';">'+(active?'Aktif':'Habis')+'</span></td>'
+        + '<td style="padding:8px;text-align:center;">'+(active?'<button onclick="deleteVoucher(''+v.code+'')" style="padding:3px 8px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:6px;color:#ef4444;font-size:10px;cursor:pointer;font-family:inherit;">Nonaktif</button>':'&mdash;')+'</td>'
+        + '</tr>';
+    });
+    html += '</table>';
+    wrap.innerHTML = html;
+  } catch(e) { wrap.innerHTML = '<div class="adm-empty" style="color:#ef4444;">Gagal memuat.</div>'; }
+}
+
+async function deleteVoucher(code) {
+  if (!confirm('Nonaktifkan voucher '+code+'?')) return;
+  await fetch('/api/admin/voucher/delete', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({code})
+  });
+  loadVouchers();
+}
 </script>
 {% endif %}
 

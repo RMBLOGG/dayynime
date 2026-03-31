@@ -2,16 +2,23 @@
 {% block title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
 {% block content %}
 
+<div id="adBanner320x50"></div>
 <script>
-  atOptions = {
-    'key' : '49b66fd4a15bc23683f26a1c8eed2930',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
+fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d){
+  if(d.premium) return;
+  var wrap = document.getElementById('adBanner320x50');
+  if(!wrap) return;
+  window.atOptions = {'key':'49b66fd4a15bc23683f26a1c8eed2930','format':'iframe','height':50,'width':320,'params':{}};
+  var s = document.createElement('script');
+  s.src = 'https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js';
+  wrap.appendChild(s);
+}).catch(function(){
+  window.atOptions = {'key':'49b66fd4a15bc23683f26a1c8eed2930','format':'iframe','height':50,'width':320,'params':{}};
+  var s = document.createElement('script');
+  s.src = 'https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js';
+  document.body.appendChild(s);
+});
 </script>
-<script src="https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js"></script>
 
 {% if data and data.detail %}
 {% set d = data.detail %}

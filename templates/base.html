@@ -12,8 +12,6 @@
   <link rel="apple-touch-icon" href="/static/icon2.png">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10">
   {% block head %}{% endblock %}
-<script src="https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js"></script>
-<script src="https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js"></script>
 </head>
 <body>
 
@@ -562,6 +560,29 @@ document.addEventListener('click', function(e) {
     if(sbOut) sbOut.style.display = 'block';
     var btn = document.getElementById('headerUserBtn');
     if(btn) btn.href = '/auth/login';
+  });
+})();
+</script>
+
+<script>
+// ── Ads: hanya tampil jika bukan premium ──
+(function() {
+  fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(d) {
+    if (d.premium) return; // premium = no ads
+    var s1 = document.createElement('script');
+    s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
+    document.head.appendChild(s1);
+    var s2 = document.createElement('script');
+    s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
+    document.head.appendChild(s2);
+  }).catch(function() {
+    // Gagal cek = anggap bukan premium, tampilkan iklan
+    var s1 = document.createElement('script');
+    s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
+    document.head.appendChild(s1);
+    var s2 = document.createElement('script');
+    s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
+    document.head.appendChild(s2);
   });
 })();
 </script>
