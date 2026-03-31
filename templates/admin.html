@@ -254,7 +254,7 @@ async function generateVoucher() {
         html += '<div style="background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">'
           + '<div><div style="font-size:15px;font-weight:900;color:#f47521;letter-spacing:2px;">'+v.code+'</div>'
           + '<div style="font-size:10px;color:var(--adm-text2);margin-top:2px;">'+v.days+' hari &middot; max '+v.max_uses+'x'+(v.label?' &middot; '+v.label:'')+'</div></div>'
-          + '<button onclick="copyCode(''+v.code+'')" style="padding:5px 10px;background:var(--adm-bg2);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text);font-size:11px;cursor:pointer;font-family:inherit;"><i class="fas fa-copy"></i> Copy</button>'
+          + '<button onclick="copyCode(\''+v.code+'\')" style="padding:5px 10px;background:var(--adm-bg2);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text);font-size:11px;cursor:pointer;font-family:inherit;"><i class="fas fa-copy"></i> Copy</button>'
           + '</div>';
       });
       html += '</div>';
