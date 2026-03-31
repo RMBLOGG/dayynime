@@ -935,7 +935,107 @@ def chat():
 
 @app.route("/admin")
 def admin():
-    return render_template("admin.html")
+    user = session.get("user")
+    if not user:
+        return redirect("/auth/login")
+    if not user.get("is_admin"):
+        return render_template("admin.html", not_admin=True)
+    return render_template("admin.html", is_admin=True)
+
+@app.route("/api/admin/stats")
+def admin_stats():
+    """Stats dashboard admin."""
+    if not _is_admin():
+        return jsonify({"error": "Forbidden"}), 403
+
+    from datetime import datetime, timezone
+
+    # Total member dari app_users
+    try:
+        r_members = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={"select": "id", "limit": "1000"},
+        )
+        member_count = len(r_members.json()) if r_members.ok else 0
+    except Exception:
+        member_count = 0
+
+    # Total komentar
+    try:
+        r_comments = requests.get(
+            f"{SUPABASE_URL}/rest/v1/anime_comments",
+            headers=supabase_service_headers(),
+            params={"select": "id", "limit": "1"},
+        )
+        comment_count = int(r_comments.headers.get("content-range", "0/0").split("/")[-1]) if r_comments.ok else 0
+    except Exception:
+        comment_count = 0
+
+    # User premium aktif
+    try:
+        now = datetime.now(timezone.utc).isoformat()
+        r_prem = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_premium",
+            headers=supabase_service_headers(),
+            params={"is_active": "is.true", "select": "user_id,expires_at,is_active"},
+        )
+        premium_rows = r_prem.json() if r_prem.ok else []
+        premium_count = len([p for p in premium_rows if p.get("is_active")])
+    except Exception:
+        premium_count = 0
+        premium_rows = []
+
+    # Active users dari Redis (pakai key animeku:active_users jika ada)
+    active_total = 0
+    active_guests = 0
+    active_logged = 0
+    try:
+        val = redis.get("animeku:active_users")
+        if val:
+            import json as _json
+            d = _json.loads(val)
+            active_total  = d.get("total", 0)
+            active_guests = d.get("guests", 0)
+            active_logged = d.get("logged", 0)
+    except Exception:
+        pass
+
+    # Premium users list
+    premium_users = []
+    try:
+        r_pu = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={"select": "id,username,email,created_at"},
+        )
+        users_map = {u["id"]: u for u in (r_pu.json() if r_pu.ok else [])}
+        for p in premium_rows:
+            uid = p.get("user_id")
+            u = users_map.get(uid, {})
+            premium_users.append({
+                "id":         uid,
+                "name":       u.get("username", uid),
+                "email":      u.get("email", ""),
+                "is_active":  p.get("is_active"),
+                "expires_at": p.get("expires_at"),
+            })
+    except Exception:
+        pass
+
+    return jsonify({
+        "stats": {
+            "active_total":  active_total,
+            "active_guests": active_guests,
+            "active_logged": active_logged,
+            "premium_count": premium_count,
+            "comment_count": comment_count,
+            "member_count":  member_count,
+        },
+        "active_users":  [],
+        "top_pages":     [],
+        "premium_users": premium_users,
+    })
 
 @app.route("/api/admin/cache/flush", methods=["POST"])
 def admin_flush_cache():
