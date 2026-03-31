@@ -1447,7 +1447,7 @@ def admin_generate_voucher():
             "is_active": True,
         }
         r = requests.post(
-            f"{SUPABASE_URL}/rest/v1/vouchers",
+            f"{SUPABASE_URL}/rest/v1/app_vouchers",
             headers={**supabase_service_headers(), "Prefer": "return=representation"},
             json=payload,
             timeout=5
@@ -1464,7 +1464,7 @@ def admin_voucher_list():
         return jsonify({"error": "Forbidden"}), 403
 
     r = requests.get(
-        f"{SUPABASE_URL}/rest/v1/vouchers",
+        f"{SUPABASE_URL}/rest/v1/app_vouchers",
         headers=supabase_service_headers(),
         params={"select": "*", "order": "created_at.desc", "limit": "100"},
         timeout=5
@@ -1480,7 +1480,7 @@ def admin_voucher_delete():
     data = request.get_json() or {}
     code = data.get("code", "")
     r = requests.patch(
-        f"{SUPABASE_URL}/rest/v1/vouchers",
+        f"{SUPABASE_URL}/rest/v1/app_vouchers",
         headers={**supabase_service_headers(), "Prefer": "return=representation"},
         params={"code": f"eq.{code}"},
         json={"is_active": False},
@@ -1504,7 +1504,7 @@ def premium_redeem():
 
     # Cek voucher
     r = requests.get(
-        f"{SUPABASE_URL}/rest/v1/vouchers",
+        f"{SUPABASE_URL}/rest/v1/app_vouchers",
         headers=supabase_service_headers(),
         params={"code": f"eq.{code}", "is_active": "is.true", "select": "*"},
         timeout=5
@@ -1522,7 +1522,7 @@ def premium_redeem():
 
     # Cek apakah user ini sudah pernah pakai voucher ini
     r_check = requests.get(
-        f"{SUPABASE_URL}/rest/v1/voucher_uses",
+        f"{SUPABASE_URL}/rest/v1/app_voucher_uses",
         headers=supabase_service_headers(),
         params={"voucher_code": f"eq.{code}", "user_id": f"eq.{user_id}", "select": "id"},
         timeout=5
@@ -1564,7 +1564,7 @@ def premium_redeem():
 
     # Catat pemakaian voucher
     requests.post(
-        f"{SUPABASE_URL}/rest/v1/voucher_uses",
+        f"{SUPABASE_URL}/rest/v1/app_voucher_uses",
         headers={**supabase_service_headers(), "Prefer": "return=representation"},
         json={"voucher_code": code, "user_id": user_id},
         timeout=5
@@ -1572,7 +1572,7 @@ def premium_redeem():
 
     # Update used count
     requests.patch(
-        f"{SUPABASE_URL}/rest/v1/vouchers",
+        f"{SUPABASE_URL}/rest/v1/app_vouchers",
         headers=supabase_service_headers(),
         params={"code": f"eq.{code}"},
         json={"used": voucher["used"] + 1},
@@ -1582,7 +1582,7 @@ def premium_redeem():
     # Nonaktifkan voucher jika sudah mencapai max_uses
     if voucher["used"] + 1 >= voucher["max_uses"]:
         requests.patch(
-            f"{SUPABASE_URL}/rest/v1/vouchers",
+            f"{SUPABASE_URL}/rest/v1/app_vouchers",
             headers=supabase_service_headers(),
             params={"code": f"eq.{code}"},
             json={"is_active": False},
