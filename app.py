@@ -1822,11 +1822,7 @@ def api_donations():
 def _is_admin(access_token=None):
     """Cek apakah user yang sedang login adalah admin (via Flask session)."""
     user = session.get("user")
-    if user and user.get("is_admin"):
-        # Verifikasi ulang token di Supabase untuk keamanan
-        token = session.get("admin_token", "")
-        return _verify_admin_token(token)
-    return False
+    return bool(user and user.get("is_admin"))
 
 @app.route("/api/admin/users")
 def admin_users():
