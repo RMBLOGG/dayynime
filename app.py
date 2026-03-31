@@ -26,7 +26,7 @@ SOURCES = {
         "type": "otakudesu",
     },
 }
-DEFAULT_SOURCE = "animasu"
+DEFAULT_SOURCE = "samehadaku"
 
 def get_active_source():
     """Baca source aktif: cookie user → Redis cache → site_config Supabase → default."""
@@ -1411,6 +1411,189 @@ def premium_list():
     )
     return jsonify(r.json() if r.ok else [])
 
+
+
+
+# ── Voucher ────────────────────────────────────────────────────────────────────
+
+import random, string
+
+def _generate_code(length=10):
+    """Generate kode voucher random huruf kapital + angka."""
+    chars = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(chars, k=length))
+
+@app.route("/api/admin/voucher/generate", methods=["POST"])
+def admin_generate_voucher():
+    """Admin generate voucher baru."""
+    if not _is_admin():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data     = request.get_json() or {}
+    days     = int(data.get("days", 30))
+    max_uses = int(data.get("max_uses", 1))
+    label    = data.get("label", "")
+    count    = int(data.get("count", 1))  # berapa voucher yang dibuat sekaligus
+
+    created = []
+    for _ in range(min(count, 50)):  # max 50 sekaligus
+        code = _generate_code(10)
+        payload = {
+            "code":     code,
+            "days":     days,
+            "max_uses": max_uses,
+            "used":     0,
+            "label":    label,
+            "is_active": True,
+        }
+        r = requests.post(
+            f"{SUPABASE_URL}/rest/v1/vouchers",
+            headers={**supabase_service_headers(), "Prefer": "return=representation"},
+            json=payload,
+            timeout=5
+        )
+        if r.ok and r.json():
+            created.append(r.json()[0])
+
+    return jsonify({"ok": True, "vouchers": created, "count": len(created)})
+
+@app.route("/api/admin/voucher/list")
+def admin_voucher_list():
+    """List semua voucher. Admin only."""
+    if not _is_admin():
+        return jsonify({"error": "Forbidden"}), 403
+
+    r = requests.get(
+        f"{SUPABASE_URL}/rest/v1/vouchers",
+        headers=supabase_service_headers(),
+        params={"select": "*", "order": "created_at.desc", "limit": "100"},
+        timeout=5
+    )
+    return jsonify(r.json() if r.ok else [])
+
+@app.route("/api/admin/voucher/delete", methods=["POST"])
+def admin_voucher_delete():
+    """Hapus / nonaktifkan voucher. Admin only."""
+    if not _is_admin():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.get_json() or {}
+    code = data.get("code", "")
+    r = requests.patch(
+        f"{SUPABASE_URL}/rest/v1/vouchers",
+        headers={**supabase_service_headers(), "Prefer": "return=representation"},
+        params={"code": f"eq.{code}"},
+        json={"is_active": False},
+        timeout=5
+    )
+    return jsonify({"ok": r.ok})
+
+@app.route("/api/premium/redeem", methods=["POST"])
+def premium_redeem():
+    """User tukar kode voucher jadi premium."""
+    from datetime import datetime, timezone, timedelta
+
+    user = session.get("user")
+    if not user:
+        return jsonify({"error": "Login dulu untuk menukar voucher."}), 401
+
+    data = request.get_json() or {}
+    code = (data.get("code") or "").strip().upper()
+    if not code:
+        return jsonify({"error": "Kode voucher tidak boleh kosong."}), 400
+
+    # Cek voucher
+    r = requests.get(
+        f"{SUPABASE_URL}/rest/v1/vouchers",
+        headers=supabase_service_headers(),
+        params={"code": f"eq.{code}", "is_active": "is.true", "select": "*"},
+        timeout=5
+    )
+    if not r.ok or not r.json():
+        return jsonify({"error": "Kode voucher tidak valid atau sudah tidak aktif."}), 400
+
+    voucher = r.json()[0]
+
+    # Cek apakah masih bisa dipakai
+    if voucher["used"] >= voucher["max_uses"]:
+        return jsonify({"error": "Kode voucher sudah habis digunakan."}), 400
+
+    user_id = user["id"]
+
+    # Cek apakah user ini sudah pernah pakai voucher ini
+    r_check = requests.get(
+        f"{SUPABASE_URL}/rest/v1/voucher_uses",
+        headers=supabase_service_headers(),
+        params={"voucher_code": f"eq.{code}", "user_id": f"eq.{user_id}", "select": "id"},
+        timeout=5
+    )
+    if r_check.ok and r_check.json():
+        return jsonify({"error": "Kamu sudah pernah menggunakan voucher ini."}), 400
+
+    # Hitung expires_at
+    now = datetime.now(timezone.utc)
+    # Kalau user sudah premium aktif, extend dari tanggal expiry
+    r_prem = requests.get(
+        f"{SUPABASE_URL}/rest/v1/user_premium",
+        headers=supabase_service_headers(),
+        params={"user_id": f"eq.{user_id}", "select": "is_active,expires_at"},
+        timeout=5
+    )
+    base = now
+    if r_prem.ok and r_prem.json():
+        row = r_prem.json()[0]
+        if row.get("is_active") and row.get("expires_at"):
+            try:
+                exp = datetime.fromisoformat(row["expires_at"].replace("Z", "+00:00"))
+                if exp > now:
+                    base = exp
+            except Exception:
+                pass
+
+    expires_at = (base + timedelta(days=voucher["days"])).isoformat()
+
+    # Upsert premium user
+    r_grant = requests.post(
+        f"{SUPABASE_URL}/rest/v1/user_premium",
+        headers={**supabase_service_headers(), "Prefer": "resolution=merge-duplicates,return=representation"},
+        json={"user_id": user_id, "is_active": True, "expires_at": expires_at},
+        timeout=5
+    )
+    if not r_grant.ok:
+        return jsonify({"error": "Gagal mengaktifkan premium."}), 500
+
+    # Catat pemakaian voucher
+    requests.post(
+        f"{SUPABASE_URL}/rest/v1/voucher_uses",
+        headers={**supabase_service_headers(), "Prefer": "return=representation"},
+        json={"voucher_code": code, "user_id": user_id},
+        timeout=5
+    )
+
+    # Update used count
+    requests.patch(
+        f"{SUPABASE_URL}/rest/v1/vouchers",
+        headers=supabase_service_headers(),
+        params={"code": f"eq.{code}"},
+        json={"used": voucher["used"] + 1},
+        timeout=5
+    )
+
+    # Nonaktifkan voucher jika sudah mencapai max_uses
+    if voucher["used"] + 1 >= voucher["max_uses"]:
+        requests.patch(
+            f"{SUPABASE_URL}/rest/v1/vouchers",
+            headers=supabase_service_headers(),
+            params={"code": f"eq.{code}"},
+            json={"is_active": False},
+            timeout=5
+        )
+
+    return jsonify({
+        "ok": True,
+        "message": f"Premium aktif {voucher['days']} hari! Berlaku hingga {expires_at[:10]}.",
+        "expires_at": expires_at,
+    })
 
 # ── Comments ───────────────────────────────────────────────────────────────────
 
