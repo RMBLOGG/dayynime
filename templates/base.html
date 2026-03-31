@@ -146,11 +146,20 @@
     <img src="/static/icon.png" style="width:26px;height:26px;border-radius:6px;object-fit:cover;">
     <span class="header-brand">Dayy<span>nime</span></span>
   </a>
-  <!-- Search bar -->
-  <form class="header-search" action="/search" method="get" style="flex:1;">
+  <!-- Search icon button -->
+  <div style="flex:1;"></div>
+  <button id="searchToggleBtn" onclick="openHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
     <i class="fas fa-search"></i>
-    <input type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off">
-  </form>
+  </button>
+
+  <!-- Search overlay -->
+  <div id="searchOverlay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:300;background:var(--bg);border-bottom:1px solid var(--border);height:var(--nav-h);align-items:center;padding:0 12px;gap:10px;">
+    <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--radius);padding:0 12px;height:36px;border:1px solid var(--accent);">
+      <i class="fas fa-search" style="color:var(--accent);font-size:13px;"></i>
+      <input id="searchOverlayInput" type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;">
+    </form>
+    <button onclick="closeHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:6px;white-space:nowrap;-webkit-tap-highlight-color:transparent;">Batal</button>
+  </div>
   <!-- User avatar / premium badge -->
   <a href="/profile" id="headerUserBtn" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);overflow:hidden;text-decoration:none;position:relative;">
     <img id="headerAvatar" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
@@ -185,6 +194,20 @@
 {% block scripts %}{% endblock %}
 
 <script>
+// ── Header Search ────────────────────────────────
+function openHeaderSearch() {
+  var overlay = document.getElementById('searchOverlay');
+  overlay.style.display = 'flex';
+  setTimeout(function() { document.getElementById('searchOverlayInput').focus(); }, 50);
+}
+function closeHeaderSearch() {
+  document.getElementById('searchOverlay').style.display = 'none';
+}
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeHeaderSearch();
+});
+
 // ── Sidebar ──────────────────────────────────────
 var sidebarOpen = false;
 function openSidebar() {
