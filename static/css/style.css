@@ -23,7 +23,12 @@
   --bottom-h:   60px;
 }
 
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+* { margin:0; padding:0; 
+  box-sizing:border-box; 
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none; }
 html { scroll-behavior:smooth; }
 
 body {
