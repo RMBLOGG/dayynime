@@ -124,7 +124,7 @@ button { font-family:inherit; cursor:pointer; }
 .bnav-item.active i { transform:scale(1.1); }
 
 /* ── HERO BANNER SLIDER ──────────────────────────── */
-.banner-slider { position:relative; overflow:hidden; margin-bottom:0; margin-top:calc(-1 * var(--nav-h)); }
+.banner-slider { position:relative; overflow:hidden; margin-bottom:0; }
 .banner-track { display:flex; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1); }
 .banner-slide {
   min-width:100%; aspect-ratio:16/7;
