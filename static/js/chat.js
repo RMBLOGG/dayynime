@@ -74,6 +74,22 @@
       });
     }
 
+    // Cegah scroll halaman saat scroll di dalam chat
+    var msgs = document.getElementById('chatMessages');
+    if (msgs) {
+      msgs.addEventListener('touchmove', function(e) {
+        e.stopPropagation();
+      }, { passive: true });
+      msgs.addEventListener('wheel', function(e) {
+        var atTop    = msgs.scrollTop === 0;
+        var atBottom = msgs.scrollTop + msgs.clientHeight >= msgs.scrollHeight - 1;
+        if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+          e.preventDefault();
+        }
+        e.stopPropagation();
+      }, { passive: false });
+    }
+
     renderMessages();
   }
 
@@ -174,7 +190,10 @@
     if (!chatOpen && !isMe) {
       unread++;
       var fab = document.getElementById('chatFab');
-      if (fab) fab.classList.add('has-unread');
+      if (fab) {
+        fab.classList.add('has-unread');
+        fab.setAttribute('data-unread', unread > 99 ? '99+' : unread);
+      }
     }
   }
 
