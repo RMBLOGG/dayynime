@@ -581,4 +581,19 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 })();
 </script>
+
+<!-- CHAT: room per anime, bukan per episode (biar semua nonton anime yg sama bisa ngobrol) -->
+<script>
+  window.CHAT_ROOM_ID = 'anime-{{ anime_slug }}';
+  {% if session.get('user') %}
+  window.CHAT_USER = {
+    id:     '{{ session["user"]["id"] }}',
+    name:   '{{ session["user"]["name"] | e }}',
+    avatar: '{{ session["user"].get("avatar", "") | e }}'
+  };
+  {% else %}
+  window.CHAT_USER = null;
+  {% endif %}
+</script>
+<script src="{{ url_for('static', filename='js/chat.js') }}?v=1"></script>
 {% endblock %}
