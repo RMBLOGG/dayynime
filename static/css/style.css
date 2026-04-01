@@ -132,12 +132,11 @@ button { font-family:inherit; cursor:pointer; }
   display:flex; align-items:flex-end;
   position:relative; overflow:hidden;
   text-decoration:none; color:#fff;
-  padding-top: var(--nav-h);
-  box-sizing: border-box;
 }
 .banner-slide .slide-bg {
   position:absolute; inset:0;
   width:100%; height:100%; object-fit:cover;
+  object-position: center 20%;
   filter:brightness(0.5);
 }
 .banner-slide::after {
@@ -672,7 +671,7 @@ button { font-family:inherit; cursor:pointer; }
 }
 @media(min-width:1024px) {
   .acard { width:155px; }
-  .banner-slide { aspect-ratio:16/6; }
+  .banner-slide { aspect-ratio:16/4; }
 }
 
 /* ── EPISODE THUMBNAILS (detail page) ────────────── */
