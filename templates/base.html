@@ -137,8 +137,8 @@
 
 <!-- TOP HEADER — Crunchyroll style -->
 <header class="top-header">
-  <!-- Hamburger -->
-  <button onclick="openSidebar()" style="background:none;border:none;color:#A0A0B0;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
+  <!-- Hamburger (mobile only) -->
+  <button onclick="openSidebar()" class="mobile-hamburger" style="background:none;border:none;color:#A0A0B0;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
     <i class="fas fa-bars"></i>
   </button>
   <!-- Logo + Brand -->
@@ -146,8 +146,22 @@
     <img src="/static/icon.png" style="width:26px;height:26px;border-radius:6px;object-fit:cover;">
     <span class="header-brand">Dayy<span>nime</span></span>
   </a>
-  <!-- Search icon button -->
-  <div style="flex:1;"></div>
+  <!-- Desktop Nav Links -->
+  <nav class="desktop-nav">
+    <a href="/home" class="desktop-nav-item" data-href="/home"><i class="fas fa-home"></i> Home</a>
+    <a href="/ongoing" class="desktop-nav-item" data-href="/ongoing"><i class="fas fa-play-circle"></i> Ongoing</a>
+    <a href="/jadwal" class="desktop-nav-item" data-href="/jadwal"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+    <a href="/genres" class="desktop-nav-item" data-href="/genres"><i class="fas fa-tag"></i> Genre</a>
+    <a href="/movies" class="desktop-nav-item" data-href="/movies"><i class="fas fa-film"></i> Movie</a>
+    <a href="/popular" class="desktop-nav-item" data-href="/popular"><i class="fas fa-fire"></i> Populer</a>
+  </nav>
+  <!-- Desktop Search Bar (inline, hidden on mobile) -->
+  <form class="desktop-search-bar" action="/search" method="get" style="display:none;">
+    <i class="fas fa-search"></i>
+    <input type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off">
+  </form>
+  <!-- Mobile: spacer + search icon -->
+  <div style="flex:1;" class="mobile-spacer"></div>
   <button id="searchToggleBtn" onclick="openHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
     <i class="fas fa-search"></i>
   </button>
@@ -155,7 +169,7 @@
   <!-- Blur backdrop -->
   <div id="searchBackdrop" onclick="closeHeaderSearch()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:298;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity 0.25s ease;"></div>
 
-  <!-- Search overlay -->
+  <!-- Search overlay (mobile) -->
   <div id="searchOverlay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:299;background:var(--bg);border-bottom:1px solid var(--border);height:var(--nav-h);align-items:center;padding:0 12px;gap:10px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s ease;">
     <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--radius);padding:0 12px;height:36px;border:1px solid var(--accent);">
       <i class="fas fa-search" style="color:var(--accent);font-size:13px;"></i>
@@ -283,11 +297,34 @@ function switchSource(key) {
       item.classList.add('active');
     }
   });
+  // Desktop nav active
+  document.querySelectorAll('.desktop-nav-item[data-href]').forEach(function(item) {
+    var href = item.getAttribute('data-href') || '';
+    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
+      item.classList.add('active');
+    }
+  });
   var sidebarPages = ['/ongoing','/completed','/movies','/popular','/animelist','/genres','/genre','/profile','/koleksi'];
   var trigger = document.getElementById('sidebarTrigger');
   if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) {
     trigger.classList.add('active');
   }
+})();
+
+// ── Inject hover overlay ke semua .acard-poster ──
+(function() {
+  function injectOverlays() {
+    document.querySelectorAll('.acard-poster:not([data-overlay])').forEach(function(poster) {
+      poster.setAttribute('data-overlay', '1');
+      var overlay = document.createElement('div');
+      overlay.className = 'acard-hover-overlay';
+      overlay.innerHTML = '<div class="acard-play-btn"><i class="fas fa-play"></i></div><div class="acard-hover-label">Tonton</div>';
+      poster.appendChild(overlay);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', injectOverlays);
+  setTimeout(injectOverlays, 800);
+  setTimeout(injectOverlays, 2500);
 })();
 </script>
 
