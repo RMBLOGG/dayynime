@@ -124,7 +124,7 @@ button { font-family:inherit; cursor:pointer; }
 .bnav-item.active i { transform:scale(1.1); }
 
 /* ── HERO BANNER SLIDER ──────────────────────────── */
-.banner-slider { position:relative; overflow:hidden; margin-bottom:0; }
+.banner-slider { position:relative; overflow:hidden; margin-bottom:0; margin-top:calc(-1 * var(--nav-h)); }
 .banner-track { display:flex; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1); }
 .banner-slide {
   min-width:100%; aspect-ratio:16/7;
@@ -132,6 +132,8 @@ button { font-family:inherit; cursor:pointer; }
   display:flex; align-items:flex-end;
   position:relative; overflow:hidden;
   text-decoration:none; color:#fff;
+  padding-top: var(--nav-h);
+  box-sizing: border-box;
 }
 .banner-slide .slide-bg {
   position:absolute; inset:0;
