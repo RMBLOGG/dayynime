@@ -305,6 +305,15 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
       {% endif %}
     </div>
 
+    <!-- LIVE VIEWER BAR -->
+    <div style="padding:8px 16px;">
+      <div id="epViewerBar" class="live-viewer-bar" style="display:none;">
+        <span class="live-viewer-bar-dot"></span>
+        <span id="epViewerCount">0</span>
+        <span style="color:rgba(255,255,255,0.6);">orang lagi nonton episode ini</span>
+      </div>
+    </div>
+
     <!-- EPISODE ACCORDION -->
     {% if anime_data and anime_data.detail.episodes %}
     <button class="ep-accordion-trigger" id="epAccTrigger" onclick="toggleAcc()">
@@ -510,5 +519,66 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 300);
   }
 });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function() {
+  var SUPABASE_URL = 'https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+
+  var epSlug   = '{{ slug }}';
+  var animeSlug = '{{ anime_slug }}';
+  if (!epSlug) return;
+
+  var client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  var uid = sessionStorage.getItem('dyn_uid');
+  if (!uid) {
+    uid = 'u_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    sessionStorage.setItem('dyn_uid', uid);
+  }
+
+  // Channel per episode — hitung yang nonton episode ini
+  var epChannel = client.channel('ep-viewers:' + epSlug, {
+    config: { presence: { key: uid } }
+  });
+
+  epChannel.on('presence', { event: 'sync' }, function() {
+    var count = Object.keys(epChannel.presenceState()).length;
+    var bar = document.getElementById('epViewerBar');
+    var countEl = document.getElementById('epViewerCount');
+    if (!bar || !countEl) return;
+    if (count >= 1) {
+      countEl.textContent = count;
+      bar.style.display = 'inline-flex';
+    } else {
+      bar.style.display = 'none';
+    }
+  });
+
+  epChannel.subscribe(function(status) {
+    if (status === 'SUBSCRIBED') {
+      epChannel.track({ page: 'episode', slug: epSlug, anime: animeSlug, at: Date.now() });
+    }
+  });
+
+  // Channel anime — supaya index.html juga bisa lihat viewer di anime ini
+  var animeChannel = client.channel('anime-viewers:' + animeSlug, {
+    config: { presence: { key: uid + '_ep' } }
+  });
+  animeChannel.subscribe(function(status) {
+    if (status === 'SUBSCRIBED') {
+      animeChannel.track({ page: 'episode', slug: epSlug, anime: animeSlug, at: Date.now() });
+    }
+  });
+
+  window.addEventListener('beforeunload', function() {
+    try {
+      epChannel.untrack(); client.removeChannel(epChannel);
+      animeChannel.untrack(); client.removeChannel(animeChannel);
+    } catch(e) {}
+  });
+})();
 </script>
 {% endblock %}

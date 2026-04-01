@@ -78,11 +78,16 @@
   </div>
   <div class="scroll-row">
     {% for anime in data.ongoing[:12] %}
-    <a href="/anime/{{ anime.slug }}" class="acard">
+    <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
       <div class="acard-poster">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
         {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
         {% if anime.episode %}<div class="acard-ep"><i class="fas fa-play-circle"></i> Ep {{ anime.episode }}</div>{% endif %}
+        <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+          <span class="acard-viewers-dot"></span>
+          <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+          <span>nonton</span>
+        </div>
       </div>
       <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
       <div class="acard-title">{{ anime.title }}</div>
@@ -140,11 +145,16 @@
   </div>
   <div class="scroll-row">
     {% for anime in popular.animes[:12] %}
-    <a href="/anime/{{ anime.slug }}" class="acard">
+    <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
       <div class="acard-poster">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
         {% if anime.rank %}<div class="acard-type">#{{ anime.rank }}</div>{% elif anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
         {% if anime.score %}<div class="acard-score"><i class="fas fa-star fa-xs"></i> {{ anime.score }}</div>{% endif %}
+        <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+          <span class="acard-viewers-dot"></span>
+          <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+          <span>nonton</span>
+        </div>
       </div>
       <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
       <div class="acard-title">{{ anime.title }}</div>
@@ -173,10 +183,15 @@
   <div class="tab-panel" id="panel-{{ day }}">
     <div class="scroll-row">
       {% for anime in animes[:10] %}
-      <a href="/anime/{{ anime.slug }}" class="acard">
+      <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
         <div class="acard-poster">
           <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
           {% if anime.time %}<div class="acard-ep"><i class="fas fa-clock fa-xs"></i> {{ anime.time }}</div>{% endif %}
+          <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+            <span class="acard-viewers-dot"></span>
+            <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+            <span>nonton</span>
+          </div>
         </div>
         <div class="acard-title">{{ anime.title }}</div>
       </a>
@@ -272,4 +287,75 @@
 </script>
 
 <div style="height:8px;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function() {
+  var SUPABASE_URL = 'https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+
+  var client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Kumpulkan semua slug anime yang ada di halaman
+  var slugs = [];
+  document.querySelectorAll('.acard[data-anime-slug]').forEach(function(el) {
+    var s = el.getAttribute('data-anime-slug');
+    if (s && slugs.indexOf(s) === -1) slugs.push(s);
+  });
+
+  // Generate user ID unik per sesi
+  var uid = sessionStorage.getItem('dyn_uid');
+  if (!uid) {
+    uid = 'u_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    sessionStorage.setItem('dyn_uid', uid);
+  }
+
+  // Track tiap channel per slug
+  var channels = {};
+
+  function updateBadge(slug, count) {
+    var badge = document.getElementById('viewers-' + slug);
+    var countEl = document.getElementById('viewers-count-' + slug);
+    if (!badge || !countEl) return;
+    if (count >= 1) {
+      countEl.textContent = count;
+      badge.classList.add('visible');
+    } else {
+      badge.classList.remove('visible');
+    }
+  }
+
+  function subscribeToSlug(slug) {
+    if (channels[slug]) return;
+    var ch = client.channel('anime-viewers:' + slug, {
+      config: { presence: { key: uid } }
+    });
+
+    ch.on('presence', { event: 'sync' }, function() {
+      var state = ch.presenceState();
+      var count = Object.keys(state).length;
+      updateBadge(slug, count);
+    });
+
+    ch.subscribe(function(status) {
+      if (status === 'SUBSCRIBED') {
+        // Kita subscribe sebagai passive observer — tidak track diri sendiri
+        // (kita hanya ingin lihat berapa yg ada di channel ini)
+      }
+    });
+
+    channels[slug] = ch;
+  }
+
+  // Subscribe ke semua slug yang ada di halaman
+  slugs.forEach(subscribeToSlug);
+
+  // Cleanup waktu user meninggalkan halaman
+  window.addEventListener('beforeunload', function() {
+    Object.values(channels).forEach(function(ch) {
+      try { client.removeChannel(ch); } catch(e) {}
+    });
+  });
+})();
+</script>
 {% endblock %}
