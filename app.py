@@ -2300,6 +2300,136 @@ def trakteer_latest():
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)})
 
+
+
+# ══════════════════════════════════════════════════════
+# WATCH HISTORY
+# ══════════════════════════════════════════════════════
+
+@app.route("/api/history", methods=["POST"])
+def history_save():
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False, "error": "Login dulu"}), 401
+    data         = request.get_json() or {}
+    anime_slug   = (data.get("anime_slug") or "").strip()
+    anime_title  = (data.get("anime_title") or "").strip()
+    anime_poster = (data.get("anime_poster") or "").strip()
+    ep_slug      = (data.get("ep_slug") or "").strip()
+    ep_name      = (data.get("ep_name") or "").strip()
+    source       = (data.get("source") or "samehadaku").strip()
+    if not anime_slug or not ep_slug:
+        return jsonify({"ok": False, "error": "Data tidak lengkap"}), 400
+    payload = {
+        "user_id": str(user["id"]), "anime_slug": anime_slug,
+        "anime_title": anime_title, "anime_poster": anime_poster,
+        "ep_slug": ep_slug, "ep_name": ep_name,
+        "source": source, "watched_at": "now()",
+    }
+    try:
+        r = requests.post(
+            f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
+            headers={**supabase_service_headers(), "Prefer": "resolution=merge-duplicates,return=minimal"},
+            json=payload, timeout=5,
+        )
+        return jsonify({"ok": r.status_code in (200, 201)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/history")
+def history_get():
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False, "history": []}), 401
+    limit = min(int(request.args.get("limit", 12)), 50)
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
+            headers=supabase_service_headers(),
+            params={"user_id": f"eq.{user['id']}", "order": "watched_at.desc", "limit": limit},
+            timeout=5,
+        )
+        rows = r.json() if r.status_code == 200 else []
+        return jsonify({"ok": True, "history": rows})
+    except Exception as e:
+        return jsonify({"ok": False, "history": [], "error": str(e)})
+
+
+@app.route("/api/history/<anime_slug>", methods=["DELETE"])
+def history_delete(anime_slug):
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False}), 401
+    try:
+        requests.delete(
+            f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
+            headers=supabase_service_headers(),
+            params={"user_id": f"eq.{user['id']}", "anime_slug": f"eq.{anime_slug}"},
+            timeout=5,
+        )
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)})
+
+
+@app.route("/api/history/all", methods=["DELETE"])
+def history_delete_all():
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False}), 401
+    try:
+        requests.delete(
+            f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
+            headers=supabase_service_headers(),
+            params={"user_id": f"eq.{user['id']}"},
+            timeout=5,
+        )
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)})
+
+
+# ══════════════════════════════════════════════════════
+# ANALYTICS (admin only)
+# ══════════════════════════════════════════════════════
+
+@app.route("/api/admin/analytics")
+def admin_analytics():
+    user = session.get("user")
+    if not user or not user.get("is_admin"):
+        return jsonify({"error": "Forbidden"}), 403
+    try:
+        from collections import Counter
+        import datetime
+        r_all = requests.get(
+            f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
+            headers=supabase_service_headers(),
+            params={"select": "anime_slug,anime_title,anime_poster,user_id,watched_at", "order": "watched_at.desc", "limit": 1000},
+            timeout=8,
+        )
+        rows = r_all.json() if r_all.status_code == 200 else []
+        counter = Counter()
+        meta = {}
+        for row in rows:
+            s = row.get("anime_slug", "")
+            counter[s] += 1
+            if s not in meta:
+                meta[s] = {"title": row.get("anime_title",""), "poster": row.get("anime_poster","")}
+        top_anime = [{"slug": s, "title": meta[s]["title"], "poster": meta[s]["poster"], "count": c} for s, c in counter.most_common(10)]
+        since_24h = (datetime.datetime.utcnow() - datetime.timedelta(hours=24)).isoformat() + "Z"
+        active_users = len(set(r["user_id"] for r in rows if r.get("watched_at","") >= since_24h))
+        r_recent = requests.get(
+            f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
+            headers=supabase_service_headers(),
+            params={"select": "anime_title,anime_poster,ep_name,anime_slug,ep_slug,watched_at,source,user_id", "order": "watched_at.desc", "limit": 15},
+            timeout=8,
+        )
+        recent = r_recent.json() if r_recent.status_code == 200 else []
+        return jsonify({"ok": True, "top_anime": top_anime, "active_users": active_users, "total_watches": len(rows), "recent": recent})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
 @app.route("/sitemap.xml")
 def sitemap():
     return send_from_directory("static", "sitemap.xml", mimetype="application/xml")
