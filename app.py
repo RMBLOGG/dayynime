@@ -1014,11 +1014,13 @@ def admin_stats():
             uid = p.get("user_id")
             u = users_map.get(uid, {})
             premium_users.append({
+                "user_id":    uid,
                 "id":         uid,
                 "name":       u.get("username", uid),
                 "email":      u.get("email", ""),
                 "is_active":  p.get("is_active"),
                 "expires_at": p.get("expires_at"),
+                "created_at": p.get("created_at", ""),
             })
     except Exception:
         pass
