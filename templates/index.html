@@ -66,6 +66,79 @@
   </div>
 </div>
 
+<!-- ═══ LANJUTKAN NONTON ═══ -->
+<div class="section" id="cwSection" style="display:none;">
+  <div class="section-head">
+    <div class="section-title">
+      <i class="fas fa-history" style="color:var(--accent);font-size:11px;"></i>
+      Lanjutkan Nonton
+    </div>
+    <button onclick="clearAllHistory()" style="font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;text-transform:uppercase;letter-spacing:0.3px;">
+      Hapus Semua
+    </button>
+  </div>
+  <div class="scroll-row" id="cwList"></div>
+</div>
+
+<script>
+(function() {
+  function timeAgo(iso) {
+    var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60)   return 'Baru saja';
+    if (diff < 3600) return Math.floor(diff/60) + ' mnt lalu';
+    if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
+    return Math.floor(diff/86400) + ' hari lalu';
+  }
+
+  function loadHistory() {
+    fetch('/api/history?limit=12')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (!d.ok || !d.history || !d.history.length) return;
+        var sec  = document.getElementById('cwSection');
+        var list = document.getElementById('cwList');
+        if (!sec || !list) return;
+        list.innerHTML = '';
+        d.history.forEach(function(item) {
+          var card = document.createElement('a');
+          card.className = 'cw-card';
+          card.href = '/episode/' + item.ep_slug + '?anime=' + item.anime_slug;
+          card.innerHTML =
+            '<div class="cw-thumb">' +
+              '<img src="' + (item.anime_poster||'/static/no-image.svg') + '" loading="lazy" onerror="this.src=\'/static/no-image.svg\'">' +
+              '<div class="cw-play-overlay"><i class="fas fa-play-circle"></i></div>' +
+              '<div class="cw-ep-badge"><i class="fas fa-play fa-xs"></i> ' + (item.ep_name||'Episode') + '</div>' +
+              '<button class="cw-del" title="Hapus" onclick="delHistory(event,\'' + item.anime_slug + '\')"><i class="fas fa-times"></i></button>' +
+            '</div>' +
+            '<div class="cw-info">' +
+              '<div class="cw-title">' + (item.anime_title||'Anime') + '</div>' +
+              '<div class="cw-meta"><i class="fas fa-clock"></i>' + timeAgo(item.watched_at) + '</div>' +
+            '</div>';
+          list.appendChild(card);
+        });
+        sec.style.display = '';
+      }).catch(function(){});
+  }
+
+  window.delHistory = function(e, slug) {
+    e.preventDefault(); e.stopPropagation();
+    fetch('/api/history/' + slug, { method: 'DELETE' })
+      .then(function() { loadHistory(); })
+      .catch(function(){});
+  };
+
+  window.clearAllHistory = function() {
+    if (!confirm('Hapus semua riwayat nonton?')) return;
+    fetch('/api/history/all', { method: 'DELETE' })
+      .then(function(){ document.getElementById('cwSection').style.display='none'; })
+      .catch(function(){});
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadHistory);
+  else loadHistory();
+})();
+</script>
+
 <!-- ═══ SEDANG HANGAT ═══ -->
 {% if data and data.ongoing %}
 <div class="section">

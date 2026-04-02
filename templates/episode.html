@@ -518,6 +518,26 @@ document.addEventListener('DOMContentLoaded', function() {
       activeSidebarEp.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }, 300);
   }
+
+  // ── Auto-save watch history ──
+  {% if session.get('user') %}
+  (function() {
+    var payload = {
+      anime_slug:   '{{ anime_slug }}',
+      anime_title:  '{{ (anime_data.detail.title if anime_data and anime_data.detail else (data.title if data else '')) | e }}',
+      anime_poster: '{{ (anime_data.detail.poster if anime_data and anime_data.detail else '') | e }}',
+      ep_slug:      '{{ slug }}',
+      ep_name:      '{{ (data.title if data else slug) | e }}',
+      source:       '{{ session.get("active_source", "samehadaku") }}',
+    };
+    if (!payload.anime_slug || !payload.ep_slug) return;
+    fetch('/api/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(function(){});
+  })();
+  {% endif %}
 });
 </script>
 

@@ -153,6 +153,44 @@ body { background: var(--adm-bg) !important; }
     <button onclick="loadVouchers()" style="margin-left:8px;padding:3px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text2);font-size:11px;cursor:pointer;font-family:inherit;">Refresh</button>
   </div>
   <div class="adm-table-wrap" id="voucher-list-wrap"><div class="adm-empty">Klik Refresh untuk memuat...</div></div>
+
+  <!-- ═══ ANALYTICS ═══ -->
+  <div class="adm-section-title" style="margin-top:28px;">
+    <i class="fas fa-chart-bar" style="color:#34d399;font-size:11px;"></i> Analytics Watch History
+    <button onclick="loadAnalytics()" style="margin-left:8px;padding:3px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text2);font-size:11px;cursor:pointer;font-family:inherit;">Refresh</button>
+  </div>
+
+  <!-- Stat cards -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+    <div class="adm-stat" style="text-align:center;">
+      <div style="font-size:1.6rem;font-weight:900;color:#34d399;" id="an-total">–</div>
+      <div style="font-size:9px;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Total Ditonton</div>
+    </div>
+    <div class="adm-stat" style="text-align:center;">
+      <div style="font-size:1.6rem;font-weight:900;color:#f47521;" id="an-active">–</div>
+      <div style="font-size:9px;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">User Aktif 24j</div>
+    </div>
+    <div class="adm-stat" style="text-align:center;">
+      <div style="font-size:1.6rem;font-weight:900;color:#a78bfa;" id="an-top-count">–</div>
+      <div style="font-size:9px;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Anime Unik</div>
+    </div>
+  </div>
+
+  <!-- Top Anime -->
+  <div style="font-size:10px;font-weight:900;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">
+    <i class="fas fa-fire" style="color:#f47521;margin-right:4px;"></i>Top 10 Anime Terpopuler
+  </div>
+  <div class="adm-table-wrap" id="an-top-anime" style="margin-bottom:16px;">
+    <div class="adm-empty">Klik Refresh untuk memuat...</div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div style="font-size:10px;font-weight:900;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">
+    <i class="fas fa-clock" style="color:#60a5fa;margin-right:4px;"></i>Aktivitas Terbaru
+  </div>
+  <div class="adm-table-wrap" id="an-recent" style="margin-bottom:16px;">
+    <div class="adm-empty">Klik Refresh untuk memuat...</div>
+  </div>
 </div>
 
 <script>
@@ -310,6 +348,71 @@ async function deleteVoucher(code) {
   });
   loadVouchers();
 }
+
+// ── Analytics ─────────────────────────────────────
+async function loadAnalytics() {
+  try {
+    const res  = await fetch('/api/admin/analytics');
+    const data = await res.json();
+    if (!data.ok) return;
+
+    // Stat cards
+    document.getElementById('an-total').textContent  = data.total_watches ?? '–';
+    document.getElementById('an-active').textContent = data.active_users  ?? '–';
+    document.getElementById('an-top-count').textContent = (data.top_anime||[]).length;
+
+    // Top anime
+    const topWrap = document.getElementById('an-top-anime');
+    if (data.top_anime && data.top_anime.length) {
+      let html = '<table style="width:100%;border-collapse:collapse;">';
+      html += '<tr style="border-bottom:1px solid var(--adm-border);"><th style="padding:8px;text-align:left;">#</th>'
+        + '<th style="padding:8px;text-align:left;">Anime</th>'
+        + '<th style="padding:8px;text-align:center;">Ditonton</th></tr>';
+      data.top_anime.forEach(function(a, i) {
+        const isTop = i < 3;
+        html += '<tr style="border-bottom:1px solid var(--adm-border);">'
+          + '<td style="padding:8px;font-weight:900;color:' + (isTop?'#f47521':'var(--adm-muted)') + ';">' + (i+1) + '</td>'
+          + '<td style="padding:8px;">'
+          + (a.poster ? '<img src="'+a.poster+'" style="width:28px;height:40px;object-fit:cover;border-radius:3px;vertical-align:middle;margin-right:8px;">' : '')
+          + '<span style="font-size:12px;font-weight:700;color:var(--adm-text);">' + (a.title||a.slug) + '</span>'
+          + '</td>'
+          + '<td style="padding:8px;text-align:center;"><span style="background:rgba(244,117,33,0.15);color:#f47521;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">'
+          + a.count + 'x</span></td>'
+          + '</tr>';
+      });
+      html += '</table>';
+      topWrap.innerHTML = html;
+    } else {
+      topWrap.innerHTML = '<div class="adm-empty">Belum ada data.</div>';
+    }
+
+    // Recent activity
+    const recWrap = document.getElementById('an-recent');
+    if (data.recent && data.recent.length) {
+      let html = '';
+      data.recent.forEach(function(r) {
+        const d = new Date(r.watched_at);
+        const timeStr = d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+        html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--adm-border);">'
+          + (r.anime_poster ? '<img src="'+r.anime_poster+'" style="width:28px;height:40px;object-fit:cover;border-radius:3px;flex-shrink:0;">' : '')
+          + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:11px;font-weight:700;color:var(--adm-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (r.anime_title||r.anime_slug) + '</div>'
+          + '<div style="font-size:10px;color:var(--adm-muted);">' + (r.ep_name||r.ep_slug) + ' · ' + (r.source||'') + '</div>'
+          + '</div>'
+          + '<div style="font-size:9px;color:var(--adm-muted);flex-shrink:0;">' + timeStr + '</div>'
+          + '</div>';
+      });
+      recWrap.innerHTML = html;
+    } else {
+      recWrap.innerHTML = '<div class="adm-empty">Belum ada aktivitas.</div>';
+    }
+  } catch(e) {
+    console.error('Analytics error', e);
+  }
+}
+
+loadAnalytics();
+setInterval(loadAnalytics, 60000);
 </script>
 {% endif %}
 
