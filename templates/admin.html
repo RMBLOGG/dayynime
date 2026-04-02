@@ -411,8 +411,10 @@ async function loadAnalytics() {
   }
 }
 
-loadAnalytics();
-setInterval(loadAnalytics, 60000);
+document.addEventListener("DOMContentLoaded", function() {
+  loadAnalytics();
+  setInterval(loadAnalytics, 60000);
+});
 </script>
 {% endif %}
 
