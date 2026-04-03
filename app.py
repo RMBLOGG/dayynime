@@ -1678,6 +1678,102 @@ def delete_comment(comment_id):
     return jsonify({"ok": r.ok})
 
 
+# ── Global Chat ────────────────────────────────────────────────────────────────
+
+@app.route("/ruang-ngobrol")
+def global_chat_page():
+    """Halaman global chat — semua user bisa lihat, hanya login yang bisa kirim."""
+    return render_template("global_chat.html")
+
+
+@app.route("/api/globalchat", methods=["GET"])
+def globalchat_get():
+    """Ambil riwayat pesan (50 terbaru, urut dari lama ke baru untuk tampilan chat)."""
+    try:
+        limit = min(int(request.args.get("limit", 50)), 100)
+        before_id = request.args.get("before_id")
+
+        params = {
+            "order": "created_at.desc",
+            "limit": limit,
+            "select": "id,user_id,user_name,user_avatar,message,created_at",
+        }
+        if before_id:
+            params["id"] = f"lt.{before_id}"
+
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_global_chat",
+            headers=supabase_service_headers(),
+            params=params,
+            timeout=5,
+        )
+        rows = r.json() if r.ok else []
+        rows.reverse()
+        return jsonify({"ok": True, "messages": rows})
+    except Exception as e:
+        return jsonify({"ok": False, "messages": [], "error": str(e)}), 500
+
+
+@app.route("/api/globalchat", methods=["POST"])
+def globalchat_post():
+    """Kirim pesan ke global chat — wajib login."""
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False, "error": "Login dulu untuk bisa ngobrol!"}), 401
+
+    data    = request.get_json() or {}
+    message = (data.get("message") or "").strip()
+
+    if not message:
+        return jsonify({"ok": False, "error": "Pesan tidak boleh kosong."}), 400
+    if len(message) > 300:
+        return jsonify({"ok": False, "error": "Pesan maksimal 300 karakter."}), 400
+
+    payload = {
+        "user_id":     str(user["id"]),
+        "user_name":   user["name"],
+        "user_avatar": user.get("avatar", ""),
+        "message":     message,
+    }
+
+    try:
+        r = requests.post(
+            f"{SUPABASE_URL}/rest/v1/app_global_chat",
+            headers={**supabase_service_headers(), "Prefer": "return=representation"},
+            json=payload,
+            timeout=5,
+        )
+        if r.ok:
+            row = r.json()[0] if r.json() else payload
+            return jsonify({"ok": True, "message": row})
+        return jsonify({"ok": False, "error": "Gagal kirim pesan.", "detail": r.text}), 500
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/globalchat/<int:msg_id>", methods=["DELETE"])
+def globalchat_delete(msg_id):
+    """Hapus pesan — hanya milik sendiri atau admin."""
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False, "error": "Unauthorized"}), 401
+
+    params = {"id": f"eq.{msg_id}"}
+    if not user.get("is_admin"):
+        params["user_id"] = f"eq.{user['id']}"
+
+    try:
+        r = requests.delete(
+            f"{SUPABASE_URL}/rest/v1/app_global_chat",
+            headers=supabase_service_headers(),
+            params=params,
+            timeout=5,
+        )
+        return jsonify({"ok": r.ok})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 # ── Sociabuzz Webhook ──────────────────────────────────────────────────────────
 
 @app.route("/api/sociabuzz/webhook", methods=["POST"])
