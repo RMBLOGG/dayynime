@@ -99,10 +99,10 @@
       Lanjutkan Nonton
     </div>
     <button onclick="clearAllHistory()" style="font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;text-transform:uppercase;letter-spacing:0.3px;">
-      Hapus Semua
+      Hapus semua ›
     </button>
   </div>
-  <div class="scroll-row" id="cwList"></div>
+  <div class="cw-list-wrap" id="cwList"></div>
 </div>
 
 <script>
@@ -131,14 +131,14 @@
           card.innerHTML =
             '<div class="cw-thumb">' +
               '<img src="' + (item.anime_poster||'/static/no-image.svg') + '" loading="lazy" onerror="this.src=\'/static/no-image.svg\'">' +
-              '<div class="cw-play-overlay"><i class="fas fa-play-circle"></i></div>' +
-              '<div class="cw-ep-badge"><i class="fas fa-play fa-xs"></i> ' + (item.ep_name||'Episode') + '</div>' +
-              '<button class="cw-del" title="Hapus" onclick="delHistory(event,\'' + item.anime_slug + '\')"><i class="fas fa-times"></i></button>' +
+              '<div class="cw-play-overlay"><i class="fas fa-play"></i></div>' +
             '</div>' +
             '<div class="cw-info">' +
               '<div class="cw-title">' + (item.anime_title||'Anime') + '</div>' +
+              '<div class="cw-ep-name">' + (item.ep_name||'Episode') + '</div>' +
               '<div class="cw-meta"><i class="fas fa-clock"></i>' + timeAgo(item.watched_at) + '</div>' +
-            '</div>';
+            '</div>' +
+            '<button class="cw-del" title="Hapus" onclick="delHistory(event,\'' + item.anime_slug + '\')"><i class="fas fa-times"></i></button>';
           list.appendChild(card);
         });
         sec.style.display = '';
