@@ -40,28 +40,20 @@
   <!-- Input area -->
   {% if session.get('user') %}
   <div class="gc-input-area">
-    <div class="gc-input-user">
-      {% if session['user'].get('avatar') %}
-      <img class="gc-input-avatar" src="{{ session['user']['avatar'] }}" alt="" onerror="this.src=''">
-      {% else %}
-      <div class="gc-input-avatar gc-avatar-init">{{ session['user']['name'][0]|upper }}</div>
-      {% endif %}
-    </div>
-    <div class="gc-input-box">
-      <textarea
-        id="gcInput"
-        class="gc-textarea"
-        placeholder="Tulis pesan... (Enter untuk kirim)"
-        maxlength="300"
-        rows="1"
-      ></textarea>
-      <div class="gc-input-footer">
-        <span class="gc-char-count" id="gcCharCount">0/300</span>
-        <button class="gc-send-btn" id="gcSendBtn">
-          <i class="fas fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
+    <textarea
+      id="gcInput"
+      class="gc-textarea"
+      placeholder="Tulis pesan..."
+      maxlength="300"
+      rows="1"
+    ></textarea>
+    <button class="gc-send-btn" id="gcSendBtn">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+  <div class="gc-input-meta">
+    <span class="gc-char-count" id="gcCharCount">0/300</span>
+    <span class="gc-input-hint">Enter untuk kirim</span>
   </div>
   {% else %}
   <div class="gc-guest-wall">
@@ -606,48 +598,47 @@
 /* Input area */
 .gc-input-area {
   display: flex;
-  align-items: flex-end;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
   background: var(--bg2);
   border-top: 1px solid var(--border);
-  padding: 10px 16px;
+  padding: 10px 12px;
   flex-shrink: 0;
 }
-.gc-input-user { flex-shrink:0; }
-.gc-input-avatar {
-  width:32px; height:32px; border-radius:50%;
-  object-fit:cover; display:block;
+.gc-input-meta {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 14px 6px;
+  background: var(--bg2);
+  flex-shrink: 0;
 }
-
-.gc-input-box { flex:1; display:flex; flex-direction:column; gap:6px; }
+.gc-char-count { font-size: 11px; color: var(--text3); }
+.gc-input-hint { font-size: 11px; color: var(--text3); }
 .gc-textarea {
-  width: 100%;
+  flex: 1;
   background: var(--bg3);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 20px;
   color: var(--text);
   font-family: inherit;
   font-size: 13px;
-  padding: 9px 12px;
+  padding: 9px 14px;
   resize: none;
   outline: none;
   line-height: 1.5;
   transition: border-color 0.2s;
   user-select: text;
   -webkit-user-select: text;
+  max-height: 100px;
 }
 .gc-textarea:focus { border-color: var(--accent); }
 .gc-textarea::placeholder { color: var(--text3); }
-
-.gc-input-footer {
-  display: flex; justify-content:space-between; align-items:center;
-}
-.gc-char-count { font-size: 11px; color: var(--text3); }
 .gc-send-btn {
   background: var(--accent);
   border: none; border-radius: 50%;
-  width: 34px; height: 34px;
-  color: #fff; font-size: 14px;
+  width: 38px; height: 38px;
+  flex-shrink: 0;
+  color: #fff; font-size: 15px;
   display: flex; align-items:center; justify-content:center;
   transition: background 0.2s, transform 0.15s;
 }
