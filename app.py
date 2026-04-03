@@ -2393,8 +2393,150 @@ def history_delete_all():
 
 
 # ══════════════════════════════════════════════════════
-# ANALYTICS (admin only)
+# PROFILE CUSTOMIZATION
 # ══════════════════════════════════════════════════════
+
+@app.route("/api/profile/update", methods=["POST"])
+def profile_update():
+    """Update username, bio, avatar user."""
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False, "error": "Login dulu"}), 401
+
+    data     = request.get_json() or {}
+    username = (data.get("username") or "").strip()
+    bio      = (data.get("bio") or "").strip()
+    avatar   = (data.get("avatar") or "").strip()
+
+    if not username:
+        return jsonify({"ok": False, "error": "Username tidak boleh kosong"}), 400
+    if len(username) < 3:
+        return jsonify({"ok": False, "error": "Username minimal 3 karakter"}), 400
+    if len(username) > 30:
+        return jsonify({"ok": False, "error": "Username maksimal 30 karakter"}), 400
+    if len(bio) > 150:
+        return jsonify({"ok": False, "error": "Bio maksimal 150 karakter"}), 400
+
+    # Cek username duplikat (kecuali username sendiri)
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={"username": f"eq.{username}", "select": "id"},
+            timeout=5,
+        )
+        existing = r.json() if r.ok else []
+        for u in existing:
+            if str(u.get("id")) != str(user["id"]):
+                return jsonify({"ok": False, "error": "Username sudah dipakai"}), 409
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+    # Build update payload
+    payload = {"username": username, "bio": bio}
+    if avatar:
+        payload["avatar"] = avatar
+
+    try:
+        r = requests.patch(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers={**supabase_service_headers(), "Prefer": "return=representation"},
+            params={"id": f"eq.{user['id']}"},
+            json=payload,
+            timeout=5,
+        )
+        if not r.ok:
+            return jsonify({"ok": False, "error": r.text}), 500
+
+        updated = r.json()
+        if updated:
+            u = updated[0]
+            # Update session
+            session["user"]["name"]   = u.get("username", username)
+            session["user"]["avatar"] = u.get("avatar", user.get("avatar", ""))
+            session.modified = True
+
+        return jsonify({"ok": True, "user": {
+            "name":   username,
+            "avatar": payload.get("avatar", user.get("avatar", "")),
+            "bio":    bio,
+        }})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/profile/me")
+def profile_me():
+    """Ambil data profil lengkap user termasuk bio."""
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False}), 401
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={"id": f"eq.{user['id']}", "select": "id,username,email,avatar,bio,created_at"},
+            timeout=5,
+        )
+        rows = r.json() if r.ok else []
+        if not rows:
+            return jsonify({"ok": False, "error": "User tidak ditemukan"}), 404
+        u = rows[0]
+        return jsonify({"ok": True, "user": {
+            "id":         str(u.get("id", "")),
+            "name":       u.get("username", ""),
+            "email":      u.get("email", ""),
+            "avatar":     u.get("avatar", ""),
+            "bio":        u.get("bio", ""),
+            "created_at": u.get("created_at", ""),
+        }})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/profile/change-password", methods=["POST"])
+def profile_change_password():
+    """Ganti password user."""
+    user = session.get("user")
+    if not user:
+        return jsonify({"ok": False, "error": "Login dulu"}), 401
+
+    data         = request.get_json() or {}
+    old_password = (data.get("old_password") or "").strip()
+    new_password = (data.get("new_password") or "").strip()
+
+    if not old_password or not new_password:
+        return jsonify({"ok": False, "error": "Password lama dan baru wajib diisi"}), 400
+    if len(new_password) < 6:
+        return jsonify({"ok": False, "error": "Password baru minimal 6 karakter"}), 400
+
+    try:
+        # Verifikasi password lama
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={"id": f"eq.{user['id']}", "select": "password"},
+            timeout=5,
+        )
+        rows = r.json() if r.ok else []
+        if not rows:
+            return jsonify({"ok": False, "error": "User tidak ditemukan"}), 404
+        if rows[0]["password"] != hash_password(old_password):
+            return jsonify({"ok": False, "error": "Password lama salah"}), 401
+
+        # Update password
+        r2 = requests.patch(
+            f"{SUPABASE_URL}/rest/v1/app_users",
+            headers=supabase_service_headers(),
+            params={"id": f"eq.{user['id']}"},
+            json={"password": hash_password(new_password)},
+            timeout=5,
+        )
+        if not r2.ok:
+            return jsonify({"ok": False, "error": r2.text}), 500
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 @app.route("/api/admin/analytics")
 def admin_analytics():
