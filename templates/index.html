@@ -10,6 +10,67 @@
   {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 
+<!-- ═══ ANNOUNCEMENT BAR ═══ -->
+<div id="announcementBar" style="
+  background: linear-gradient(90deg, #1a1a23 0%, #1e1a2e 50%, #1a1a23 100%);
+  border-bottom: 1px solid rgba(244,117,33,0.25);
+  padding: 0 12px;
+  position: relative;
+  overflow: hidden;
+">
+  <!-- shimmer line -->
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F47521,transparent);opacity:0.6;"></div>
+
+  <div style="display:flex;align-items:center;gap:8px;padding:7px 0;">
+    <!-- label -->
+    <div style="
+      flex-shrink:0;
+      background:#F47521;color:#fff;
+      font-size:9px;font-weight:900;
+      padding:3px 7px;border-radius:4px;
+      letter-spacing:0.5px;text-transform:uppercase;
+    ">📢 INFO</div>
+
+    <!-- scrolling text -->
+    <div style="flex:1;overflow:hidden;position:relative;">
+      <div id="announceTicker" style="
+        display:flex;gap:40px;
+        white-space:nowrap;
+        animation: tickerScroll 22s linear infinite;
+        font-size:11px;color:#C0C0C8;
+      ">
+        <span>Ganti server sesuai kebutuhan kamu &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> (Samehadaku) — koleksi terlengkap &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> (Animasu) — update cepat &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> (Otakudesu) — kualitas stabil &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server
+        </span>
+        <!-- duplicate for seamless loop -->
+        <span>Ganti server sesuai kebutuhan kamu &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> (Samehadaku) — koleksi terlengkap &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> (Animasu) — update cepat &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> (Otakudesu) — kualitas stabil &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server
+        </span>
+      </div>
+    </div>
+
+    <!-- close button -->
+    <button onclick="document.getElementById('announcementBar').style.display='none'" style="
+      flex-shrink:0;background:none;border:none;
+      color:#666;font-size:14px;cursor:pointer;
+      padding:0 2px;line-height:1;
+    ">×</button>
+  </div>
+</div>
+<style>
+@keyframes tickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+#announceTicker:hover { animation-play-state: paused; }
+</style>
+
 <!-- ═══ HERO BANNER ═══ -->
 <div class="banner-slider">
   <div class="banner-track">
