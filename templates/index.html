@@ -34,23 +34,22 @@
     <!-- scrolling text -->
     <div style="flex:1;overflow:hidden;position:relative;">
       <div id="announceTicker" style="
-        display:flex;gap:40px;
+        display:inline-flex;gap:0;
         white-space:nowrap;
-        animation: tickerScroll 22s linear infinite;
+        animation: tickerScroll 18s linear infinite;
         font-size:11px;color:#C0C0C8;
       ">
-        <span>Ganti server sesuai kebutuhan kamu &nbsp;·&nbsp;
-          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> (Samehadaku) — koleksi terlengkap &nbsp;·&nbsp;
-          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> (Animasu) — update cepat &nbsp;·&nbsp;
-          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> (Otakudesu) — kualitas stabil &nbsp;·&nbsp;
-          Ganti server lewat Menu → Ganti Server
+        <span style="padding-right:60px;">Setiap server memiliki koleksi berbeda &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </span>
-        <!-- duplicate for seamless loop -->
-        <span>Ganti server sesuai kebutuhan kamu &nbsp;·&nbsp;
-          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> (Samehadaku) — koleksi terlengkap &nbsp;·&nbsp;
-          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> (Animasu) — update cepat &nbsp;·&nbsp;
-          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> (Otakudesu) — kualitas stabil &nbsp;·&nbsp;
-          Ganti server lewat Menu → Ganti Server
+        <span style="padding-right:60px;">Setiap server memiliki koleksi berbeda &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </span>
       </div>
     </div>
@@ -68,6 +67,7 @@
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+#announceTicker { will-change: transform; }
 #announceTicker:hover { animation-play-state: paused; }
 </style>
 
