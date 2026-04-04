@@ -213,8 +213,19 @@
   <a href="/genres" class="bnav-item" data-href="/genres">
     <i class="fas fa-tag"></i><span>Genre</span>
   </a>
-  <a href="/ruang-ngobrol" class="bnav-item" data-href="/ruang-ngobrol">
-    <i class="fas fa-comments"></i><span>Ngobrol</span>
+  <a href="/ruang-ngobrol" class="bnav-item" data-href="/ruang-ngobrol" id="bnavNgobrol" style="position:relative;">
+    <span style="position:relative;display:inline-block;">
+      <i class="fas fa-comments"></i>
+      <span id="chatUnreadDot" style="
+        display:none;
+        position:absolute;top:-3px;right:-4px;
+        width:8px;height:8px;border-radius:50%;
+        background:#e53e3e;
+        border:1.5px solid var(--bg);
+        animation:chatDotPulse 1.5s ease-in-out infinite;
+      "></span>
+    </span>
+    <span>Ngobrol</span>
   </a>
   <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
     <i class="fas fa-bars"></i><span>Menu</span>
@@ -635,6 +646,59 @@ document.addEventListener('click', function(e) {
     s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
     document.head.appendChild(s2);
   });
+})();
+</script>
+
+<!-- ── Chat Unread Dot ─────────────────────────────── -->
+<style>
+@keyframes chatDotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.35); opacity: 0.7; }
+}
+</style>
+<script>
+(function() {
+  // Jangan jalankan kalau sedang di halaman ngobrol
+  if (window.location.pathname === '/ruang-ngobrol') return;
+
+  var SUPABASE_URL  = 'https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+
+  var dot = document.getElementById('chatUnreadDot');
+  if (!dot) return;
+
+  // Cek localStorage — kalau sudah pernah dapat notif sebelum halaman di-refresh
+  var STORE_KEY = 'dayy_chat_unread';
+  if (localStorage.getItem(STORE_KEY) === '1') dot.style.display = 'block';
+
+  // Sembunyikan dot kalau user klik tombol Ngobrol
+  var navBtn = document.getElementById('bnavNgobrol');
+  if (navBtn) navBtn.addEventListener('click', function() {
+    dot.style.display = 'none';
+    localStorage.removeItem(STORE_KEY);
+  });
+
+  // Load Supabase SDK lalu subscribe realtime
+  function initChatWatcher() {
+    if (typeof supabase === 'undefined') return; // SDK belum ada, skip
+    var client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    client.channel('global-chat-room')
+      .on('broadcast', { event: 'new_message' }, function() {
+        dot.style.display = 'block';
+        localStorage.setItem(STORE_KEY, '1');
+      })
+      .subscribe();
+  }
+
+  // Tunggu SDK siap (mungkin di-load async oleh halaman lain)
+  if (typeof supabase !== 'undefined') {
+    initChatWatcher();
+  } else {
+    var sdk = document.createElement('script');
+    sdk.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+    sdk.onload = initChatWatcher;
+    document.head.appendChild(sdk);
+  }
 })();
 </script>
 </body>
