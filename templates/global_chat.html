@@ -370,7 +370,8 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/"/g, '&quot;')
+      .replace(/\n/g, '<br>');
   }
 
   function formatTime(val) {
@@ -578,7 +579,7 @@
   color: var(--text);
 }
 
-.gc-msg-text { flex: 1; }
+.gc-msg-text { flex: 1; white-space: pre-wrap; word-break: break-word; }
 
 .gc-del-btn {
   background: none; border: none;
