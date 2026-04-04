@@ -658,47 +658,52 @@ document.addEventListener('click', function(e) {
 </style>
 <script>
 (function() {
-  // Jangan jalankan kalau sedang di halaman ngobrol
-  if (window.location.pathname === '/ruang-ngobrol') return;
-
-  var SUPABASE_URL  = 'https://mafnnqttvkdgqqxczqyt.supabase.co';
-  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+  if (window.location.pathname === '/ruang-ngobrol') {
+    // Kalau di halaman ngobrol, update last_seen ke sekarang
+    localStorage.setItem('dayy_chat_seen', new Date().toISOString());
+    return;
+  }
 
   var dot = document.getElementById('chatUnreadDot');
   if (!dot) return;
 
-  // Cek localStorage — kalau sudah pernah dapat notif sebelum halaman di-refresh
-  var STORE_KEY = 'dayy_chat_unread';
-  if (localStorage.getItem(STORE_KEY) === '1') dot.style.display = 'block';
+  var SEEN_KEY  = 'dayy_chat_seen';
+  var UNREAD_KEY = 'dayy_chat_unread';
 
-  // Sembunyikan dot kalau user klik tombol Ngobrol
+  // Tampilkan dot kalau ada unread tersimpan
+  if (localStorage.getItem(UNREAD_KEY) === '1') dot.style.display = 'block';
+
+  // Klik Ngobrol → hapus dot + update last seen
   var navBtn = document.getElementById('bnavNgobrol');
   if (navBtn) navBtn.addEventListener('click', function() {
     dot.style.display = 'none';
-    localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem(UNREAD_KEY);
+    localStorage.setItem(SEEN_KEY, new Date().toISOString());
   });
 
-  // Load Supabase SDK lalu subscribe realtime
-  function initChatWatcher() {
-    if (typeof supabase === 'undefined') return; // SDK belum ada, skip
-    var client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-    client.channel('global-chat-room')
-      .on('broadcast', { event: 'new_message' }, function() {
-        dot.style.display = 'block';
-        localStorage.setItem(STORE_KEY, '1');
+  function checkUnread() {
+    var lastSeen = localStorage.getItem(SEEN_KEY);
+    // Kalau belum pernah buka chat, anggap last seen = 1 jam lalu
+    if (!lastSeen) {
+      lastSeen = new Date(Date.now() - 3600000).toISOString();
+    }
+
+    fetch('/api/globalchat?limit=1')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.messages || !d.messages.length) return;
+        var latestTime = d.messages[0].created_at;
+        if (latestTime && latestTime > lastSeen) {
+          dot.style.display = 'block';
+          localStorage.setItem(UNREAD_KEY, '1');
+        }
       })
-      .subscribe();
+      .catch(function() {});
   }
 
-  // Tunggu SDK siap (mungkin di-load async oleh halaman lain)
-  if (typeof supabase !== 'undefined') {
-    initChatWatcher();
-  } else {
-    var sdk = document.createElement('script');
-    sdk.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-    sdk.onload = initChatWatcher;
-    document.head.appendChild(sdk);
-  }
+  // Cek langsung saat load, lalu tiap 30 detik
+  checkUnread();
+  setInterval(checkUnread, 30000);
 })();
 </script>
 </body>
