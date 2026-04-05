@@ -1521,6 +1521,13 @@ def analytics_admin_page():
         return redirect("/auth/login")
     return render_template("analytics_admin.html")
 
+@app.route("/users-admin")
+def users_admin_page():
+    user = session.get("user")
+    if not user or not user.get("is_admin"):
+        return redirect("/auth/login")
+    return render_template("users_admin.html")
+
 @app.route("/api/admin/voucher/generate", methods=["POST"])
 def admin_generate_voucher():
     """Admin generate voucher baru."""
