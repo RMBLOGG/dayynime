@@ -1,60 +1,45 @@
 {% extends "base.html" %}
-{% block title %}Daftar Anime A-Z - Dayynime{% endblock %}
+{% block title %}A-Z Anime List - Dayynime{% endblock %}
 {% block content %}
-
-<div class="page-head">
-  <h1><i class="fas fa-list-ul" style="color:var(--accent);"></i> Daftar Anime</h1>
-  <p>Semua anime dari A sampai Z</p>
-</div>
-
-{% if data and data.anime_list %}
-
-<!-- Letter nav -->
-<div style="padding:0 14px 14px;">
-  <div style="display:flex;gap:4px;flex-wrap:wrap;">
-    {% for group in data.anime_list %}
-    <a href="#az-{{ group.letter }}" style="
-      width:30px;height:30px;border-radius:var(--radius);
-      background:var(--bg2);border:1px solid var(--border);
-      font-size:11px;font-weight:900;color:var(--accent);
-      display:flex;align-items:center;justify-content:center;
-      transition:all 0.2s;flex-shrink:0;
-    " onmousedown="this.style.background='var(--accent)';this.style.color='#fff';">{{ group.letter }}</a>
+<div class="section-wrap" style="padding-top:16px;">
+  <div class="section-head">
+    <div class="section-title">A-Z Anime List</div>
+  </div>
+  <!-- alphabet filter -->
+  {% if data and data.animes %}
+  <div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:14px;scrollbar-width:none;">
+    <button onclick="filterLetter('all')" id="filter-all" style="flex-shrink:0;padding:6px 12px;border-radius:50px;border:1.5px solid var(--pink);background:var(--pink-dim);color:var(--pink);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;">Semua</button>
+    {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+    <button onclick="filterLetter('{{ letter }}')" id="filter-{{ letter }}" style="flex-shrink:0;padding:6px 10px;border-radius:50px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text3);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;">{{ letter }}</button>
     {% endfor %}
   </div>
-</div>
-
-<!-- Sections -->
-{% for group in data.anime_list %}
-<div id="az-{{ group.letter }}" style="margin-bottom:6px;">
-  <!-- Letter header -->
-  <div style="
-    font-size:12px;font-weight:900;color:var(--accent);
-    padding:7px 14px;background:var(--bg2);
-    border-left:3px solid var(--accent);
-    text-transform:uppercase;letter-spacing:0.5px;
-    margin-bottom:4px;
-  ">{{ group.letter }}</div>
-  <!-- Anime list -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:0 14px;">
-    {% for anime in group.animes %}
-    <a href="/anime/{{ anime.slug }}" style="
-      font-size:12px;font-weight:600;color:var(--text2);
-      padding:7px 10px;border-radius:var(--radius);
-      background:var(--bg2);border:1px solid transparent;
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      transition:all 0.15s;-webkit-tap-highlight-color:transparent;
-      display:block;
-    " onmousedown="this.style.color='var(--accent)';this.style.borderColor='rgba(244,117,33,0.3)';"
-       ontouchstart="this.style.color='var(--accent)';this.style.borderColor='rgba(244,117,33,0.3)';">{{ anime.title }}</a>
+  <div class="anime-grid" id="animeGrid">
+    {% for anime in data.animes %}
+    <a href="/anime/{{ anime.slug }}" class="acard" data-title="{{ anime.title|upper }}">
+      <div class="acard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+      </div>
+      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
+      <div class="acard-title">{{ anime.title }}</div>
+    </a>
     {% endfor %}
   </div>
+  {% endif %}
 </div>
-{% endfor %}
-
-{% else %}
-<div class="empty"><i class="fas fa-list"></i><h3>Daftar tidak tersedia</h3></div>
-{% endif %}
-
-<div style="height:20px;"></div>
+<script>
+function filterLetter(l) {
+  var cards = document.querySelectorAll('.acard[data-title]');
+  cards.forEach(function(c) {
+    if (l === 'all') { c.style.display=''; return; }
+    c.style.display = c.getAttribute('data-title').startsWith(l) ? '' : 'none';
+  });
+  document.querySelectorAll('[id^="filter-"]').forEach(function(b) {
+    var isActive = b.id === 'filter-' + l;
+    b.style.borderColor = isActive ? 'var(--pink)' : 'var(--border2)';
+    b.style.background = isActive ? 'var(--pink-dim)' : 'var(--bg2)';
+    b.style.color = isActive ? 'var(--pink)' : 'var(--text3)';
+  });
+}
+</script>
 {% endblock %}

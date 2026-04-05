@@ -1,11 +1,41 @@
 <!DOCTYPE html>
-<html>
-<head><title>Redirect...</title></head>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login... - Dayynime</title>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@900&family=Nunito:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#0d0d14;color:#f0f0f8;font-family:'Nunito',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+    .wrap{text-align:center;}
+    .logo{font-family:'M PLUS Rounded 1c',sans-serif;font-size:24px;font-weight:900;margin-bottom:20px;}
+    .logo span{color:#fb7299;}
+    .dots{display:flex;gap:8px;justify-content:center;}
+    .dot{width:10px;height:10px;border-radius:50%;background:#fb7299;animation:dot 1.2s ease-in-out infinite;}
+    .dot:nth-child(2){animation-delay:.2s;background:#ff8fab;}
+    .dot:nth-child(3){animation-delay:.4s;background:#ffaacc;}
+    @keyframes dot{0%,80%,100%{transform:scale(0.6);opacity:0.3;}40%{transform:scale(1);opacity:1;}}
+    p{margin-top:16px;font-size:13px;color:#6060a0;}
+  </style>
+</head>
 <body>
+<div class="wrap">
+  <div class="logo">Dayy<span>nime</span></div>
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <p>Memproses login...</p>
+</div>
 <script>
-  // Callback Google OAuth sudah tidak dipakai.
-  window.location.href = '/auth/login';
+var hash = window.location.hash.substring(1);
+var params = new URLSearchParams(hash);
+var access_token = params.get('access_token');
+var refresh_token = params.get('refresh_token');
+if(access_token) {
+  fetch('/auth/callback', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({access_token:access_token,refresh_token:refresh_token})})
+  .then(function(r){return r.json();}).then(function(d){window.location.href=d.redirect||'/home';}).catch(function(){window.location.href='/home';});
+} else {
+  window.location.href='/home';
+}
 </script>
-<p style="font-family:sans-serif;text-align:center;padding-top:100px;color:#666">Mengalihkan...</p>
 </body>
 </html>
