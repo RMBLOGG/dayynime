@@ -647,7 +647,8 @@ def detail(slug):
                     }
                 }
             }
-    is_locked = _is_anime_locked(slug)
+    anime_title = data["detail"].get("title", "") if data and data.get("detail") else ""
+    is_locked = _is_anime_locked(slug=slug, title=anime_title)
     is_premium = _is_premium_user()
     return render_template("detail.html", data=data, slug=slug,
                            is_locked=is_locked, is_premium=is_premium)
@@ -732,7 +733,8 @@ def episode(slug):
                 }
             }
 
-    is_locked = _is_anime_locked(anime_slug) if anime_slug else False
+    anime_title = anime_data["detail"].get("title", "") if anime_data and anime_data.get("detail") else ""
+    is_locked = _is_anime_locked(slug=anime_slug, title=anime_title)
     is_premium = _is_premium_user()
     return render_template("episode.html", data=data, slug=slug,
                            anime_slug=anime_slug, anime_data=anime_data,
@@ -1091,7 +1093,7 @@ def locked_anime_lock():
     if not _is_admin():
         return jsonify({"error": "Forbidden"}), 403
     body = request.get_json(silent=True) or {}
-    slug = (body.get("slug") or "").strip()
+    slug = (body.get("slug") or "").strip().replace(" ", "-").lower()
     title = (body.get("title") or "").strip()
     poster = (body.get("poster") or "").strip()
     if not slug:
@@ -1129,29 +1131,9 @@ def locked_anime_unlock():
 
 @app.route("/api/admin/locked-anime/check")
 def locked_anime_check():
-    """Check apakah satu anime terkunci (bisa dipakai dari frontend)."""
     slug = request.args.get("slug", "").strip()
-    if not slug:
-        return jsonify({"locked": False})
-    try:
-        headers = {
-            "apikey": SUPABASE_ANON_KEY,
-            "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
-        }
-        r = requests.get(
-            f"{SUPABASE_URL}/rest/v1/locked_anime",
-            headers=headers,
-            params={"slug": f"eq.{slug}", "select": "slug"},
-            timeout=3
-        )
-        return jsonify({
-            "locked": r.ok and len(r.json()) > 0,
-            "status_code": r.status_code,
-            "response": r.json(),
-            "slug_queried": slug
-        })
-    except Exception as e:
-        return jsonify({"locked": False, "error": str(e)})
+    title = request.args.get("title", "").strip()
+    return jsonify({"locked": _is_anime_locked(slug=slug, title=title)})
 
 @app.route("/premium")
 def premium():
@@ -2081,12 +2063,11 @@ def _is_premium_user():
         pass
     return False
 
-def _is_anime_locked(slug):
-    """Cek apakah anime slug ada di tabel locked_anime."""
-    if not slug:
+def _is_anime_locked(slug=None, title=None):
+    """Cek apakah anime terkunci by title keyword (berlaku semua source)."""
+    if not title and not slug:
         return False
     try:
-        # Pakai anon key karena locked_anime bisa dibaca publik (tidak butuh service key)
         headers = {
             "apikey": SUPABASE_ANON_KEY,
             "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
@@ -2094,10 +2075,25 @@ def _is_anime_locked(slug):
         r = requests.get(
             f"{SUPABASE_URL}/rest/v1/locked_anime",
             headers=headers,
-            params={"slug": f"eq.{slug}", "select": "slug"},
+            params={"select": "title,slug"},
             timeout=3
         )
-        return r.ok and len(r.json()) > 0
+        if not r.ok:
+            return False
+        rows = r.json()
+        if not rows:
+            return False
+        title_lower = (title or "").lower().strip()
+        slug_lower  = (slug or "").lower().strip()
+        for row in rows:
+            keyword = (row.get("title") or row.get("slug") or "").lower().strip()
+            if not keyword:
+                continue
+            if keyword in title_lower or keyword in slug_lower:
+                return True
+            if title_lower and title_lower in keyword:
+                return True
+        return False
     except Exception:
         return False
 
