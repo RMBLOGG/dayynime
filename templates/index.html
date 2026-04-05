@@ -697,4 +697,188 @@
   if (banner) banner.style.display = 'block';
 })();
 </script>
+<script>
+/* ═══════════════════════════════════════════════
+   EFEK JS — DayyNime Index
+   1. Scroll Reveal (sections fade+slide masuk)
+   2. Parallax Banner (bg bergerak saat scroll)
+   3. Rank score bar animate on scroll
+   4. Rank number pop-in
+   5. Rank item ripple on tap
+   ═══════════════════════════════════════════════ */
+(function() {
+
+  /* ── 1. SCROLL REVEAL ─────────────────────── */
+  var revealStyle = document.createElement('style');
+  revealStyle.textContent =
+    '.sr-hidden{opacity:0;transform:translateY(22px);transition:opacity 0.5s ease,transform 0.5s ease;}' +
+    '.sr-visible{opacity:1!important;transform:translateY(0)!important;}' +
+    '.idx-rank-item.sr-hidden{transform:translateX(-18px);}' +
+    '.idx-rank-item.sr-visible{transform:translateX(0)!important;}' +
+    '.idx-wcard.sr-hidden{transform:translateY(16px) scale(0.97);}' +
+    '.idx-wcard.sr-visible{transform:translateY(0) scale(1)!important;}' +
+    '@keyframes rankRipple{to{transform:scale(30);opacity:0;}}';
+  document.head.appendChild(revealStyle);
+
+  var revealSelectors = [
+    '.idx-section-wrap', '.section',
+    '.idx-rank-item', '.idx-wcard', '.idx-schedule-item'
+  ];
+
+  function initReveal() {
+    revealSelectors.forEach(function(sel) {
+      document.querySelectorAll(sel).forEach(function(el) {
+        if (el.style.display === 'none') return;
+        el.classList.add('sr-hidden');
+      });
+    });
+
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var delay = 0;
+        if (el.classList.contains('idx-rank-item') ||
+            el.classList.contains('idx-wcard') ||
+            el.classList.contains('idx-schedule-item')) {
+          var idx = Array.from(el.parentElement.children).indexOf(el);
+          delay = idx * 65;
+        }
+        setTimeout(function() {
+          el.classList.remove('sr-hidden');
+          el.classList.add('sr-visible');
+        }, delay);
+        obs.unobserve(el);
+      });
+    }, { threshold: 0.07, rootMargin: '0px 0px -20px 0px' });
+
+    revealSelectors.forEach(function(sel) {
+      document.querySelectorAll(sel + '.sr-hidden').forEach(function(el) {
+        obs.observe(el);
+      });
+    });
+
+    // Re-observe section yg muncul dinamis
+    var mutObs = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === 'attributes' && m.attributeName === 'style') {
+          var el = m.target;
+          if (el.style.display !== 'none' && !el.classList.contains('sr-visible')) {
+            el.classList.add('sr-hidden');
+            setTimeout(function() { obs.observe(el); }, 50);
+          }
+        }
+      });
+    });
+    ['cwSection','supporterSection','pwaBannerSection'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) mutObs.observe(el, { attributes: true });
+    });
+  }
+
+  /* ── 2. PARALLAX BANNER ───────────────────── */
+  function initParallax() {
+    var slider = document.querySelector('.banner-slider');
+    if (!slider) return;
+    var bgs = slider.querySelectorAll('.slide-bg');
+    var contents = slider.querySelectorAll('.banner-content');
+    var ticking = false;
+
+    function apply() {
+      var sy = window.scrollY || window.pageYOffset;
+      if (sy < slider.offsetHeight * 1.6) {
+        bgs.forEach(function(img) {
+          img.style.transform = 'translateY(' + (sy * 0.32) + 'px) scale(1.08)';
+        });
+        contents.forEach(function(c) {
+          c.style.transform = 'translateY(' + (sy * 0.12) + 'px)';
+          c.style.opacity = Math.max(0, 1 - sy / (slider.offsetHeight * 0.9));
+        });
+      }
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) { requestAnimationFrame(apply); ticking = true; }
+    }, { passive: true });
+  }
+
+  /* ── 3. RANK SCORE BAR ANIMATE ───────────── */
+  function initRankBars() {
+    var bars = document.querySelectorAll('.idx-rank-score-fill');
+    if (!bars.length) return;
+    bars.forEach(function(bar) {
+      bar._tw = bar.style.width || '70%';
+      bar.style.cssText += ';width:0%;transition:none;';
+    });
+    var barObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var bar = entry.target;
+        var i = Array.from(bars).indexOf(bar);
+        setTimeout(function() {
+          bar.style.transition = 'width 1s cubic-bezier(0.4,0,0.2,1)';
+          bar.style.width = bar._tw;
+        }, 250 + i * 90);
+        barObs.unobserve(bar);
+      });
+    }, { threshold: 0.4 });
+    bars.forEach(function(b) { barObs.observe(b); });
+  }
+
+  /* ── 4. RANK NUMBER POP-IN ────────────────── */
+  function initRankPop() {
+    var nums = document.querySelectorAll('.idx-rank-num');
+    var popObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var i = Array.from(nums).indexOf(el);
+        el.style.transition = 'none';
+        el.style.transform = 'scale(0.3)';
+        el.style.opacity = '0';
+        setTimeout(function() {
+          el.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease';
+          el.style.transform = 'scale(1)';
+          el.style.opacity = '1';
+        }, 100 + i * 70);
+        popObs.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    nums.forEach(function(n) { popObs.observe(n); });
+  }
+
+  /* ── 5. RANK ITEM RIPPLE ON TAP ───────────── */
+  function initRipple() {
+    document.querySelectorAll('.idx-rank-item').forEach(function(item) {
+      item.style.position = 'relative';
+      item.style.overflow = 'hidden';
+      item.addEventListener('click', function(e) {
+        var r = document.createElement('span');
+        r.style.cssText = 'position:absolute;border-radius:50%;background:rgba(244,117,33,0.2);' +
+          'width:8px;height:8px;pointer-events:none;transform:scale(0);' +
+          'animation:rankRipple 0.5s ease-out forwards;';
+        var rect = item.getBoundingClientRect();
+        r.style.left = (e.clientX - rect.left - 4) + 'px';
+        r.style.top  = (e.clientY - rect.top  - 4) + 'px';
+        item.appendChild(r);
+        setTimeout(function() { r.remove(); }, 550);
+      });
+    });
+  }
+
+  /* ── INIT ─────────────────────────────────── */
+  function init() {
+    initParallax();
+    initReveal();
+    initRankBars();
+    initRankPop();
+    initRipple();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
+})();
+</script>
 {% endblock %}
