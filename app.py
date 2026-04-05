@@ -2570,8 +2570,6 @@ def trakteer_latest():
 @app.route("/api/history", methods=["POST"])
 def history_save():
     user = session.get("user")
-    if not user:
-        return jsonify({"ok": False, "error": "Login dulu"}), 401
     data         = request.get_json() or {}
     anime_slug   = (data.get("anime_slug") or "").strip()
     anime_title  = (data.get("anime_title") or "").strip()
@@ -2581,21 +2579,45 @@ def history_save():
     source       = (data.get("source") or "samehadaku").strip()
     if not anime_slug or not ep_slug:
         return jsonify({"ok": False, "error": "Data tidak lengkap"}), 400
-    payload = {
-        "user_id": str(user["id"]), "anime_slug": anime_slug,
-        "anime_title": anime_title, "anime_poster": anime_poster,
-        "ep_slug": ep_slug, "ep_name": ep_name,
-        "source": source, "watched_at": "now()",
-    }
-    try:
-        r = requests.post(
-            f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
-            headers={**supabase_service_headers(), "Prefer": "resolution=merge-duplicates,return=minimal"},
-            json=payload, timeout=5,
-        )
-        return jsonify({"ok": r.status_code in (200, 201)})
-    except Exception as e:
-        return jsonify({"ok": False, "error": str(e)}), 500
+
+    if not user:
+        # ── Guest → simpan ke tabel terpisah guest_watch_history ──
+        import secrets
+        if "guest_sid" not in session:
+            session["guest_sid"] = "g_" + secrets.token_hex(10)
+            session.permanent = True
+        payload = {
+            "session_id": session["guest_sid"],
+            "anime_slug": anime_slug, "anime_title": anime_title,
+            "anime_poster": anime_poster, "ep_slug": ep_slug,
+            "ep_name": ep_name, "source": source, "watched_at": "now()",
+        }
+        try:
+            r = requests.post(
+                f"{SUPABASE_URL}/rest/v1/guest_watch_history",
+                headers={**supabase_service_headers(), "Prefer": "resolution=merge-duplicates,return=minimal"},
+                json=payload, timeout=5,
+            )
+            return jsonify({"ok": r.status_code in (200, 201)})
+        except Exception as e:
+            return jsonify({"ok": False, "error": str(e)}), 500
+    else:
+        # ── User login → tabel utama dayynime_watch_history ──
+        payload = {
+            "user_id": str(user["id"]), "anime_slug": anime_slug,
+            "anime_title": anime_title, "anime_poster": anime_poster,
+            "ep_slug": ep_slug, "ep_name": ep_name,
+            "source": source, "watched_at": "now()",
+        }
+        try:
+            r = requests.post(
+                f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
+                headers={**supabase_service_headers(), "Prefer": "resolution=merge-duplicates,return=minimal"},
+                json=payload, timeout=5,
+            )
+            return jsonify({"ok": r.status_code in (200, 201)})
+        except Exception as e:
+            return jsonify({"ok": False, "error": str(e)}), 500
 
 
 @app.route("/api/history")
@@ -2663,31 +2685,80 @@ def admin_analytics():
     try:
         from collections import Counter
         import datetime
-        r_all = requests.get(
+        # ── Ambil data user login ──
+        r_login = requests.get(
             f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
             headers=supabase_service_headers(),
             params={"select": "anime_slug,anime_title,anime_poster,user_id,watched_at", "order": "watched_at.desc", "limit": 1000},
             timeout=8,
         )
-        rows = r_all.json() if r_all.status_code == 200 else []
+        login_rows = r_login.json() if r_login.status_code == 200 else []
+        for row in login_rows:
+            row["is_guest"] = False
+
+        # ── Ambil data guest ──
+        r_guest = requests.get(
+            f"{SUPABASE_URL}/rest/v1/guest_watch_history",
+            headers=supabase_service_headers(),
+            params={"select": "anime_slug,anime_title,anime_poster,session_id,watched_at", "order": "watched_at.desc", "limit": 1000},
+            timeout=8,
+        )
+        guest_rows = r_guest.json() if r_guest.status_code == 200 else []
+        for row in guest_rows:
+            row["is_guest"] = True
+            row["user_id"] = row.get("session_id", "")
+
+        # ── Gabungkan ──
+        all_rows = login_rows + guest_rows
+
+        # Top anime dari semua tontonan
         counter = Counter()
         meta = {}
-        for row in rows:
+        for row in all_rows:
             s = row.get("anime_slug", "")
             counter[s] += 1
             if s not in meta:
                 meta[s] = {"title": row.get("anime_title",""), "poster": row.get("anime_poster","")}
         top_anime = [{"slug": s, "title": meta[s]["title"], "poster": meta[s]["poster"], "count": c} for s, c in counter.most_common(10)]
+
+        # User aktif 24 jam
         since_24h = (datetime.datetime.utcnow() - datetime.timedelta(hours=24)).isoformat() + "Z"
-        active_users = len(set(r["user_id"] for r in rows if r.get("watched_at","") >= since_24h))
-        r_recent = requests.get(
+        recent_24h = [r for r in all_rows if r.get("watched_at","") >= since_24h]
+        active_logged = len(set(r["user_id"] for r in recent_24h if not r["is_guest"] and r.get("user_id")))
+        active_guests = len(set(r["user_id"] for r in recent_24h if r["is_guest"] and r.get("user_id")))
+
+        # Aktivitas terbaru (gabungan, sort by watched_at)
+        r_rec_login = requests.get(
             f"{SUPABASE_URL}/rest/v1/dayynime_watch_history",
             headers=supabase_service_headers(),
-            params={"select": "anime_title,anime_poster,ep_name,anime_slug,ep_slug,watched_at,source,user_id", "order": "watched_at.desc", "limit": 15},
+            params={"select": "anime_title,anime_poster,ep_name,anime_slug,ep_slug,watched_at,source,user_id", "order": "watched_at.desc", "limit": 10},
             timeout=8,
         )
-        recent = r_recent.json() if r_recent.status_code == 200 else []
-        return jsonify({"ok": True, "top_anime": top_anime, "active_users": active_users, "total_watches": len(rows), "recent": recent})
+        r_rec_guest = requests.get(
+            f"{SUPABASE_URL}/rest/v1/guest_watch_history",
+            headers=supabase_service_headers(),
+            params={"select": "anime_title,anime_poster,ep_name,anime_slug,ep_slug,watched_at,source,session_id", "order": "watched_at.desc", "limit": 10},
+            timeout=8,
+        )
+        rec_login = r_rec_login.json() if r_rec_login.status_code == 200 else []
+        rec_guest = r_rec_guest.json() if r_rec_guest.status_code == 200 else []
+        for row in rec_login:
+            row["is_guest"] = False
+        for row in rec_guest:
+            row["is_guest"] = True
+        recent_all = sorted(rec_login + rec_guest, key=lambda x: x.get("watched_at",""), reverse=True)[:15]
+
+        return jsonify({
+            "ok": True,
+            "top_anime": top_anime,
+            "total_watches": len(all_rows),
+            "total_login_watches": len(login_rows),
+            "total_guest_watches": len(guest_rows),
+            "active_users": active_logged + active_guests,
+            "active_logged": active_logged,
+            "active_guests": active_guests,
+            "recent": recent_all,
+        })
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
