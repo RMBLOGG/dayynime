@@ -141,21 +141,48 @@ body { background: var(--adm-bg) !important; }
   </div>
 
   <!-- Stat Cards -->
-  <div class="an-stats">
+  <div class="an-stats" style="grid-template-columns:repeat(2,1fr);gap:10px;">
     <div class="an-stat">
       <div class="an-stat-bar" style="background:#22c55e;"></div>
       <div class="an-stat-num" id="statTotal">—</div>
       <div class="an-stat-lbl">Total Ditonton</div>
     </div>
     <div class="an-stat">
-      <div class="an-stat-bar" style="background:#f97316;"></div>
-      <div class="an-stat-num" id="statUsers">—</div>
-      <div class="an-stat-lbl">User Aktif 24J</div>
-    </div>
-    <div class="an-stat">
       <div class="an-stat-bar" style="background:#a78bfa;"></div>
       <div class="an-stat-num" id="statAnime">—</div>
       <div class="an-stat-lbl">Anime Unik</div>
+    </div>
+    <div class="an-stat">
+      <div class="an-stat-bar" style="background:#3b82f6;"></div>
+      <div class="an-stat-num" id="statLoginWatch">—</div>
+      <div class="an-stat-lbl">Ditonton (Login)</div>
+    </div>
+    <div class="an-stat">
+      <div class="an-stat-bar" style="background:#f97316;"></div>
+      <div class="an-stat-num" id="statGuestWatch">—</div>
+      <div class="an-stat-lbl">Ditonton (Guest)</div>
+    </div>
+  </div>
+
+  <!-- User Aktif 24J -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+    <div style="background:var(--adm-card,#13131c);border:1px solid rgba(255,102,0,0.15);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:9px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas fa-user-check" style="color:#22c55e;font-size:14px;"></i>
+      </div>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#fff;line-height:1;" id="statActiveLogin">—</div>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin-top:2px;">Aktif 24J · Login</div>
+      </div>
+    </div>
+    <div style="background:var(--adm-card,#13131c);border:1px solid rgba(255,102,0,0.15);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:9px;background:rgba(249,115,22,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas fa-user-secret" style="color:#f97316;font-size:14px;"></i>
+      </div>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#fff;line-height:1;" id="statActiveGuest">—</div>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin-top:2px;">Aktif 24J · Guest</div>
+      </div>
     </div>
   </div>
 
@@ -226,10 +253,12 @@ async function loadAll() {
     }
 
     // Stats
-    document.getElementById('statTotal').textContent = d.total_watches || 0;
-    document.getElementById('statUsers').textContent = d.active_users || 0;
-    var uniqueAnime = d.top_anime ? d.top_anime.length : 0;
-    document.getElementById('statAnime').textContent = uniqueAnime;
+    document.getElementById('statTotal').textContent      = d.total_watches || 0;
+    document.getElementById('statAnime').textContent      = d.top_anime ? d.top_anime.length : 0;
+    document.getElementById('statLoginWatch').textContent = d.total_login_watches || 0;
+    document.getElementById('statGuestWatch').textContent = d.total_guest_watches || 0;
+    document.getElementById('statActiveLogin').textContent = d.active_logged || 0;
+    document.getElementById('statActiveGuest').textContent = d.active_guests || 0;
 
     // Top Anime
     var topEl = document.getElementById('topAnimeList');
@@ -262,12 +291,16 @@ async function loadAll() {
     } else {
       var html = '';
       d.recent.forEach(function(row) {
+        var guestBadge = row.is_guest
+          ? '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.07);color:#888;">👁 Guest</span>'
+          : '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(34,197,94,0.12);color:#22c55e;">✓ Login</span>';
         html += '<div class="an-activity-item">'
           + '<img class="an-act-poster" src="' + (row.anime_poster || '/static/no-image.png') + '" onerror="this.src=\'/static/no-image.png\'" loading="lazy">'
           + '<div class="an-act-info">'
           +   '<div class="an-act-title">' + (row.anime_title || row.anime_slug || '-') + '</div>'
           +   '<div class="an-act-ep">' + (row.ep_name || '-') + '</div>'
           +   '<div class="an-act-meta">'
+          +     guestBadge
           +     (row.source ? '<span class="an-act-src">' + row.source + '</span>' : '')
           +     '<span class="an-act-time">' + timeAgo(row.watched_at) + '</span>'
           +   '</div>'
