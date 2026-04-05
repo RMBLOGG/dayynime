@@ -415,7 +415,66 @@
 </div>
 
 <style>
-/* ── RANKING LIST ── */
+/* ══════════════════════════════════════
+   INDEX PAGE — CUSTOM LAYOUT STYLES
+   (prefix idx- supaya ga nabrak style.css)
+   ══════════════════════════════════════ */
+
+/* ── SECTION WRAPPER ── */
+.idx-section-wrap { padding: 0 14px; margin-bottom: 20px; }
+.idx-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+.idx-section-title-group { display:flex; align-items:center; gap:10px; }
+.idx-section-accent {
+  width: 4px; height: 20px; border-radius: 2px; flex-shrink:0;
+  background: linear-gradient(to bottom, var(--accent), #b36000);
+  box-shadow: 0 0 8px rgba(244,117,33,0.4);
+}
+.idx-section-badge {
+  background: rgba(244,117,33,0.15); color: var(--accent);
+  font-size: 9px; font-weight: 900; padding: 2px 8px;
+  border-radius: 20px; letter-spacing: 0.3px; text-transform: uppercase;
+}
+
+/* ── WCARD GRID (Baru Ditambahkan) — 2 kolom ── */
+.idx-wcard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.idx-wcard {
+  display: flex; gap: 8px;
+  text-decoration: none; color: inherit;
+  padding: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+.idx-wcard:hover { border-color: rgba(244,117,33,0.35); background: rgba(244,117,33,0.05); }
+.idx-wcard-thumb {
+  width: 56px; height: 76px; border-radius: 6px;
+  overflow: hidden; flex-shrink: 0;
+  background: #1a1a23; position: relative;
+}
+.idx-wcard-thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
+.idx-wcard-ep {
+  position: absolute; bottom: 3px; right: 3px;
+  background: var(--accent);
+  color: #fff; font-size: 7px; font-weight: 900;
+  padding: 1px 4px; border-radius: 3px;
+}
+.idx-wcard-info { flex: 1; min-width: 0; display:flex; flex-direction:column; justify-content:center; gap:3px; }
+.idx-wcard-title {
+  font-size: 11px; font-weight: 800; color: #fff;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  line-height: 1.3;
+}
+.idx-wcard-sub { font-size: 9px; color: #6060a0; font-weight: 600; }
+.idx-wcard-time { font-size: 9px; color: var(--accent); font-weight: 700; display:flex; align-items:center; gap:3px; }
+
+/* ── RANKING LIST (Populer) ── */
 .idx-rank-item {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -427,7 +486,6 @@
 .idx-rank-num {
   width: 28px; font-size: 20px; font-weight: 900;
   flex-shrink: 0; text-align: center; line-height: 1;
-  font-family: inherit;
 }
 .idx-rank-num.top1 { color: #ffd700; }
 .idx-rank-num.top2 { color: #c0c0c0; }
@@ -440,7 +498,7 @@
 .idx-rank-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .idx-rank-info { flex: 1; min-width: 0; }
 .idx-rank-title {
-  font-size: 12px; font-weight: 800;
+  font-size: 12px; font-weight: 800; color: #fff;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   margin-bottom: 6px;
 }
@@ -455,7 +513,7 @@
 }
 .idx-rank-score-num { font-size: 10px; color: var(--accent); font-weight: 800; flex-shrink: 0; }
 
-/* ── SCHEDULE VERTIKAL ── */
+/* ── SCHEDULE VERTIKAL (Jadwal) ── */
 .idx-schedule-days {
   display: flex; gap: 8px; overflow-x: auto;
   padding-bottom: 14px; scrollbar-width: none;
@@ -481,7 +539,6 @@
 .idx-sday.active .idx-sday-label { color: var(--accent); }
 .idx-sday-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0; }
 .idx-sday.active .idx-sday-dot { opacity: 1; }
-
 .idx-schedule-item {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -496,62 +553,15 @@
 .idx-schedule-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .idx-schedule-info { flex: 1; min-width: 0; }
 .idx-schedule-title {
-  font-size: 12px; font-weight: 800;
+  font-size: 12px; font-weight: 800; color: #fff;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   margin-bottom: 3px;
 }
 .idx-schedule-ep { font-size: 10px; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
 .idx-schedule-time { font-size: 10px; color: #6060a0; font-weight: 600; display: flex; align-items: center; gap: 4px; }
 
+/* ── SUPPORTER ── */
 .supporter-card {
-.idx-section-wrap { padding: 0 14px; margin-bottom: 4px; }
-.idx-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
-.idx-section-title-group { display:flex; align-items:center; gap:10px; }
-.idx-section-accent {
-  width: 4px; height: 20px; border-radius: 2px; flex-shrink:0;
-  background: linear-gradient(to bottom, var(--accent), #b36000);
-  box-shadow: 0 0 8px rgba(244,117,33,0.4);
-}
-.idx-section-badge {
-  background: rgba(244,117,33,0.15); color: var(--accent);
-  font-size: 9px; font-weight: 900; padding: 2px 8px;
-  border-radius: 20px; letter-spacing: 0.3px; text-transform: uppercase;
-}
-/* wcard grid — 2 kolom */
-.idx-wcard-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.idx-wcard {
-  display: flex; gap: 10px;
-  text-decoration: none; color: inherit;
-  padding: 10px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 10px;
-  transition: border-color 0.2s, background 0.2s;
-}
-.idx-wcard:hover { border-color: rgba(244,117,33,0.35); background: rgba(244,117,33,0.05); }
-.idx-wcard-thumb {
-  width: 72px; height: 52px; border-radius: 7px;
-  overflow: hidden; flex-shrink: 0;
-  background: #1a1a23; position: relative;
-}
-.idx-wcard-thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
-.idx-wcard-ep {
-  position: absolute; bottom: 3px; right: 3px;
-  background: var(--accent);
-  color: #fff; font-size: 8px; font-weight: 900;
-  padding: 1px 5px; border-radius: 4px;
-}
-.idx-wcard-info { flex: 1; min-width: 0; display:flex; flex-direction:column; justify-content:center; gap:2px; }
-.idx-wcard-title {
-  font-size: 11px; font-weight: 800; color: var(--text, #fff);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.idx-wcard-sub { font-size: 10px; color: #6060a0; font-weight: 600; }
-.idx-wcard-time { font-size: 10px; color: var(--accent); font-weight: 700; display:flex; align-items:center; gap:4px; }
   display:flex; align-items:center; gap:10px;
   background:#1a1a23; border-radius:8px;
   padding:10px 12px; border:1px solid rgba(255,255,255,0.06);
@@ -567,6 +577,8 @@
 .supporter-msg  { font-size:11px; color:#A0A0B0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .supporter-amount { font-size:13px; font-weight:900; color:#F47521; white-space:nowrap; flex-shrink:0; }
 @keyframes fadeInUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── end custom styles ── */
 </style>
 <script>
 (function() {
