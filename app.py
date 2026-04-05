@@ -1133,7 +1133,25 @@ def locked_anime_check():
     slug = request.args.get("slug", "").strip()
     if not slug:
         return jsonify({"locked": False})
-    return jsonify({"locked": _is_anime_locked(slug)})
+    try:
+        headers = {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+        }
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/locked_anime",
+            headers=headers,
+            params={"slug": f"eq.{slug}", "select": "slug"},
+            timeout=3
+        )
+        return jsonify({
+            "locked": r.ok and len(r.json()) > 0,
+            "status_code": r.status_code,
+            "response": r.json(),
+            "slug_queried": slug
+        })
+    except Exception as e:
+        return jsonify({"locked": False, "error": str(e)})
 
 @app.route("/premium")
 def premium():
