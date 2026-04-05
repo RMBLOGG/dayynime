@@ -229,13 +229,14 @@
 })();
 </script>
 
-<!-- ═══ SEDANG HANGAT ═══ -->
+<!-- ═══ SEDANG TAYANG ═══ -->
 {% if data and data.ongoing %}
-<div class="section">
-  <div class="section-head">
-    <div class="section-title">
-      <span class="section-live-dot"></span>
-      Sedang Tayang
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <div class="idx-section-accent"></div>
+      <span class="section-title">Sedang Tayang</span>
+      <div class="idx-section-badge">Live</div>
     </div>
     <a href="/ongoing" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
@@ -262,32 +263,28 @@
 
 <!-- ═══ BARU DITAMBAHKAN ═══ -->
 {% if data and data.recent %}
-<div class="section">
-  <div class="section-head">
-    <div class="section-title">
-      <span class="badge" style="background:#3b82f6;font-size:8px;">NEW</span>
-      Baru Ditambahkan
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#3b82f6,#1d4ed8);box-shadow:0 0 8px rgba(59,130,246,0.4);"></div>
+      <span class="section-title">Baru Ditambahkan</span>
+      <div class="idx-section-badge" style="background:rgba(59,130,246,0.15);color:#60a5fa;">NEW</div>
     </div>
     <a href="/completed" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div class="scroll-row ncard-row">
+  <div class="idx-wcard-grid">
     {% for anime in data.recent[:10] %}
-    <a href="/anime/{{ anime.slug }}" class="ncard">
-      <div class="ncard-banner">
+    <a href="/anime/{{ anime.slug }}" class="idx-wcard">
+      <div class="idx-wcard-thumb">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.type %}<div class="ncard-typebadge">{{ anime.type }}</div>{% endif %}
+        {% if anime.episode %}<div class="idx-wcard-ep">Ep {{ anime.episode }}</div>{% elif anime.type %}<div class="idx-wcard-ep">{{ anime.type }}</div>{% endif %}
       </div>
-      <div class="ncard-bottom">
-        <div class="ncard-poster">
-          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        </div>
-        <div class="ncard-info">
-          <div class="ncard-genre">{{ anime.type or 'Anime' }}</div>
-          <div class="ncard-title">{{ anime.title }}</div>
-          <div class="ncard-meta">
-            <i class="fas fa-circle-play" style="color:#F47521;font-size:9px;"></i>
-            <span>{{ anime.status_or_day or 'Update Terbaru' }}</span>
-          </div>
+      <div class="idx-wcard-info">
+        <div class="idx-wcard-title">{{ anime.title }}</div>
+        <div class="idx-wcard-sub">{{ anime.type or 'Anime' }}</div>
+        <div class="idx-wcard-time">
+          <i class="fas fa-circle-play" style="font-size:9px;"></i>
+          {{ anime.status_or_day or 'Update Terbaru' }}
         </div>
       </div>
     </a>
@@ -298,11 +295,12 @@
 
 <!-- ═══ POPULER ═══ -->
 {% if popular and popular.animes %}
-<div class="section">
-  <div class="section-head">
-    <div class="section-title">
-      <i class="fas fa-fire" style="color:#fb923c;font-size:11px;"></i>
-      Populer Minggu Ini
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#fb923c,#ea580c);box-shadow:0 0 8px rgba(251,146,60,0.4);"></div>
+      <span class="section-title">Populer Minggu Ini</span>
+      <div class="idx-section-badge" style="background:rgba(251,146,60,0.15);color:#fb923c;"><i class="fas fa-fire" style="font-size:8px;"></i> Hot</div>
     </div>
     <a href="/popular" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
@@ -329,11 +327,11 @@
 
 <!-- ═══ JADWAL RILIS ═══ -->
 {% if schedule and schedule.schedule %}
-<div class="section">
-  <div class="section-head">
-    <div class="section-title">
-      <i class="fas fa-calendar-week" style="color:var(--accent);font-size:11px;"></i>
-      Jadwal Rilis
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <div class="idx-section-accent" style="background:linear-gradient(to bottom,var(--accent),#b36000);box-shadow:0 0 8px rgba(244,117,33,0.4);"></div>
+      <span class="section-title">Jadwal Rilis</span>
     </div>
     <a href="/jadwal" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
@@ -396,6 +394,56 @@
 </div>
 
 <style>
+/* ── INDEX SECTION LAYOUT (preview grid style) ── */
+.idx-section-wrap { padding: 0 14px; margin-bottom: 4px; }
+.idx-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+.idx-section-title-group { display:flex; align-items:center; gap:10px; }
+.idx-section-accent {
+  width: 4px; height: 20px; border-radius: 2px; flex-shrink:0;
+  background: linear-gradient(to bottom, var(--accent), #b36000);
+  box-shadow: 0 0 8px rgba(244,117,33,0.4);
+}
+.idx-section-badge {
+  background: rgba(244,117,33,0.15); color: var(--accent);
+  font-size: 9px; font-weight: 900; padding: 2px 8px;
+  border-radius: 20px; letter-spacing: 0.3px; text-transform: uppercase;
+}
+/* wcard grid — 2 kolom */
+.idx-wcard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.idx-wcard {
+  display: flex; gap: 10px;
+  text-decoration: none; color: inherit;
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.idx-wcard:hover { border-color: rgba(244,117,33,0.35); background: rgba(244,117,33,0.05); }
+.idx-wcard-thumb {
+  width: 72px; height: 52px; border-radius: 7px;
+  overflow: hidden; flex-shrink: 0;
+  background: #1a1a23; position: relative;
+}
+.idx-wcard-thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
+.idx-wcard-ep {
+  position: absolute; bottom: 3px; right: 3px;
+  background: var(--accent);
+  color: #fff; font-size: 8px; font-weight: 900;
+  padding: 1px 5px; border-radius: 4px;
+}
+.idx-wcard-info { flex: 1; min-width: 0; display:flex; flex-direction:column; justify-content:center; gap:2px; }
+.idx-wcard-title {
+  font-size: 11px; font-weight: 800; color: var(--text, #fff);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.idx-wcard-sub { font-size: 10px; color: #6060a0; font-weight: 600; }
+.idx-wcard-time { font-size: 10px; color: var(--accent); font-weight: 700; display:flex; align-items:center; gap:4px; }
+
 .supporter-card {
   display:flex; align-items:center; gap:10px;
   background:#1a1a23; border-radius:8px;
