@@ -1,62 +1,32 @@
 {% extends "base.html" %}
-{% block title %}Genre {{ slug|replace('-',' ')|title }} - Dayynime{% endblock %}
+{% block title %}{{ genre_name }} - Genre - Dayynime{% endblock %}
 {% block content %}
-
-<!-- Page Header -->
-<div class="page-head">
-  <h1><i class="fas fa-tag" style="color:var(--accent);"></i> {{ slug|replace('-',' ')|title }}</h1>
-  <p>Halaman {{ page }}</p>
+<div style="padding:14px 16px 0;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+    <a href="/genres" style="width:34px;height:34px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;"><i class="fas fa-arrow-left" style="font-size:13px;"></i></a>
+    <div>
+      <div style="font-family:'M PLUS Rounded 1c',sans-serif;font-size:18px;font-weight:900;color:var(--text);">{{ genre_name }}</div>
+      <div style="font-size:11px;color:var(--text3);">{% if data and data.animes %}{{ data.animes|length }} anime{% endif %}</div>
+    </div>
+  </div>
 </div>
-
-<!-- Genre filter pills (horizontal scroll) -->
-{% if genres and genres.genres %}
-<div style="display:flex;gap:6px;overflow-x:auto;padding:0 14px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch;" id="genreScroll">
-  {% for g in genres.genres %}
-  <a href="/genre/{{ g.slug }}" style="
-    flex-shrink:0; padding:6px 13px;
-    background:{% if g.slug==slug %}var(--accent){% else %}var(--bg2){% endif %};
-    border-radius:50px; font-size:11px; font-weight:700;
-    color:{% if g.slug==slug %}#fff{% else %}var(--text3){% endif %};
-    border:1px solid {% if g.slug==slug %}var(--accent){% else %}var(--border){% endif %};
-    white-space:nowrap; transition:all 0.2s;
-  ">{{ g.name }}</a>
-  {% endfor %}
-</div>
-{% endif %}
-
 {% if data and data.animes %}
-<div class="anime-grid" style="padding:0 14px;">
+<div class="anime-grid" style="padding:0 16px;">
   {% for anime in data.animes %}
   <a href="/anime/{{ anime.slug }}" class="acard">
     <div class="acard-poster">
       <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
       {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
-      {% if anime.score %}<div class="acard-ep"><i class="fas fa-star" style="color:#ffd700;font-size:9px"></i> {{ anime.score }}</div>{% endif %}
     </div>
     <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
     <div class="acard-title">{{ anime.title }}</div>
   </a>
   {% endfor %}
 </div>
-
-{% if data.pagination %}
-<div class="pagination">
-  {% if data.pagination.hasPrev %}<a href="/genre/{{ slug }}?page={{ page-1 }}" class="pag-btn"><i class="fas fa-chevron-left"></i> Prev</a>{% endif %}
-  <div class="pag-current">{{ data.pagination.currentPage }}</div>
-  {% if data.pagination.hasNext %}<a href="/genre/{{ slug }}?page={{ page+1 }}" class="pag-btn">Next <i class="fas fa-chevron-right"></i></a>{% endif %}
+{% else %}
+<div style="text-align:center;padding:60px 20px;color:var(--text3);">
+  <i class="fas fa-film" style="font-size:40px;margin-bottom:12px;display:block;"></i>
+  <div style="font-size:14px;font-weight:700;">Belum ada anime di genre ini</div>
 </div>
 {% endif %}
-
-{% else %}
-<div class="empty"><i class="fas fa-film"></i><h3>Tidak ada anime</h3></div>
-{% endif %}
-
-<script>
-// Auto-scroll active genre pill into view
-document.addEventListener('DOMContentLoaded', function() {
-  var active = document.querySelector('#genreScroll a[style*="var(--accent)"]') ||
-               document.querySelector('#genreScroll a[style*="background:var(--accent)"]');
-  if(active) active.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
-});
-</script>
 {% endblock %}
