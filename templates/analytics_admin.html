@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+{% block title %}Analytics – Admin{% endblock %}
+
+{% block head %}
+<style>
+:root {
+  --adm-bg: #0a0a0f;
+  --adm-card: #13131c;
+  --adm-border: rgba(255,102,0,0.15);
+  --adm-accent: #ff6600;
+  --adm-green: #22c55e;
+  --adm-blue: #3b82f6;
+  --adm-purple: #a78bfa;
+  --adm-text: #e2e2e2;
+  --adm-muted: #555;
+}
+body { background: var(--adm-bg) !important; }
+.an-wrap { max-width: 800px; margin: 0 auto; padding: 20px 14px 100px; font-family: 'Poppins', sans-serif; }
+.an-breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.an-breadcrumb a { color: var(--adm-muted); text-decoration: none; font-size: 13px; }
+.an-breadcrumb span { color: var(--adm-muted); font-size: 13px; }
+.an-breadcrumb .current { color: var(--adm-text); font-weight: 700; font-size: 13px; }
+
+/* Header */
+.an-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.an-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+.an-title i { color: var(--adm-accent); }
+.an-refresh-btn {
+  padding: 8px 16px; background: var(--adm-card); border: 1px solid var(--adm-border);
+  border-radius: 8px; color: var(--adm-text); font-size: 12px; cursor: pointer;
+  font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 6px;
+  transition: border-color 0.2s;
+}
+.an-refresh-btn:hover { border-color: var(--adm-accent); }
+
+/* Stat Cards */
+.an-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.an-stat {
+  background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: 14px;
+  padding: 16px 12px; text-align: center;
+}
+.an-stat-bar { width: 32px; height: 3px; border-radius: 2px; margin: 0 auto 12px; }
+.an-stat-num { font-size: 22px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 4px; }
+.an-stat-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--adm-muted); }
+
+/* Section Card */
+.an-card {
+  background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: 14px;
+  padding: 18px; margin-bottom: 14px;
+}
+.an-section-hd {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.an-section-title {
+  font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: #888;
+  display: flex; align-items: center; gap: 6px;
+}
+.an-section-title i { font-size: 12px; }
+
+/* Top Anime */
+.an-anime-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 10px; margin-bottom: 6px;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+.an-anime-item:hover { background: rgba(255,102,0,0.05); }
+.an-rank {
+  width: 24px; height: 24px; border-radius: 6px; background: rgba(255,102,0,0.12);
+  color: var(--adm-accent); font-size: 11px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.an-rank.gold { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.an-rank.silver { background: rgba(148,163,184,0.15); color: #94a3b8; }
+.an-rank.bronze { background: rgba(180,83,9,0.15); color: #b45309; }
+.an-anime-poster {
+  width: 36px; height: 50px; border-radius: 6px; object-fit: cover;
+  background: #1a1a2e; flex-shrink: 0;
+}
+.an-anime-info { flex: 1; min-width: 0; }
+.an-anime-title {
+  font-size: 12px; font-weight: 700; color: var(--adm-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;
+}
+.an-anime-count { font-size: 10px; color: var(--adm-muted); }
+.an-anime-bar-wrap { width: 60px; flex-shrink: 0; }
+.an-anime-bar-bg { background: rgba(255,255,255,0.06); border-radius: 2px; height: 4px; }
+.an-anime-bar-fill { height: 4px; border-radius: 2px; background: var(--adm-accent); }
+
+/* Recent Activity */
+.an-activity-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px; border-radius: 10px; margin-bottom: 6px;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+}
+.an-act-poster {
+  width: 32px; height: 44px; border-radius: 5px; object-fit: cover;
+  background: #1a1a2e; flex-shrink: 0;
+}
+.an-act-info { flex: 1; min-width: 0; }
+.an-act-title {
+  font-size: 12px; font-weight: 700; color: var(--adm-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;
+}
+.an-act-ep { font-size: 10px; color: #888; margin-bottom: 3px; }
+.an-act-meta { display: flex; align-items: center; gap: 8px; }
+.an-act-src {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 2px 7px; border-radius: 4px; background: rgba(59,130,246,0.15); color: #60a5fa;
+}
+.an-act-time { font-size: 10px; color: var(--adm-muted); }
+
+/* Empty / loading states */
+.an-empty { text-align: center; color: var(--adm-muted); font-size: 12px; padding: 24px; }
+.an-loading { text-align: center; color: var(--adm-muted); font-size: 12px; padding: 24px; }
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.fa-spin { animation: spin 0.8s linear infinite; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="an-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="an-breadcrumb">
+    <a href="/admin">← Admin</a>
+    <span>/</span>
+    <span class="current">Analytics</span>
+  </div>
+
+  <!-- Header -->
+  <div class="an-header">
+    <div class="an-title">
+      <i class="fas fa-chart-bar"></i> Watch Analytics
+    </div>
+    <button class="an-refresh-btn" onclick="loadAll()">
+      <i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="an-stats">
+    <div class="an-stat">
+      <div class="an-stat-bar" style="background:#22c55e;"></div>
+      <div class="an-stat-num" id="statTotal">—</div>
+      <div class="an-stat-lbl">Total Ditonton</div>
+    </div>
+    <div class="an-stat">
+      <div class="an-stat-bar" style="background:#f97316;"></div>
+      <div class="an-stat-num" id="statUsers">—</div>
+      <div class="an-stat-lbl">User Aktif 24J</div>
+    </div>
+    <div class="an-stat">
+      <div class="an-stat-bar" style="background:#a78bfa;"></div>
+      <div class="an-stat-num" id="statAnime">—</div>
+      <div class="an-stat-lbl">Anime Unik</div>
+    </div>
+  </div>
+
+  <!-- Top 10 Anime -->
+  <div class="an-card">
+    <div class="an-section-hd">
+      <div class="an-section-title">
+        <i class="fas fa-fire" style="color:#f97316;"></i> Top 10 Anime Terpopuler
+      </div>
+    </div>
+    <div id="topAnimeList">
+      <div class="an-loading"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="an-card">
+    <div class="an-section-hd">
+      <div class="an-section-title">
+        <i class="fas fa-clock" style="color:#3b82f6;"></i> Aktivitas Terbaru
+      </div>
+    </div>
+    <div id="recentList">
+      <div class="an-loading"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function timeAgo(isoStr) {
+  if (!isoStr) return '';
+  var diff = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
+  if (diff < 60) return diff + 'd lalu';
+  if (diff < 3600) return Math.floor(diff/60) + 'm lalu';
+  if (diff < 86400) return Math.floor(diff/3600) + 'j lalu';
+  return Math.floor(diff/86400) + ' hari lalu';
+}
+
+function rankClass(i) {
+  if (i === 0) return 'gold';
+  if (i === 1) return 'silver';
+  if (i === 2) return 'bronze';
+  return '';
+}
+
+async function loadAll() {
+  var icon = document.getElementById('refreshIcon');
+  icon.className = 'fas fa-spinner fa-spin';
+
+  document.getElementById('topAnimeList').innerHTML = '<div class="an-loading"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>';
+  document.getElementById('recentList').innerHTML = '<div class="an-loading"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>';
+
+  try {
+    var r = await fetch('/api/admin/analytics');
+    if (r.status === 403) {
+      var errHtml = '<div class="an-empty">❌ Forbidden — <a href="/auth/login" style="color:#f47521;">Login ulang</a></div>';
+      document.getElementById('topAnimeList').innerHTML = errHtml;
+      document.getElementById('recentList').innerHTML = errHtml;
+      return;
+    }
+    var d = await r.json();
+    if (!d.ok) {
+      var errHtml = '<div class="an-empty">❌ Error: ' + (d.error || 'Unknown') + '</div>';
+      document.getElementById('topAnimeList').innerHTML = errHtml;
+      document.getElementById('recentList').innerHTML = errHtml;
+      return;
+    }
+
+    // Stats
+    document.getElementById('statTotal').textContent = d.total_watches || 0;
+    document.getElementById('statUsers').textContent = d.active_users || 0;
+    var uniqueAnime = d.top_anime ? d.top_anime.length : 0;
+    document.getElementById('statAnime').textContent = uniqueAnime;
+
+    // Top Anime
+    var topEl = document.getElementById('topAnimeList');
+    if (!d.top_anime || d.top_anime.length === 0) {
+      topEl.innerHTML = '<div class="an-empty">Belum ada data tontonan.</div>';
+    } else {
+      var maxCount = d.top_anime[0].count || 1;
+      var html = '';
+      d.top_anime.forEach(function(a, i) {
+        var pct = Math.round((a.count / maxCount) * 100);
+        html += '<div class="an-anime-item">'
+          + '<div class="an-rank ' + rankClass(i) + '">' + (i + 1) + '</div>'
+          + '<img class="an-anime-poster" src="' + (a.poster || '/static/no-image.png') + '" onerror="this.src=\'/static/no-image.png\'" loading="lazy">'
+          + '<div class="an-anime-info">'
+          +   '<div class="an-anime-title">' + (a.title || a.slug || '-') + '</div>'
+          +   '<div class="an-anime-count"><i class="fas fa-eye" style="font-size:9px;margin-right:3px;"></i>' + a.count + ' ditonton</div>'
+          + '</div>'
+          + '<div class="an-anime-bar-wrap">'
+          +   '<div class="an-anime-bar-bg"><div class="an-anime-bar-fill" style="width:' + pct + '%;"></div></div>'
+          + '</div>'
+          + '</div>';
+      });
+      topEl.innerHTML = html;
+    }
+
+    // Recent Activity
+    var recEl = document.getElementById('recentList');
+    if (!d.recent || d.recent.length === 0) {
+      recEl.innerHTML = '<div class="an-empty">Belum ada aktivitas terbaru.</div>';
+    } else {
+      var html = '';
+      d.recent.forEach(function(row) {
+        html += '<div class="an-activity-item">'
+          + '<img class="an-act-poster" src="' + (row.anime_poster || '/static/no-image.png') + '" onerror="this.src=\'/static/no-image.png\'" loading="lazy">'
+          + '<div class="an-act-info">'
+          +   '<div class="an-act-title">' + (row.anime_title || row.anime_slug || '-') + '</div>'
+          +   '<div class="an-act-ep">' + (row.ep_name || '-') + '</div>'
+          +   '<div class="an-act-meta">'
+          +     (row.source ? '<span class="an-act-src">' + row.source + '</span>' : '')
+          +     '<span class="an-act-time">' + timeAgo(row.watched_at) + '</span>'
+          +   '</div>'
+          + '</div>'
+          + '</div>';
+      });
+      recEl.innerHTML = html;
+    }
+
+  } catch(e) {
+    var errHtml = '<div class="an-empty">❌ Network error: ' + e.message + '</div>';
+    document.getElementById('topAnimeList').innerHTML = errHtml;
+    document.getElementById('recentList').innerHTML = errHtml;
+  } finally {
+    icon.className = 'fas fa-sync-alt';
+  }
+}
+
+// Auto load on page ready
+document.addEventListener('DOMContentLoaded', loadAll);
+</script>
+{% endblock %}
