@@ -6,57 +6,58 @@
   <title>{% block title %}Dayynime{% endblock %}</title>
   <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia di Dayynime{% endblock %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" type="image/png" href="/static/icon.png">
   <link rel="apple-touch-icon" href="/static/icon.png">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0d0d14">
+  <meta name="theme-color" content="#141519">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DayyNime">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10">
   {% block head %}{% endblock %}
 </head>
 <body>
 
-<!-- ══ SIDEBAR OVERLAY ══ -->
+<!-- SIDEBAR OVERLAY -->
 <div id="sidebarOverlay" onclick="closeSidebar()" style="
   display:none; position:fixed; inset:0; z-index:10000;
-  background:rgba(0,0,0,0.75); backdrop-filter:blur(4px);
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(3px);
   -webkit-tap-highlight-color:transparent;
 "></div>
 
-<!-- ══ SIDEBAR PANEL ══ -->
+<!-- SIDEBAR PANEL — Crunchyroll style: left side -->
 <aside id="sidebarPanel" style="
-  position:fixed; top:0; left:-290px; width:270px; height:100%;
+  position:fixed; top:0; left:-280px; width:260px; height:100%;
   max-height:100vh; z-index:10001;
-  background:#0d0d14;
-  border-right:1px solid rgba(251,114,153,0.15);
+  background:#141519;
+  border-right:1px solid rgba(244,117,33,0.15);
   transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
   display:flex; flex-direction:column; overflow:hidden;
 ">
   <!-- Sidebar Header -->
-  <div style="padding:18px 16px 14px; border-bottom:1px solid rgba(251,114,153,0.1); display:flex; align-items:center; justify-content:space-between; background:#13131f;">
+  <div style="padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between; background:#1a1a23;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#fb7299,#c44b7a);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 14px rgba(251,114,153,0.3);">🎌</div>
+      <img src="/static/icon.png" style="width:30px;height:30px;border-radius:6px;object-fit:cover;">
       <div>
-        <div style="font-family:'M PLUS Rounded 1c',sans-serif;font-size:15px;font-weight:900;color:#fff;">Dayy<span style="color:#fb7299;">nime</span></div>
-        <div style="font-size:9px;color:#6060a0;text-transform:uppercase;letter-spacing:0.5px;">Nonton anime sub indo</div>
+        <div style="font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.3px;">Dayy<span style="color:#F47521;">nime</span></div>
+        <div style="font-size:9px;color:#5a5a72;text-transform:uppercase;letter-spacing:0.5px;">Nonton anime sub indo</div>
       </div>
     </div>
-    <button onclick="closeSidebar()" style="background:rgba(251,114,153,0.1);border:1px solid rgba(251,114,153,0.2);color:#fb7299;font-size:13px;cursor:pointer;padding:6px 8px;border-radius:8px;">
+    <button onclick="closeSidebar()" style="background:rgba(255,255,255,0.06);border:none;color:#A0A0B0;font-size:14px;cursor:pointer;padding:6px 8px;border-radius:6px;-webkit-tap-highlight-color:transparent;">
       <i class="fas fa-times"></i>
     </button>
   </div>
 
-  <!-- Sidebar Nav -->
+  <!-- Sidebar Menu -->
   <nav style="flex:1; overflow-y:auto; overflow-x:hidden; padding:8px 0; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;">
-    <div style="font-size:9px;color:#6060a0;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Jelajahi</div>
+
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Jelajahi</div>
 
     <a href="/ongoing" onclick="closeSidebar()" class="sb-item">
-      <span class="sb-dot" style="background:#00d4aa;"></span>
+      <span class="sb-dot" style="background:#10B981;"></span>
       <span>Ongoing</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
@@ -66,7 +67,7 @@
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/movies" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-film sb-icon" style="color:#fb7299;"></i>
+      <i class="fas fa-film sb-icon" style="color:#F47521;"></i>
       <span>Movie</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
@@ -76,81 +77,87 @@
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/animelist" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-list sb-icon" style="color:#fb7299;"></i>
+      <i class="fas fa-list sb-icon" style="color:#F47521;"></i>
       <span>A-Z List</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/popular" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-fire sb-icon" style="color:#fb7299;"></i>
+      <i class="fas fa-fire sb-icon" style="color:#F47521;"></i>
       <span>Populer</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/jadwal" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-calendar-alt sb-icon" style="color:#00d4aa;"></i>
+      <i class="fas fa-calendar-alt sb-icon" style="color:#10B981;"></i>
       <span>Jadwal Rilis</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/ruang-ngobrol" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-comments sb-icon" style="color:#00a1d6;"></i>
+      <i class="fas fa-comments sb-icon" style="color:#7C3AED;"></i>
       <span>Ruang Ngobrol</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
 
     <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
-    <div style="font-size:9px;color:#6060a0;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Akun</div>
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Akun</div>
 
+    <!-- Jika sudah login -->
     <div id="sbLoggedIn" style="display:block;">
       <a href="/profile" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-user sb-icon" style="color:#b0b0cc;"></i>
+        <i class="fas fa-user sb-icon" style="color:#A0A0B0;"></i>
         <span id="sbUsername">Profile</span>
         <i class="fas fa-chevron-right sb-arr"></i>
       </a>
       <a href="/koleksi" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-bookmark sb-icon" style="color:#fb7299;"></i>
+        <i class="fas fa-bookmark sb-icon" style="color:#A0A0B0;"></i>
         <span>Koleksi</span>
         <i class="fas fa-chevron-right sb-arr"></i>
       </a>
     </div>
-    <div id="sbLoggedOut" style="display:none;">
+
+    <!-- Jika belum login -->
+    <div id="sbLoggedOut" style="display:none;"><!-- hidden until JS confirms not logged in -->
       <a href="/auth/login" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-sign-in-alt sb-icon" style="color:#fb7299;"></i>
-        <span style="color:#fb7299;font-weight:800;">Masuk</span>
+        <i class="fas fa-sign-in-alt sb-icon" style="color:#f47521;"></i>
+        <span style="color:#f47521;font-weight:700;">Masuk</span>
         <i class="fas fa-chevron-right sb-arr"></i>
       </a>
       <a href="/auth/register" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-user-plus sb-icon" style="color:#b0b0cc;"></i>
+        <i class="fas fa-user-plus sb-icon" style="color:#A0A0B0;"></i>
         <span>Daftar</span>
         <i class="fas fa-chevron-right sb-arr"></i>
       </a>
     </div>
 
     <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
-    <div style="font-size:9px;color:#6060a0;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Server</div>
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Server</div>
     {% for key, src in all_sources.items() %}
     <button onclick="switchSource('{{ key }}')" id="sbBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
+      <i class="fas fa-server" style="font-size:12px;opacity:0.5;"></i>
       <span>{{ src.label }}</span>
-      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#fb7299;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
+      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
     </button>
     {% endfor %}
   </nav>
 
-  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.05);font-size:10px;color:#6060a0;display:flex;align-items:center;justify-content:space-between;">
+  <!-- Sidebar Footer -->
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.05);font-size:10px;color:#5a5a72;display:flex;align-items:center;justify-content:space-between;">
     <span style="text-transform:uppercase;letter-spacing:0.3px;">Server Aktif</span>
-    <span id="srcActiveLabel" style="color:#fb7299;font-weight:900;">{{ active_source_label }}</span>
+    <span id="srcActiveLabel" style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
   </div>
 </aside>
 
-<!-- ══ TOP HEADER ══ -->
+<!-- TOP HEADER — Crunchyroll style -->
 <header class="top-header">
-  <button onclick="openSidebar()" class="mobile-hamburger" style="background:none;border:none;color:#b0b0cc;font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;">
+  <!-- Hamburger (mobile only) -->
+  <button onclick="openSidebar()" class="mobile-hamburger" style="background:none;border:none;color:#A0A0B0;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
     <i class="fas fa-bars"></i>
   </button>
-  <a href="/home" style="display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none;">
-    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#fb7299,#c44b7a);display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 4px 14px rgba(251,114,153,0.3);">🎌</div>
+  <!-- Logo + Brand -->
+  <a href="/home" style="display:flex;align-items:center;gap:7px;flex-shrink:0;text-decoration:none;">
+    <img src="/static/icon.png" style="width:26px;height:26px;border-radius:6px;object-fit:cover;">
     <span class="header-brand">Dayy<span>nime</span></span>
   </a>
-
-  <!-- Desktop Nav -->
+  <!-- Desktop Nav Links -->
   <nav class="desktop-nav">
     <a href="/home" class="desktop-nav-item" data-href="/home"><i class="fas fa-home"></i> Home</a>
     <a href="/ongoing" class="desktop-nav-item" data-href="/ongoing"><i class="fas fa-play-circle"></i> Ongoing</a>
@@ -159,44 +166,40 @@
     <a href="/movies" class="desktop-nav-item" data-href="/movies"><i class="fas fa-film"></i> Movie</a>
     <a href="/popular" class="desktop-nav-item" data-href="/popular"><i class="fas fa-fire"></i> Populer</a>
   </nav>
-
-  <!-- Desktop Search -->
+  <!-- Desktop Search Bar (inline, hidden on mobile) -->
   <form class="desktop-search-bar" action="/search" method="get" style="display:none;">
     <i class="fas fa-search"></i>
     <input type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off">
   </form>
-
+  <!-- Mobile: spacer + search icon -->
   <div style="flex:1;" class="mobile-spacer"></div>
-
-  <!-- Mobile Search Toggle -->
-  <button id="searchToggleBtn" onclick="openHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+  <button id="searchToggleBtn" onclick="openHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
     <i class="fas fa-search"></i>
   </button>
 
-  <!-- Search Backdrop -->
-  <div id="searchBackdrop" onclick="closeHeaderSearch()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:298;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);opacity:0;transition:opacity 0.25s ease;"></div>
+  <!-- Blur backdrop -->
+  <div id="searchBackdrop" onclick="closeHeaderSearch()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:298;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity 0.25s ease;"></div>
 
-  <!-- Mobile Search Overlay -->
+  <!-- Search overlay (mobile) -->
   <div id="searchOverlay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:299;background:var(--bg);border-bottom:1px solid var(--border);height:var(--nav-h);align-items:center;padding:0 12px;gap:10px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s ease;">
-    <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:50px;padding:0 16px;height:38px;border:1.5px solid var(--pink);">
-      <i class="fas fa-search" style="color:var(--pink);font-size:13px;"></i>
-      <input id="searchOverlayInput" type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;font-weight:600;">
+    <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--radius);padding:0 12px;height:36px;border:1px solid var(--accent);">
+      <i class="fas fa-search" style="color:var(--accent);font-size:13px;"></i>
+      <input id="searchOverlayInput" type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;">
     </form>
-    <button onclick="closeHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:6px;white-space:nowrap;">Batal</button>
+    <button onclick="closeHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:6px;white-space:nowrap;-webkit-tap-highlight-color:transparent;">Batal</button>
   </div>
-
-  <!-- User Avatar -->
-  <a href="/profile" id="headerUserBtn" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1.5px solid var(--border2);overflow:hidden;text-decoration:none;position:relative;">
+  <!-- User avatar / premium badge -->
+  <a href="/profile" id="headerUserBtn" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);overflow:hidden;text-decoration:none;position:relative;">
     <img id="headerAvatar" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
     <i id="headerAvatarFallback" class="fas fa-user" style="color:var(--text3);font-size:13px;"></i>
     <div id="headerPremiumDot" style="display:none;position:absolute;bottom:0;right:0;width:9px;height:9px;background:#fbbf24;border-radius:50%;border:1.5px solid var(--bg);"></div>
   </a>
 </header>
 
-<!-- ══ PAGE CONTENT ══ -->
+<!-- PAGE CONTENT -->
 {% block content %}{% endblock %}
 
-<!-- ══ BOTTOM NAV ══ -->
+<!-- BOTTOM NAV — Crunchyroll 5-tab -->
 <nav class="bottom-nav">
   <a href="/home" class="bnav-item" data-href="/home">
     <i class="fas fa-home"></i><span>Home</span>
@@ -213,16 +216,23 @@
   <a href="/ruang-ngobrol" class="bnav-item" data-href="/ruang-ngobrol" id="bnavNgobrol" style="position:relative;">
     <span style="position:relative;display:inline-block;">
       <i class="fas fa-comments"></i>
-      <span id="chatUnreadDot" style="display:none;position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#e53e3e;border:1.5px solid var(--bg);animation:chatDotPulse 1.5s ease-in-out infinite;"></span>
+      <span id="chatUnreadDot" style="
+        display:none;
+        position:absolute;top:-3px;right:-4px;
+        width:8px;height:8px;border-radius:50%;
+        background:#e53e3e;
+        border:1.5px solid var(--bg);
+        animation:chatDotPulse 1.5s ease-in-out infinite;
+      "></span>
     </span>
     <span>Ngobrol</span>
   </a>
-  <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;">
+  <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
     <i class="fas fa-bars"></i><span>Menu</span>
   </button>
 </nav>
 
-<script src="{{ url_for('static', filename='js/main.js') }}?v=20"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=10"></script>
 {% block scripts %}{% endblock %}
 
 <script>
@@ -250,7 +260,10 @@ function closeHeaderSearch() {
     backdrop.style.display = 'none';
   }, 250);
 }
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeHeaderSearch(); });
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeHeaderSearch();
+});
 
 // ── Sidebar ──────────────────────────────────────
 var sidebarOpen = false;
@@ -263,48 +276,67 @@ function openSidebar() {
 function closeSidebar() {
   sidebarOpen = false;
   document.getElementById('sidebarOverlay').style.display = 'none';
-  document.getElementById('sidebarPanel').style.left = '-290px';
+  document.getElementById('sidebarPanel').style.left = '-280px';
   document.body.style.overflow = '';
 }
+// Swipe kiri untuk tutup sidebar
 (function() {
   var startX = 0;
   var panel = document.getElementById('sidebarPanel');
   panel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
-  panel.addEventListener('touchend', function(e){ if (startX - e.changedTouches[0].clientX > 60) closeSidebar(); }, {passive:true});
+  panel.addEventListener('touchend', function(e){
+    if (startX - e.changedTouches[0].clientX > 60) closeSidebar();
+  }, {passive:true});
 })();
 
 // ── Source Switcher ──────────────────────────────
 function switchSource(key) {
+  var btns = document.querySelectorAll('.sb-src-btn');
+  btns.forEach(function(b){ b.style.opacity='0.5'; b.disabled=true; });
   fetch('/api/source/switch', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({source: key})
-  }).then(function(r){ return r.json(); }).then(function(data) {
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
     if (data.ok) {
       var lbl = document.getElementById('srcActiveLabel');
       if (lbl) lbl.textContent = data.label;
       setTimeout(function(){ location.reload(); }, 400);
+    } else {
+      btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
     }
-  }).catch(function() {});
+  })
+  .catch(function() {
+    btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
+  });
 }
 
-// ── Active Nav ───────────────────────────────────
+// ── Bottom nav active ────────────────────────────
 (function(){
   var path = location.pathname;
   document.querySelectorAll('.bnav-item[data-href]').forEach(function(item) {
     var href = item.getAttribute('data-href') || '';
-    if (href && (path === href || (href !== '/' && path.startsWith(href)))) item.classList.add('active');
+    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
+      item.classList.add('active');
+    }
   });
+  // Desktop nav active
   document.querySelectorAll('.desktop-nav-item[data-href]').forEach(function(item) {
     var href = item.getAttribute('data-href') || '';
-    if (href && (path === href || (href !== '/' && path.startsWith(href)))) item.classList.add('active');
+    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
+      item.classList.add('active');
+    }
   });
   var sidebarPages = ['/ongoing','/completed','/movies','/popular','/animelist','/genres','/genre','/profile','/koleksi'];
   var trigger = document.getElementById('sidebarTrigger');
-  if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) trigger.classList.add('active');
+  if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) {
+    trigger.classList.add('active');
+  }
 })();
 
-// ── Hover Overlay on acard-poster ───────────────
+// ── Inject hover overlay ke semua .acard-poster ──
 (function() {
   function injectOverlays() {
     document.querySelectorAll('.acard-poster:not([data-overlay])').forEach(function(poster) {
@@ -321,13 +353,64 @@ function switchSource(key) {
 })();
 </script>
 
-<!-- ══ FAB ══ -->
+
+<!-- FAB -->
 <style>
-#srcPanel { display:none; position:fixed; bottom:76px; right:14px; z-index:99999; background:#13131f; border:1px solid rgba(251,114,153,0.3); border-radius:14px; padding:12px 10px; min-width:190px; box-shadow:0 8px 32px rgba(0,0,0,0.8); }
+#fabWrap { position:fixed; bottom:76px; right:14px; z-index:99998; display:flex; flex-direction:column; align-items:flex-end; gap:10px; pointer-events:none; }
+#fabMain, #fabMenu.open .fab-item { pointer-events:all; }
+#fabMain {
+  width:44px; height:44px; border-radius:50%;
+  background:#F47521; color:#fff; border:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; cursor:pointer;
+  box-shadow:0 4px 20px rgba(244,117,33,0.5);
+  transition:transform 0.3s, background 0.2s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation; position:relative; z-index:2;
+}
+#fabMain.open { transform:rotate(45deg); background:#22222e; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+#fabMenu {
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  pointer-events:none; opacity:0;
+  transform:translateY(10px) scale(0.95);
+  transition:opacity 0.25s, transform 0.25s;
+}
+#fabMenu.open { pointer-events:none; opacity:1; transform:translateY(0) scale(1); }
+#fabMenu.open .fab-item { pointer-events:all; }
+.fab-item { display:flex; align-items:center; gap:8px; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+.fab-item-label {
+  background:#1a1a23; color:#fff; font-size:11px; font-weight:700; font-family:'Lato',sans-serif;
+  padding:6px 12px; border-radius:20px; box-shadow:0 2px 12px rgba(0,0,0,0.5);
+  white-space:nowrap; border:1px solid rgba(255,255,255,0.08);
+  text-transform:uppercase; letter-spacing:0.3px;
+}
+.fab-item-icon {
+  width:38px; height:38px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; color:#fff; border:none; cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4); -webkit-tap-highlight-color:transparent; flex-shrink:0;
+}
+.fab-item-icon.tr  { background:#be1e2d; }
+.fab-item-icon.srv { background:#F47521; }
+
+#srcPanel {
+  display:none; position:fixed; bottom:76px; right:14px; z-index:99999;
+  background:#1a1a23; border:1px solid rgba(244,117,33,0.4);
+  border-radius:12px; padding:12px 10px; min-width:190px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.8);
+}
+
 #trModal { display:none; position:fixed; inset:0; z-index:999999; background:rgba(0,0,0,0.85); align-items:flex-end; justify-content:center; }
 #trModal.open { display:flex; }
-#trModalBox { background:#13131f; border-radius:18px 18px 0 0; overflow:hidden; width:100%; max-width:480px; height:90vh; display:flex; flex-direction:column; box-shadow:0 -8px 40px rgba(0,0,0,0.8); animation:trSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both; border-top:1px solid rgba(251,114,153,0.2); }
-@keyframes trSlideUp { from{transform:translateY(100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
+#trModalBox {
+  background:#1a1a23; border-radius:16px 16px 0 0; overflow:hidden;
+  width:100%; max-width:480px; height:90vh;
+  display:flex; flex-direction:column;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.8);
+  animation:trSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
+  border-top:1px solid rgba(244,117,33,0.2);
+}
+@keyframes trSlideUp { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
 #trModalHead { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#be1e2d; flex-shrink:0; }
 #trModalHead span { font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:0.3px; }
 #trModalClose { background:rgba(255,255,255,0.2); border:none; color:#fff; width:26px; height:26px; border-radius:50%; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
@@ -345,7 +428,7 @@ function switchSource(key) {
     <div class="fab-item" onclick="toggleSrcPanel(); closeFab();">
       <span class="fab-item-label">Ganti Server</span>
       <button class="fab-item-icon srv" title="Server">
-        <i class="fas fa-server" style="font-size:12px;"></i>
+        <i class="fas fa-server" style="font-size:13px;"></i>
       </button>
     </div>
   </div>
@@ -365,14 +448,26 @@ function switchSource(key) {
 </div>
 
 <div id="srcPanel">
-  <div style="font-size:9px;color:#6060a0;font-weight:900;letter-spacing:1.5px;margin-bottom:10px;text-align:center;text-transform:uppercase;">Ganti Server</div>
+  <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;margin-bottom:10px;text-align:center;text-transform:uppercase;">Ganti Server</div>
   {% for key, src in all_sources.items() %}
-  <button id="srcBtn-{{ key }}" onclick="switchSource('{{ key }}')" style="width:100%;margin-bottom:5px;padding:9px 12px;border-radius:10px;border:1px solid {% if active_source == key %}#fb7299{% else %}rgba(255,255,255,0.08){% endif %};background:{% if active_source == key %}rgba(251,114,153,0.15){% else %}rgba(255,255,255,0.03){% endif %};color:{% if active_source == key %}#fb7299{% else %}#b0b0cc{% endif %};font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:8px;text-transform:uppercase;letter-spacing:0.3px;">
+  <button id="srcBtn-{{ key }}" onclick="switchSource('{{ key }}')" style="
+    width:100%;margin-bottom:5px;padding:9px 12px;border-radius:8px;
+    border:1px solid {% if active_source == key %}#F47521{% else %}rgba(255,255,255,0.08){% endif %};
+    background:{% if active_source == key %}rgba(244,117,33,0.15){% else %}rgba(255,255,255,0.03){% endif %};
+    color:{% if active_source == key %}#F47521{% else %}#A0A0B0{% endif %};
+    font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+    text-transform:uppercase;letter-spacing:0.3px;">
     <span>{{ src.label }}</span>
-    {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#fb7299;flex-shrink:0;display:inline-block;"></span>{% endif %}
+    {% if active_source == key %}
+    <span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;"></span>
+    {% endif %}
   </button>
   {% endfor %}
-  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);font-size:9px;color:#6060a0;text-align:center;text-transform:uppercase;letter-spacing:0.3px;">Aktif: <span style="color:#fb7299;font-weight:900;">{{ active_source_label }}</span></div>
+  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);font-size:9px;color:#5a5a72;text-align:center;text-transform:uppercase;letter-spacing:0.3px;">
+    Aktif: <span style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
+  </div>
 </div>
 
 <script>
@@ -420,23 +515,25 @@ document.addEventListener('click', function(e) {
 });
 </script>
 
-<!-- ══ Trakteer Notif ══ -->
-<div id="trNotif" style="display:none;position:fixed;bottom:76px;right:14px;z-index:99997;background:#13131f;border:1px solid rgba(190,30,45,0.4);border-radius:14px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.7);animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;">
+<!-- Trakteer Donation Notif -->
+<div id="trNotif" style="display:none;position:fixed;bottom:76px;right:14px;z-index:99997;background:#1a1a23;border:1px solid rgba(190,30,45,0.4);border-radius:12px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.7);animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;">
   <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px;">
     <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,#ff6b6b);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;" id="trNotifAvatar">?</div>
     <div style="flex:1;min-width:0;">
       <div style="font-size:9px;color:#be1e2d;font-weight:900;letter-spacing:0.5px;text-transform:uppercase;">❤️ Donasi Masuk!</div>
-      <div style="font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="trNotifName">-</div>
+      <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="trNotifName">-</div>
     </div>
-    <button onclick="hidetrNotif()" style="background:none;border:none;color:#6060a0;font-size:14px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;">✕</button>
+    <button onclick="hidetrNotif()" style="background:none;border:none;color:#5a5a72;font-size:14px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;">✕</button>
   </div>
-  <div style="font-size:11px;color:#b0b0cc;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
+  <div style="font-size:11px;color:#A0A0B0;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div style="font-size:14px;font-weight:900;color:#fb7299;" id="trNotifAmount">-</div>
+    <div style="font-size:14px;font-weight:900;color:#F47521;" id="trNotifAmount">-</div>
     <button onclick="openTrakteer();hidetrNotif();" style="background:#be1e2d;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.3px;">Dukung</button>
   </div>
 </div>
-
+<style>
+@keyframes trNotifIn { from{opacity:0;transform:translateX(20px);} to{opacity:1;transform:translateX(0);} }
+</style>
 <script>
 (function() {
   var lastId = localStorage.getItem('trLastDonorId') || '';
@@ -466,20 +563,25 @@ document.addEventListener('click', function(e) {
     fetch('/api/trakteer/latest').then(function(r){ return r.json(); }).then(function(d) {
       if (!d.ok || !d.latest) return;
       var s = d.latest;
-      if (s.id && s.id !== lastId) { lastId = s.id; localStorage.setItem('trLastDonorId', lastId); showNotif(s); }
+      if (s.id && s.id !== lastId) {
+        lastId = s.id; localStorage.setItem('trLastDonorId', lastId); showNotif(s);
+      }
     }).catch(function(){});
   }
   setTimeout(checkLatest, 5000); setInterval(checkLatest, 60000);
 })();
 </script>
 
-<!-- ══ Header User ══ -->
+
 <script>
+// ── Header user avatar + sidebar auth state ───────────────────────────
 (function() {
   fetch('/api/me').then(function(r){ return r.json(); }).then(function(d) {
     var user = d.user;
     var btn = document.getElementById('headerUserBtn');
+
     if (!user) {
+      // Belum login: arahkan icon user ke halaman login
       if(btn) btn.href = '/auth/login';
       var sbOut = document.getElementById('sbLoggedOut');
       var sbIn  = document.getElementById('sbLoggedIn');
@@ -487,19 +589,26 @@ document.addEventListener('click', function(e) {
       if(sbIn)  sbIn.style.display  = 'none';
       return;
     }
+
+    // Sudah login: tampilkan avatar & username di sidebar
     var sbOut = document.getElementById('sbLoggedOut');
     var sbIn  = document.getElementById('sbLoggedIn');
     if(sbOut) sbOut.style.display = 'none';
     if(sbIn)  sbIn.style.display  = 'block';
+
     var sbName = document.getElementById('sbUsername');
     if(sbName) sbName.textContent = user.name || 'Profile';
+
     var avatar = document.getElementById('headerAvatar');
     var fallback = document.getElementById('headerAvatarFallback');
     if (user.avatar && avatar) {
-      avatar.src = user.avatar; avatar.style.display = 'block';
+      avatar.src = user.avatar;
+      avatar.style.display = 'block';
       if(fallback) fallback.style.display = 'none';
-      if(btn) btn.style.border = '1.5px solid var(--pink)';
+      if(btn) btn.style.border = '1.5px solid var(--accent)';
     }
+
+    // Check premium for dot
     fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(p) {
       if(p.premium) {
         var dot = document.getElementById('headerPremiumDot');
@@ -508,6 +617,7 @@ document.addEventListener('click', function(e) {
       }
     }).catch(function(){});
   }).catch(function(){
+    // Error fetch: fallback ke tampilkan tombol login
     var sbOut = document.getElementById('sbLoggedOut');
     if(sbOut) sbOut.style.display = 'block';
     var btn = document.getElementById('headerUserBtn');
@@ -516,11 +626,11 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 
-<!-- ══ Ads (non-premium) ══ -->
 <script>
+// ── Ads: hanya tampil jika bukan premium ──
 (function() {
   fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(d) {
-    if (d.premium) return;
+    if (d.premium) return; // premium = no ads
     var s1 = document.createElement('script');
     s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
     document.head.appendChild(s1);
@@ -528,70 +638,115 @@ document.addEventListener('click', function(e) {
     s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
     document.head.appendChild(s2);
   }).catch(function() {
+    // Gagal cek = anggap bukan premium, tampilkan iklan
     var s1 = document.createElement('script');
     s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
     document.head.appendChild(s1);
+    var s2 = document.createElement('script');
+    s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
+    document.head.appendChild(s2);
   });
 })();
 </script>
 
-<!-- ══ Chat Unread Dot ══ -->
+<!-- ── Chat Unread Dot ─────────────────────────────── -->
+<style>
+@keyframes chatDotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.35); opacity: 0.7; }
+}
+</style>
 <script>
 (function() {
   if (window.location.pathname === '/ruang-ngobrol') {
+    // Kalau di halaman ngobrol, update last_seen ke sekarang
     localStorage.setItem('dayy_chat_seen', new Date().toISOString());
     return;
   }
+
   var dot = document.getElementById('chatUnreadDot');
   if (!dot) return;
-  var SEEN_KEY = 'dayy_chat_seen';
+
+  var SEEN_KEY  = 'dayy_chat_seen';
   var UNREAD_KEY = 'dayy_chat_unread';
+
+  // Tampilkan dot kalau ada unread tersimpan
   if (localStorage.getItem(UNREAD_KEY) === '1') dot.style.display = 'block';
+
+  // Klik Ngobrol → hapus dot + update last seen
   var navBtn = document.getElementById('bnavNgobrol');
   if (navBtn) navBtn.addEventListener('click', function() {
     dot.style.display = 'none';
     localStorage.removeItem(UNREAD_KEY);
     localStorage.setItem(SEEN_KEY, new Date().toISOString());
   });
+
   function checkUnread() {
     var lastSeen = localStorage.getItem(SEEN_KEY);
-    if (!lastSeen) lastSeen = new Date(Date.now() - 3600000).toISOString();
-    fetch('/api/globalchat?limit=1').then(function(r){ return r.json(); }).then(function(d) {
-      if (!d.messages || !d.messages.length) return;
-      var latestTime = d.messages[0].created_at;
-      if (latestTime && latestTime > lastSeen) { dot.style.display = 'block'; localStorage.setItem(UNREAD_KEY, '1'); }
-    }).catch(function(){});
+    // Kalau belum pernah buka chat, anggap last seen = 1 jam lalu
+    if (!lastSeen) {
+      lastSeen = new Date(Date.now() - 3600000).toISOString();
+    }
+
+    fetch('/api/globalchat?limit=1')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.messages || !d.messages.length) return;
+        var latestTime = d.messages[0].created_at;
+        if (latestTime && latestTime > lastSeen) {
+          dot.style.display = 'block';
+          localStorage.setItem(UNREAD_KEY, '1');
+        }
+      })
+      .catch(function() {});
   }
+
+  // Cek langsung saat load, lalu tiap 30 detik
   checkUnread();
   setInterval(checkUnread, 30000);
 })();
 </script>
-
 </body>
 <script>
+// ── Service Worker ───────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(err) { console.warn('[SW] Register gagal:', err); });
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .catch(function(err) { console.warn('[SW] Register gagal:', err); });
   });
 }
+
+// ── PWA Install Prompt ───────────────────────────
 var deferredPrompt = null;
+
 window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault(); deferredPrompt = e; window._pwaPrompt = e;
+  e.preventDefault();
+  deferredPrompt = e;
+  // Simpan supaya bisa dipanggil dari halaman lain
+  window._pwaPrompt = e;
 });
+
 function installPWA() {
   var p = deferredPrompt || window._pwaPrompt;
   if (!p) return;
   p.prompt();
   p.userChoice.then(function() {
-    deferredPrompt = null; window._pwaPrompt = null;
+    deferredPrompt = null;
+    window._pwaPrompt = null;
     var banner = document.getElementById('pwaBannerSection');
     if (banner) banner.style.display = 'none';
   });
 }
+
 window.addEventListener('appinstalled', function() {
-  deferredPrompt = null; window._pwaPrompt = null;
+  deferredPrompt = null;
+  window._pwaPrompt = null;
   var banner = document.getElementById('pwaBannerSection');
   if (banner) banner.style.display = 'none';
 });
 </script>
+
+<style>
+
+</style>
 </html>

@@ -1,25 +1,39 @@
 {% extends "base.html" %}
 {% block title %}{% if query %}{{ query }} - {% endif %}Cari Anime - Dayynime{% endblock %}
 {% block content %}
-<div style="padding:14px 16px 10px;">
-  <form action="/search" method="get" style="display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:50px;padding:0 16px;height:48px;border:1.5px solid {% if query %}var(--pink){% else %}var(--border2){% endif %};transition:border-color 0.2s;box-shadow:{% if query %}0 0 0 3px var(--pink-dim){% else %}none{% endif %};">
-    <i class="fas fa-search" style="color:var(--pink);font-size:14px;flex-shrink:0;"></i>
-    <input type="text" name="q" value="{{ query }}" placeholder="Cari judul anime..." autocomplete="off" autofocus style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;">
-    {% if query %}<a href="/search" style="color:var(--text3);font-size:14px;flex-shrink:0;"><i class="fas fa-times"></i></a>{% endif %}
+
+<!-- Search Bar -->
+<div style="padding:14px 14px 10px;">
+  <form action="/search" method="get"
+    style="display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:var(--radius-md);padding:0 16px;height:46px;border:1.5px solid {% if query %}var(--accent){% else %}var(--border){% endif %};transition:border-color 0.2s;">
+    <i class="fas fa-search" style="color:var(--accent);font-size:14px;flex-shrink:0;"></i>
+    <input type="text" name="q" value="{{ query }}" placeholder="Cari judul anime..." autocomplete="off"
+      autofocus
+      style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;font-weight:600;">
+    {% if query %}
+    <a href="/search" style="color:var(--text3);font-size:13px;flex-shrink:0;"><i class="fas fa-times"></i></a>
+    {% endif %}
   </form>
 </div>
 
 {% if query %}
-<div style="padding:0 16px 14px;display:flex;align-items:center;justify-content:space-between;">
+
+<!-- Result Header -->
+<div style="padding:0 14px 12px;display:flex;align-items:center;justify-content:space-between;">
   {% if data and data.animes %}
-  <div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;"><span style="color:var(--pink);">{{ data.animes|length }}</span> hasil &mdash; "{{ query }}"</div>
+  <div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+    <span style="color:var(--accent);">{{ data.animes|length }}</span> hasil &mdash;
+    "<span style="color:var(--text);">{{ query }}</span>"
+  </div>
   {% else %}
-  <div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Tidak ditemukan untuk "{{ query }}"</div>
+  <div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+    Tidak ditemukan untuk "<span style="color:var(--text);">{{ query }}</span>"
+  </div>
   {% endif %}
 </div>
 
 {% if data and data.animes %}
-<div class="anime-grid" style="padding:0 16px;">
+<div class="anime-grid" style="padding:0 14px;">
   {% for anime in data.animes %}
   <a href="/anime/{{ anime.slug }}" class="acard">
     <div class="acard-poster">
@@ -31,25 +45,86 @@
   </a>
   {% endfor %}
 </div>
+
 {% else %}
 <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 30px;text-align:center;">
-  <div style="width:80px;height:80px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;margin-bottom:20px;border:1.5px solid var(--border2);">
-    <i class="fas fa-search" style="font-size:30px;color:var(--text3);"></i>
+  <div style="width:72px;height:72px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;margin-bottom:20px;border:1px solid var(--border);">
+    <i class="fas fa-search" style="font-size:28px;color:var(--text3);"></i>
   </div>
-  <h3 style="font-family:'M PLUS Rounded 1c',sans-serif;font-size:16px;font-weight:900;color:var(--text);margin-bottom:8px;">Anime Tidak Ditemukan</h3>
+  <h3 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">Anime Tidak Ditemukan</h3>
   <p style="font-size:12px;color:var(--text3);line-height:1.6;max-width:220px;">Coba kata kunci lain atau periksa ejaan judul anime</p>
   <div style="margin-top:24px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-    <a href="/home" style="padding:9px 20px;background:linear-gradient(135deg,var(--pink),#c44b7a);color:#fff;border-radius:50px;font-size:12px;font-weight:800;box-shadow:0 4px 14px var(--pink-glow);">Ke Beranda</a>
-    <a href="/genres" style="padding:9px 20px;background:var(--bg2);color:var(--text2);border-radius:50px;font-size:12px;font-weight:800;border:1.5px solid var(--border2);">Jelajahi Genre</a>
+    <a href="/home" style="padding:8px 18px;background:var(--accent);color:#fff;border-radius:50px;font-size:12px;font-weight:700;">Ke Beranda</a>
+    <a href="/genres" style="padding:8px 18px;background:var(--bg2);color:var(--text2);border-radius:50px;font-size:12px;font-weight:700;border:1px solid var(--border);">Jelajahi Genre</a>
   </div>
 </div>
 {% endif %}
 
 {% else %}
-<div style="padding:30px 16px;text-align:center;">
-  <div style="font-size:48px;margin-bottom:16px;">🔍</div>
-  <div style="font-family:'M PLUS Rounded 1c',sans-serif;font-size:16px;font-weight:900;color:var(--text);margin-bottom:6px;">Cari Anime Favorit</div>
-  <div style="font-size:12px;color:var(--text3);">Ketik judul anime di atas untuk mulai mencari</div>
+<!-- No Query: Trending + Browse -->
+<div style="padding:0 14px;">
+  <div style="margin-bottom:22px;">
+    <div style="font-size:10px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">
+      <i class="fas fa-fire" style="color:var(--accent);margin-right:5px;"></i>Populer
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;">
+      <a href="/search?q=one+piece" class="sug-tag">One Piece</a>
+      <a href="/search?q=naruto" class="sug-tag">Naruto</a>
+      <a href="/search?q=demon+slayer" class="sug-tag">Demon Slayer</a>
+      <a href="/search?q=attack+on+titan" class="sug-tag">Attack on Titan</a>
+      <a href="/search?q=jujutsu+kaisen" class="sug-tag">Jujutsu Kaisen</a>
+      <a href="/search?q=bleach" class="sug-tag">Bleach</a>
+      <a href="/search?q=dragon+ball" class="sug-tag">Dragon Ball</a>
+      <a href="/search?q=sword+art+online" class="sug-tag">SAO</a>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size:10px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">
+      <i class="fas fa-compass" style="color:var(--accent);margin-right:5px;"></i>Jelajahi
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <a href="/ongoing" class="browse-card">
+        <div class="browse-icon" style="background:rgba(74,222,128,0.15);"><i class="fas fa-circle" style="color:#4ade80;font-size:10px;"></i></div>
+        <div><div class="browse-label">Ongoing</div><div class="browse-sub">Sedang tayang</div></div>
+      </a>
+      <a href="/completed" class="browse-card">
+        <div class="browse-icon" style="background:rgba(96,165,250,0.15);"><i class="fas fa-check-circle" style="color:#60a5fa;font-size:14px;"></i></div>
+        <div><div class="browse-label">Completed</div><div class="browse-sub">Sudah tamat</div></div>
+      </a>
+      <a href="/movies" class="browse-card">
+        <div class="browse-icon" style="background:rgba(244,117,33,0.15);"><i class="fas fa-film" style="color:var(--accent);font-size:14px;"></i></div>
+        <div><div class="browse-label">Movie</div><div class="browse-sub">Film anime</div></div>
+      </a>
+      <a href="/genres" class="browse-card">
+        <div class="browse-icon" style="background:rgba(167,139,250,0.15);"><i class="fas fa-tags" style="color:#a78bfa;font-size:13px;"></i></div>
+        <div><div class="browse-label">Genre</div><div class="browse-sub">Filter genre</div></div>
+      </a>
+    </div>
+  </div>
 </div>
 {% endif %}
+
+<div style="height:20px;"></div>
+
+<style>
+.sug-tag {
+  padding:6px 13px; background:var(--bg2); border:1px solid var(--border);
+  border-radius:50px; font-size:11px; font-weight:700; color:var(--text2);
+  transition:all 0.2s; white-space:nowrap;
+}
+.sug-tag:active { background:var(--accent-dim); border-color:rgba(244,117,33,0.4); color:var(--accent); }
+.browse-card {
+  display:flex; align-items:center; gap:10px; padding:12px 14px;
+  background:var(--bg2); border-radius:var(--radius-md);
+  border:1px solid var(--border); transition:border-color 0.2s;
+}
+.browse-card:active { border-color:var(--accent); }
+.browse-icon {
+  width:32px; height:32px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.browse-label { font-size:12px; font-weight:800; color:var(--text); }
+.browse-sub { font-size:10px; color:var(--text3); margin-top:1px; }
+</style>
 {% endblock %}

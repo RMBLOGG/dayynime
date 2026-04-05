@@ -1,32 +1,49 @@
 {% extends "base.html" %}
-{% block title %}{{ title }} - Dayynime{% endblock %}
+{% block title %}{{ title }} Anime - Dayynime{% endblock %}
 {% block content %}
-<div class="section-wrap" style="padding-top:16px;">
-  <div class="section-head">
-    <div class="section-title">{{ title }}</div>
-    {% if data and data.animes %}<div style="font-size:11px;color:var(--text3);font-weight:700;">{{ data.animes|length }} anime</div>{% endif %}
-  </div>
-  {% if data and data.animes %}
-  <div class="anime-grid">
-    {% for anime in data.animes %}
-    <a href="/anime/{{ anime.slug }}" class="acard">
-      <div class="acard-poster">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
-        {% if anime.episode %}<div class="acard-ep-badge"><i class="fas fa-play" style="font-size:6px;"></i> Ep {{ anime.episode }}</div>{% endif %}
-        {% if anime.score %}<div style="position:absolute;bottom:6px;right:6px;z-index:3;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#ffd700;font-size:8px;font-weight:900;padding:2px 6px;border-radius:6px;"><i class="fas fa-star" style="font-size:7px;"></i> {{ anime.score }}</div>{% endif %}
-        {% if anime.rank %}<div style="position:absolute;top:6px;left:6px;z-index:3;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;font-size:8px;font-weight:900;padding:2px 6px;border-radius:6px;">#{{ anime.rank }}</div>{% endif %}
-      </div>
-      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
-      <div class="acard-title">{{ anime.title }}</div>
-    </a>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div style="text-align:center;padding:60px 20px;color:var(--text3);">
-    <i class="fas fa-film" style="font-size:40px;margin-bottom:12px;display:block;"></i>
-    <div style="font-size:14px;font-weight:700;">Belum ada anime</div>
-  </div>
+
+<div class="page-head">
+  <h1>
+    {% if title == 'Ongoing' %}<i class="fas fa-circle" style="color:#4ade80;font-size:0.8em;"></i>
+    {% elif title == 'Completed' %}<i class="fas fa-check-circle" style="color:#60a5fa;font-size:0.8em;"></i>
+    {% elif title == 'Movie' %}<i class="fas fa-film" style="color:#ff6600;font-size:0.8em;"></i>
+    {% else %}<i class="fas fa-fire" style="color:#fb923c;font-size:0.8em;"></i>{% endif %}
+    {{ title }} Anime
+  </h1>
+  {% if data and data.pagination %}
+  <p>Halaman {{ data.pagination.currentPage }}</p>
   {% endif %}
 </div>
+
+{% if data and data.animes %}
+<div class="anime-grid">
+  {% for anime in data.animes %}
+  <a href="/anime/{{ anime.slug }}" class="acard">
+    <div class="acard-poster">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+      {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+      {% if anime.episode %}<div class="acard-ep">Ep {{ anime.episode }}</div>{% endif %}
+    </div>
+    <div class="acard-genre">{{ anime.type or '' }}</div>
+    <div class="acard-title">{{ anime.title }}</div>
+    {% if anime.score %}<div class="acard-stat"><i class="fas fa-star" style="color:#ffd700;font-size:9px"></i> {{ anime.score }}</div>{% endif %}
+  </a>
+  {% endfor %}
+</div>
+
+{% if data.pagination %}
+<div class="pagination">
+  {% if data.pagination.hasPrev %}
+  <a href="{{ base_url }}?page={{ page - 1 }}" class="pag-btn"><i class="fas fa-chevron-left"></i> Prev</a>
+  {% endif %}
+  <div class="pag-current">{{ data.pagination.currentPage }}</div>
+  {% if data.pagination.hasNext %}
+  <a href="{{ base_url }}?page={{ page + 1 }}" class="pag-btn">Next <i class="fas fa-chevron-right"></i></a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty"><i class="fas fa-film"></i><h3>Tidak ada data</h3></div>
+{% endif %}
 {% endblock %}
