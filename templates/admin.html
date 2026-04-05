@@ -15,58 +15,41 @@
   --adm-muted: #555;
 }
 body { background: var(--adm-bg) !important; }
-#adm-wrap { max-width:1100px; margin:0 auto; padding:24px 16px 80px; font-family:'Poppins',sans-serif; }
-.adm-center { min-height:60vh; display:flex; align-items:center; justify-content:center; padding:40px 20px; font-family:'Poppins',sans-serif; }
-.adm-box { text-align:center; max-width:340px; }
-.adm-icon-circle { width:72px; height:72px; border-radius:50%; background:rgba(255,102,0,0.12); border:1px solid rgba(255,102,0,0.3); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:28px; }
-.adm-title { font-size:20px; font-weight:800; color:#fff; margin-bottom:8px; }
-.adm-sub { font-size:13px; color:#666; margin-bottom:28px; line-height:1.6; }
-.adm-btn-login { display:inline-flex; align-items:center; gap:10px; background:#ff6600; color:#fff; font-weight:700; font-size:14px; padding:12px 28px; border-radius:10px; border:none; cursor:pointer; font-family:'Poppins',sans-serif; transition:background 0.2s; }
-.adm-btn-login:hover { background:#e55a00; }
-.adm-back { color:#ff6600; font-size:13px; font-weight:600; text-decoration:none; }
-/* Stats */
-.adm-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
-.adm-header h1 { font-size:20px; font-weight:800; color:#fff; margin:0; display:flex; align-items:center; gap:10px; }
-.adm-header h1 .badge { font-size:10px; font-weight:700; background:var(--adm-accent); color:#000; padding:3px 8px; border-radius:4px; letter-spacing:1px; text-transform:uppercase; }
-.adm-refresh-btn { background:rgba(255,102,0,0.12); border:1px solid var(--adm-border); color:var(--adm-accent); font-size:13px; font-weight:600; padding:8px 16px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:7px; }
-.live-dot { width:8px; height:8px; border-radius:50%; background:var(--adm-green); display:inline-block; animation:pulse-dot 1.6s ease-in-out infinite; }
+#adm-wrap { max-width: 800px; margin: 0 auto; padding: 20px 14px 100px; font-family: 'Poppins', sans-serif; }
+.adm-center { min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; font-family: 'Poppins', sans-serif; }
+.adm-box { text-align: center; max-width: 340px; }
+.adm-icon-circle { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,102,0,0.12); border: 1px solid rgba(255,102,0,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; }
+.adm-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.adm-sub { font-size: 13px; color: #666; margin-bottom: 28px; line-height: 1.6; }
+.adm-btn-login { display: inline-flex; align-items: center; gap: 10px; background: #ff6600; color: #fff; font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 10px; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background 0.2s; text-decoration: none; }
+.adm-btn-login:hover { background: #e55a00; }
+.adm-back { color: #ff6600; font-size: 13px; font-weight: 600; text-decoration: none; }
+.adm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 12px; }
+.adm-header h1 { font-size: 20px; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 10px; }
+.adm-header h1 .badge { font-size: 10px; font-weight: 700; background: var(--adm-accent); color: #000; padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; }
+.adm-refresh-btn { background: rgba(255,102,0,0.12); border: 1px solid var(--adm-border); color: var(--adm-accent); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 7px; font-family: 'Poppins', sans-serif; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--adm-green); display: inline-block; animation: pulse-dot 1.6s ease-in-out infinite; }
 @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0)} }
-.adm-stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:14px; margin-bottom:28px; }
-.adm-stat { background:var(--adm-card); border:1px solid var(--adm-border); border-radius:14px; padding:18px 18px 16px; }
-.adm-stat-icon { font-size:22px; margin-bottom:10px; }
-.adm-stat-val { font-size:30px; font-weight:800; color:#fff; line-height:1; margin-bottom:4px; letter-spacing:-1px; }
-.adm-stat-label { font-size:11px; font-weight:600; color:var(--adm-muted); text-transform:uppercase; letter-spacing:0.8px; }
-.adm-section-title { font-size:12px; font-weight:700; color:var(--adm-muted); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
-.adm-section-title::after { content:''; flex:1; height:1px; background:var(--adm-border); }
-.adm-table-wrap { background:var(--adm-card); border:1px solid var(--adm-border); border-radius:14px; overflow:hidden; margin-bottom:24px; }
-.adm-table { width:100%; border-collapse:collapse; font-size:13px; }
-.adm-table th { background:rgba(255,255,255,0.03); color:var(--adm-muted); font-weight:700; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:12px 16px; text-align:left; border-bottom:1px solid var(--adm-border); }
-.adm-table td { padding:12px 16px; color:var(--adm-text); border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
-.adm-table tr:last-child td { border-bottom:none; }
-.adm-table tr:hover td { background:rgba(255,102,0,0.04); }
-.adm-avatar { width:30px; height:30px; border-radius:50%; background:rgba(255,102,0,0.2); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--adm-accent); flex-shrink:0; overflow:hidden; }
-.adm-avatar img { width:100%; height:100%; object-fit:cover; }
-.adm-user-cell { display:flex; align-items:center; gap:10px; }
-.adm-user-name { font-weight:600; font-size:13px; color:#fff; }
-.adm-user-email { font-size:11px; color:var(--adm-muted); }
-.adm-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:5px; font-size:11px; font-weight:700; }
-.adm-badge.active { background:rgba(34,197,94,0.15); color:var(--adm-green); }
-.adm-badge.premium { background:rgba(255,153,51,0.15); color:var(--adm-accent2); }
-.adm-badge.guest { background:rgba(255,255,255,0.07); color:#888; }
-.adm-badge.expired { background:rgba(239,68,68,0.12); color:var(--adm-red); }
-.adm-page-row { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); }
-.adm-page-row:last-child { border-bottom:none; }
-.adm-page-name { font-size:12px; color:var(--adm-text); width:180px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.adm-page-bar-wrap { flex:1; background:rgba(255,255,255,0.05); border-radius:4px; height:6px; overflow:hidden; }
-.adm-page-bar { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--adm-accent),var(--adm-accent2)); transition:width 0.6s cubic-bezier(0.4,0,0.2,1); }
-.adm-page-count { font-size:11px; font-weight:700; color:var(--adm-muted); width:28px; text-align:right; }
-.adm-empty { text-align:center; padding:40px 20px; color:var(--adm-muted); font-size:13px; }
-.adm-empty i { font-size:28px; margin-bottom:10px; display:block; }
-.adm-updated { font-size:11px; color:var(--adm-muted); margin-bottom:20px; display:flex; align-items:center; gap:6px; }
-@media(max-width:640px){
-  .adm-table th:nth-child(3),.adm-table td:nth-child(3),
-  .adm-table th:nth-child(4),.adm-table td:nth-child(4){display:none}
-}
+.adm-updated { font-size: 11px; color: var(--adm-muted); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; }
+.adm-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.adm-stat { background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: 14px; padding: 18px 16px 16px; }
+.adm-stat-icon { font-size: 22px; margin-bottom: 10px; }
+.adm-stat-val { font-size: 30px; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
+.adm-stat-label { font-size: 11px; font-weight: 600; color: var(--adm-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.adm-menu-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--adm-muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.adm-menu-title::after { content: ''; flex: 1; height: 1px; background: var(--adm-border); }
+.adm-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+.adm-menu-card { display: flex; align-items: center; gap: 12px; background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: 14px; padding: 14px 12px; text-decoration: none; transition: border-color 0.2s, background 0.2s; }
+.adm-menu-card:hover { border-color: var(--adm-accent); background: rgba(255,102,0,0.05); }
+.adm-menu-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.adm-menu-info { min-width: 0; flex: 1; }
+.adm-menu-name { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+.adm-menu-desc { font-size: 10px; color: var(--adm-muted); line-height: 1.3; }
+.adm-menu-arrow { margin-left: auto; color: var(--adm-muted); font-size: 11px; flex-shrink: 0; }
+.adm-section-title { font-size: 12px; font-weight: 700; color: var(--adm-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.adm-section-title::after { content: ''; flex: 1; height: 1px; background: var(--adm-border); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.fa-spin { animation: spin 0.8s linear infinite; }
 </style>
 {% endblock %}
 
@@ -78,9 +61,7 @@ body { background: var(--adm-bg) !important; }
     <div class="adm-icon-circle">🔐</div>
     <div class="adm-title">Login Admin</div>
     <div class="adm-sub">Masuk menggunakan token admin untuk mengakses dashboard.</div>
-    <a href="/auth/login" class="adm-btn-login" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
-      <i class="fas fa-shield-alt"></i> Login Admin
-    </a>
+    <a href="/auth/login" class="adm-btn-login"><i class="fas fa-shield-alt"></i> Login Admin</a>
   </div>
 </div>
 
@@ -96,6 +77,7 @@ body { background: var(--adm-bg) !important; }
 
 {% else %}
 <div id="adm-wrap">
+
   <div class="adm-header">
     <h1><span class="live-dot"></span> Dashboard Admin <span class="badge">Live</span></h1>
     <button class="adm-refresh-btn" onclick="loadStats()">
@@ -113,425 +95,176 @@ body { background: var(--adm-bg) !important; }
     <div class="adm-stat"><div class="adm-stat-icon">🎌</div><div class="adm-stat-val" id="stat-members">–</div><div class="adm-stat-label">Total Member</div></div>
   </div>
 
-  <div class="adm-section-title"><span class="live-dot" style="width:6px;height:6px;"></span> User Aktif (5 Menit Terakhir)</div>
-  <div class="adm-table-wrap" id="active-users-wrap"><div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div></div>
+  <!-- ── NAVIGATION MENU ── -->
+  <div class="adm-menu-title">Menu Admin</div>
+  <div class="adm-menu-grid">
 
-  <div class="adm-section-title" style="margin-top:24px;"><i class="fas fa-fire" style="color:var(--adm-accent);font-size:11px;"></i> Halaman Terpopuler (Hari Ini)</div>
-  <div class="adm-table-wrap" id="top-pages-wrap"><div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div></div>
+    <a href="/users-admin" class="adm-menu-card">
+      <div class="adm-menu-icon" style="background:rgba(34,197,94,0.12);">
+        <i class="fas fa-users" style="color:#22c55e;"></i>
+      </div>
+      <div class="adm-menu-info">
+        <div class="adm-menu-name">Users</div>
+        <div class="adm-menu-desc">Aktif, premium & terpopuler</div>
+      </div>
+      <i class="fas fa-chevron-right adm-menu-arrow"></i>
+    </a>
 
-  <div class="adm-section-title" style="margin-top:24px;"><i class="fas fa-star" style="color:var(--adm-accent2);font-size:11px;"></i> Member Premium</div>
-  <div class="adm-table-wrap" id="premium-users-wrap"><div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div></div>
+    <a href="/analytics-admin" class="adm-menu-card">
+      <div class="adm-menu-icon" style="background:rgba(52,211,153,0.12);">
+        <i class="fas fa-chart-bar" style="color:#34d399;"></i>
+      </div>
+      <div class="adm-menu-info">
+        <div class="adm-menu-name">Analytics</div>
+        <div class="adm-menu-desc">Watch history & top anime</div>
+      </div>
+      <i class="fas fa-chevron-right adm-menu-arrow"></i>
+    </a>
 
-  <!-- VOUCHER SECTION -->
-  <div class="adm-section-title" style="margin-top:28px;"><i class="fas fa-ticket-alt" style="color:#f47521;font-size:11px;"></i> Generate Voucher</div>
-  <div style="background:var(--adm-bg2);border:1px solid var(--adm-border);border-radius:12px;padding:16px;margin-bottom:12px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-      <div>
-        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Durasi (hari)</label>
-        <input type="number" id="vDays" value="30" min="1" max="365" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+    <a href="/voucher-admin" class="adm-menu-card">
+      <div class="adm-menu-icon" style="background:rgba(244,117,33,0.12);">
+        <i class="fas fa-ticket-alt" style="color:#f47521;"></i>
       </div>
-      <div>
-        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Max Pemakai</label>
-        <input type="number" id="vMaxUses" value="1" min="1" max="999" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+      <div class="adm-menu-info">
+        <div class="adm-menu-name">Voucher</div>
+        <div class="adm-menu-desc">Generate & kelola kode</div>
       </div>
-      <div>
-        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Jumlah Voucher</label>
-        <input type="number" id="vCount" value="1" min="1" max="50" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+      <i class="fas fa-chevron-right adm-menu-arrow"></i>
+    </a>
+
+    <a href="#locked-section" class="adm-menu-card" onclick="document.getElementById('locked-section').scrollIntoView({behavior:'smooth'});return false;">
+      <div class="adm-menu-icon" style="background:rgba(239,68,68,0.12);">
+        <i class="fas fa-lock" style="color:#ef4444;"></i>
       </div>
-      <div>
-        <label style="font-size:10px;font-weight:700;color:var(--adm-text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Label (opsional)</label>
-        <input type="text" id="vLabel" placeholder="contoh: Promo Lebaran" style="width:100%;padding:8px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;color:var(--adm-text);font-size:13px;font-family:inherit;outline:none;">
+      <div class="adm-menu-info">
+        <div class="adm-menu-name">Locked Anime</div>
+        <div class="adm-menu-desc">Kunci akses anime premium</div>
+      </div>
+      <i class="fas fa-chevron-right adm-menu-arrow"></i>
+    </a>
+
+  </div>
+
+  <!-- ── LOCKED ANIME ── -->
+  <div id="locked-section">
+    <div class="adm-section-title">
+      <i class="fas fa-lock" style="color:#ef4444;font-size:11px;"></i> Kelola Anime Terkunci
+    </div>
+    <div style="background:var(--adm-card);border:1px solid var(--adm-border);border-radius:14px;overflow:hidden;margin-bottom:20px;">
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="font-size:10px;color:var(--adm-muted);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;">Kunci Anime</div>
+        <div style="display:flex;gap:8px;">
+          <input id="lockSlugInput" type="text" placeholder="Masukkan slug anime (contoh: one-piece)"
+            style="flex:1;background:#0d0d0d;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 12px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+          <button onclick="lockAnime()"
+            style="background:#f47521;border:none;border-radius:8px;color:#fff;font-weight:900;font-size:12px;padding:10px 16px;cursor:pointer;white-space:nowrap;font-family:inherit;">
+            <i class="fas fa-lock"></i> Kunci
+          </button>
+        </div>
+        <div id="lockMsg" style="font-size:11px;margin-top:6px;min-height:16px;"></div>
+      </div>
+      <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.5px;">Daftar Terkunci</span>
+          <span id="lock-count" style="background:rgba(244,117,33,0.15);color:#f47521;font-size:10px;font-weight:900;padding:2px 8px;border-radius:20px;">0</span>
+        </div>
+        <button onclick="loadLockedList()" style="background:none;border:none;color:#666;font-size:12px;cursor:pointer;font-family:inherit;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </div>
+      <div id="locked-list">
+        <div style="text-align:center;padding:24px;color:#555;font-size:12px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
       </div>
     </div>
-    <button onclick="generateVoucher()" style="width:100%;padding:10px;background:#f47521;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;">
-      <i class="fas fa-plus"></i> Generate Voucher
-    </button>
-    <div id="voucherResult" style="margin-top:12px;display:none;"></div>
   </div>
 
-  <div class="adm-section-title" style="margin-top:20px;"><i class="fas fa-list" style="color:#a78bfa;font-size:11px;"></i> Daftar Voucher
-    <button onclick="loadVouchers()" style="margin-left:8px;padding:3px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text2);font-size:11px;cursor:pointer;font-family:inherit;">Refresh</button>
-  </div>
-  <div class="adm-table-wrap" id="voucher-list-wrap"><div class="adm-empty">Klik Refresh untuk memuat...</div></div>
-
-  <!-- ═══ ANALYTICS ═══ -->
-  <div class="adm-section-title" style="margin-top:28px;">
-    <i class="fas fa-chart-bar" style="color:#34d399;font-size:11px;"></i> Analytics Watch History
-    <button onclick="loadAnalytics()" style="margin-left:8px;padding:3px 10px;background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text2);font-size:11px;cursor:pointer;font-family:inherit;">Refresh</button>
-  </div>
-
-  <!-- Stat cards -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
-    <div class="adm-stat" style="text-align:center;">
-      <div style="font-size:1.6rem;font-weight:900;color:#34d399;" id="an-total">–</div>
-      <div style="font-size:9px;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Total Ditonton</div>
-    </div>
-    <div class="adm-stat" style="text-align:center;">
-      <div style="font-size:1.6rem;font-weight:900;color:#f47521;" id="an-active">–</div>
-      <div style="font-size:9px;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">User Aktif 24j</div>
-    </div>
-    <div class="adm-stat" style="text-align:center;">
-      <div style="font-size:1.6rem;font-weight:900;color:#a78bfa;" id="an-top-count">–</div>
-      <div style="font-size:9px;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Anime Unik</div>
-    </div>
-  </div>
-
-  <!-- Top Anime -->
-  <div style="font-size:10px;font-weight:900;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">
-    <i class="fas fa-fire" style="color:#f47521;margin-right:4px;"></i>Top 10 Anime Terpopuler
-  </div>
-  <div class="adm-table-wrap" id="an-top-anime" style="margin-bottom:16px;">
-    <div class="adm-empty">Klik Refresh untuk memuat...</div>
-  </div>
-
-  <!-- Recent Activity -->
-  <div style="font-size:10px;font-weight:900;color:var(--adm-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">
-    <i class="fas fa-clock" style="color:#60a5fa;margin-right:4px;"></i>Aktivitas Terbaru
-  </div>
-  <div class="adm-table-wrap" id="an-recent" style="margin-bottom:16px;">
-    <div class="adm-empty">Klik Refresh untuk memuat...</div>
-  </div>
 </div>
 
 <script>
 async function loadStats() {
-  const icon = document.getElementById('refresh-icon');
+  var icon = document.getElementById('refresh-icon');
   if (icon) icon.style.animation = 'fa-spin 0.6s linear infinite';
   try {
-    const res = await fetch('/api/admin/stats');
-    const data = await res.json();
-    renderStats(data);
-    const now = new Date();
+    var res = await fetch('/api/admin/stats');
+    var data = await res.json();
+    var s = data.stats || {};
+    setText('stat-active',   s.active_total  != null ? s.active_total  : '–');
+    setText('stat-guests',   s.active_guests != null ? s.active_guests : '–');
+    setText('stat-logged',   s.active_logged != null ? s.active_logged : '–');
+    setText('stat-premium',  s.premium_count != null ? s.premium_count : '–');
+    setText('stat-comments', s.comment_count != null ? s.comment_count : '–');
+    setText('stat-members',  s.member_count  != null ? s.member_count  : '–');
+    var now = new Date();
     document.getElementById('adm-updated').innerHTML = '<i class="far fa-clock"></i> Update: ' + now.toLocaleTimeString('id-ID');
   } catch(e) { console.error(e); }
   finally { if (icon) icon.style.animation = ''; }
 }
-
-function renderStats(d) {
-  const s = d.stats || {};
-  setText('stat-active',   s.active_total  ?? '–');
-  setText('stat-guests',   s.active_guests ?? '–');
-  setText('stat-logged',   s.active_logged ?? '–');
-  setText('stat-premium',  s.premium_count ?? '–');
-  setText('stat-comments', s.comment_count ?? '–');
-  setText('stat-members',  s.member_count  ?? '–');
-  renderActiveUsers(d.active_users || []);
-  renderTopPages(d.top_pages || []);
-  renderPremiumUsers(d.premium_users || []);
-}
-
-function renderActiveUsers(users) {
-  const wrap = document.getElementById('active-users-wrap');
-  if (!users.length) { wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-user-slash"></i>Belum ada user aktif</div>'; return; }
-  let html = '<table class="adm-table"><thead><tr><th>User</th><th>Halaman</th><th>Terakhir Aktif</th><th>Status</th></tr></thead><tbody>';
-  users.forEach(u => {
-    const initial = (u.name || u.email || '?')[0].toUpperCase();
-    const av = u.avatar ? `<img src="${esc(u.avatar)}" onerror="this.parentElement.textContent='${initial}'">` : initial;
-    const bc = u.is_premium ? 'premium' : (u.user_id ? 'active' : 'guest');
-    const bt = u.is_premium ? '⭐ Premium' : (u.user_id ? '✓ Login' : '👁 Guest');
-    html += `<tr><td><div class="adm-user-cell"><div class="adm-avatar">${av}</div><div><div class="adm-user-name">${esc(u.name||'Anonymous')}</div><div class="adm-user-email">${esc(u.email||'')}</div></div></div></td><td style="color:#aaa;font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(u.page||'/')}</td><td style="color:#666;font-size:12px;">${relTime(u.last_seen)}</td><td><span class="adm-badge ${bc}">${bt}</span></td></tr>`;
-  });
-  html += '</tbody></table>';
-  wrap.innerHTML = html;
-}
-
-function renderTopPages(pages) {
-  const wrap = document.getElementById('top-pages-wrap');
-  if (!pages.length) { wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-chart-bar"></i>Belum ada data</div>'; return; }
-  const max = pages[0]?.count || 1;
-  wrap.innerHTML = pages.map(p => `<div class="adm-page-row"><div class="adm-page-name">${esc(p.page)}</div><div class="adm-page-bar-wrap"><div class="adm-page-bar" style="width:${Math.round(p.count/max*100)}%"></div></div><div class="adm-page-count">${p.count}</div></div>`).join('');
-}
-
-function renderPremiumUsers(users) {
-  const wrap = document.getElementById('premium-users-wrap');
-  if (!users.length) { wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-star"></i>Belum ada member premium</div>'; return; }
-  let html = '<table class="adm-table"><thead><tr><th>User ID</th><th>Status</th><th>Expires</th><th>Sejak</th></tr></thead><tbody>';
-  users.forEach(u => {
-    const expired = u.expires_at && new Date(u.expires_at) < new Date();
-    const bc = !u.is_active ? 'guest' : (expired ? 'expired' : 'premium');
-    const bt = !u.is_active ? 'Revoked' : (expired ? 'Expired' : 'Active');
-    const exp = u.expires_at ? new Date(u.expires_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'2-digit'}) : '∞';
-    const cre = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'2-digit'}) : '–';
-    html += `<tr><td><div class="adm-user-cell"><div class="adm-avatar" style="background:rgba(255,153,51,0.15);color:#ff9933;">⭐</div><div class="adm-user-email">${esc((u.user_id||'').slice(0,20)+'…')}</div></div></td><td><span class="adm-badge ${bc}">${bt}</span></td><td style="font-size:12px;color:#aaa;">${exp}</td><td style="font-size:12px;color:#666;">${cre}</td></tr>`;
-  });
-  html += '</tbody></table>';
-  wrap.innerHTML = html;
-}
-
-function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function setText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function relTime(iso) {
-  if (!iso) return '–';
-  const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
-  if (diff < 60) return diff + 'd lalu';
-  if (diff < 3600) return Math.floor(diff/60) + 'm lalu';
-  return Math.floor(diff/3600) + 'j lalu';
-}
 
 loadStats();
 setInterval(loadStats, 30000);
 
-// ── Voucher ──────────────────────────────────────
-async function generateVoucher() {
-  const days    = parseInt(document.getElementById('vDays').value) || 30;
-  const maxUses = parseInt(document.getElementById('vMaxUses').value) || 1;
-  const count   = parseInt(document.getElementById('vCount').value) || 1;
-  const label   = document.getElementById('vLabel').value.trim();
-  const resultEl = document.getElementById('voucherResult');
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-  try {
-    const r = await fetch('/api/admin/voucher/generate', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({days, max_uses:maxUses, count, label})
-    });
-    const d = await r.json();
-    if (d.ok && d.vouchers.length > 0) {
-      let html = '<div style="display:flex;flex-direction:column;gap:6px;">';
-      d.vouchers.forEach(function(v) {
-        html += '<div style="background:var(--adm-bg3);border:1px solid var(--adm-border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">'
-          + '<div><div style="font-size:15px;font-weight:900;color:#f47521;letter-spacing:2px;">'+v.code+'</div>'
-          + '<div style="font-size:10px;color:var(--adm-text2);margin-top:2px;">'+v.days+' hari &middot; max '+v.max_uses+'x'+(v.label?' &middot; '+v.label:'')+'</div></div>'
-          + '<button onclick="copyCode(\''+v.code+'\')" style="padding:5px 10px;background:var(--adm-bg2);border:1px solid var(--adm-border);border-radius:6px;color:var(--adm-text);font-size:11px;cursor:pointer;font-family:inherit;"><i class="fas fa-copy"></i> Copy</button>'
-          + '</div>';
-      });
-      html += '</div>';
-      resultEl.innerHTML = html;
-      loadVouchers();
-    } else {
-      resultEl.innerHTML = '<span style="color:#ef4444;">Gagal generate voucher.</span>';
-    }
-  } catch(e) {
-    resultEl.innerHTML = '<span style="color:#ef4444;">Error: '+e.message+'</span>';
-  }
-}
-
-function copyCode(code) {
-  navigator.clipboard.writeText(code).then(function(){
-    alert('Kode '+code+' berhasil dicopy!');
-  }).catch(function(){ prompt('Copy kode ini:', code); });
-}
-
-async function loadVouchers() {
-  const wrap = document.getElementById('voucher-list-wrap');
-  if (!wrap) return;
-  wrap.innerHTML = '<div class="adm-empty"><i class="fas fa-spinner fa-spin"></i>Memuat…</div>';
-  try {
-    const r = await fetch('/api/admin/voucher/list');
-    const data = await r.json();
-    if (!data.length) { wrap.innerHTML = '<div class="adm-empty">Belum ada voucher.</div>'; return; }
-    let html = '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
-      + '<tr style="color:var(--adm-text2);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--adm-border);">'
-      + '<th style="padding:8px;text-align:left;">Kode</th><th style="padding:8px;text-align:center;">Hari</th>'
-      + '<th style="padding:8px;text-align:center;">Pakai</th><th style="padding:8px;text-align:center;">Status</th>'
-      + '<th style="padding:8px;text-align:center;">Aksi</th></tr>';
-    data.forEach(function(v) {
-      const active = v.is_active && v.used < v.max_uses;
-      html += '<tr style="border-bottom:1px solid var(--adm-border);">'
-        + '<td style="padding:8px;font-weight:800;color:#f47521;letter-spacing:1px;">'+v.code+'</td>'
-        + '<td style="padding:8px;text-align:center;">'+v.days+'h</td>'
-        + '<td style="padding:8px;text-align:center;">'+v.used+'/'+v.max_uses+'</td>'
-        + '<td style="padding:8px;text-align:center;"><span style="padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;background:'+(active?'rgba(74,222,128,0.15)':'rgba(239,68,68,0.15)')+';color:'+(active?'#4ade80':'#ef4444')+';">'+(active?'Aktif':'Habis')+'</span></td>'
-        + '<td style="padding:8px;text-align:center;">'+(active?'<button onclick="deleteVoucher(''+v.code+'')" style="padding:3px 8px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:6px;color:#ef4444;font-size:10px;cursor:pointer;font-family:inherit;">Nonaktif</button>':'&mdash;')+'</td>'
-        + '</tr>';
-    });
-    html += '</table>';
-    wrap.innerHTML = html;
-  } catch(e) { wrap.innerHTML = '<div class="adm-empty" style="color:#ef4444;">Gagal memuat.</div>'; }
-}
-
-async function deleteVoucher(code) {
-  if (!confirm('Nonaktifkan voucher '+code+'?')) return;
-  await fetch('/api/admin/voucher/delete', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({code})
-  });
-  loadVouchers();
-}
-
-// ── Analytics ─────────────────────────────────────
-async function loadAnalytics() {
-  try {
-    const res  = await fetch('/api/admin/analytics');
-    const data = await res.json();
-    if (!data.ok) return;
-
-    // Stat cards
-    document.getElementById('an-total').textContent  = data.total_watches ?? '–';
-    document.getElementById('an-active').textContent = data.active_users  ?? '–';
-    document.getElementById('an-top-count').textContent = (data.top_anime||[]).length;
-
-    // Top anime
-    const topWrap = document.getElementById('an-top-anime');
-    if (data.top_anime && data.top_anime.length) {
-      let html = '<table style="width:100%;border-collapse:collapse;">';
-      html += '<tr style="border-bottom:1px solid var(--adm-border);"><th style="padding:8px;text-align:left;">#</th>'
-        + '<th style="padding:8px;text-align:left;">Anime</th>'
-        + '<th style="padding:8px;text-align:center;">Ditonton</th></tr>';
-      data.top_anime.forEach(function(a, i) {
-        const isTop = i < 3;
-        html += '<tr style="border-bottom:1px solid var(--adm-border);">'
-          + '<td style="padding:8px;font-weight:900;color:' + (isTop?'#f47521':'var(--adm-muted)') + ';">' + (i+1) + '</td>'
-          + '<td style="padding:8px;">'
-          + (a.poster ? '<img src="'+a.poster+'" style="width:28px;height:40px;object-fit:cover;border-radius:3px;vertical-align:middle;margin-right:8px;">' : '')
-          + '<span style="font-size:12px;font-weight:700;color:var(--adm-text);">' + (a.title||a.slug) + '</span>'
-          + '</td>'
-          + '<td style="padding:8px;text-align:center;"><span style="background:rgba(244,117,33,0.15);color:#f47521;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">'
-          + a.count + 'x</span></td>'
-          + '</tr>';
-      });
-      html += '</table>';
-      topWrap.innerHTML = html;
-    } else {
-      topWrap.innerHTML = '<div class="adm-empty">Belum ada data.</div>';
-    }
-
-    // Recent activity
-    const recWrap = document.getElementById('an-recent');
-    if (data.recent && data.recent.length) {
-      let html = '';
-      data.recent.forEach(function(r) {
-        const d = new Date(r.watched_at);
-        const timeStr = d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-        html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--adm-border);">'
-          + (r.anime_poster ? '<img src="'+r.anime_poster+'" style="width:28px;height:40px;object-fit:cover;border-radius:3px;flex-shrink:0;">' : '')
-          + '<div style="flex:1;min-width:0;">'
-          + '<div style="font-size:11px;font-weight:700;color:var(--adm-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (r.anime_title||r.anime_slug) + '</div>'
-          + '<div style="font-size:10px;color:var(--adm-muted);">' + (r.ep_name||r.ep_slug) + ' · ' + (r.source||'') + '</div>'
-          + '</div>'
-          + '<div style="font-size:9px;color:var(--adm-muted);flex-shrink:0;">' + timeStr + '</div>'
-          + '</div>';
-      });
-      recWrap.innerHTML = html;
-    } else {
-      recWrap.innerHTML = '<div class="adm-empty">Belum ada aktivitas.</div>';
-    }
-  } catch(e) {
-    console.error('Analytics error', e);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-  loadAnalytics();
-  loadVouchers();
-  setInterval(loadAnalytics, 60000);
-});
-</script>
-{% endif %}
-
-<!-- ═══ SECTION: LOCKED ANIME ═══ -->
-{% if is_admin %}
-<div style="padding:16px 14px 32px;">
-  <div style="background:#111118;border:1px solid rgba(244,117,33,0.25);border-radius:14px;overflow:hidden;">
-
-    <!-- header -->
-    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <i class="fas fa-lock" style="color:#F47521;font-size:13px;"></i>
-        <span style="font-weight:900;font-size:14px;color:#fff;">Kelola Anime Terkunci</span>
-        <span id="lock-count" style="background:rgba(244,117,33,0.15);color:#F47521;font-size:10px;font-weight:900;padding:2px 8px;border-radius:20px;">0</span>
-      </div>
-      <button onclick="loadLockedList()" style="background:none;border:none;color:#888;font-size:12px;cursor:pointer;font-family:inherit;">
-        <i class="fas fa-sync-alt"></i> Refresh
-      </button>
-    </div>
-
-    <!-- form kunci anime baru -->
-    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);">
-      <div style="font-size:11px;color:#888;margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;">Kunci Anime</div>
-      <div style="display:flex;gap:8px;">
-        <input id="lockSlugInput" type="text" placeholder="Masukkan slug anime (contoh: one-piece)" style="
-          flex:1;background:#0d0d0d;border:1px solid rgba(255,255,255,0.1);
-          border-radius:8px;padding:10px 12px;color:#fff;font-size:12px;font-family:inherit;
-          outline:none;
-        ">
-        <button onclick="lockAnime()" style="
-          background:#F47521;border:none;border-radius:8px;
-          color:#fff;font-weight:900;font-size:12px;padding:10px 16px;
-          cursor:pointer;white-space:nowrap;font-family:inherit;
-        "><i class="fas fa-lock"></i> Kunci</button>
-      </div>
-      <div id="lockMsg" style="font-size:11px;margin-top:6px;min-height:16px;"></div>
-    </div>
-
-    <!-- daftar anime terkunci -->
-    <div id="locked-list" style="padding:10px 0;">
-      <div style="text-align:center;padding:20px;color:#555;font-size:12px;">
-        <i class="fas fa-spinner fa-spin"></i> Memuat...
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script>
 async function loadLockedList() {
-  const wrap = document.getElementById('locked-list');
-  const countEl = document.getElementById('lock-count');
+  var wrap = document.getElementById('locked-list');
+  var countEl = document.getElementById('lock-count');
   try {
-    const r = await fetch('/api/admin/locked-anime/list');
-    const d = await r.json();
-    const list = d.data || [];
+    var r = await fetch('/api/admin/locked-anime/list');
+    var d = await r.json();
+    var list = d.data || [];
     countEl.textContent = list.length;
     if (!list.length) {
-      wrap.innerHTML = '<div style="text-align:center;padding:20px;color:#555;font-size:12px;"><i class="fas fa-unlock"></i> Belum ada anime yang dikunci.</div>';
+      wrap.innerHTML = '<div style="text-align:center;padding:24px;color:#555;font-size:12px;"><i class="fas fa-unlock"></i> Belum ada anime yang dikunci.</div>';
       return;
     }
     wrap.innerHTML = list.map(function(a) {
       return '<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.04);">'
-        + (a.poster ? '<img src="'+a.poster+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">' : '<div style="width:36px;height:36px;border-radius:6px;background:#1a1a23;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-film" style="color:#555;font-size:12px;"></i></div>')
+        + (a.poster ? '<img src="'+esc(a.poster)+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">'
+          : '<div style="width:36px;height:36px;border-radius:6px;background:#1a1a23;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-film" style="color:#555;font-size:12px;"></i></div>')
         + '<div style="flex:1;min-width:0;">'
-        +   '<div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(a.title || a.slug)+'</div>'
-        +   '<div style="font-size:10px;color:#555;margin-top:1px;font-family:monospace;">'+a.slug+'</div>'
+        +   '<div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(a.title||a.slug)+'</div>'
+        +   '<div style="font-size:10px;color:#555;margin-top:1px;font-family:monospace;">'+esc(a.slug)+'</div>'
         + '</div>'
-        + '<button onclick="unlockAnime(\''+a.slug+'\')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);border-radius:6px;color:#ef4444;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;">'
-        +   '<i class="fas fa-unlock"></i> Buka'
-        + '</button>'
-        + '</div>';
+        + '<button onclick="unlockAnime(\''+esc(a.slug)+'\')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);border-radius:6px;color:#ef4444;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;">'
+        +   '<i class="fas fa-unlock"></i> Buka</button></div>';
     }).join('');
   } catch(e) {
-    wrap.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;font-size:12px;">Gagal memuat data.</div>';
+    wrap.innerHTML = '<div style="text-align:center;padding:24px;color:#ef4444;font-size:12px;">Gagal memuat data.</div>';
   }
 }
 
 async function lockAnime() {
-  const slugInput = document.getElementById('lockSlugInput');
-  const msg = document.getElementById('lockMsg');
-  const slug = slugInput.value.trim();
+  var slugInput = document.getElementById('lockSlugInput');
+  var msg = document.getElementById('lockMsg');
+  var slug = slugInput.value.trim();
   if (!slug) { msg.style.color='#ef4444'; msg.textContent='Slug tidak boleh kosong.'; return; }
   msg.style.color='#888'; msg.textContent='Mengunci...';
   try {
-    const r = await fetch('/api/admin/locked-anime/lock', {
+    var r = await fetch('/api/admin/locked-anime/lock', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({slug: slug})
     });
-    const d = await r.json();
+    var d = await r.json();
     if (d.ok) {
       msg.style.color='#10B981'; msg.textContent='✓ Anime berhasil dikunci!';
       slugInput.value = '';
       setTimeout(function(){ msg.textContent=''; }, 3000);
       loadLockedList();
-    } else {
-      msg.style.color='#ef4444'; msg.textContent='Gagal: '+(d.error||'unknown');
-    }
-  } catch(e) {
-    msg.style.color='#ef4444'; msg.textContent='Error: '+e.message;
-  }
+    } else { msg.style.color='#ef4444'; msg.textContent='Gagal: '+(d.error||'unknown'); }
+  } catch(e) { msg.style.color='#ef4444'; msg.textContent='Error: '+e.message; }
 }
 
 async function unlockAnime(slug) {
   if (!confirm('Buka kunci anime: '+slug+'?')) return;
   try {
-    const r = await fetch('/api/admin/locked-anime/unlock', {
+    var r = await fetch('/api/admin/locked-anime/unlock', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({slug: slug})
     });
-    const d = await r.json();
+    var d = await r.json();
     if (d.ok) loadLockedList();
     else alert('Gagal buka kunci: '+(d.error||'unknown'));
-  } catch(e) {
-    alert('Error: '+e.message);
-  }
+  } catch(e) { alert('Error: '+e.message); }
 }
 
 document.addEventListener('DOMContentLoaded', loadLockedList);
