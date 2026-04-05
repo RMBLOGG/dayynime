@@ -234,8 +234,7 @@
 <div class="section idx-section-wrap">
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
-      <div class="idx-section-accent"></div>
-      <span class="section-title">Sedang Tayang</span>
+      <span class="section-title idx-title-pill">Sedang Tayang</span>
       <div class="idx-section-badge">Live</div>
     </div>
     <a href="/ongoing" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
@@ -266,8 +265,7 @@
 <div class="section idx-section-wrap">
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
-      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#3b82f6,#1d4ed8);box-shadow:0 0 8px rgba(59,130,246,0.4);"></div>
-      <span class="section-title">Baru Ditambahkan</span>
+      <span class="section-title idx-title-pill">Baru Ditambahkan</span>
       <div class="idx-section-badge" style="background:rgba(59,130,246,0.15);color:#60a5fa;">NEW</div>
     </div>
     <a href="/completed" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
@@ -298,8 +296,7 @@
 <div class="section idx-section-wrap">
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
-      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#ffd700,#ff8c00);box-shadow:0 0 8px rgba(255,215,0,0.4);"></div>
-      <span class="section-title">Top Populer</span>
+      <span class="section-title idx-title-pill">Top Populer</span>
       <div class="idx-section-badge" style="background:rgba(255,215,0,0.12);color:#ffd700;">Chart</div>
     </div>
     <a href="/popular" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
@@ -334,8 +331,7 @@
 <div class="section idx-section-wrap">
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
-      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#00d4aa,#00a1d6);box-shadow:0 0 8px rgba(0,212,170,0.4);"></div>
-      <span class="section-title">Jadwal Rilis</span>
+      <span class="section-title idx-title-pill">Jadwal Rilis</span>
     </div>
     <a href="/jadwal" class="section-more" style="color:#00d4aa;">Lengkap <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
@@ -424,11 +420,19 @@
 .idx-section-wrap { padding: 0 14px; margin-bottom: 20px; }
 .idx-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
 .idx-section-title-group { display:flex; align-items:center; gap:10px; }
-.idx-section-accent {
-  width: 4px; height: 20px; border-radius: 2px; flex-shrink:0;
-  background: linear-gradient(to bottom, var(--accent), #b36000);
-  box-shadow: 0 0 8px rgba(244,117,33,0.4);
+.idx-title-pill {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(244,117,33,0.18), rgba(244,117,33,0.08));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 30px;
+  border: 1px solid rgba(244,117,33,0.35);
+  box-shadow: 0 0 12px rgba(244,117,33,0.15), inset 0 1px 0 rgba(255,255,255,0.07);
+  letter-spacing: 0.3px;
 }
+
 .idx-section-badge {
   background: rgba(244,117,33,0.15); color: var(--accent);
   font-size: 9px; font-weight: 900; padding: 2px 8px;
