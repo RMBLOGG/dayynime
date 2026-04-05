@@ -298,30 +298,34 @@
 <div class="section idx-section-wrap">
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
-      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#fb923c,#ea580c);box-shadow:0 0 8px rgba(251,146,60,0.4);"></div>
-      <span class="section-title">Populer Minggu Ini</span>
-      <div class="idx-section-badge" style="background:rgba(251,146,60,0.15);color:#fb923c;"><i class="fas fa-fire" style="font-size:8px;"></i> Hot</div>
+      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#ffd700,#ff8c00);box-shadow:0 0 8px rgba(255,215,0,0.4);"></div>
+      <span class="section-title">Top Populer</span>
+      <div class="idx-section-badge" style="background:rgba(255,215,0,0.12);color:#ffd700;">Chart</div>
     </div>
     <a href="/popular" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div class="scroll-row">
-    {% for anime in popular.animes[:12] %}
-    <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
-      <div class="acard-poster">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.rank %}<div class="acard-type">#{{ anime.rank }}</div>{% elif anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
-        {% if anime.score %}<div class="acard-score"><i class="fas fa-star fa-xs"></i> {{ anime.score }}</div>{% endif %}
-        <div class="acard-viewers" id="viewers-{{ anime.slug }}">
-          <span class="acard-viewers-dot"></span>
-          <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
-          <span>nonton</span>
+  {% for anime in popular.animes[:8] %}
+  <a href="/anime/{{ anime.slug }}" class="idx-rank-item" data-anime-slug="{{ anime.slug }}">
+    <div class="idx-rank-num {% if loop.index == 1 %}top1{% elif loop.index == 2 %}top2{% elif loop.index == 3 %}top3{% else %}other{% endif %}">{{ anime.rank or loop.index }}</div>
+    <div class="idx-rank-thumb">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+    </div>
+    <div class="idx-rank-info">
+      <div class="idx-rank-title">{{ anime.title }}</div>
+      <div class="idx-rank-score">
+        <div class="idx-rank-score-bar">
+          <div class="idx-rank-score-fill" style="width:{{ ((anime.score|float / 10) * 100)|int if anime.score else (90 - loop.index * 5) }}%;"></div>
         </div>
+        <span class="idx-rank-score-num">{{ anime.score or '—' }}</span>
       </div>
-      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
-      <div class="acard-title">{{ anime.title }}</div>
-    </a>
-    {% endfor %}
-  </div>
+    </div>
+    <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+      <span class="acard-viewers-dot"></span>
+      <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+      <span>nonton</span>
+    </div>
+  </a>
+  {% endfor %}
 </div>
 {% endif %}
 
@@ -330,37 +334,54 @@
 <div class="section idx-section-wrap">
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
-      <div class="idx-section-accent" style="background:linear-gradient(to bottom,var(--accent),#b36000);box-shadow:0 0 8px rgba(244,117,33,0.4);"></div>
+      <div class="idx-section-accent" style="background:linear-gradient(to bottom,#00d4aa,#00a1d6);box-shadow:0 0 8px rgba(0,212,170,0.4);"></div>
       <span class="section-title">Jadwal Rilis</span>
     </div>
-    <a href="/jadwal" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+    <a href="/jadwal" class="section-more" style="color:#00d4aa;">Lengkap <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div class="day-tabs">
+  <!-- Day circles selector -->
+  <div class="idx-schedule-days">
     {% for day in schedule.schedule.keys() %}
-    <button class="day-tab" data-tab="{{ day }}">{{ day }}</button>
+    <div class="idx-sday" data-sday="{{ day }}">
+      <div class="idx-sday-circle">{{ day[:3] }}</div>
+      <div class="idx-sday-dot"></div>
+      <div class="idx-sday-label">{{ day }}</div>
+    </div>
     {% endfor %}
   </div>
+  <!-- Panels per hari -->
   {% for day, animes in schedule.schedule.items() %}
-  <div class="tab-panel" id="panel-{{ day }}">
-    <div class="scroll-row">
-      {% for anime in animes[:10] %}
-      <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
-        <div class="acard-poster">
-          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-          {% if anime.time %}<div class="acard-ep"><i class="fas fa-clock fa-xs"></i> {{ anime.time }}</div>{% endif %}
-          <div class="acard-viewers" id="viewers-{{ anime.slug }}">
-            <span class="acard-viewers-dot"></span>
-            <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
-            <span>nonton</span>
-          </div>
-        </div>
-        <div class="acard-title">{{ anime.title }}</div>
-      </a>
-      {% endfor %}
-    </div>
+  <div class="idx-schedule-panel" id="idx-panel-{{ day }}" style="display:none;">
+    {% for anime in animes[:8] %}
+    <a href="/anime/{{ anime.slug }}" class="idx-schedule-item">
+      <div class="idx-schedule-thumb">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+      </div>
+      <div class="idx-schedule-info">
+        <div class="idx-schedule-title">{{ anime.title }}</div>
+        {% if anime.episode %}<div class="idx-schedule-ep">Episode {{ anime.episode }}</div>{% endif %}
+        {% if anime.time %}<div class="idx-schedule-time"><i class="fas fa-clock" style="font-size:9px;"></i> {{ anime.time }}</div>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
   </div>
   {% endfor %}
 </div>
+<script>
+(function() {
+  var days = document.querySelectorAll('.idx-sday');
+  var panels = document.querySelectorAll('.idx-schedule-panel');
+  function activate(dayEl) {
+    days.forEach(function(d) { d.classList.remove('active'); });
+    panels.forEach(function(p) { p.style.display = 'none'; });
+    dayEl.classList.add('active');
+    var panel = document.getElementById('idx-panel-' + dayEl.getAttribute('data-sday'));
+    if (panel) panel.style.display = 'block';
+  }
+  days.forEach(function(d) { d.addEventListener('click', function() { activate(this); }); });
+  if (days.length) activate(days[0]);
+})();
+</script>
 {% endif %}
 
 <!-- ═══ KOMUNITAS ═══ -->
@@ -394,7 +415,95 @@
 </div>
 
 <style>
-/* ── INDEX SECTION LAYOUT (preview grid style) ── */
+/* ── RANKING LIST ── */
+.idx-rank-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  text-decoration: none; color: inherit;
+  transition: transform 0.2s;
+}
+.idx-rank-item:last-child { border-bottom: none; }
+.idx-rank-item:hover { transform: translateX(4px); }
+.idx-rank-num {
+  width: 28px; font-size: 20px; font-weight: 900;
+  flex-shrink: 0; text-align: center; line-height: 1;
+  font-family: inherit;
+}
+.idx-rank-num.top1 { color: #ffd700; }
+.idx-rank-num.top2 { color: #c0c0c0; }
+.idx-rank-num.top3 { color: #cd7f32; }
+.idx-rank-num.other { color: #6060a0; font-size: 14px; }
+.idx-rank-thumb {
+  width: 42px; height: 58px; border-radius: 8px;
+  overflow: hidden; flex-shrink: 0; background: #1a1a23;
+}
+.idx-rank-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.idx-rank-info { flex: 1; min-width: 0; }
+.idx-rank-title {
+  font-size: 12px; font-weight: 800;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 6px;
+}
+.idx-rank-score { display: flex; align-items: center; gap: 6px; }
+.idx-rank-score-bar {
+  flex: 1; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.08); overflow: hidden;
+}
+.idx-rank-score-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), #ffd700);
+}
+.idx-rank-score-num { font-size: 10px; color: var(--accent); font-weight: 800; flex-shrink: 0; }
+
+/* ── SCHEDULE VERTIKAL ── */
+.idx-schedule-days {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding-bottom: 14px; scrollbar-width: none;
+}
+.idx-schedule-days::-webkit-scrollbar { display: none; }
+.idx-sday {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; flex-shrink: 0; cursor: pointer;
+}
+.idx-sday-circle {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 900;
+  background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.08);
+  color: #A0A0B0; transition: all 0.2s;
+}
+.idx-sday.active .idx-sday-circle, .idx-sday:hover .idx-sday-circle {
+  background: linear-gradient(135deg, var(--accent), #b36000);
+  border-color: var(--accent); color: #fff;
+  box-shadow: 0 4px 14px rgba(244,117,33,0.35);
+}
+.idx-sday-label { font-size: 9px; color: #6060a0; font-weight: 700; }
+.idx-sday.active .idx-sday-label { color: var(--accent); }
+.idx-sday-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0; }
+.idx-sday.active .idx-sday-dot { opacity: 1; }
+
+.idx-schedule-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  text-decoration: none; color: inherit; transition: transform 0.2s;
+}
+.idx-schedule-item:last-child { border-bottom: none; }
+.idx-schedule-item:hover { transform: translateX(3px); }
+.idx-schedule-thumb {
+  width: 50px; height: 70px; border-radius: 8px;
+  overflow: hidden; flex-shrink: 0; background: #1a1a23;
+}
+.idx-schedule-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.idx-schedule-info { flex: 1; min-width: 0; }
+.idx-schedule-title {
+  font-size: 12px; font-weight: 800;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.idx-schedule-ep { font-size: 10px; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+.idx-schedule-time { font-size: 10px; color: #6060a0; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+.supporter-card {
 .idx-section-wrap { padding: 0 14px; margin-bottom: 4px; }
 .idx-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
 .idx-section-title-group { display:flex; align-items:center; gap:10px; }
@@ -443,8 +552,6 @@
 }
 .idx-wcard-sub { font-size: 10px; color: #6060a0; font-weight: 600; }
 .idx-wcard-time { font-size: 10px; color: var(--accent); font-weight: 700; display:flex; align-items:center; gap:4px; }
-
-.supporter-card {
   display:flex; align-items:center; gap:10px;
   background:#1a1a23; border-radius:8px;
   padding:10px 12px; border:1px solid rgba(255,255,255,0.06);
