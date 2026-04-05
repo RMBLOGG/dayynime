@@ -2065,10 +2065,17 @@ def _is_premium_user():
 
 def _is_anime_locked(slug):
     """Cek apakah anime slug ada di tabel locked_anime."""
+    if not slug:
+        return False
     try:
+        # Pakai anon key karena locked_anime bisa dibaca publik (tidak butuh service key)
+        headers = {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+        }
         r = requests.get(
             f"{SUPABASE_URL}/rest/v1/locked_anime",
-            headers=supabase_service_headers(),
+            headers=headers,
             params={"slug": f"eq.{slug}", "select": "slug"},
             timeout=3
         )
