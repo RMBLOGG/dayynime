@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% block title %}Users – Admin{% endblock %}
+
+{% block head %}
+<style>
+:root {
+  --adm-bg: #0a0a0f;
+  --adm-card: #13131c;
+  --adm-border: rgba(255,102,0,0.15);
+  --adm-accent: #ff6600;
+  --adm-accent2: #ff9933;
+  --adm-green: #22c55e;
+  --adm-red: #ef4444;
+  --adm-text: #e2e2e2;
+  --adm-muted: #555;
+}
+body { background: var(--adm-bg) !important; }
+.uw { max-width: 800px; margin: 0 auto; padding: 20px 14px 100px; font-family: 'Poppins', sans-serif; }
+.uw-breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.uw-breadcrumb a { color: var(--adm-muted); text-decoration: none; font-size: 13px; }
+.uw-breadcrumb span { color: var(--adm-muted); font-size: 13px; }
+.uw-breadcrumb .cur { color: var(--adm-text); font-weight: 700; }
+
+.uw-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.uw-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+.uw-refresh { padding: 8px 16px; background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: 8px; color: var(--adm-text); font-size: 12px; cursor: pointer; font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 6px; transition: border-color 0.2s; }
+.uw-refresh:hover { border-color: var(--adm-accent); }
+
+/* Stat row */
+.uw-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.uw-stat { background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: 14px; padding: 16px 12px; text-align: center; }
+.uw-stat-icon { font-size: 20px; margin-bottom: 8px; }
+.uw-stat-num { font-size: 24px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 4px; }
+.uw-stat-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--adm-muted); }
+
+/* Section card */
+.uw-card { background: var(--adm-card); border: 1px solid var(--adm-border); border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+.uw-card-hd { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; }
+.uw-card-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: #888; display: flex; align-items: center; gap: 6px; }
+
+/* Table */
+.uw-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.uw-table th { background: rgba(255,255,255,0.03); color: var(--adm-muted); font-weight: 700; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--adm-border); }
+.uw-table td { padding: 10px 14px; color: var(--adm-text); border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.uw-table tr:last-child td { border-bottom: none; }
+.uw-table tr:hover td { background: rgba(255,102,0,0.03); }
+
+.uw-avatar { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,102,0,0.2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--adm-accent); flex-shrink: 0; overflow: hidden; }
+.uw-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.uw-user-cell { display: flex; align-items: center; gap: 10px; }
+.uw-user-name { font-weight: 600; font-size: 12px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+.uw-user-email { font-size: 10px; color: var(--adm-muted); }
+
+.uw-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; }
+.uw-badge.active   { background: rgba(34,197,94,0.15);   color: #22c55e; }
+.uw-badge.premium  { background: rgba(255,153,51,0.15);  color: #ff9933; }
+.uw-badge.guest    { background: rgba(255,255,255,0.07); color: #888; }
+.uw-badge.expired  { background: rgba(239,68,68,0.12);   color: #ef4444; }
+
+/* Live dot */
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; animation: pulse-dot 1.6s ease-in-out infinite; flex-shrink: 0; }
+@keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)} }
+
+/* Page bars */
+.uw-page-row { display: flex; align-items: center; gap: 10px; padding: 9px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.uw-page-row:last-child { border-bottom: none; }
+.uw-page-name { font-size: 11px; color: var(--adm-text); width: 160px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.uw-page-bar-bg { flex: 1; background: rgba(255,255,255,0.05); border-radius: 3px; height: 5px; overflow: hidden; }
+.uw-page-bar-fill { height: 5px; border-radius: 3px; background: linear-gradient(90deg, var(--adm-accent), var(--adm-accent2)); transition: width 0.6s; }
+.uw-page-cnt { font-size: 11px; font-weight: 700; color: var(--adm-muted); width: 24px; text-align: right; flex-shrink: 0; }
+
+.uw-empty { text-align: center; padding: 32px 20px; color: var(--adm-muted); font-size: 12px; }
+.uw-empty i { font-size: 24px; margin-bottom: 8px; display: block; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.fa-spin { animation: spin 0.8s linear infinite; }
+@media(max-width:480px){
+  .uw-table th:nth-child(3), .uw-table td:nth-child(3),
+  .uw-table th:nth-child(4), .uw-table td:nth-child(4) { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="uw">
+
+  <!-- Breadcrumb -->
+  <div class="uw-breadcrumb">
+    <a href="/admin">← Admin</a>
+    <span>/</span>
+    <span class="cur">Users & Aktivitas</span>
+  </div>
+
+  <!-- Header -->
+  <div class="uw-header">
+    <div class="uw-title">
+      <i class="fas fa-users" style="color:#ff6600;"></i> Users & Aktivitas
+    </div>
+    <button class="uw-refresh" onclick="loadAll()">
+      <i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="uw-stats">
+    <div class="uw-stat">
+      <div class="uw-stat-icon">🟢</div>
+      <div class="uw-stat-num" id="statActive">—</div>
+      <div class="uw-stat-lbl">Aktif Sekarang</div>
+    </div>
+    <div class="uw-stat">
+      <div class="uw-stat-icon">⭐</div>
+      <div class="uw-stat-num" id="statPremium">—</div>
+      <div class="uw-stat-lbl">User Premium</div>
+    </div>
+    <div class="uw-stat">
+      <div class="uw-stat-icon">🎌</div>
+      <div class="uw-stat-num" id="statMembers">—</div>
+      <div class="uw-stat-lbl">Total Member</div>
+    </div>
+  </div>
+
+  <!-- User Aktif 5 Menit -->
+  <div class="uw-card">
+    <div class="uw-card-hd">
+      <div class="uw-card-title">
+        <span class="live-dot"></span> User Aktif (5 Menit Terakhir)
+      </div>
+    </div>
+    <div id="activeUsersWrap">
+      <div class="uw-empty"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
+    </div>
+  </div>
+
+  <!-- Halaman Terpopuler Hari Ini -->
+  <div class="uw-card">
+    <div class="uw-card-hd">
+      <div class="uw-card-title">
+        <i class="fas fa-fire" style="color:#f97316;"></i> Halaman Terpopuler (Hari Ini)
+      </div>
+    </div>
+    <div id="topPagesWrap">
+      <div class="uw-empty"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
+    </div>
+  </div>
+
+  <!-- Member Premium -->
+  <div class="uw-card">
+    <div class="uw-card-hd">
+      <div class="uw-card-title">
+        <i class="fas fa-star" style="color:#ff9933;"></i> Member Premium
+      </div>
+    </div>
+    <div id="premiumWrap">
+      <div class="uw-empty"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function relTime(iso) {
+  if (!iso) return '–';
+  var diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (diff < 60) return diff + 'd lalu';
+  if (diff < 3600) return Math.floor(diff/60) + 'm lalu';
+  return Math.floor(diff/3600) + 'j lalu';
+}
+
+async function loadAll() {
+  var icon = document.getElementById('refreshIcon');
+  icon.className = 'fas fa-spinner fa-spin';
+  try {
+    var r = await fetch('/api/admin/stats');
+    if (r.status === 403) {
+      var err = '<div class="uw-empty">❌ Forbidden — <a href="/auth/login" style="color:#f47521;">Login ulang</a></div>';
+      ['activeUsersWrap','topPagesWrap','premiumWrap'].forEach(function(id){ document.getElementById(id).innerHTML = err; });
+      return;
+    }
+    var d = await r.json();
+    var s = d.stats || {};
+    document.getElementById('statActive').textContent  = s.active_total  ?? '–';
+    document.getElementById('statPremium').textContent = s.premium_count ?? '–';
+    document.getElementById('statMembers').textContent = s.member_count  ?? '–';
+
+    renderActiveUsers(d.active_users || []);
+    renderTopPages(d.top_pages || []);
+    renderPremiumUsers(d.premium_users || []);
+  } catch(e) {
+    var err = '<div class="uw-empty" style="color:#ef4444;">❌ ' + e.message + '</div>';
+    ['activeUsersWrap','topPagesWrap','premiumWrap'].forEach(function(id){ document.getElementById(id).innerHTML = err; });
+  } finally {
+    icon.className = 'fas fa-sync-alt';
+  }
+}
+
+function renderActiveUsers(users) {
+  var wrap = document.getElementById('activeUsersWrap');
+  if (!users.length) {
+    wrap.innerHTML = '<div class="uw-empty"><i class="fas fa-user-slash"></i>Belum ada user aktif</div>';
+    return;
+  }
+  var html = '<table class="uw-table"><thead><tr><th>User</th><th>Halaman</th><th>Terakhir Aktif</th><th>Status</th></tr></thead><tbody>';
+  users.forEach(function(u) {
+    var initial = (u.name || u.email || '?')[0].toUpperCase();
+    var av = u.avatar ? '<img src="'+esc(u.avatar)+'" onerror="this.parentElement.textContent=\''+initial+'\'">' : initial;
+    var bc = u.is_premium ? 'premium' : (u.user_id ? 'active' : 'guest');
+    var bt = u.is_premium ? '⭐ Premium' : (u.user_id ? '✓ Login' : '👁 Guest');
+    html += '<tr>'
+      + '<td><div class="uw-user-cell"><div class="uw-avatar">'+av+'</div><div>'
+      + '<div class="uw-user-name">'+esc(u.name||'Anonymous')+'</div>'
+      + '<div class="uw-user-email">'+esc(u.email||'')+'</div></div></div></td>'
+      + '<td style="color:#aaa;font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(u.page||'/')+'</td>'
+      + '<td style="color:#666;font-size:11px;">'+relTime(u.last_seen)+'</td>'
+      + '<td><span class="uw-badge '+bc+'">'+bt+'</span></td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function renderTopPages(pages) {
+  var wrap = document.getElementById('topPagesWrap');
+  if (!pages.length) {
+    wrap.innerHTML = '<div class="uw-empty"><i class="fas fa-chart-bar"></i>Belum ada data hari ini</div>';
+    return;
+  }
+  var max = pages[0] ? pages[0].count : 1;
+  wrap.innerHTML = pages.map(function(p) {
+    var pct = Math.round(p.count / max * 100);
+    return '<div class="uw-page-row">'
+      + '<div class="uw-page-name">'+esc(p.page)+'</div>'
+      + '<div class="uw-page-bar-bg"><div class="uw-page-bar-fill" style="width:'+pct+'%;"></div></div>'
+      + '<div class="uw-page-cnt">'+p.count+'</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderPremiumUsers(users) {
+  var wrap = document.getElementById('premiumWrap');
+  if (!users.length) {
+    wrap.innerHTML = '<div class="uw-empty"><i class="fas fa-star"></i>Belum ada member premium</div>';
+    return;
+  }
+  var html = '<table class="uw-table"><thead><tr><th>User ID</th><th>Status</th><th>Expires</th><th>Sejak</th></tr></thead><tbody>';
+  users.forEach(function(u) {
+    var expired = u.expires_at && new Date(u.expires_at) < new Date();
+    var bc = !u.is_active ? 'guest' : (expired ? 'expired' : 'premium');
+    var bt = !u.is_active ? 'Revoked' : (expired ? 'Expired' : 'Active');
+    var exp = u.expires_at ? new Date(u.expires_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'2-digit'}) : '∞';
+    var cre = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'2-digit'}) : '–';
+    html += '<tr>'
+      + '<td><div class="uw-user-cell">'
+      + '<div class="uw-avatar" style="background:rgba(255,153,51,0.15);color:#ff9933;">⭐</div>'
+      + '<div class="uw-user-email">'+esc((u.user_id||'').slice(0,18)+'…')+'</div>'
+      + '</div></td>'
+      + '<td><span class="uw-badge '+bc+'">'+bt+'</span></td>'
+      + '<td style="font-size:11px;color:#aaa;">'+exp+'</td>'
+      + '<td style="font-size:11px;color:#666;">'+cre+'</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', loadAll);
+</script>
+{% endblock %}
