@@ -13,19 +13,19 @@
 <!-- ═══ ANNOUNCEMENT BAR ═══ -->
 <div id="announcementBar" style="
   background: linear-gradient(90deg, #1a1a23 0%, #1e1a2e 50%, #1a1a23 100%);
-  border-bottom: 1px solid rgba(244,117,33,0.25);
+  border-bottom: 1px solid rgba(0,161,214,0.25);
   padding: 0 12px;
   position: relative;
   overflow: hidden;
 ">
   <!-- shimmer line -->
-  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F47521,transparent);opacity:0.6;"></div>
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0.6;"></div>
 
   <div style="display:flex;align-items:center;gap:8px;padding:7px 0;">
     <!-- label -->
     <div style="
       flex-shrink:0;
-      background:#F47521;color:#fff;
+      background:var(--accent);color:#fff;
       font-size:9px;font-weight:900;
       padding:3px 7px;border-radius:4px;
       letter-spacing:0.5px;text-transform:uppercase;
@@ -40,13 +40,13 @@
         font-size:11px;color:#C0C0C8;
       ">
         <span style="padding-right:60px;">Setiap server memiliki kelengkapan anime berbeda &nbsp;·&nbsp;
-          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:var(--accent);font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
           <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
           <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
           Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </span>
         <span style="padding-right:60px;">Setiap server memiliki koleksi berbeda &nbsp;·&nbsp;
-          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:var(--accent);font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
           <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
           <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
           Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -121,7 +121,7 @@
     <a href="/ongoing" class="quick-nav-item"><span class="dot" style="background:#10B981;"></span> Ongoing</a>
     <a href="/completed" class="quick-nav-item"><span class="dot" style="background:#60a5fa;"></span> Completed</a>
     <a href="/movies" class="quick-nav-item"><i class="fas fa-film"></i> Movie</a>
-    <a href="/popular" class="quick-nav-item"><i class="fas fa-fire" style="color:#F47521;"></i> Populer</a>
+    <a href="/popular" class="quick-nav-item"><i class="fas fa-fire" style="color:var(--accent);"></i> Populer</a>
     <a href="/jadwal" class="quick-nav-item"><i class="fas fa-calendar-alt" style="color:#10B981;"></i> Jadwal</a>
     <a href="/animelist" class="quick-nav-item"><i class="fas fa-list"></i> A-Z List</a>
   </div>
@@ -131,7 +131,7 @@
 <div id="pwaBannerSection" style="margin:0 12px 16px;display:none;">
   <div style="
     background: linear-gradient(135deg, #1e1a2e 0%, #1a1a23 100%);
-    border: 1px solid rgba(244,117,33,0.35);
+    border: 1px solid rgba(0,161,214,0.35);
     border-radius: 14px;
     padding: 14px 14px;
     display: flex;
@@ -144,7 +144,7 @@
       <div style="font-size:11px;color:#A0A0B0;margin-top:2px;">Nonton anime lebih nyaman lewat homescreen</div>
     </div>
     <button onclick="installPWA()" style="
-      background:#F47521;border:none;border-radius:10px;
+      background:var(--accent);border:none;border-radius:10px;
       color:#fff;font-weight:900;font-size:12px;
       padding:9px 14px;cursor:pointer;flex-shrink:0;
       white-space:nowrap;letter-spacing:0.2px;
@@ -382,7 +382,7 @@
 
 <!-- ═══ KOMUNITAS ═══ -->
 <div style="padding:0 14px 28px;">
-  <div style="background:#1a1a23;border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.07);">
+  <div style="background:#111827;border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.07);">
     <div style="font-size:11px;font-weight:900;color:#A0A0B0;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
     <div style="display:flex;gap:8px;">
       <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener"
@@ -438,7 +438,7 @@
 }
 
 .idx-section-badge {
-  background: rgba(244,117,33,0.15); color: var(--accent);
+  background: rgba(0,161,214,0.15); color: var(--accent);
   font-size: 9px; font-weight: 900; padding: 2px 8px;
   border-radius: 20px; letter-spacing: 0.3px; text-transform: uppercase;
 }
@@ -459,7 +459,7 @@
   overflow: hidden;
   transition: border-color 0.2s, background 0.2s;
 }
-.idx-wcard:hover { border-color: rgba(244,117,33,0.35); background: rgba(244,117,33,0.05); }
+.idx-wcard:hover { border-color: rgba(0,161,214,0.35); background: rgba(0,161,214,0.05); }
 .idx-wcard-thumb {
   width: 56px; height: 76px; border-radius: 6px;
   overflow: hidden; flex-shrink: 0;
@@ -541,7 +541,7 @@
 .idx-sday.active .idx-sday-circle, .idx-sday:hover .idx-sday-circle {
   background: linear-gradient(135deg, var(--accent), #b36000);
   border-color: var(--accent); color: #fff;
-  box-shadow: 0 4px 14px rgba(244,117,33,0.35);
+  box-shadow: 0 4px 14px rgba(0,161,214,0.35);
 }
 .idx-sday-label { font-size: 9px; color: #6060a0; font-weight: 700; }
 .idx-sday.active .idx-sday-label { color: var(--accent); }
@@ -571,19 +571,19 @@
 /* ── SUPPORTER ── */
 .supporter-card {
   display:flex; align-items:center; gap:10px;
-  background:#1a1a23; border-radius:8px;
+  background:#111827; border-radius:8px;
   padding:10px 12px; border:1px solid rgba(255,255,255,0.06);
   animation:fadeInUp 0.4s ease both;
 }
 .supporter-avatar {
   width:36px; height:36px; border-radius:50%; flex-shrink:0;
-  background:linear-gradient(135deg,#be1e2d,#F47521);
+  background:linear-gradient(135deg,#be1e2d,var(--accent));
   display:flex; align-items:center; justify-content:center;
   font-size:14px; font-weight:900; color:#fff;
 }
 .supporter-name { font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .supporter-msg  { font-size:11px; color:#A0A0B0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.supporter-amount { font-size:13px; font-weight:900; color:#F47521; white-space:nowrap; flex-shrink:0; }
+.supporter-amount { font-size:13px; font-weight:900; color:var(--accent); white-space:nowrap; flex-shrink:0; }
 @keyframes fadeInUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
 
 /* ── end custom styles ── */
@@ -863,7 +863,7 @@
       item.style.overflow = 'hidden';
       item.addEventListener('click', function(e) {
         var r = document.createElement('span');
-        r.style.cssText = 'position:absolute;border-radius:50%;background:rgba(244,117,33,0.2);' +
+        r.style.cssText = 'position:absolute;border-radius:50%;background:rgba(0,161,214,0.2);' +
           'width:8px;height:8px;pointer-events:none;transform:scale(0);' +
           'animation:rankRipple 0.5s ease-out forwards;';
         var rect = item.getBoundingClientRect();
