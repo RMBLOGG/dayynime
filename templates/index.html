@@ -10,183 +10,285 @@
   {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 
-<!-- ══ ANNOUNCEMENT BAR ══ -->
-<div id="announcementBar" class="announce-bar">
-  <div class="announce-tag">📢 Info</div>
-  <div class="announce-scroll">
-    <div class="announce-inner">
-      <span style="padding-right:60px;">Tiap server punya koleksi beda &nbsp;·&nbsp; <span class="hi">Dayynime-v1</span> &nbsp;·&nbsp; <span class="hi2">Dayynime-v2</span> &nbsp;·&nbsp; <span style="color:var(--cyan);font-weight:800;">Dayynime-v3</span> &nbsp;·&nbsp; Ganti server lewat Menu &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span style="padding-right:60px;">Tiap server punya koleksi beda &nbsp;·&nbsp; <span class="hi">Dayynime-v1</span> &nbsp;·&nbsp; <span class="hi2">Dayynime-v2</span> &nbsp;·&nbsp; <span style="color:var(--cyan);font-weight:800;">Dayynime-v3</span> &nbsp;·&nbsp; Ganti server lewat Menu &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    </div>
-  </div>
-  <button class="announce-close" onclick="document.getElementById('announcementBar').style.display='none'">×</button>
-</div>
+<!-- ═══ ANNOUNCEMENT BAR ═══ -->
+<div id="announcementBar" style="
+  background: linear-gradient(90deg, #1a1a23 0%, #1e1a2e 50%, #1a1a23 100%);
+  border-bottom: 1px solid rgba(244,117,33,0.25);
+  padding: 0 12px;
+  position: relative;
+  overflow: hidden;
+">
+  <!-- shimmer line -->
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F47521,transparent);opacity:0.6;"></div>
 
-<!-- ══ HERO BANNER ══ -->
-<div class="hero-wrap">
-  <div class="hero-slider" id="heroSlider">
-    <a href="https://trakteer.id/Dayynimee" target="_blank" rel="noopener" class="hero-slide">
-      <img src="/static/banner.png" alt="Dukung Dayynime" class="hero-slide-bg">
-      <div class="hero-content">
-        <div class="hero-badge"><i class="fas fa-heart"></i> Support Kami</div>
-        <div class="hero-title">Dukung Dayynime</div>
-        <div class="hero-meta"><div class="hero-meta-tag">Platform Anime Sub Indo Gratis</div></div>
-        <div class="hero-actions"><button class="hero-play"><i class="fas fa-heart"></i> Dukung Sekarang</button></div>
+  <div style="display:flex;align-items:center;gap:8px;padding:7px 0;">
+    <!-- label -->
+    <div style="
+      flex-shrink:0;
+      background:#F47521;color:#fff;
+      font-size:9px;font-weight:900;
+      padding:3px 7px;border-radius:4px;
+      letter-spacing:0.5px;text-transform:uppercase;
+    ">📢 INFO</div>
+
+    <!-- scrolling text -->
+    <div style="flex:1;overflow:hidden;position:relative;">
+      <div id="announceTicker" style="
+        display:inline-flex;gap:0;
+        white-space:nowrap;
+        animation: tickerScroll 18s linear infinite;
+        font-size:11px;color:#C0C0C8;
+      ">
+        <span style="padding-right:60px;">Setiap server memiliki kelengkapan anime berbeda &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+        <span style="padding-right:60px;">Setiap server memiliki koleksi berbeda &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+      </div>
+    </div>
+
+    <!-- close button -->
+    <button onclick="document.getElementById('announcementBar').style.display='none'" style="
+      flex-shrink:0;background:none;border:none;
+      color:#666;font-size:14px;cursor:pointer;
+      padding:0 2px;line-height:1;
+    ">×</button>
+  </div>
+</div>
+<style>
+@keyframes tickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+#announceTicker { will-change: transform; }
+#announceTicker:hover { animation-play-state: paused; }
+</style>
+
+<!-- ═══ HERO BANNER ═══ -->
+<div class="banner-slider">
+  <div class="banner-track">
+    <!-- Slide 0: Promo -->
+    <a href="https://trakteer.id/Dayynimee" target="_blank" rel="noopener" class="banner-slide">
+      <img src="/static/banner.png" alt="Dukung Dayynime" class="slide-bg">
+      <div class="banner-content">
+        <div class="banner-badge"><i class="fas fa-heart"></i> Support Kami</div>
+        <div class="banner-title">Dukung Dayynime</div>
+        <div class="banner-meta"><span><i class="fas fa-star"></i> Platform Anime Sub Indo</span></div>
+        <div class="banner-play"><i class="fas fa-heart"></i> Dukung Sekarang</div>
       </div>
     </a>
     {% if banner_animes %}
       {% for anime in banner_animes[:5] %}
-      <a href="/anime/{{ anime.slug }}" class="hero-slide">
-        <img src="{{ anime.poster }}" alt="" class="hero-slide-bg" onerror="this.src='/static/no-image.svg'">
-        <div class="hero-content">
-          <div class="hero-badge">
+      <a href="/anime/{{ anime.slug }}" class="banner-slide">
+        <img src="{{ anime.poster }}" alt="" class="slide-bg">
+        <div class="banner-content">
+          <div class="banner-badge">
             {% if loop.index == 1 %}<i class="fas fa-fire"></i> Trending
             {% elif loop.index == 2 %}<i class="fas fa-star"></i> Populer
             {% else %}<i class="fas fa-play"></i> Unggulan{% endif %}
           </div>
-          <div class="hero-title">{{ anime.title }}</div>
-          <div class="hero-meta">
-            {% if anime.type %}<div class="hero-meta-tag">{{ anime.type }}</div>{% endif %}
-            {% if anime.episode %}<div class="hero-meta-tag">Ep {{ anime.episode }}</div>{% endif %}
+          <div class="banner-title">{{ anime.title }}</div>
+          <div class="banner-meta">
+            {% if anime.type %}<span>{{ anime.type }}</span>{% endif %}
+            {% if anime.episode %}<span><i class="fas fa-circle" style="font-size:4px;"></i> Ep {{ anime.episode }}</span>{% endif %}
           </div>
-          <div class="hero-actions">
-            <button class="hero-play"><i class="fas fa-play"></i> Tonton</button>
-          </div>
+          <div class="banner-play"><i class="fas fa-play"></i> Tonton</div>
         </div>
       </a>
       {% endfor %}
     {% endif %}
   </div>
-  <button class="hero-prev" id="heroPrev"><i class="fas fa-chevron-left"></i></button>
-  <button class="hero-next" id="heroNext"><i class="fas fa-chevron-right"></i></button>
-  <div class="hero-dots" id="heroDots">
+  <button class="banner-arrow left" id="bannerPrev"><i class="fas fa-chevron-left"></i></button>
+  <button class="banner-arrow right" id="bannerNext"><i class="fas fa-chevron-right"></i></button>
+  <div class="banner-dots-wrap" id="bannerDots">
     {% set count = (banner_animes|length if banner_animes else 0) + 1 %}
     {% for i in range([count, 6]|min) %}
-    <button class="hero-dot {% if loop.first %}active{% endif %}"></button>
+    <button class="banner-dot {% if loop.first %}active{% endif %}"></button>
     {% endfor %}
   </div>
 </div>
 
-<!-- ══ QUICK CATEGORIES ══ -->
-<div class="quick-cats">
-  <a href="/ongoing" class="qcat"><span class="dot" style="background:#00d4aa;"></span> Ongoing</a>
-  <a href="/completed" class="qcat"><span class="dot" style="background:#60a5fa;"></span> Completed</a>
-  <a href="/movies" class="qcat"><i class="fas fa-film icon"></i> Movie</a>
-  <a href="/popular" class="qcat"><i class="fas fa-fire icon" style="color:var(--pink);"></i> Populer</a>
-  <a href="/jadwal" class="qcat"><i class="fas fa-calendar-alt icon" style="color:var(--cyan);"></i> Jadwal</a>
-  <a href="/animelist" class="qcat"><i class="fas fa-list icon"></i> A-Z List</a>
-</div>
-
-<!-- ══ PWA INSTALL ══ -->
-<div id="pwaBannerSection" class="pwa-banner" style="display:none;">
-  <div class="pwa-icon">📱</div>
-  <div class="pwa-info">
-    <div class="pwa-title">Install DayyNime</div>
-    <div class="pwa-desc">Nonton lebih nyaman dari homescreen kamu</div>
+<!-- ═══ QUICK NAV ═══ -->
+<div style="padding:16px 0 0;">
+  <div class="quick-nav">
+    <a href="/ongoing" class="quick-nav-item"><span class="dot" style="background:#10B981;"></span> Ongoing</a>
+    <a href="/completed" class="quick-nav-item"><span class="dot" style="background:#60a5fa;"></span> Completed</a>
+    <a href="/movies" class="quick-nav-item"><i class="fas fa-film"></i> Movie</a>
+    <a href="/popular" class="quick-nav-item"><i class="fas fa-fire" style="color:#F47521;"></i> Populer</a>
+    <a href="/jadwal" class="quick-nav-item"><i class="fas fa-calendar-alt" style="color:#10B981;"></i> Jadwal</a>
+    <a href="/animelist" class="quick-nav-item"><i class="fas fa-list"></i> A-Z List</a>
   </div>
-  <button onclick="installPWA()" class="pwa-btn">Install</button>
 </div>
-<script>
-(function(){
-  window.addEventListener('beforeinstallprompt', function(){
-    var s=document.getElementById('pwaBannerSection'); if(s) s.style.display='flex';
-  });
-})();
-</script>
 
-<!-- ══ LANJUTKAN NONTON ══ -->
-<div id="cwSection" style="display:none;" class="section-wrap">
-  <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent"></div>
-      <span class="section-title">Lanjutkan Nonton</span>
+<!-- ═══ PWA INSTALL BANNER ═══ -->
+<div id="pwaBannerSection" style="margin:0 12px 16px;display:none;">
+  <div style="
+    background: linear-gradient(135deg, #1e1a2e 0%, #1a1a23 100%);
+    border: 1px solid rgba(244,117,33,0.35);
+    border-radius: 14px;
+    padding: 14px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  ">
+    <img src="/static/icon.png" style="width:46px;height:46px;border-radius:12px;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.4);">
+    <div style="flex:1;min-width:0;">
+      <div style="font-weight:900;font-size:14px;color:#fff;">Install DayyNime</div>
+      <div style="font-size:11px;color:#A0A0B0;margin-top:2px;">Nonton anime lebih nyaman lewat homescreen</div>
     </div>
-    <button onclick="clearAllHistory()" style="font-size:11px;color:var(--pink);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;font-weight:800;">Hapus ›</button>
+    <button onclick="installPWA()" style="
+      background:#F47521;border:none;border-radius:10px;
+      color:#fff;font-weight:900;font-size:12px;
+      padding:9px 14px;cursor:pointer;flex-shrink:0;
+      white-space:nowrap;letter-spacing:0.2px;
+    ">Install</button>
   </div>
-  <div class="hscroll" id="cwList"></div>
 </div>
+
+<!-- ═══ LANJUTKAN NONTON ═══ -->
+<div id="cwSection" style="display:none; padding:18px 0 0;">
+  <div class="section-head">
+    <div class="section-title">
+      <span style="display:inline-block;width:3px;height:16px;background:var(--accent);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>
+      Lanjutkan Nonton
+    </div>
+    <button onclick="clearAllHistory()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;">
+      Hapus semua ›
+    </button>
+  </div>
+  <div class="cw-strip" id="cwList"></div>
+</div>
+
 <script>
 (function() {
-  function timeAgo(iso) { var d=(Date.now()-new Date(iso).getTime())/1000; if(d<60)return'Baru saja'; if(d<3600)return Math.floor(d/60)+' mnt lalu'; if(d<86400)return Math.floor(d/3600)+' jam lalu'; return Math.floor(d/86400)+' hari lalu'; }
-  function loadHistory() {
-    fetch('/api/history?limit=10').then(function(r){return r.json();}).then(function(d){
-      var sec=document.getElementById('cwSection'); var list=document.getElementById('cwList');
-      if(!d.ok||!d.history||!d.history.length){if(sec)sec.style.display='none';return;}
-      list.innerHTML=d.history.map(function(item){
-        var pct=Math.min(92,Math.max(6,(parseInt((item.ep_name||'').match(/\d+/)||[1])||1)%24/24*100));
-        return '<a href="/episode/'+item.ep_slug+'?anime='+item.anime_slug+'" class="acard" style="flex-shrink:0;width:120px;">'+
-          '<div class="acard-poster" style="width:120px;height:168px;aspect-ratio:unset;">'+
-            '<img src="'+(item.anime_poster||'/static/no-image.svg')+'" loading="lazy">'+
-            '<div class="acard-overlay"></div>'+
-            '<div class="acard-hover-overlay"><div class="acard-play-btn"><i class="fas fa-play"></i></div><div class="acard-hover-label">Lanjut</div></div>'+
-            '<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.15);"><div style="height:100%;width:'+pct+'%;background:var(--pink);border-radius:2px;"></div></div>'+
-          '</div>'+
-          '<div class="acard-info"><div class="acard-title">'+(item.anime_title||'Anime')+'</div><div class="acard-sub"><span style="color:var(--pink);font-size:9px;">'+(item.ep_name||'')+'</span></div></div>'+
-        '</a>';
-      }).join('');
-      if(sec)sec.style.display='';
-    }).catch(function(){});
+  function timeAgo(iso) {
+    var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60)   return 'Baru saja';
+    if (diff < 3600) return Math.floor(diff/60) + ' menit lalu';
+    if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
+    return Math.floor(diff/86400) + ' hari lalu';
   }
-  window.delHistory=function(slug){fetch('/api/history/'+slug,{method:'DELETE'}).then(loadHistory).catch(function(){});};
-  window.clearAllHistory=function(){if(!confirm('Hapus semua riwayat?'))return;fetch('/api/history/all',{method:'DELETE'}).then(function(){document.getElementById('cwSection').style.display='none';}).catch(function(){});};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',loadHistory); else loadHistory();
+
+  function renderHistory(history) {
+    var sec  = document.getElementById('cwSection');
+    var list = document.getElementById('cwList');
+    if (!sec || !list) return;
+    if (!history || !history.length) { sec.style.display = 'none'; return; }
+
+    list.innerHTML = history.map(function(item) {
+      var epNum = parseInt((item.ep_name || '').match(/\d+/) || [1]) || 1;
+      var pct   = Math.min(92, Math.max(6, (epNum % 24) / 24 * 100));
+      return '<a href="/episode/' + item.ep_slug + '?anime=' + item.anime_slug + '" class="cw-card">' +
+        '<div class="cw-thumb">' +
+          '<img src="' + (item.anime_poster||'/static/no-image.svg') + '" loading="lazy" onerror="this.src=\'/static/no-image.svg\'">' +
+          '<div class="cw-play-overlay"><i class="fas fa-play" style="font-size:9px;"></i></div>' +
+          '<div class="cw-progress-bar"><div class="cw-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="cw-info">' +
+          '<div class="cw-title">' + (item.anime_title||'Anime') + '</div>' +
+          '<div class="cw-ep-name">' + (item.ep_name||'Episode') + '</div>' +
+          '<div class="cw-meta"><i class="fas fa-clock"></i>' + timeAgo(item.watched_at) + '</div>' +
+        '</div>' +
+        '<button class="cw-del" title="Hapus" onclick="event.preventDefault();event.stopPropagation();delHistory(\'' + item.anime_slug + '\')">×</button>' +
+      '</a>';
+    }).join('');
+    sec.style.display = '';
+  }
+
+  function loadHistory() {
+    fetch('/api/history?limit=10')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (!d.ok || !d.history || !d.history.length) return;
+        renderHistory(d.history);
+      }).catch(function(){});
+  }
+
+  window.delHistory = function(slug) {
+    fetch('/api/history/' + slug, { method: 'DELETE' })
+      .then(function() { loadHistory(); })
+      .catch(function(){});
+  };
+
+  window.clearAllHistory = function() {
+    if (!confirm('Hapus semua riwayat nonton?')) return;
+    fetch('/api/history/all', { method: 'DELETE' })
+      .then(function(){ document.getElementById('cwSection').style.display='none'; })
+      .catch(function(){});
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadHistory);
+  else loadHistory();
 })();
 </script>
 
-<!-- ══ SEDANG TAYANG ══ -->
+<!-- ═══ SEDANG HANGAT ═══ -->
 {% if data and data.ongoing %}
-<div class="section-wrap">
+<div class="section">
   <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent"></div>
-      <span class="section-title">Sedang Tayang</span>
-      <div class="section-badge">Live</div>
+    <div class="section-title">
+      <span class="section-live-dot"></span>
+      Sedang Tayang
     </div>
-    <a href="/ongoing" class="section-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+    <a href="/ongoing" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div class="hscroll">
+  <div class="scroll-row">
     {% for anime in data.ongoing[:12] %}
     <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
       <div class="acard-poster">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        <div class="acard-overlay"></div>
-        <div class="acard-hover-overlay"><div class="acard-play-btn"><i class="fas fa-play"></i></div><div class="acard-hover-label">Tonton</div></div>
-        {% if anime.type %}<div class="acard-type-badge">{{ anime.type }}</div>{% endif %}
-        {% if anime.episode %}<div class="acard-ep-badge"><i class="fas fa-play" style="font-size:6px;"></i> Ep {{ anime.episode }}</div>{% endif %}
-        <div class="acard-viewers" id="viewers-{{ anime.slug }}"><span class="acard-viewers-dot"></span><span id="viewers-count-{{ anime.slug }}">0</span><span>nonton</span></div>
+        {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+        {% if anime.episode %}<div class="acard-ep"><i class="fas fa-play-circle"></i> Ep {{ anime.episode }}</div>{% endif %}
+        <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+          <span class="acard-viewers-dot"></span>
+          <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+          <span>nonton</span>
+        </div>
       </div>
-      <div class="acard-info">
-        <div class="acard-title">{{ anime.title }}</div>
-        <div class="acard-sub">{{ anime.type or 'Anime' }} <span class="acard-sub-dot">●</span> Update</div>
-      </div>
+      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
+      <div class="acard-title">{{ anime.title }}</div>
     </a>
     {% endfor %}
   </div>
 </div>
 {% endif %}
 
-<!-- ══ EPISODE TERBARU ══ -->
+<!-- ═══ BARU DITAMBAHKAN ═══ -->
 {% if data and data.recent %}
-<div class="section-wrap">
+<div class="section">
   <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent" style="background:linear-gradient(to bottom,#60a5fa,#3b82f6);box-shadow:0 0 8px rgba(96,165,250,0.4);"></div>
-      <span class="section-title">Baru Ditambahkan</span>
-      <div class="section-badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;">NEW</div>
+    <div class="section-title">
+      <span class="badge" style="background:#3b82f6;font-size:8px;">NEW</span>
+      Baru Ditambahkan
     </div>
-    <a href="/completed" class="section-more" style="color:#60a5fa;">Lihat Semua <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+    <a href="/completed" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div class="wcard-grid">
-    {% for anime in data.recent[:4] %}
-    <a href="/anime/{{ anime.slug }}" class="wcard">
-      <div class="wcard-thumb">
+  <div class="scroll-row ncard-row">
+    {% for anime in data.recent[:10] %}
+    <a href="/anime/{{ anime.slug }}" class="ncard">
+      <div class="ncard-banner">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.type %}<div class="wcard-thumb-ep">{{ anime.type }}</div>{% endif %}
+        {% if anime.type %}<div class="ncard-typebadge">{{ anime.type }}</div>{% endif %}
       </div>
-      <div class="wcard-info">
-        <div class="wcard-title">{{ anime.title }}</div>
-        <div class="wcard-sub">Sub Indo</div>
-        <div class="wcard-time">{{ anime.status_or_day or 'Terbaru' }}</div>
+      <div class="ncard-bottom">
+        <div class="ncard-poster">
+          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        </div>
+        <div class="ncard-info">
+          <div class="ncard-genre">{{ anime.type or 'Anime' }}</div>
+          <div class="ncard-title">{{ anime.title }}</div>
+          <div class="ncard-meta">
+            <i class="fas fa-circle-play" style="color:#F47521;font-size:9px;"></i>
+            <span>{{ anime.status_or_day or 'Update Terbaru' }}</span>
+          </div>
+        </div>
       </div>
     </a>
     {% endfor %}
@@ -194,235 +296,238 @@
 </div>
 {% endif %}
 
-<!-- ══ GENRE GRID ══ -->
-<div class="section-wrap">
-  <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent" style="background:linear-gradient(to bottom,#a78bfa,#7c3aed);box-shadow:0 0 8px rgba(167,139,250,0.4);"></div>
-      <span class="section-title">Jelajahi Genre</span>
-    </div>
-    <a href="/genres" class="section-more">Semua <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
-  </div>
-  <div class="genre-grid">
-    <a href="/genre/action" class="genre-pill gp-action"><span class="icon">⚔️</span><span class="name">Action</span></a>
-    <a href="/genre/romance" class="genre-pill gp-romance"><span class="icon">💕</span><span class="name">Romance</span></a>
-    <a href="/genre/fantasy" class="genre-pill gp-fantasy"><span class="icon">🔮</span><span class="name">Fantasy</span></a>
-    <a href="/genre/comedy" class="genre-pill gp-comedy"><span class="icon">😂</span><span class="name">Comedy</span></a>
-    <a href="/genre/horror" class="genre-pill gp-horror"><span class="icon">👻</span><span class="name">Horror</span></a>
-    <a href="/genre/sci-fi" class="genre-pill gp-scifi"><span class="icon">🚀</span><span class="name">Sci-Fi</span></a>
-    <a href="/genre/isekai" class="genre-pill gp-isekai"><span class="icon">🌀</span><span class="name">Isekai</span></a>
-    <a href="/genre/sport" class="genre-pill gp-sport"><span class="icon">⚡</span><span class="name">Sport</span></a>
-  </div>
-</div>
-
-<!-- ══ POPULER / RANKING ══ -->
+<!-- ═══ POPULER ═══ -->
 {% if popular and popular.animes %}
-<div class="section-wrap">
+<div class="section">
   <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent" style="background:linear-gradient(to bottom,#ffd700,#ff8c00);box-shadow:0 0 8px rgba(255,215,0,0.4);"></div>
-      <span class="section-title">Top Populer</span>
-      <div class="section-badge" style="background:rgba(255,215,0,0.15);color:#ffd700;">Chart</div>
+    <div class="section-title">
+      <i class="fas fa-fire" style="color:#fb923c;font-size:11px;"></i>
+      Populer Minggu Ini
     </div>
-    <a href="/popular" class="section-more">Lihat <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+    <a href="/popular" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  {% for anime in popular.animes[:5] %}
-  <a href="/anime/{{ anime.slug }}" class="rank-item">
-    <div class="rank-num {% if loop.index == 1 %}top1{% elif loop.index == 2 %}top2{% elif loop.index == 3 %}top3{% else %}other{% endif %}">{{ loop.index }}</div>
-    <div class="rank-thumb"><img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'"></div>
-    <div class="rank-info">
-      <div class="rank-title">{{ anime.title }}</div>
-      <div class="rank-score">
-        <div class="rank-score-bar"><div class="rank-score-fill" style="width:{{ (100 - loop.index * 8)|int }}%;"></div></div>
-        <span class="rank-score-num">{% if anime.score %}{{ anime.score }}{% else %}{{ (9.5 - loop.index * 0.2)|round(1) }}{% endif %}</span>
+  <div class="scroll-row">
+    {% for anime in popular.animes[:12] %}
+    <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
+      <div class="acard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.rank %}<div class="acard-type">#{{ anime.rank }}</div>{% elif anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+        {% if anime.score %}<div class="acard-score"><i class="fas fa-star fa-xs"></i> {{ anime.score }}</div>{% endif %}
+        <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+          <span class="acard-viewers-dot"></span>
+          <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+          <span>nonton</span>
+        </div>
       </div>
-    </div>
-  </a>
-  {% endfor %}
+      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
+      <div class="acard-title">{{ anime.title }}</div>
+    </a>
+    {% endfor %}
+  </div>
 </div>
 {% endif %}
 
-<!-- ══ JADWAL RILIS ══ -->
+<!-- ═══ JADWAL RILIS ═══ -->
 {% if schedule and schedule.schedule %}
-<div class="section-wrap">
+<div class="section">
   <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent" style="background:linear-gradient(to bottom,#00d4aa,#00a1d6);box-shadow:0 0 8px rgba(0,212,170,0.4);"></div>
-      <span class="section-title">Jadwal Rilis</span>
+    <div class="section-title">
+      <i class="fas fa-calendar-week" style="color:var(--accent);font-size:11px;"></i>
+      Jadwal Rilis
     </div>
-    <a href="/jadwal" class="section-more" style="color:var(--cyan);">Lengkap <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+    <a href="/jadwal" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div class="schedule-days" id="schedDays">
+  <div class="day-tabs">
     {% for day in schedule.schedule.keys() %}
-    <div class="sday" data-day="{{ day }}">
-      <div class="sday-circle">{{ day[:3] }}</div>
-      <div class="sday-dot"></div>
-      <div class="sday-label">{{ day }}</div>
-    </div>
+    <button class="day-tab" data-tab="{{ day }}">{{ day }}</button>
     {% endfor %}
   </div>
   {% for day, animes in schedule.schedule.items() %}
-  <div class="sched-day-panel" id="sdp-{{ day }}" style="display:none;">
-    {% for anime in animes[:3] %}
-    <a href="/anime/{{ anime.slug }}" class="schedule-item" style="text-decoration:none;color:inherit;">
-      <div class="schedule-thumb"><img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'"></div>
-      <div class="schedule-info">
-        <div class="schedule-title">{{ anime.title }}</div>
-        {% if anime.episode %}<div class="schedule-ep">{{ anime.episode }}</div>{% endif %}
-        {% if anime.time %}<div class="schedule-time"><i class="fas fa-clock" style="font-size:9px;"></i> {{ anime.time }} WIB</div>{% endif %}
-      </div>
-      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:11px;flex-shrink:0;"></i>
-    </a>
-    {% endfor %}
+  <div class="tab-panel" id="panel-{{ day }}">
+    <div class="scroll-row">
+      {% for anime in animes[:10] %}
+      <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
+        <div class="acard-poster">
+          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+          {% if anime.time %}<div class="acard-ep"><i class="fas fa-clock fa-xs"></i> {{ anime.time }}</div>{% endif %}
+          <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+            <span class="acard-viewers-dot"></span>
+            <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+            <span>nonton</span>
+          </div>
+        </div>
+        <div class="acard-title">{{ anime.title }}</div>
+      </a>
+      {% endfor %}
+    </div>
   </div>
   {% endfor %}
 </div>
 {% endif %}
 
-<!-- ══ PREMIUM BANNER ══ -->
-<div class="premium-banner">
-  <div class="prem-title">Upgrade ke <span>Premium</span> ✨</div>
-  <div class="prem-desc">Nikmatin anime tanpa gangguan, kualitas terbaik</div>
-  <div class="prem-perks">
-    <div class="prem-perk"><i class="fas fa-ban"></i> Tanpa Iklan</div>
-    <div class="prem-perk"><i class="fas fa-film"></i> HD Quality</div>
-    <div class="prem-perk"><i class="fas fa-download"></i> Download</div>
-    <div class="prem-perk"><i class="fas fa-bolt"></i> Early Access</div>
-  </div>
-  <a href="/premium" class="prem-btn"><i class="fas fa-crown"></i> Mulai Premium <span class="prem-price">— Rp 15.000/bln</span></a>
-</div>
-
-<!-- ══ RUANG NGOBROL PROMO ══ -->
-<a href="/ruang-ngobrol" class="chat-promo">
-  <div class="chat-promo-icon">💬</div>
-  <div class="chat-promo-info">
-    <div class="chat-promo-title">Ruang Ngobrol Anime</div>
-    <div class="chat-promo-desc">Diskusi seru bareng sesama weebs!</div>
-  </div>
-  <div class="chat-promo-online">
-    <div class="online-dot"></div>
-    <span id="chatOnlineCount">online</span>
-  </div>
-</a>
-
-<!-- ══ COMPLETED ══ -->
-{% if data and data.ongoing %}
-<div class="section-wrap">
-  <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent" style="background:linear-gradient(to bottom,#60a5fa,#3b82f6);box-shadow:0 0 8px rgba(96,165,250,0.4);"></div>
-      <span class="section-title">Sedang Tayang Lainnya</span>
-    </div>
-    <a href="/ongoing" class="section-more" style="color:#60a5fa;">Lihat <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
-  </div>
-  <div class="hscroll">
-    {% for anime in data.ongoing[12:24] %}
-    <a href="/anime/{{ anime.slug }}" class="acard">
-      <div class="acard-poster">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        <div class="acard-overlay"></div>
-        <div class="acard-hover-overlay"><div class="acard-play-btn"><i class="fas fa-play"></i></div><div class="acard-hover-label">Tonton</div></div>
-        {% if anime.type %}<div class="acard-type-badge">{{ anime.type }}</div>{% endif %}
-      </div>
-      <div class="acard-info">
-        <div class="acard-title">{{ anime.title }}</div>
-        <div class="acard-sub">{{ anime.type or 'Anime' }} <span class="acard-sub-dot">●</span> Ongoing</div>
-      </div>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-
-<!-- ══ KOMUNITAS ══ -->
-<div class="section-wrap">
-  <div style="background:linear-gradient(135deg,rgba(0,161,214,0.08),rgba(0,212,170,0.08));border:1.5px solid rgba(0,161,214,0.15);border-radius:16px;padding:16px;">
-    <div style="font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:900;color:var(--text);margin-bottom:12px;">Komunitas Dayynime 💙</div>
+<!-- ═══ KOMUNITAS ═══ -->
+<div style="padding:0 14px 28px;">
+  <div style="background:#1a1a23;border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.07);">
+    <div style="font-size:11px;font-weight:900;color:#A0A0B0;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
     <div style="display:flex;gap:8px;">
-      <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.12);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:800;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-facebook-f"></i> FB Page</a>
-      <a href="https://facebook.com/groups/1569311164620890/" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.12);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:800;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fas fa-users"></i> Grup FB</a>
-      <a href="https://discord.gg/bChVdNUzh" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(88,101,242,0.12);border:1px solid rgba(88,101,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:800;color:#7983f5;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-discord"></i> Discord</a>
+      <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener"
+         style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;">
+        <i class="fab fa-facebook-f"></i> FB Page
+      </a>
+      <a href="https://facebook.com/groups/1569311164620890/" target="_blank" rel="noopener"
+         style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;">
+        <i class="fas fa-users"></i> Grup FB
+      </a>
+      <a href="https://discord.gg/bChVdNUzh" target="_blank" rel="noopener"
+         style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.2);border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;color:#7983f5;text-transform:uppercase;letter-spacing:0.3px;">
+        <i class="fab fa-discord"></i> Discord
+      </a>
     </div>
   </div>
 </div>
 
-<div id="supporterSection" class="section-wrap" style="display:none;">
+<!-- ═══ SUPPORTER ═══ -->
+<div class="section" id="supporterSection" style="display:none;">
   <div class="section-head">
-    <div class="section-title-group">
-      <div class="section-accent" style="background:linear-gradient(to bottom,#be1e2d,#fb7299);"></div>
-      <span class="section-title">❤️ Supporter</span>
-    </div>
-    <a href="javascript:void(0)" onclick="openTrakteer()" class="section-more">Dukung <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+    <div class="section-title">Supporter Terbaru</div>
+    <a href="javascript:void(0)" onclick="openTrakteer()" class="section-more">Dukung <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
-  <div id="supporterList" style="display:flex;flex-direction:column;gap:6px;"></div>
+  <div id="supporterList" style="display:flex;flex-direction:column;gap:6px;padding:0 14px;"></div>
 </div>
+
+<style>
+.supporter-card {
+  display:flex; align-items:center; gap:10px;
+  background:#1a1a23; border-radius:8px;
+  padding:10px 12px; border:1px solid rgba(255,255,255,0.06);
+  animation:fadeInUp 0.4s ease both;
+}
+.supporter-avatar {
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,#be1e2d,#F47521);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:900; color:#fff;
+}
+.supporter-name { font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.supporter-msg  { font-size:11px; color:#A0A0B0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.supporter-amount { font-size:13px; font-weight:900; color:#F47521; white-space:nowrap; flex-shrink:0; }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+</style>
+<script>
+(function() {
+  function fmtAmount(v) {
+    var n = parseInt(v) || 0;
+    if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace('.0','') + 'jt';
+    if (n >= 1000) return 'Rp ' + (n/1000).toFixed(0) + 'rb';
+    return 'Rp ' + n;
+  }
+  function loadSupporters() {
+    fetch('/api/trakteer/supporters')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (!d.ok || !d.supporters || !d.supporters.length) return;
+        var list = document.getElementById('supporterList');
+        var sec  = document.getElementById('supporterSection');
+        if (!list || !sec) return;
+        list.innerHTML = '';
+        d.supporters.slice(0,5).forEach(function(s, i) {
+          var card = document.createElement('div');
+          card.className = 'supporter-card';
+          card.style.animationDelay = (i * 0.07) + 's';
+          card.innerHTML =
+            '<div class="supporter-avatar">' + (s.name||'A')[0].toUpperCase() + '</div>' +
+            '<div style="flex:1;min-width:0;"><div class="supporter-name">' + (s.name||'Anonim') + '</div>' +
+            '<div class="supporter-msg">' + (s.message||'') + '</div></div>' +
+            '<div class="supporter-amount">' + fmtAmount(s.amount) + '</div>';
+          list.appendChild(card);
+        });
+        sec.style.display = '';
+      }).catch(function(){});
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadSupporters);
+  else loadSupporters();
+})();
+</script>
+
+<div style="height:8px;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-(function(){
-  var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';
-  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
-  var client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-  var slugs=[];
-  document.querySelectorAll('.acard[data-anime-slug]').forEach(function(el){var s=el.getAttribute('data-anime-slug');if(s&&slugs.indexOf(s)===-1)slugs.push(s);});
-  var uid=sessionStorage.getItem('dyn_uid');
-  if(!uid){uid='u_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();sessionStorage.setItem('dyn_uid',uid);}
-  function updateBadge(slug,count){var badge=document.getElementById('viewers-'+slug);var countEl=document.getElementById('viewers-count-'+slug);if(!badge||!countEl)return;if(count>=1){badge.classList.add('show');countEl.textContent=count;}else{badge.classList.remove('show');}}
-  if(slugs.length>0){slugs.forEach(function(slug){var ch=client.channel('room:'+slug).on('presence',{event:'sync'},function(){updateBadge(slug,Object.keys(ch.presenceState()).length);}).subscribe(function(status){if(status==='SUBSCRIBED')ch.track({uid:uid,page:'home',slug:slug});});});}
-})();
+(function() {
+  var SUPABASE_URL = 'https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
 
-// Supporters
-(function(){
-  function fmtAmt(v){var n=parseInt(v)||0;if(n>=1000000)return'Rp '+(n/1000000).toFixed(1).replace('.0','').replace('.',',')+'jt';if(n>=1000)return'Rp '+(n/1000).toFixed(0)+'rb';return'Rp '+n;}
-  fetch('/api/trakteer/supporters').then(function(r){return r.json();}).then(function(d){
-    if(!d.ok||!d.supporters||!d.supporters.length)return;
-    var list=document.getElementById('supporterList'),sec=document.getElementById('supporterSection');if(!list||!sec)return;
-    list.innerHTML='';
-    d.supporters.slice(0,5).forEach(function(s,i){
-      var card=document.createElement('div');
-      card.style.cssText='display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:12px;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.06);';
-      card.innerHTML='<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,var(--pink));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;">'+(s.name||'A')[0].toUpperCase()+'</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:var(--text);">'+(s.name||'Anonim')+'</div><div style="font-size:11px;color:var(--text2);">'+(s.message||'')+'</div></div><div style="font-size:13px;font-weight:900;color:var(--pink);">'+fmtAmt(s.amount)+'</div>';
-      list.appendChild(card);
+  var client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Kumpulkan semua slug anime yang ada di halaman
+  var slugs = [];
+  document.querySelectorAll('.acard[data-anime-slug]').forEach(function(el) {
+    var s = el.getAttribute('data-anime-slug');
+    if (s && slugs.indexOf(s) === -1) slugs.push(s);
+  });
+
+  // Generate user ID unik per sesi
+  var uid = sessionStorage.getItem('dyn_uid');
+  if (!uid) {
+    uid = 'u_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    sessionStorage.setItem('dyn_uid', uid);
+  }
+
+  // Track tiap channel per slug
+  var channels = {};
+
+  function updateBadge(slug, count) {
+    var badge = document.getElementById('viewers-' + slug);
+    var countEl = document.getElementById('viewers-count-' + slug);
+    if (!badge || !countEl) return;
+    if (count >= 1) {
+      countEl.textContent = count;
+      badge.classList.add('visible');
+    } else {
+      badge.classList.remove('visible');
+    }
+  }
+
+  function subscribeToSlug(slug) {
+    if (channels[slug]) return;
+    var ch = client.channel('anime-viewers:' + slug, {
+      config: { presence: { key: uid } }
     });
-    sec.style.display='';
-  }).catch(function(){});
+
+    ch.on('presence', { event: 'sync' }, function() {
+      var state = ch.presenceState();
+      var count = Object.keys(state).length;
+      updateBadge(slug, count);
+    });
+
+    ch.subscribe(function(status) {
+      if (status === 'SUBSCRIBED') {
+        // Kita subscribe sebagai passive observer — tidak track diri sendiri
+        // (kita hanya ingin lihat berapa yg ada di channel ini)
+      }
+    });
+
+    channels[slug] = ch;
+  }
+
+  // Subscribe ke semua slug yang ada di halaman
+  slugs.forEach(subscribeToSlug);
+
+  // Cleanup waktu user meninggalkan halaman
+  window.addEventListener('beforeunload', function() {
+    Object.values(channels).forEach(function(ch) {
+      try { client.removeChannel(ch); } catch(e) {}
+    });
+  });
 })();
 </script>
-<div style="height:8px;"></div>
-{% endblock %}
-
-{% block scripts %}
 <script>
-// Hero Slider
-(function(){
-  var slider=document.getElementById('heroSlider');
-  var dots=document.querySelectorAll('.hero-dot');
-  var cur=0; var total=dots.length; var timer;
-  function goTo(idx){cur=(idx+total)%total;if(slider)slider.style.transform='translateX(-'+(cur*100)+'%)';dots.forEach(function(d,i){d.classList.toggle('active',i===cur);});}
-  var prev=document.getElementById('heroPrev'); var next=document.getElementById('heroNext');
-  if(prev)prev.onclick=function(){goTo(cur-1);resetTimer();};
-  if(next)next.onclick=function(){goTo(cur+1);resetTimer();};
-  dots.forEach(function(d,i){d.onclick=function(){goTo(i);resetTimer();};});
-  function resetTimer(){clearInterval(timer);timer=setInterval(function(){goTo(cur+1);},5000);}
-  resetTimer();
-})();
-
-// Schedule days
-(function(){
-  var days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  var today=days[new Date().getDay()];
-  var sdays=document.querySelectorAll('.sday[data-day]');
-  function activate(el){
-    sdays.forEach(function(d){d.classList.remove('active');});
-    document.querySelectorAll('.sched-day-panel').forEach(function(p){p.style.display='none';});
-    el.classList.add('active');
-    var panel=document.getElementById('sdp-'+el.getAttribute('data-day'));
-    if(panel)panel.style.display='';
-  }
-  var found=false;
-  sdays.forEach(function(d){if(d.getAttribute('data-day')===today){activate(d);found=true;}});
-  if(!found&&sdays.length>0)activate(sdays[0]);
-  sdays.forEach(function(d){d.addEventListener('click',function(){activate(d);});});
+// Tampilkan banner install kalau belum terinstall sebagai PWA
+(function() {
+  // Kalau sudah jalan sebagai standalone (sudah install), sembunyikan
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
+  var banner = document.getElementById('pwaBannerSection');
+  if (banner) banner.style.display = 'block';
 })();
 </script>
 {% endblock %}
