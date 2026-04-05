@@ -647,7 +647,10 @@ def detail(slug):
                     }
                 }
             }
-    return render_template("detail.html", data=data, slug=slug)
+    is_locked = _is_anime_locked(slug)
+    is_premium = _is_premium_user()
+    return render_template("detail.html", data=data, slug=slug,
+                           is_locked=is_locked, is_premium=is_premium)
 
 
 @app.route("/episode/<slug>")
@@ -729,8 +732,11 @@ def episode(slug):
                 }
             }
 
+    is_locked = _is_anime_locked(anime_slug) if anime_slug else False
+    is_premium = _is_premium_user()
     return render_template("episode.html", data=data, slug=slug,
-                           anime_slug=anime_slug, anime_data=anime_data)
+                           anime_slug=anime_slug, anime_data=anime_data,
+                           is_locked=is_locked, is_premium=is_premium)
 
 
 @app.route("/api/server/<server_id>")
@@ -1059,6 +1065,75 @@ def admin_flush_cache():
         return jsonify({"ok": True, "deleted": len(keys) if keys else 0})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# ── Admin: Locked Anime ────────────────────────────────────────────────────────
+
+@app.route("/api/admin/locked-anime/list")
+def locked_anime_list():
+    """Daftar semua anime yang dikunci. Admin only."""
+    if not _is_admin():
+        return jsonify({"error": "Forbidden"}), 403
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/locked_anime",
+            headers=supabase_service_headers(),
+            params={"select": "slug,title,poster,locked_at", "order": "locked_at.desc"},
+            timeout=5
+        )
+        return jsonify({"ok": True, "data": r.json() if r.ok else []})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+@app.route("/api/admin/locked-anime/lock", methods=["POST"])
+def locked_anime_lock():
+    """Kunci sebuah anime by slug. Admin only."""
+    if not _is_admin():
+        return jsonify({"error": "Forbidden"}), 403
+    body = request.get_json(silent=True) or {}
+    slug = (body.get("slug") or "").strip()
+    title = (body.get("title") or "").strip()
+    poster = (body.get("poster") or "").strip()
+    if not slug:
+        return jsonify({"ok": False, "error": "slug required"}), 400
+    try:
+        r = requests.post(
+            f"{SUPABASE_URL}/rest/v1/locked_anime",
+            headers={**supabase_service_headers(), "Prefer": "resolution=merge-duplicates"},
+            json={"slug": slug, "title": title, "poster": poster, "locked_by": "admin"},
+            timeout=5
+        )
+        return jsonify({"ok": r.ok})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+@app.route("/api/admin/locked-anime/unlock", methods=["POST"])
+def locked_anime_unlock():
+    """Buka kunci anime by slug. Admin only."""
+    if not _is_admin():
+        return jsonify({"error": "Forbidden"}), 403
+    body = request.get_json(silent=True) or {}
+    slug = (body.get("slug") or "").strip()
+    if not slug:
+        return jsonify({"ok": False, "error": "slug required"}), 400
+    try:
+        r = requests.delete(
+            f"{SUPABASE_URL}/rest/v1/locked_anime",
+            headers=supabase_service_headers(),
+            params={"slug": f"eq.{slug}"},
+            timeout=5
+        )
+        return jsonify({"ok": r.ok})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+@app.route("/api/admin/locked-anime/check")
+def locked_anime_check():
+    """Check apakah satu anime terkunci (bisa dipakai dari frontend)."""
+    slug = request.args.get("slug", "").strip()
+    if not slug:
+        return jsonify({"locked": False})
+    return jsonify({"locked": _is_anime_locked(slug)})
 
 @app.route("/premium")
 def premium():
@@ -1954,6 +2029,52 @@ def _is_admin(access_token=None):
     """Cek apakah user yang sedang login adalah admin (via Flask session)."""
     user = session.get("user")
     return bool(user and user.get("is_admin"))
+
+def _is_premium_user():
+    """Cek apakah user sedang login dan punya premium aktif."""
+    from datetime import datetime, timezone
+    user = session.get("user")
+    if not user:
+        return False
+    if user.get("is_admin"):
+        return True
+    user_id = user.get("id")
+    if not user_id:
+        return False
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_premium",
+            headers=supabase_service_headers(),
+            params={"user_id": f"eq.{user_id}", "select": "is_active,expires_at"},
+            timeout=3
+        )
+        if r.ok and r.json():
+            row = r.json()[0]
+            if row.get("is_active"):
+                expires_at = row.get("expires_at")
+                if not expires_at:
+                    return True
+                try:
+                    exp = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+                    return exp > datetime.now(timezone.utc)
+                except Exception:
+                    return True
+    except Exception:
+        pass
+    return False
+
+def _is_anime_locked(slug):
+    """Cek apakah anime slug ada di tabel locked_anime."""
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/locked_anime",
+            headers=supabase_service_headers(),
+            params={"slug": f"eq.{slug}", "select": "slug"},
+            timeout=3
+        )
+        return r.ok and len(r.json()) > 0
+    except Exception:
+        return False
 
 @app.route("/api/admin/users")
 def admin_users():
