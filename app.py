@@ -600,7 +600,7 @@ def home():
         sched = norm_schedule(schedule)
 
     return render_template("index.html", data=data, popular=pop_norm,
-                           schedule=sched)
+                           schedule=sched, is_premium=_is_premium_user())
 
 
 @app.route("/anime/<slug>")
