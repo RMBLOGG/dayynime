@@ -128,7 +128,7 @@
 </div>
 
 <!-- ═══ PROMO PREMIUM ═══ -->
-{% if not current_user or not current_user.is_authenticated or not current_user.is_premium %}
+{% if not is_premium %}
 <div style="margin:16px 12px 32px;">
   <div style="
     position:relative;overflow:hidden;
