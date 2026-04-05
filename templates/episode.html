@@ -163,6 +163,27 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
   <div class="watch-main">
 
     <!-- PLAYER -->
+    {% if is_locked and not is_premium %}
+    <div class="ep-player-wrap">
+      <div class="player-box" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;min-height:220px;background:#0d0d0d;padding:24px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#F47521,#e05a00);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(244,117,33,0.4);">
+          <i class="fas fa-lock" style="font-size:26px;color:#fff;"></i>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-weight:900;font-size:15px;color:#fff;margin-bottom:6px;">Konten Premium</div>
+          <div style="font-size:12px;color:#888;line-height:1.6;">Anime ini hanya bisa ditonton<br>oleh member Premium.</div>
+        </div>
+        <a href="/premium" style="
+          display:inline-flex;align-items:center;gap:8px;
+          background:linear-gradient(90deg,#F47521,#e05a00);
+          color:#fff;font-weight:900;font-size:13px;
+          padding:11px 24px;border-radius:10px;text-decoration:none;
+          letter-spacing:0.3px;margin-top:4px;
+        ">👑 Upgrade Premium</a>
+        <a href="/anime/{{ anime_slug }}" style="font-size:12px;color:#555;text-decoration:none;">← Kembali ke detail anime</a>
+      </div>
+    </div>
+    {% else %}
     <div class="ep-player-wrap">
       <div class="player-box">
         <!-- AD OVERLAY: hanya untuk non-premium -->
@@ -194,6 +215,7 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
         </iframe>
       </div>
     </div>
+    {% endif %}
 
     <!-- INFO BAR -->
     <div style="padding:12px 16px 0;border-bottom:1px solid var(--border);padding-bottom:12px;">

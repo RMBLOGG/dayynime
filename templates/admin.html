@@ -418,4 +418,123 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 {% endif %}
 
+<!-- ═══ SECTION: LOCKED ANIME ═══ -->
+{% if is_admin %}
+<div style="padding:16px 14px 32px;">
+  <div style="background:#111118;border:1px solid rgba(244,117,33,0.25);border-radius:14px;overflow:hidden;">
+
+    <!-- header -->
+    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-lock" style="color:#F47521;font-size:13px;"></i>
+        <span style="font-weight:900;font-size:14px;color:#fff;">Kelola Anime Terkunci</span>
+        <span id="lock-count" style="background:rgba(244,117,33,0.15);color:#F47521;font-size:10px;font-weight:900;padding:2px 8px;border-radius:20px;">0</span>
+      </div>
+      <button onclick="loadLockedList()" style="background:none;border:none;color:#888;font-size:12px;cursor:pointer;font-family:inherit;">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+    </div>
+
+    <!-- form kunci anime baru -->
+    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <div style="font-size:11px;color:#888;margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;">Kunci Anime</div>
+      <div style="display:flex;gap:8px;">
+        <input id="lockSlugInput" type="text" placeholder="Masukkan slug anime (contoh: one-piece)" style="
+          flex:1;background:#0d0d0d;border:1px solid rgba(255,255,255,0.1);
+          border-radius:8px;padding:10px 12px;color:#fff;font-size:12px;font-family:inherit;
+          outline:none;
+        ">
+        <button onclick="lockAnime()" style="
+          background:#F47521;border:none;border-radius:8px;
+          color:#fff;font-weight:900;font-size:12px;padding:10px 16px;
+          cursor:pointer;white-space:nowrap;font-family:inherit;
+        "><i class="fas fa-lock"></i> Kunci</button>
+      </div>
+      <div id="lockMsg" style="font-size:11px;margin-top:6px;min-height:16px;"></div>
+    </div>
+
+    <!-- daftar anime terkunci -->
+    <div id="locked-list" style="padding:10px 0;">
+      <div style="text-align:center;padding:20px;color:#555;font-size:12px;">
+        <i class="fas fa-spinner fa-spin"></i> Memuat...
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+async function loadLockedList() {
+  const wrap = document.getElementById('locked-list');
+  const countEl = document.getElementById('lock-count');
+  try {
+    const r = await fetch('/api/admin/locked-anime/list');
+    const d = await r.json();
+    const list = d.data || [];
+    countEl.textContent = list.length;
+    if (!list.length) {
+      wrap.innerHTML = '<div style="text-align:center;padding:20px;color:#555;font-size:12px;"><i class="fas fa-unlock"></i> Belum ada anime yang dikunci.</div>';
+      return;
+    }
+    wrap.innerHTML = list.map(function(a) {
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.04);">'
+        + (a.poster ? '<img src="'+a.poster+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;">' : '<div style="width:36px;height:36px;border-radius:6px;background:#1a1a23;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-film" style="color:#555;font-size:12px;"></i></div>')
+        + '<div style="flex:1;min-width:0;">'
+        +   '<div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(a.title || a.slug)+'</div>'
+        +   '<div style="font-size:10px;color:#555;margin-top:1px;font-family:monospace;">'+a.slug+'</div>'
+        + '</div>'
+        + '<button onclick="unlockAnime(\''+a.slug+'\')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);border-radius:6px;color:#ef4444;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;">'
+        +   '<i class="fas fa-unlock"></i> Buka'
+        + '</button>'
+        + '</div>';
+    }).join('');
+  } catch(e) {
+    wrap.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;font-size:12px;">Gagal memuat data.</div>';
+  }
+}
+
+async function lockAnime() {
+  const slugInput = document.getElementById('lockSlugInput');
+  const msg = document.getElementById('lockMsg');
+  const slug = slugInput.value.trim();
+  if (!slug) { msg.style.color='#ef4444'; msg.textContent='Slug tidak boleh kosong.'; return; }
+  msg.style.color='#888'; msg.textContent='Mengunci...';
+  try {
+    const r = await fetch('/api/admin/locked-anime/lock', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({slug: slug})
+    });
+    const d = await r.json();
+    if (d.ok) {
+      msg.style.color='#10B981'; msg.textContent='✓ Anime berhasil dikunci!';
+      slugInput.value = '';
+      setTimeout(function(){ msg.textContent=''; }, 3000);
+      loadLockedList();
+    } else {
+      msg.style.color='#ef4444'; msg.textContent='Gagal: '+(d.error||'unknown');
+    }
+  } catch(e) {
+    msg.style.color='#ef4444'; msg.textContent='Error: '+e.message;
+  }
+}
+
+async function unlockAnime(slug) {
+  if (!confirm('Buka kunci anime: '+slug+'?')) return;
+  try {
+    const r = await fetch('/api/admin/locked-anime/unlock', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({slug: slug})
+    });
+    const d = await r.json();
+    if (d.ok) loadLockedList();
+    else alert('Gagal buka kunci: '+(d.error||'unknown'));
+  } catch(e) {
+    alert('Error: '+e.message);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadLockedList);
+</script>
+{% endif %}
+
 {% endblock %}
