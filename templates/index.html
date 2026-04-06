@@ -365,6 +365,27 @@
 </div>
 {% endif %}
 
+<!-- ═══ GENRE ═══ -->
+{% if genres %}
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <span class="section-title idx-title-pill">Jelajahi Genre</span>
+      <div class="idx-section-badge" style="background:rgba(168,85,247,0.15);color:#c084fc;">Genre</div>
+    </div>
+    <a href="/genres" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="idx-genre-scroll">
+    {% for g in genres %}
+    <a href="/genre/{{ g.slug }}" class="idx-genre-chip">
+      <i class="fas fa-tag idx-genre-icon"></i>
+      <span>{{ g.name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <!-- ═══ POPULER ═══ -->
 {% if popular and popular.animes %}
 <div class="section idx-section-wrap">
@@ -659,6 +680,38 @@
 .supporter-msg  { font-size:11px; color:#A0A0B0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .supporter-amount { font-size:13px; font-weight:900; color:#F47521; white-space:nowrap; flex-shrink:0; }
 @keyframes fadeInUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── GENRE CHIPS ── */
+.idx-genre-scroll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 14px;
+}
+.idx-genre-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: rgba(168,85,247,0.08);
+  border: 1px solid rgba(168,85,247,0.25);
+  border-radius: 20px;
+  text-decoration: none;
+  color: #c084fc;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.idx-genre-chip:hover {
+  background: rgba(168,85,247,0.2);
+  border-color: rgba(168,85,247,0.5);
+  color: #e9d5ff;
+}
+.idx-genre-icon {
+  font-size: 9px;
+  opacity: 0.7;
+}
 
 /* ── end custom styles ── */
 </style>
