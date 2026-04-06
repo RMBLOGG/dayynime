@@ -752,6 +752,17 @@
   flex-shrink: 0;
 }
 
+/* ── GENRE REVEAL ANIMATION ── */
+.idx-genre-chip {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.18s ease, opacity 0.35s ease, transform 0.35s ease;
+}
+.idx-genre-chip.genre-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ── end custom styles ── */
 </style>
 <script>
@@ -1053,6 +1064,30 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
+})();
+</script>
+
+<script>
+// Genre scroll reveal
+(function() {
+  var chips = document.querySelectorAll('.idx-genre-chip');
+  if (!chips.length) return;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var idx = parseInt(el.getAttribute('data-gi')) || 0;
+        setTimeout(function() {
+          el.classList.add('genre-visible');
+        }, idx * 40);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.1 });
+  chips.forEach(function(chip, i) {
+    chip.setAttribute('data-gi', i);
+    observer.observe(chip);
+  });
 })();
 </script>
 {% endblock %}
