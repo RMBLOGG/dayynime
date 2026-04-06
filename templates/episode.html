@@ -379,6 +379,71 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
     </div>
     {% endif %}
 
+    <!-- ═══ KOMENTAR ═══ -->
+    <div id="commentSection" style="margin-top:16px;border-top:1px solid var(--border);">
+      <div style="padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:7px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-comments" style="color:var(--accent);font-size:11px;"></i>
+          </div>
+          <span style="font-size:13px;font-weight:800;color:var(--text);">Komentar</span>
+          <span id="commentCount" style="font-size:11px;color:var(--text3);font-weight:600;"></span>
+        </div>
+      </div>
+
+      {% if session.get('user') %}
+      <!-- Form kirim komentar -->
+      <div style="padding:0 16px 14px;display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+          {% if session['user'].get('avatar') %}
+          <img src="{{ session['user']['avatar'] }}" style="width:100%;height:100%;object-fit:cover;">
+          {% else %}
+          <span style="font-size:13px;font-weight:900;color:#fff;">{{ session['user']['name'][0]|upper }}</span>
+          {% endif %}
+        </div>
+        <div style="flex:1;">
+          <textarea id="commentInput" placeholder="Tulis komentar..." rows="2" style="
+            width:100%;box-sizing:border-box;resize:none;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:10px;padding:10px 12px;
+            font-size:12px;color:var(--text);font-family:inherit;
+            outline:none;transition:border-color 0.2s;
+            line-height:1.5;
+          " onfocus="this.style.borderColor='rgba(244,117,33,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"></textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:6px;">
+            <button id="commentSubmitBtn" onclick="submitComment()" style="
+              background:var(--accent);color:#fff;border:none;
+              padding:7px 16px;border-radius:8px;
+              font-size:12px;font-weight:700;cursor:pointer;
+              font-family:inherit;transition:opacity 0.2s;
+              display:flex;align-items:center;gap:6px;
+            ">
+              <i class="fas fa-paper-plane fa-xs"></i> Kirim
+            </button>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <!-- Prompt login -->
+      <div style="margin:0 16px 14px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;text-align:center;">
+        <p style="font-size:12px;color:var(--text3);margin:0 0 8px;">Login untuk bisa berkomentar</p>
+        <a href="/login" style="
+          display:inline-flex;align-items:center;gap:6px;
+          background:var(--accent);color:#fff;text-decoration:none;
+          padding:7px 18px;border-radius:8px;font-size:12px;font-weight:700;
+        "><i class="fas fa-sign-in-alt fa-xs"></i> Login</a>
+      </div>
+      {% endif %}
+
+      <!-- Daftar komentar -->
+      <div id="commentList" style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;">
+        <div id="commentLoading" style="text-align:center;padding:16px 0;color:var(--text3);font-size:12px;">
+          <i class="fas fa-spinner fa-spin"></i> Memuat komentar...
+        </div>
+      </div>
+    </div>
+
   </div><!-- /watch-main -->
 
   <!-- DESKTOP SIDEBAR -->
@@ -636,4 +701,151 @@ document.addEventListener('DOMContentLoaded', function() {
   {% endif %}
 </script>
 <script src="{{ url_for('static', filename='js/chat.js') }}?v=1"></script>
+
+<script>
+// ── KOMENTAR EPISODE ──
+(function() {
+  var ANIME_SLUG = '{{ anime_slug }}';
+  var IS_LOGIN   = {{ 'true' if session.get('user') else 'false' }};
+  var MY_ID      = '{{ session["user"]["id"] if session.get("user") else "" }}';
+  var IS_ADMIN   = {{ 'true' if session.get('user') and session['user'].get('is_admin') else 'false' }};
+
+  function timeAgo(dateStr) {
+    var diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
+    if (diff < 60) return 'Baru saja';
+    if (diff < 3600) return Math.floor(diff/60) + ' mnt lalu';
+    if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
+    if (diff < 604800) return Math.floor(diff/86400) + ' hari lalu';
+    return new Date(dateStr).toLocaleDateString('id-ID');
+  }
+
+  function avatarEl(c) {
+    if (c.user_avatar) {
+      return '<img src="'+c.user_avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+    }
+    return '<span style="font-size:13px;font-weight:900;color:#fff;">'+(c.user_name||'?')[0].toUpperCase()+'</span>';
+  }
+
+  function renderComment(c) {
+    var canDelete = IS_LOGIN && (IS_ADMIN || c.user_id === MY_ID);
+    return '<div class="cmt-item" id="cmt-'+c.id+'">'
+      +'<div style="width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">'
+      + avatarEl(c)
+      +'</div>'
+      +'<div style="flex:1;min-width:0;">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px;">'
+          +'<span style="font-size:12px;font-weight:700;color:var(--text);">'+escHtml(c.user_name||'User')+'</span>'
+          +'<div style="display:flex;align-items:center;gap:8px;">'
+            +'<span style="font-size:10px;color:var(--text3);">'+timeAgo(c.created_at)+'</span>'
+            +(canDelete ? '<button onclick="deleteComment(\''+c.id+'\')" style="background:none;border:none;cursor:pointer;color:#555;font-size:11px;padding:0;font-family:inherit;" title="Hapus"><i class="fas fa-trash-alt"></i></button>' : '')
+          +'</div>'
+        +'</div>'
+        +'<div style="font-size:12px;color:var(--text2);line-height:1.6;word-break:break-word;">'+escHtml(c.content)+'</div>'
+      +'</div>'
+    +'</div>';
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function loadComments() {
+    fetch('/api/comments/'+ANIME_SLUG)
+      .then(function(r){ return r.json(); })
+      .then(function(list) {
+        var el = document.getElementById('commentList');
+        var loading = document.getElementById('commentLoading');
+        var countEl = document.getElementById('commentCount');
+        if (loading) loading.remove();
+        if (!Array.isArray(list) || !list.length) {
+          el.innerHTML = '<div style="text-align:center;padding:16px 0;color:var(--text3);font-size:12px;">Belum ada komentar. Jadi yang pertama!</div>';
+          if (countEl) countEl.textContent = '';
+          return;
+        }
+        if (countEl) countEl.textContent = '(' + list.length + ')';
+        el.innerHTML = list.map(renderComment).join('');
+      })
+      .catch(function(){
+        var el = document.getElementById('commentList');
+        if (el) el.innerHTML = '<div style="text-align:center;padding:12px 0;color:#666;font-size:12px;">Gagal memuat komentar.</div>';
+      });
+  }
+
+  window.submitComment = function() {
+    var input = document.getElementById('commentInput');
+    var btn   = document.getElementById('commentSubmitBtn');
+    var text  = (input.value || '').trim();
+    if (!text || text.length < 2) { input.focus(); return; }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin fa-xs"></i> Mengirim...';
+    fetch('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: text, anime_slug: ANIME_SLUG })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (data.error) { alert(data.error); return; }
+      input.value = '';
+      // Tambah komentar baru di atas
+      var el = document.getElementById('commentList');
+      var empty = el.querySelector('div[style*="Belum ada"]');
+      if (empty) empty.remove();
+      el.insertAdjacentHTML('afterbegin', renderComment(data));
+      var countEl = document.getElementById('commentCount');
+      if (countEl) {
+        var cur = parseInt((countEl.textContent||'').replace(/\D/g,'')) || 0;
+        countEl.textContent = '(' + (cur+1) + ')';
+      }
+    })
+    .catch(function(){ alert('Gagal kirim komentar.'); })
+    .finally(function(){
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane fa-xs"></i> Kirim';
+    });
+  };
+
+  window.deleteComment = function(id) {
+    if (!confirm('Hapus komentar ini?')) return;
+    fetch('/api/comments/'+id, { method: 'DELETE' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.ok) {
+          var el = document.getElementById('cmt-'+id);
+          if (el) el.remove();
+          var countEl = document.getElementById('commentCount');
+          if (countEl) {
+            var cur = parseInt((countEl.textContent||'').replace(/\D/g,'')) || 1;
+            countEl.textContent = cur > 1 ? '(' + (cur-1) + ')' : '';
+          }
+        }
+      });
+  };
+
+  // Kirim dengan Ctrl+Enter / Enter di textarea
+  var input = document.getElementById('commentInput');
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        window.submitComment();
+      }
+    });
+  }
+
+  loadComments();
+})();
+</script>
+
+<style>
+.cmt-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  animation: fadeInUp 0.25s ease;
+}
+</style>
 {% endblock %}
