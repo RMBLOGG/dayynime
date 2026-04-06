@@ -2888,7 +2888,55 @@ def admin_analytics():
 
 @app.route("/sitemap.xml")
 def sitemap():
-    return send_from_directory("static", "sitemap.xml", mimetype="application/xml")
+    base = "https://dayynime.vercel.app"
+    urls = [
+        (base + "/",          "daily",   "1.0"),
+        (base + "/home",      "daily",   "1.0"),
+        (base + "/ongoing",   "daily",   "0.9"),
+        (base + "/completed", "weekly",  "0.8"),
+        (base + "/popular",   "daily",   "0.8"),
+        (base + "/movies",    "weekly",  "0.8"),
+        (base + "/genres",    "monthly", "0.7"),
+        (base + "/jadwal",    "daily",   "0.7"),
+        (base + "/search",    "monthly", "0.6"),
+    ]
+    # Tambah URL anime dari API (ongoing + completed)
+    try:
+        source = get_active_source()
+        pfx    = SOURCES[source]["prefix"]
+        for endpoint in ["ongoing", "completed", "popular"]:
+            try:
+                if source == "animasu":
+                    raw = fetch(f"{pfx}/{endpoint}")
+                    animes = animasu_norm_list(raw.get("animes", [])) if raw else []
+                elif source == "otakudesu":
+                    raw = fetch(f"{pfx}/home")
+                    data = otakudesu_norm_home(raw) if raw else {}
+                    animes = data.get("ongoing", []) if endpoint == "ongoing" else data.get("recent", [])
+                else:
+                    raw = fetch(f"{pfx}/{endpoint}")
+                    animes = norm_list(raw["data"].get("animeList", [])) if raw and raw.get("data") else []
+                for a in animes:
+                    slug = a.get("slug","")
+                    if slug:
+                        urls.append((base + "/anime/" + slug, "weekly", "0.8"))
+            except Exception:
+                pass
+    except Exception:
+        pass
+    # Hapus duplikat
+    seen = set()
+    unique = []
+    for u in urls:
+        if u[0] not in seen:
+            seen.add(u[0])
+            unique.append(u)
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for loc, freq, pri in unique:
+        xml += f"  <url>\n    <loc>{loc}</loc>\n    <changefreq>{freq}</changefreq>\n    <priority>{pri}</priority>\n  </url>\n"
+    xml += "</urlset>"
+    return xml, 200, {"Content-Type": "application/xml"}
 
 
 @app.route("/robots.txt")
