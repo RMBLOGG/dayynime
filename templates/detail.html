@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 {% block title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
+{% block og_type %}video.tv_show{% endblock %}
+{% block og_title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
+{% block og_description %}{{ data.detail.synopsis[:150] ~ '...' if data and data.detail and data.detail.synopsis else 'Nonton anime subtitle Indonesia gratis di Dayynime.' }}{% endblock %}
+{% block og_image %}{{ data.detail.poster if data and data.detail and data.detail.poster else 'https://dayynime.vercel.app/static/banner.png' }}{% endblock %}
+{% block tw_title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
+{% block tw_description %}{{ data.detail.synopsis[:150] ~ '...' if data and data.detail and data.detail.synopsis else 'Nonton anime subtitle Indonesia gratis di Dayynime.' }}{% endblock %}
+{% block tw_image %}{{ data.detail.poster if data and data.detail and data.detail.poster else 'https://dayynime.vercel.app/static/banner.png' }}{% endblock %}
 {% block content %}
 
 <div id="adBanner320x50"></div>

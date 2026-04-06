@@ -5,7 +5,22 @@
   <meta name="google-site-verification" content="pTKv7RdKpXBtLCnGaf4YM9U_aXpx4uzHnyL2mm3Kn3s" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>{% block title %}Dayynime{% endblock %}</title>
-  <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia di Dayynime{% endblock %}">
+  <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia gratis di Dayynime. Streaming anime ongoing, completed, dan movie dengan subtitle Indonesia berkualitas.{% endblock %}">
+  <!-- Open Graph -->
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:site_name" content="DayyNime">
+  <meta property="og:title" content="{% block og_title %}Dayynime - Nonton Anime Sub Indo Gratis{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Nonton anime subtitle Indonesia gratis di Dayynime. Streaming anime ongoing, completed, dan movie dengan subtitle Indonesia berkualitas.{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}https://dayynime.vercel.app/static/banner.png{% endblock %}">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:locale" content="id_ID">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block tw_title %}Dayynime - Nonton Anime Sub Indo Gratis{% endblock %}">
+  <meta name="twitter:description" content="{% block tw_description %}Nonton anime subtitle Indonesia gratis di Dayynime.{% endblock %}">
+  <meta name="twitter:image" content="{% block tw_image %}https://dayynime.vercel.app/static/banner.png{% endblock %}">
+  <!-- Canonical -->
+  <link rel="canonical" href="{{ request.url }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
