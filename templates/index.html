@@ -715,25 +715,30 @@
 
 /* ── GENRE CHIPS ── */
 .idx-genre-scroll {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 6px;
   padding: 0 14px;
 }
 .idx-genre-chip {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
-  padding: 5px 11px;
+  padding: 8px 6px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
   color: #a0a0b8;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1px;
   transition: all 0.18s ease;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .idx-genre-chip:hover,
 .idx-genre-chip:active {
@@ -744,6 +749,7 @@
 .idx-genre-icon {
   font-size: 9px;
   opacity: 0.6;
+  flex-shrink: 0;
 }
 
 /* ── end custom styles ── */
