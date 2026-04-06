@@ -541,8 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 300);
   }
 
-  // ── Auto-save watch history ──
-  {% if session.get('user') %}
+  // ── Auto-save watch history (login & guest) ──
   (function() {
     var payload = {
       anime_slug:   '{{ anime_slug }}',
@@ -559,7 +558,6 @@ document.addEventListener('DOMContentLoaded', function() {
       body: JSON.stringify(payload),
     }).catch(function(){});
   })();
-  {% endif %}
 });
 </script>
 
