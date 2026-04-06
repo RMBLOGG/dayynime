@@ -570,21 +570,26 @@ def home():
         raw      = fetch(f"{pfx}/home")
         pop_raw  = fetch(f"{pfx}/popular")
         schedule = fetch(f"{pfx}/schedule")
+        genres_raw = fetch(f"{pfx}/genres")
         data     = animasu_norm_home(raw)
         # populer dari endpoint /popular animasu (response: {animes: [...]})
         pop_norm = {"animes": animasu_norm_list(pop_raw.get("animes", []))} if pop_raw and pop_raw.get("animes") else None
         sched    = animasu_norm_schedule(schedule)
+        genres_list = animasu_norm_genres(genres_raw) if genres_raw else []
     elif source == "otakudesu":
         raw      = fetch(f"{pfx}/home")
         schedule = fetch(f"{pfx}/schedule")
+        genres_raw = fetch(f"{pfx}/genre")
         data     = otakudesu_norm_home(raw)
         # populer dari ongoing (otakudesu tidak punya endpoint popular terpisah)
         pop_norm = {"animes": data["ongoing"][:10]} if data and data.get("ongoing") else None
         sched    = otakudesu_norm_schedule(schedule)
+        genres_list = otakudesu_norm_genres(genres_raw) if genres_raw else []
     else:
         raw      = fetch(f"{pfx}/home")
         popular  = fetch(f"{pfx}/popular")
         schedule = fetch(f"{pfx}/schedule")
+        genres_raw = fetch(f"{pfx}/genres")
         data = None
         if raw and raw.get("data"):
             d = raw["data"]
@@ -598,9 +603,11 @@ def home():
         if popular and popular.get("data"):
             pop_norm = {"animes": norm_list(popular["data"].get("animeList", []))}
         sched = norm_schedule(schedule)
+        genres_list = norm_genres(genres_raw["data"].get("genreList", [])) if genres_raw and genres_raw.get("data") else []
 
     return render_template("index.html", data=data, popular=pop_norm,
-                           schedule=sched, is_premium=_is_premium_user())
+                           schedule=sched, is_premium=_is_premium_user(),
+                           genres=genres_list)
 
 
 @app.route("/anime/<slug>")
