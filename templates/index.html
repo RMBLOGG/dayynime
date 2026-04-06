@@ -366,25 +366,57 @@
 {% endif %}
 
 <!-- ═══ GENRE ═══ -->
-{% if genres %}
+{% set genre_icons = {
+  'Action':'fas fa-fist-raised','Adventure':'fas fa-map-marked-alt',
+  'Comedy':'fas fa-laugh-beam','Drama':'fas fa-theater-masks',
+  'Fantasy':'fas fa-hat-wizard','Horror':'fas fa-skull',
+  'Magic':'fas fa-magic','Mecha':'fas fa-robot',
+  'Military':'fas fa-fighter-jet','Mystery':'fas fa-search',
+  'Psychological':'fas fa-brain','Romance':'fas fa-heart',
+  'School':'fas fa-graduation-cap','Sci-Fi':'fas fa-atom',
+  'Seinen':'fas fa-mars','Shoujo':'fas fa-venus',
+  'Shounen':'fas fa-fire','Slice of Life':'fas fa-coffee',
+  'Sports':'fas fa-running','Supernatural':'fas fa-ghost',
+  'Thriller':'fas fa-bolt','Music':'fas fa-music',
+  'Ecchi':'fas fa-star','Isekai':'fas fa-door-open',
+  'Demons':'fas fa-dragon','Game':'fas fa-gamepad',
+  'Harem':'fas fa-users','Historical':'fas fa-landmark',
+  'Josei':'fas fa-female','Martial Arts':'fas fa-hand-rock',
+  'Parody':'fas fa-mask','Police':'fas fa-shield-alt',
+  'Samurai':'fas fa-sword','Shoujo Ai':'fas fa-heart',
+  'Space':'fas fa-rocket','Super Power':'fas fa-bolt',
+  'Vampire':'fas fa-tint','Aksi':'fas fa-fist-raised',
+  'Petualangan':'fas fa-map-marked-alt','Komedi':'fas fa-laugh-beam',
+  'Romansa':'fas fa-heart','Misteri':'fas fa-search','Sekolah':'fas fa-graduation-cap'
+} %}
+{% set fallback_genres = [
+  {'name':'Action','slug':'action'},{'name':'Adventure','slug':'adventure'},
+  {'name':'Comedy','slug':'comedy'},{'name':'Drama','slug':'drama'},
+  {'name':'Fantasy','slug':'fantasy'},{'name':'Horror','slug':'horror'},
+  {'name':'Isekai','slug':'isekai'},{'name':'Magic','slug':'magic'},
+  {'name':'Mecha','slug':'mecha'},{'name':'Mystery','slug':'mystery'},
+  {'name':'Psychological','slug':'psychological'},{'name':'Romance','slug':'romance'},
+  {'name':'School','slug':'school'},{'name':'Sci-Fi','slug':'sci-fi'},
+  {'name':'Shounen','slug':'shounen'},{'name':'Slice of Life','slug':'slice-of-life'},
+  {'name':'Sports','slug':'sports'},{'name':'Supernatural','slug':'supernatural'}
+] %}
+{% set genre_data = genres if genres else fallback_genres %}
 <div class="section idx-section-wrap">
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
-      <span class="section-title idx-title-pill">Jelajahi Genre</span>
-      <div class="idx-section-badge" style="background:rgba(168,85,247,0.15);color:#c084fc;">Genre</div>
+      <span class="section-title idx-title-pill">Genre</span>
     </div>
     <a href="/genres" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
   <div class="idx-genre-scroll">
-    {% for g in genres %}
+    {% for g in genre_data %}
     <a href="/genre/{{ g.slug }}" class="idx-genre-chip">
-      <i class="fas fa-tag idx-genre-icon"></i>
+      <i class="{{ genre_icons.get(g.name, 'fas fa-play') }} idx-genre-icon"></i>
       <span>{{ g.name }}</span>
     </a>
     {% endfor %}
   </div>
 </div>
-{% endif %}
 
 <!-- ═══ POPULER ═══ -->
 {% if popular and popular.animes %}
@@ -685,32 +717,33 @@
 .idx-genre-scroll {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   padding: 0 14px;
 }
 .idx-genre-chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 12px;
-  background: rgba(168,85,247,0.08);
-  border: 1px solid rgba(168,85,247,0.25);
-  border-radius: 20px;
+  padding: 5px 11px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
   text-decoration: none;
-  color: #c084fc;
+  color: #a0a0b8;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  transition: all 0.18s ease;
 }
-.idx-genre-chip:hover {
-  background: rgba(168,85,247,0.2);
-  border-color: rgba(168,85,247,0.5);
-  color: #e9d5ff;
+.idx-genre-chip:hover,
+.idx-genre-chip:active {
+  background: rgba(244,117,33,0.1);
+  border-color: rgba(244,117,33,0.3);
+  color: var(--accent);
 }
 .idx-genre-icon {
   font-size: 9px;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 /* ── end custom styles ── */
