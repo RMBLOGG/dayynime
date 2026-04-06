@@ -1781,6 +1781,123 @@ def delete_comment(comment_id):
     return jsonify({"ok": r.ok})
 
 
+@app.route("/api/comments/<comment_id>/replies", methods=["GET"])
+def get_replies(comment_id):
+    r = requests.get(
+        f"{SUPABASE_URL}/rest/v1/comment_replies",
+        headers=supabase_headers(),
+        params={"comment_id": f"eq.{comment_id}", "order": "created_at.asc", "select": "*"}
+    )
+    return jsonify(r.json() if r.ok else [])
+
+@app.route("/api/comments/<comment_id>/replies", methods=["POST"])
+def post_reply(comment_id):
+    user = session.get("user")
+    if not user:
+        return jsonify({"error": "Login dulu ya!"}), 401
+    data    = request.get_json()
+    content = (data.get("content") or "").strip()
+    if not content or len(content) < 2:
+        return jsonify({"error": "Balasan terlalu pendek"}), 400
+    payload = {
+        "comment_id":  comment_id,
+        "user_id":     user["id"],
+        "user_name":   user["name"],
+        "user_avatar": user.get("avatar", ""),
+        "content":     content,
+    }
+    r = requests.post(
+        f"{SUPABASE_URL}/rest/v1/comment_replies",
+        headers={**supabase_service_headers(), "Prefer": "return=representation"},
+        json=payload,
+    )
+    if r.ok:
+        return jsonify(r.json()[0] if r.json() else {})
+    return jsonify({"error": "Gagal kirim balasan", "detail": r.text}), 500
+
+@app.route("/api/comments/replies/<reply_id>", methods=["DELETE"])
+def delete_reply(reply_id):
+    user = session.get("user")
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    params = {"id": f"eq.{reply_id}"}
+    if not user.get("is_admin"):
+        params["user_id"] = f"eq.{user['id']}"
+    r = requests.delete(
+        f"{SUPABASE_URL}/rest/v1/comment_replies",
+        headers=supabase_service_headers(),
+        params=params,
+    )
+    return jsonify({"ok": r.ok})
+
+@app.route("/api/comments/<comment_id>/react", methods=["POST"])
+def react_comment(comment_id):
+    user = session.get("user")
+    if not user:
+        return jsonify({"error": "Login dulu ya!"}), 401
+    data  = request.get_json()
+    emoji = (data.get("emoji") or "").strip()
+    if emoji not in ["👍", "❤️", "😂", "😮", "😢", "🔥"]:
+        return jsonify({"error": "Reaksi tidak valid"}), 400
+    user_id = user["id"]
+    # Cek apakah sudah react dengan emoji yang sama → toggle off
+    chk = requests.get(
+        f"{SUPABASE_URL}/rest/v1/comment_reactions",
+        headers=supabase_service_headers(),
+        params={"comment_id": f"eq.{comment_id}", "user_id": f"eq.{user_id}", "emoji": f"eq.{emoji}", "select": "id"}
+    )
+    existing = chk.json() if chk.ok else []
+    if existing:
+        # Hapus (toggle off)
+        requests.delete(
+            f"{SUPABASE_URL}/rest/v1/comment_reactions",
+            headers=supabase_service_headers(),
+            params={"comment_id": f"eq.{comment_id}", "user_id": f"eq.{user_id}", "emoji": f"eq.{emoji}"}
+        )
+        action = "removed"
+    else:
+        # Tambah reaksi
+        requests.post(
+            f"{SUPABASE_URL}/rest/v1/comment_reactions",
+            headers={**supabase_service_headers(), "Prefer": "return=minimal"},
+            json={"comment_id": comment_id, "user_id": user_id, "emoji": emoji}
+        )
+        action = "added"
+    # Ambil summary reaksi terbaru
+    summary_r = requests.get(
+        f"{SUPABASE_URL}/rest/v1/comment_reactions",
+        headers=supabase_service_headers(),
+        params={"comment_id": f"eq.{comment_id}", "select": "emoji,user_id"}
+    )
+    reactions = summary_r.json() if summary_r.ok else []
+    # Group by emoji
+    summary = {}
+    for rx in reactions:
+        e = rx.get("emoji","")
+        if e not in summary:
+            summary[e] = {"count": 0, "users": []}
+        summary[e]["count"] += 1
+        summary[e]["users"].append(rx.get("user_id",""))
+    return jsonify({"ok": True, "action": action, "summary": summary})
+
+@app.route("/api/comments/<comment_id>/reactions", methods=["GET"])
+def get_reactions(comment_id):
+    r = requests.get(
+        f"{SUPABASE_URL}/rest/v1/comment_reactions",
+        headers=supabase_service_headers(),
+        params={"comment_id": f"eq.{comment_id}", "select": "emoji,user_id"}
+    )
+    reactions = r.json() if r.ok else []
+    summary = {}
+    for rx in reactions:
+        e = rx.get("emoji","")
+        if e not in summary:
+            summary[e] = {"count": 0, "users": []}
+        summary[e]["count"] += 1
+        summary[e]["users"].append(rx.get("user_id",""))
+    return jsonify(summary)
+
+
 # ── Global Chat ────────────────────────────────────────────────────────────────
 
 @app.route("/ruang-ngobrol")
