@@ -12,20 +12,20 @@
 
 <!-- ═══ ANNOUNCEMENT BAR ═══ -->
 <div id="announcementBar" style="
-  background: linear-gradient(90deg, #1a1a23 0%, #1e1a2e 50%, #1a1a23 100%);
+  background: linear-gradient(90deg, #16213e 0%, #1e1a2e 50%, #16213e 100%);
   border-bottom: 1px solid rgba(244,117,33,0.25);
   padding: 0 12px;
   position: relative;
   overflow: hidden;
 ">
   <!-- shimmer line -->
-  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F47521,transparent);opacity:0.6;"></div>
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ff6b9d,transparent);opacity:0.6;"></div>
 
   <div style="display:flex;align-items:center;gap:8px;padding:7px 0;">
     <!-- label -->
     <div style="
       flex-shrink:0;
-      background:#F47521;color:#fff;
+      background:#ff6b9d;color:#fff;
       font-size:9px;font-weight:900;
       padding:3px 7px;border-radius:4px;
       letter-spacing:0.5px;text-transform:uppercase;
@@ -40,15 +40,15 @@
         font-size:11px;color:#C0C0C8;
       ">
         <span style="padding-right:60px;">Setiap server memiliki kelengkapan anime berbeda &nbsp;·&nbsp;
-          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
-          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
-          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          <span style="color:#ff6b9d;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#1eda8a;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#5b8dee;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
           Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </span>
         <span style="padding-right:60px;">Setiap server memiliki koleksi berbeda &nbsp;·&nbsp;
-          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
-          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
-          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          <span style="color:#ff6b9d;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#1eda8a;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#5b8dee;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
           Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </span>
       </div>
@@ -99,7 +99,7 @@
             {% if anime.type %}<span>{{ anime.type }}</span>{% endif %}
             {% if anime.episode %}<span><i class="fas fa-circle" style="font-size:4px;"></i> Ep {{ anime.episode }}</span>{% endif %}
           </div>
-          <div class="banner-play"><i class="fas fa-play"></i> Tonton</div>
+          <div class="banner-play"><i class="fas fa-play"></i> Watch Now</div>
         </div>
       </a>
       {% endfor %}
@@ -107,7 +107,14 @@
   </div>
   <button class="banner-arrow left" id="bannerPrev"><i class="fas fa-chevron-left"></i></button>
   <button class="banner-arrow right" id="bannerNext"><i class="fas fa-chevron-right"></i></button>
-  <div class="banner-dots-wrap" id="bannerDots">
+  <!-- Vertical dots (right side) HiAnime style -->
+  <div class="banner-dots-vertical" id="bannerDotsV">
+    {% set count = (banner_animes|length if banner_animes else 0) + 1 %}
+    {% for i in range([count, 12]|min) %}
+    <button class="banner-dot-v {% if loop.first %}active{% endif %}"></button>
+    {% endfor %}
+  </div>
+  <div class="banner-dots-wrap" id="bannerDots" style="display:none;">
     {% set count = (banner_animes|length if banner_animes else 0) + 1 %}
     {% for i in range([count, 6]|min) %}
     <button class="banner-dot {% if loop.first %}active{% endif %}"></button>
@@ -118,11 +125,11 @@
 <!-- ═══ QUICK NAV ═══ -->
 <div style="padding:16px 0 0;">
   <div class="quick-nav">
-    <a href="/ongoing" class="quick-nav-item"><span class="dot" style="background:#10B981;"></span> Ongoing</a>
-    <a href="/completed" class="quick-nav-item"><span class="dot" style="background:#60a5fa;"></span> Completed</a>
+    <a href="/ongoing" class="quick-nav-item"><span class="dot" style="background:#1eda8a;"></span> Ongoing</a>
+    <a href="/completed" class="quick-nav-item"><span class="dot" style="background:#5b8dee;"></span> Completed</a>
     <a href="/movies" class="quick-nav-item"><i class="fas fa-film"></i> Movie</a>
-    <a href="/popular" class="quick-nav-item"><i class="fas fa-fire" style="color:#F47521;"></i> Populer</a>
-    <a href="/jadwal" class="quick-nav-item"><i class="fas fa-calendar-alt" style="color:#10B981;"></i> Jadwal</a>
+    <a href="/popular" class="quick-nav-item"><i class="fas fa-fire" style="color:#ff6b9d;"></i> Populer</a>
+    <a href="/jadwal" class="quick-nav-item"><i class="fas fa-calendar-alt" style="color:#1eda8a;"></i> Jadwal</a>
     <a href="/animelist" class="quick-nav-item"><i class="fas fa-list"></i> A-Z List</a>
   </div>
 </div>
@@ -132,13 +139,13 @@
 <div style="margin:16px 12px 32px;">
   <div style="
     position:relative;overflow:hidden;
-    background:#111118;
+    background:#1e2a45;
     border:1px solid rgba(244,117,33,0.3);
     border-radius:14px;
     padding:16px;
   ">
     <!-- top accent line -->
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#F47521,#ffd700,#F47521);border-radius:14px 14px 0 0;"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#ff6b9d,#ffd700,#ff6b9d);border-radius:14px 14px 0 0;"></div>
 
     <!-- baris atas: icon + teks -->
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
@@ -148,7 +155,7 @@
         <!-- mahkota nongol di atas -->
         <svg style="position:absolute;top:0;left:50%;transform:translateX(-50%);display:block;filter:drop-shadow(0 1px 4px #000);"
           width="32" height="18" viewBox="0 0 32 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2 16 L6 4 L12 11 L16 1 L20 11 L26 4 L30 16 Z" fill="#F47521" stroke="#FFD700" stroke-width="1.3" stroke-linejoin="round"/>
+          <path d="M2 16 L6 4 L12 11 L16 1 L20 11 L26 4 L30 16 Z" fill="#ff6b9d" stroke="#FFD700" stroke-width="1.3" stroke-linejoin="round"/>
           <circle cx="2.5" cy="16" r="2.5" fill="#FFD700"/>
           <circle cx="16" cy="1.5" r="2.5" fill="#FFD700"/>
           <circle cx="29.5" cy="16" r="2.5" fill="#FFD700"/>
@@ -165,7 +172,7 @@
       </div>
 
       <!-- label PREMIUM -->
-      <div style="flex-shrink:0;background:linear-gradient(135deg,#F47521,#e05a00);color:#fff;font-size:9px;font-weight:900;padding:4px 8px;border-radius:6px;letter-spacing:0.6px;text-transform:uppercase;">PREMIUM</div>
+      <div style="flex-shrink:0;background:linear-gradient(135deg,#ff6b9d,#e05a00);color:#fff;font-size:9px;font-weight:900;padding:4px 8px;border-radius:6px;letter-spacing:0.6px;text-transform:uppercase;">PREMIUM</div>
     </div>
 
     <!-- divider tipis -->
@@ -173,13 +180,13 @@
 
     <!-- fitur pills -->
     <div style="display:flex;gap:6px;margin-bottom:14px;">
-      <div style="display:flex;align-items:center;gap:4px;background:rgba(244,117,33,0.08);border:1px solid rgba(244,117,33,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#F47521;white-space:nowrap;">
+      <div style="display:flex;align-items:center;gap:4px;background:rgba(244,117,33,0.08);border:1px solid rgba(244,117,33,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#ff6b9d;white-space:nowrap;">
         <i class="fas fa-ban" style="font-size:9px;"></i> No Iklan
       </div>
-      <div style="display:flex;align-items:center;gap:4px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#10B981;white-space:nowrap;">
+      <div style="display:flex;align-items:center;gap:4px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#1eda8a;white-space:nowrap;">
         <i class="fas fa-bolt" style="font-size:9px;"></i> Server Cepat
       </div>
-      <div style="display:flex;align-items:center;gap:4px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#60a5fa;white-space:nowrap;">
+      <div style="display:flex;align-items:center;gap:4px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#5b8dee;white-space:nowrap;">
         <i class="fas fa-infinity" style="font-size:9px;"></i> Unlimited
       </div>
     </div>
@@ -187,7 +194,7 @@
     <!-- tombol -->
     <a href="/premium" style="
       display:flex;align-items:center;justify-content:center;gap:8px;
-      background:linear-gradient(90deg,#F47521,#e05a00);
+      background:linear-gradient(90deg,#ff6b9d,#e05a00);
       color:#fff;font-weight:900;font-size:13px;
       padding:11px;border-radius:9px;text-decoration:none;
       letter-spacing:0.3px;
@@ -204,7 +211,7 @@
 <!-- ═══ PWA INSTALL BANNER ═══ -->
 <div id="pwaBannerSection" style="margin:0 12px 16px;display:none;">
   <div style="
-    background: linear-gradient(135deg, #1e1a2e 0%, #1a1a23 100%);
+    background: linear-gradient(135deg, #1e1a2e 0%, #16213e 100%);
     border: 1px solid rgba(244,117,33,0.35);
     border-radius: 14px;
     padding: 14px 14px;
@@ -218,7 +225,7 @@
       <div style="font-size:11px;color:#A0A0B0;margin-top:2px;">Nonton anime lebih nyaman lewat homescreen</div>
     </div>
     <button onclick="installPWA()" style="
-      background:#F47521;border:none;border-radius:10px;
+      background:#ff6b9d;border:none;border-radius:10px;
       color:#fff;font-weight:900;font-size:12px;
       padding:9px 14px;cursor:pointer;flex-shrink:0;
       white-space:nowrap;letter-spacing:0.2px;
@@ -229,7 +236,7 @@
 <!-- ═══ LANJUTKAN NONTON ═══ -->
 <div id="cwSection" style="display:none; padding:18px 0 0;">
   <div class="section-head">
-    <div class="section-title">
+    <div class="section-title" style="color:var(--accent);font-family:'Nunito',sans-serif;">
       <span style="display:inline-block;width:3px;height:16px;background:var(--accent);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>
       Lanjutkan Nonton
     </div>
@@ -340,7 +347,7 @@
   <div class="section-head idx-section-head">
     <div class="idx-section-title-group">
       <span class="section-title idx-title-pill">Baru Ditambahkan</span>
-      <div class="idx-section-badge" style="background:rgba(59,130,246,0.15);color:#60a5fa;">NEW</div>
+      <div class="idx-section-badge" style="background:rgba(59,130,246,0.15);color:#5b8dee;">NEW</div>
     </div>
     <a href="/completed" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
@@ -509,7 +516,7 @@
 
 <!-- ═══ KOMUNITAS ═══ -->
 <div style="padding:0 14px 28px;">
-  <div style="background:#1a1a23;border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.07);">
+  <div style="background:#16213e;border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.07);">
     <div style="font-size:11px;font-weight:900;color:#A0A0B0;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
     <div style="display:flex;gap:8px;">
       <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener"
@@ -531,7 +538,7 @@
 <!-- ═══ SUPPORTER ═══ -->
 <div class="section" id="supporterSection" style="display:none;">
   <div class="section-head">
-    <div class="section-title">Supporter Terbaru</div>
+    <div class="section-title" style="color:var(--accent);font-family:'Nunito',sans-serif;">Supporter Terbaru</div>
     <a href="javascript:void(0)" onclick="openTrakteer()" class="section-more">Dukung <i class="fas fa-chevron-right fa-xs"></i></a>
   </div>
   <div id="supporterList" style="display:flex;flex-direction:column;gap:6px;padding:0 14px;"></div>
@@ -590,7 +597,7 @@
 .idx-wcard-thumb {
   width: 56px; height: 76px; border-radius: 6px;
   overflow: hidden; flex-shrink: 0;
-  background: #1a1a23; position: relative;
+  background: #16213e; position: relative;
 }
 .idx-wcard-thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
 .idx-wcard-ep {
@@ -628,7 +635,7 @@
 .idx-rank-num.other { color: #6060a0; font-size: 14px; }
 .idx-rank-thumb {
   width: 42px; height: 58px; border-radius: 8px;
-  overflow: hidden; flex-shrink: 0; background: #1a1a23;
+  overflow: hidden; flex-shrink: 0; background: #16213e;
 }
 .idx-rank-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .idx-rank-info { flex: 1; min-width: 0; }
@@ -683,7 +690,7 @@
 .idx-schedule-item:hover { transform: translateX(3px); }
 .idx-schedule-thumb {
   width: 50px; height: 70px; border-radius: 8px;
-  overflow: hidden; flex-shrink: 0; background: #1a1a23;
+  overflow: hidden; flex-shrink: 0; background: #16213e;
 }
 .idx-schedule-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .idx-schedule-info { flex: 1; min-width: 0; }
@@ -698,19 +705,19 @@
 /* ── SUPPORTER ── */
 .supporter-card {
   display:flex; align-items:center; gap:10px;
-  background:#1a1a23; border-radius:8px;
+  background:#16213e; border-radius:8px;
   padding:10px 12px; border:1px solid rgba(255,255,255,0.06);
   animation:fadeInUp 0.4s ease both;
 }
 .supporter-avatar {
   width:36px; height:36px; border-radius:50%; flex-shrink:0;
-  background:linear-gradient(135deg,#be1e2d,#F47521);
+  background:linear-gradient(135deg,#be1e2d,#ff6b9d);
   display:flex; align-items:center; justify-content:center;
   font-size:14px; font-weight:900; color:#fff;
 }
 .supporter-name { font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .supporter-msg  { font-size:11px; color:#A0A0B0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.supporter-amount { font-size:13px; font-weight:900; color:#F47521; white-space:nowrap; flex-shrink:0; }
+.supporter-amount { font-size:13px; font-weight:900; color:#ff6b9d; white-space:nowrap; flex-shrink:0; }
 @keyframes fadeInUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
 
 /* ── GENRE CHIPS ── */

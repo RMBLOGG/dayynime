@@ -91,7 +91,7 @@ async function generateVoucher() {
     }
 
     if (r.status === 403) {
-      showError('❌ Forbidden — session admin tidak terdeteksi. Coba <a href="/auth/login" style="color:#f47521;">login ulang</a>.');
+      showError('❌ Forbidden — session admin tidak terdeteksi. Coba <a href="/auth/login" style="color:#ff6b9d;">login ulang</a>.');
       return;
     }
     if (!r.ok) {
@@ -108,7 +108,7 @@ async function generateVoucher() {
     d.vouchers.forEach(function(v) {
       html += '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">'
         + '<div>'
-        + '<div style="font-size:16px;font-weight:900;color:#f47521;letter-spacing:2px;">' + v.code + '</div>'
+        + '<div style="font-size:16px;font-weight:900;color:#ff6b9d;letter-spacing:2px;">' + v.code + '</div>'
         + '<div style="font-size:10px;color:var(--text3);margin-top:2px;">' + v.days + ' hari · max ' + v.max_uses + 'x' + (v.label ? ' · ' + v.label : '') + '</div>'
         + '</div>'
         + '<button onclick="copyCode(\'' + v.code + '\')" style="padding:6px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;cursor:pointer;font-family:inherit;">'
@@ -163,7 +163,7 @@ async function loadVouchers() {
       var active = v.is_active && v.used < v.max_uses;
       html += '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;">'
         + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
-        + '<span style="font-size:15px;font-weight:900;color:#f47521;letter-spacing:1px;">' + v.code + '</span>'
+        + '<span style="font-size:15px;font-weight:900;color:#ff6b9d;letter-spacing:1px;">' + v.code + '</span>'
         + '<span style="padding:2px 10px;border-radius:50px;font-size:10px;font-weight:700;background:' + (active ? 'rgba(74,222,128,0.15)' : 'rgba(239,68,68,0.15)') + ';color:' + (active ? '#4ade80' : '#ef4444') + ';">' + (active ? 'Aktif' : 'Habis') + '</span>'
         + '</div>'
         + '<div style="font-size:11px;color:var(--text3);">' + v.days + ' hari · ' + v.used + '/' + v.max_uses + ' dipakai' + (v.label ? ' · ' + v.label : '') + '</div>'

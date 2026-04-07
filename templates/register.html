@@ -1,192 +1,70 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar - Dayynime</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" type="image/png" href="/static/icon.png">
-  <style>
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    :root {
-      --bg: #0d0d0d; --bg2: #161616; --bg3: #1e1e1e;
-      --accent: #f47521; --accent-dim: rgba(244,117,33,0.12);
-      --text: #f0f0f0; --text2: #aaa; --text3: #666;
-      --border: rgba(255,255,255,0.07); --radius: 14px;
-    }
-    html, body { min-height:100%; background:var(--bg); color:var(--text); font-family:'Poppins',sans-serif; }
-    .blob { position:fixed; border-radius:50%; filter:blur(80px); opacity:0.15; pointer-events:none; z-index:0; }
-    .blob-1 { width:400px; height:400px; background:radial-gradient(circle,#f47521,transparent 70%); top:-100px; left:-100px; }
-    .blob-2 { width:300px; height:300px; background:radial-gradient(circle,#ff3300,transparent 70%); bottom:-80px; right:-80px; }
+{% extends "base.html" %}
+{% block title %}Daftar — Dayynime{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">dayyy<span class="exclaim">n</span>ime</div>
+    <div class="auth-title">Buat Akun</div>
+    <div class="auth-sub">Daftar gratis dan mulai nonton!</div>
 
-    .page { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; }
+    <div id="authError" class="auth-error" style="display:none;"></div>
 
-    .logo { margin-bottom:28px; text-align:center; }
-    .logo img { width:48px; height:48px; border-radius:12px; }
-    .logo-name { font-size:22px; font-weight:800; color:var(--text); margin-top:8px; letter-spacing:-0.5px; }
-    .logo-sub { font-size:11px; color:var(--text3); margin-top:2px; }
-
-    .card { width:100%; max-width:360px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:28px 22px; }
-    .card h2 { font-size:18px; font-weight:800; color:var(--text); margin-bottom:4px; }
-    .card p  { font-size:12px; color:var(--text2); margin-bottom:22px; }
-
-    .field { margin-bottom:14px; }
-    .field label { display:block; font-size:11px; font-weight:700; color:var(--text2); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
-    .field input {
-      width:100%; padding:11px 14px; background:var(--bg3); border:1px solid var(--border);
-      border-radius:10px; color:var(--text); font-size:14px; font-family:'Poppins',sans-serif;
-      outline:none; transition:border-color .2s;
-    }
-    .field input:focus { border-color:var(--accent); }
-    .field .hint { font-size:10px; color:var(--text3); margin-top:4px; }
-
-    .btn-main {
-      width:100%; padding:13px; background:var(--accent); color:#fff; border:none;
-      border-radius:10px; font-size:14px; font-weight:800; cursor:pointer;
-      font-family:'Poppins',sans-serif; letter-spacing:0.3px; transition:opacity .2s; margin-top:6px;
-    }
-    .btn-main:hover { opacity:0.88; }
-    .btn-main:disabled { opacity:0.5; cursor:not-allowed; }
-
-    .error-box { background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:10px 12px; font-size:12px; color:#f87171; margin-bottom:14px; display:none; }
-    .error-box.show { display:block; }
-
-    .success-box { background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); border-radius:8px; padding:10px 12px; font-size:12px; color:#4ade80; margin-bottom:14px; display:none; }
-    .success-box.show { display:block; }
-
-    .footer-link { text-align:center; font-size:12px; color:var(--text3); margin-top:20px; }
-    .footer-link a { color:var(--accent); font-weight:700; text-decoration:none; }
-
-    .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-
-    .strength { height:3px; border-radius:2px; margin-top:6px; transition:width .3s, background .3s; width:0; }
-  </style>
-</head>
-<body>
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-
-  <div class="page">
-    <div class="logo">
-      <img src="/static/icon.png" alt="Dayynime">
-      <div class="logo-name">Dayynime</div>
-      <div class="logo-sub">Nonton Anime Sub Indo</div>
+    <div class="auth-field">
+      <label class="auth-label">Username</label>
+      <input type="text" id="inputUsername" class="auth-input" placeholder="username unik kamu" autocomplete="username">
+    </div>
+    <div class="auth-field">
+      <label class="auth-label">Email</label>
+      <input type="email" id="inputEmail" class="auth-input" placeholder="email@contoh.com" autocomplete="email">
+    </div>
+    <div class="auth-field">
+      <label class="auth-label">Password</label>
+      <input type="password" id="inputPassword" class="auth-input" placeholder="minimal 6 karakter" autocomplete="new-password">
     </div>
 
-    <div class="card">
-      <h2>Buat Akun</h2>
-      <p>Daftar gratis dan mulai nonton anime favoritmu!</p>
+    <button class="auth-btn" id="regBtn" onclick="doRegister()">
+      <span id="regBtnText">Daftar Sekarang</span>
+    </button>
 
-      <div class="error-box" id="errorBox"></div>
-      <div class="success-box" id="successBox"></div>
-
-      <div class="field">
-        <label>Username</label>
-        <input type="text" id="usernameInput" placeholder="minimal 3 karakter" autocomplete="username" maxlength="30">
-        <div class="hint">Hanya huruf, angka, dan underscore</div>
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="emailInput" placeholder="email@contoh.com" autocomplete="email">
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="passInput" placeholder="minimal 6 karakter" autocomplete="new-password" oninput="checkStrength(this.value)">
-        <div class="strength" id="strengthBar"></div>
-      </div>
-
-      <button class="btn-main" id="regBtn" onclick="doRegister()">
-        Daftar Sekarang
-      </button>
-
-      <div class="footer-link">
-        Sudah punya akun? <a href="/auth/login">Masuk di sini</a>
-      </div>
+    <div class="auth-link">
+      Sudah punya akun? <a href="/auth/login">Masuk</a>
     </div>
   </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function doRegister() {
+  var username = document.getElementById('inputUsername').value.trim();
+  var email = document.getElementById('inputEmail').value.trim();
+  var password = document.getElementById('inputPassword').value;
+  var btn = document.getElementById('regBtn');
+  var errEl = document.getElementById('authError');
+  var btnText = document.getElementById('regBtnText');
 
-  <script>
-    function checkStrength(val) {
-      var bar = document.getElementById('strengthBar');
-      var score = 0;
-      if (val.length >= 6) score++;
-      if (val.length >= 10) score++;
-      if (/[A-Z]/.test(val)) score++;
-      if (/[0-9]/.test(val)) score++;
-      if (/[^A-Za-z0-9]/.test(val)) score++;
-      var colors = ['#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
-      bar.style.width = (score * 20) + '%';
-      bar.style.background = colors[score - 1] || 'transparent';
+  if (!username || !email || !password) {
+    errEl.textContent = 'Semua field wajib diisi.'; errEl.style.display = 'block'; return;
+  }
+  btn.disabled = true; btnText.textContent = 'Memuat...'; errEl.style.display = 'none';
+
+  fetch('/auth/register', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username: username, email: email, password: password})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d) {
+    if (d.ok) { location.href = d.redirect || '/home'; }
+    else {
+      errEl.textContent = d.error || 'Gagal daftar.'; errEl.style.display = 'block';
+      btn.disabled = false; btnText.textContent = 'Daftar Sekarang';
     }
-
-    function showError(msg) {
-      var box = document.getElementById('errorBox');
-      box.textContent = msg;
-      box.classList.add('show');
-      document.getElementById('successBox').classList.remove('show');
-    }
-    function showSuccess(msg) {
-      var box = document.getElementById('successBox');
-      box.textContent = msg;
-      box.classList.add('show');
-      document.getElementById('errorBox').classList.remove('show');
-    }
-    function clearMsg() {
-      document.getElementById('errorBox').classList.remove('show');
-      document.getElementById('successBox').classList.remove('show');
-    }
-
-    function setLoading(loading) {
-      var btn = document.getElementById('regBtn');
-      btn.disabled = loading;
-      btn.innerHTML = loading ? '<span class="spinner"></span>Mendaftar...' : 'Daftar Sekarang';
-    }
-
-    function doRegister() {
-      clearMsg();
-      var username = document.getElementById('usernameInput').value.trim();
-      var email    = document.getElementById('emailInput').value.trim();
-      var pass     = document.getElementById('passInput').value;
-
-      if (!username || !email || !pass) {
-        showError('Semua field wajib diisi.'); return;
-      }
-      if (username.length < 3) {
-        showError('Username minimal 3 karakter.'); return;
-      }
-      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        showError('Username hanya boleh huruf, angka, dan underscore.'); return;
-      }
-      if (pass.length < 6) {
-        showError('Password minimal 6 karakter.'); return;
-      }
-
-      setLoading(true);
-      fetch('/auth/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({username: username, email: email, password: pass})
-      }).then(function(r){ return r.json(); }).then(function(d) {
-        if (d.ok) {
-          showSuccess('Akun berhasil dibuat! Mengalihkan...');
-          setTimeout(function() {
-            window.location.href = d.redirect || '/home';
-          }, 1000);
-        } else {
-          showError(d.error || 'Pendaftaran gagal.');
-          setLoading(false);
-        }
-      }).catch(function() {
-        showError('Koneksi bermasalah, coba lagi.');
-        setLoading(false);
-      });
-    }
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') doRegister();
-    });
-  </script>
-</body>
-</html>
+  })
+  .catch(function() {
+    errEl.textContent = 'Gagal menghubungi server.'; errEl.style.display = 'block';
+    btn.disabled = false; btnText.textContent = 'Daftar Sekarang';
+  });
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Enter') doRegister(); });
+</script>
+{% endblock %}
