@@ -174,7 +174,7 @@ async function loadAll() {
   try {
     var r = await fetch('/api/admin/stats');
     if (r.status === 403) {
-      var err = '<div class="uw-empty">❌ Forbidden — <a href="/auth/login" style="color:#ff6b9d;">Login ulang</a></div>';
+      var err = '<div class="uw-empty">❌ Forbidden — <a href="/auth/login" style="color:#f47521;">Login ulang</a></div>';
       ['activeUsersWrap','topPagesWrap','premiumWrap'].forEach(function(id){ document.getElementById(id).innerHTML = err; });
       return;
     }

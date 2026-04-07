@@ -106,7 +106,7 @@ body { background: var(--adm-bg) !important; }
 .an-act-meta { display: flex; align-items: center; gap: 8px; }
 .an-act-src {
   font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-  padding: 2px 7px; border-radius: 4px; background: rgba(59,130,246,0.15); color: #5b8dee;
+  padding: 2px 7px; border-radius: 4px; background: rgba(59,130,246,0.15); color: #60a5fa;
 }
 .an-act-time { font-size: 10px; color: var(--adm-muted); }
 
@@ -239,7 +239,7 @@ async function loadAll() {
   try {
     var r = await fetch('/api/admin/analytics');
     if (r.status === 403) {
-      var errHtml = '<div class="an-empty">❌ Forbidden — <a href="/auth/login" style="color:#ff6b9d;">Login ulang</a></div>';
+      var errHtml = '<div class="an-empty">❌ Forbidden — <a href="/auth/login" style="color:#f47521;">Login ulang</a></div>';
       document.getElementById('topAnimeList').innerHTML = errHtml;
       document.getElementById('recentList').innerHTML = errHtml;
       return;
