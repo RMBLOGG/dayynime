@@ -1,5 +1,17 @@
 User-agent: *
 Allow: /
+Allow: /home
+Allow: /anime/
+Allow: /episode/
+Allow: /genre/
+Allow: /genres
+Allow: /ongoing
+Allow: /completed
+Allow: /movies
+Allow: /popular
+Allow: /jadwal
+Allow: /search
+
 Disallow: /admin
 Disallow: /profile
 Disallow: /api/
