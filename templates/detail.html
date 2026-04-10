@@ -115,7 +115,7 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
   {% if is_locked and not is_premium %}
   <a href="/premium" style="
     display:inline-flex;align-items:center;gap:8px;
-    background:linear-gradient(90deg,#F47521,#e05a00);color:#fff;
+    background:linear-gradient(90deg,#e8415a,#e05a00);color:#fff;
     padding:11px 22px;border-radius:var(--radius-md);
     font-size:13px;font-weight:900;flex-shrink:0;
     letter-spacing:0.3px;
@@ -211,9 +211,9 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
       </div>
       <div class="ep-thumb-info">
         <div class="ep-thumb-num">{{ ep.name|replace('Episode','Ep') }}</div>
-        <div class="ep-thumb-title" style="color:#F47521;font-size:10px;">👑 Premium Only</div>
+        <div class="ep-thumb-title" style="color:#e8415a;font-size:10px;">👑 Premium Only</div>
       </div>
-      <i class="fas fa-lock" style="color:#F47521;font-size:11px;flex-shrink:0;"></i>
+      <i class="fas fa-lock" style="color:#e8415a;font-size:11px;flex-shrink:0;"></i>
     </div>
     {% else %}
     <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="ep-thumb-item" {% if loop.index > 20 %}data-hidden style="display:none"{% endif %}>
@@ -268,7 +268,7 @@ function updateBookmarkUI() {
   if (!btn) return;
   if (isInKoleksi()) {
     btn.style.background = 'var(--accent-dim)';
-    btn.style.borderColor = 'rgba(244,117,33,0.5)';
+    btn.style.borderColor = 'rgba(232,65,90,0.5)';
     btn.style.color = 'var(--accent)';
     icon.className = 'fas fa-bookmark';
     label.textContent = 'Tersimpan';
