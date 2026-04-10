@@ -27,7 +27,7 @@
   <link rel="icon" type="image/png" href="/static/icon.png">
   <link rel="apple-touch-icon" href="/static/icon.png">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0d0d0d">
+  <meta name="theme-color" content="#141519">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -48,17 +48,17 @@
 <aside id="sidebarPanel" style="
   position:fixed; top:0; left:-280px; width:260px; height:100%;
   max-height:100vh; z-index:10001;
-  background:#0d0d0d;
-  border-right:1px solid rgba(232,65,90,0.15);
+  background:#141519;
+  border-right:1px solid rgba(244,117,33,0.15);
   transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
   display:flex; flex-direction:column; overflow:hidden;
 ">
   <!-- Sidebar Header -->
-  <div style="padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between; background:#161616;">
+  <div style="padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between; background:#1a1a23;">
     <div style="display:flex;align-items:center;gap:10px;">
       <img src="/static/icon.png" style="width:30px;height:30px;border-radius:6px;object-fit:cover;">
       <div>
-        <div style="font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.3px;">Dayy<span style="color:#e8415a;">nime</span></div>
+        <div style="font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.3px;">Dayy<span style="color:#F47521;">nime</span></div>
         <div style="font-size:9px;color:#5a5a72;text-transform:uppercase;letter-spacing:0.5px;">Nonton anime sub indo</div>
       </div>
     </div>
@@ -83,7 +83,7 @@
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/movies" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-film sb-icon" style="color:#e8415a;"></i>
+      <i class="fas fa-film sb-icon" style="color:#F47521;"></i>
       <span>Movie</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
@@ -93,12 +93,12 @@
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/animelist" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-list sb-icon" style="color:#e8415a;"></i>
+      <i class="fas fa-list sb-icon" style="color:#F47521;"></i>
       <span>A-Z List</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
     <a href="/popular" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-fire sb-icon" style="color:#e8415a;"></i>
+      <i class="fas fa-fire sb-icon" style="color:#F47521;"></i>
       <span>Populer</span>
       <i class="fas fa-chevron-right sb-arr"></i>
     </a>
@@ -133,8 +133,8 @@
     <!-- Jika belum login -->
     <div id="sbLoggedOut" style="display:none;"><!-- hidden until JS confirms not logged in -->
       <a href="/auth/login" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-sign-in-alt sb-icon" style="color:#e8415a;"></i>
-        <span style="color:#e8415a;font-weight:700;">Masuk</span>
+        <i class="fas fa-sign-in-alt sb-icon" style="color:#f47521;"></i>
+        <span style="color:#f47521;font-weight:700;">Masuk</span>
         <i class="fas fa-chevron-right sb-arr"></i>
       </a>
       <a href="/auth/register" onclick="closeSidebar()" class="sb-item">
@@ -150,7 +150,7 @@
     <button onclick="switchSource('{{ key }}')" id="sbBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
       <i class="fas fa-server" style="font-size:12px;opacity:0.5;"></i>
       <span>{{ src.label }}</span>
-      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#e8415a;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
+      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
     </button>
     {% endfor %}
   </nav>
@@ -158,7 +158,7 @@
   <!-- Sidebar Footer -->
   <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.05);font-size:10px;color:#5a5a72;display:flex;align-items:center;justify-content:space-between;">
     <span style="text-transform:uppercase;letter-spacing:0.3px;">Server Aktif</span>
-    <span id="srcActiveLabel" style="color:#e8415a;font-weight:900;">{{ active_source_label }}</span>
+    <span id="srcActiveLabel" style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
   </div>
 </aside>
 
@@ -376,15 +376,15 @@ function switchSource(key) {
 #fabMain, #fabMenu.open .fab-item { pointer-events:all; }
 #fabMain {
   width:44px; height:44px; border-radius:50%;
-  background:#e8415a; color:#fff; border:none;
+  background:#F47521; color:#fff; border:none;
   display:flex; align-items:center; justify-content:center;
   font-size:17px; cursor:pointer;
-  box-shadow:0 4px 20px rgba(232,65,90,0.5);
+  box-shadow:0 4px 20px rgba(244,117,33,0.5);
   transition:transform 0.3s, background 0.2s;
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation; position:relative; z-index:2;
 }
-#fabMain.open { transform:rotate(45deg); background:#1e1e1e; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+#fabMain.open { transform:rotate(45deg); background:#22222e; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
 #fabMenu {
   display:flex; flex-direction:column; align-items:flex-end; gap:8px;
   pointer-events:none; opacity:0;
@@ -395,7 +395,7 @@ function switchSource(key) {
 #fabMenu.open .fab-item { pointer-events:all; }
 .fab-item { display:flex; align-items:center; gap:8px; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 .fab-item-label {
-  background:#161616; color:#fff; font-size:11px; font-weight:700; font-family:'Lato',sans-serif;
+  background:#1a1a23; color:#fff; font-size:11px; font-weight:700; font-family:'Lato',sans-serif;
   padding:6px 12px; border-radius:20px; box-shadow:0 2px 12px rgba(0,0,0,0.5);
   white-space:nowrap; border:1px solid rgba(255,255,255,0.08);
   text-transform:uppercase; letter-spacing:0.3px;
@@ -407,11 +407,11 @@ function switchSource(key) {
   box-shadow:0 2px 12px rgba(0,0,0,0.4); -webkit-tap-highlight-color:transparent; flex-shrink:0;
 }
 .fab-item-icon.tr  { background:#be1e2d; }
-.fab-item-icon.srv { background:#e8415a; }
+.fab-item-icon.srv { background:#F47521; }
 
 #srcPanel {
   display:none; position:fixed; bottom:76px; right:14px; z-index:99999;
-  background:#161616; border:1px solid rgba(232,65,90,0.4);
+  background:#1a1a23; border:1px solid rgba(244,117,33,0.4);
   border-radius:12px; padding:12px 10px; min-width:190px;
   box-shadow:0 8px 32px rgba(0,0,0,0.8);
 }
@@ -419,12 +419,12 @@ function switchSource(key) {
 #trModal { display:none; position:fixed; inset:0; z-index:999999; background:rgba(0,0,0,0.85); align-items:flex-end; justify-content:center; }
 #trModal.open { display:flex; }
 #trModalBox {
-  background:#161616; border-radius:16px 16px 0 0; overflow:hidden;
+  background:#1a1a23; border-radius:16px 16px 0 0; overflow:hidden;
   width:100%; max-width:480px; height:90vh;
   display:flex; flex-direction:column;
   box-shadow:0 -8px 40px rgba(0,0,0,0.8);
   animation:trSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
-  border-top:1px solid rgba(232,65,90,0.2);
+  border-top:1px solid rgba(244,117,33,0.2);
 }
 @keyframes trSlideUp { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
 #trModalHead { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#be1e2d; flex-shrink:0; }
@@ -468,21 +468,21 @@ function switchSource(key) {
   {% for key, src in all_sources.items() %}
   <button id="srcBtn-{{ key }}" onclick="switchSource('{{ key }}')" style="
     width:100%;margin-bottom:5px;padding:9px 12px;border-radius:8px;
-    border:1px solid {% if active_source == key %}#e8415a{% else %}rgba(255,255,255,0.08){% endif %};
-    background:{% if active_source == key %}rgba(232,65,90,0.15){% else %}rgba(255,255,255,0.03){% endif %};
-    color:{% if active_source == key %}#e8415a{% else %}#A0A0B0{% endif %};
+    border:1px solid {% if active_source == key %}#F47521{% else %}rgba(255,255,255,0.08){% endif %};
+    background:{% if active_source == key %}rgba(244,117,33,0.15){% else %}rgba(255,255,255,0.03){% endif %};
+    color:{% if active_source == key %}#F47521{% else %}#A0A0B0{% endif %};
     font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
     display:flex;align-items:center;justify-content:space-between;gap:8px;
     -webkit-tap-highlight-color:transparent;touch-action:manipulation;
     text-transform:uppercase;letter-spacing:0.3px;">
     <span>{{ src.label }}</span>
     {% if active_source == key %}
-    <span style="width:6px;height:6px;border-radius:50%;background:#e8415a;flex-shrink:0;display:inline-block;"></span>
+    <span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;"></span>
     {% endif %}
   </button>
   {% endfor %}
   <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);font-size:9px;color:#5a5a72;text-align:center;text-transform:uppercase;letter-spacing:0.3px;">
-    Aktif: <span style="color:#e8415a;font-weight:900;">{{ active_source_label }}</span>
+    Aktif: <span style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
   </div>
 </div>
 
@@ -532,7 +532,7 @@ document.addEventListener('click', function(e) {
 </script>
 
 <!-- Trakteer Donation Notif -->
-<div id="trNotif" style="display:none;position:fixed;bottom:76px;right:14px;z-index:99997;background:#161616;border:1px solid rgba(190,30,45,0.4);border-radius:12px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.7);animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;">
+<div id="trNotif" style="display:none;position:fixed;bottom:76px;right:14px;z-index:99997;background:#1a1a23;border:1px solid rgba(190,30,45,0.4);border-radius:12px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.7);animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;">
   <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px;">
     <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,#ff6b6b);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;" id="trNotifAvatar">?</div>
     <div style="flex:1;min-width:0;">
@@ -543,7 +543,7 @@ document.addEventListener('click', function(e) {
   </div>
   <div style="font-size:11px;color:#A0A0B0;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div style="font-size:14px;font-weight:900;color:#e8415a;" id="trNotifAmount">-</div>
+    <div style="font-size:14px;font-weight:900;color:#F47521;" id="trNotifAmount">-</div>
     <button onclick="openTrakteer();hidetrNotif();" style="background:#be1e2d;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.3px;">Dukung</button>
   </div>
 </div>
