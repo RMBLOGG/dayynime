@@ -4,641 +4,383 @@
 {% block og_title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
 {% block og_description %}{{ data.detail.synopsis[:150] ~ '...' if data and data.detail and data.detail.synopsis else 'Nonton anime subtitle Indonesia gratis di Dayynime.' }}{% endblock %}
 {% block og_image %}{{ data.detail.poster if data and data.detail and data.detail.poster else 'https://dayynime.vercel.app/static/banner.png' }}{% endblock %}
-
-{% block head %}
-<style>
-/* ════════════════════════════════════════
-   DETAIL PAGE — APP CLONE STYLE
-   Black + Crimson + Salmon palette
-   ════════════════════════════════════════ */
-
-:root {
-  --app-black:    #0d0d0d;
-  --app-card:     #181818;
-  --app-card2:    #1e1e1e;
-  --app-border:   rgba(255,255,255,0.07);
-  --app-crimson:  #be1e2d;
-  --app-salmon:   #f08080;
-  --app-pink:     #e8637a;
-  --app-green:    #10b981;
-  --app-blue:     #60a5fa;
-  --app-gold:     #f59e0b;
-  --app-text:     #ffffff;
-  --app-text2:    #b0b0b8;
-  --app-text3:    #606068;
-}
-
-body { background: var(--app-black) !important; }
-
-/* ── HERO BACKDROP ── */
-.det-hero {
-  position: relative;
-  width: 100%;
-  min-height: 280px;
-  overflow: hidden;
-}
-.det-hero-backdrop {
-  position: absolute; inset: 0;
-}
-.det-hero-backdrop img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  filter: blur(20px) brightness(0.2);
-  transform: scale(1.2);
-}
-.det-hero-backdrop::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.2) 0%,
-    rgba(13,13,13,0.7) 60%,
-    rgba(13,13,13,1) 100%
-  );
-}
-
-/* Back + action btns top row */
-.det-top-bar {
-  position: relative; z-index: 4;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px;
-}
-.det-top-btn {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: rgba(255,255,255,0.12);
-  border: none; color: #fff; font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  backdrop-filter: blur(10px);
-}
-.det-top-actions { display: flex; gap: 10px; }
-
-/* Poster + Info Layout */
-.det-hero-body {
-  position: relative; z-index: 4;
-  display: flex; gap: 14px;
-  padding: 0 16px 20px;
-  align-items: flex-end;
-}
-.det-poster {
-  width: 110px; flex-shrink: 0;
-}
-.det-poster img {
-  width: 110px; height: 155px;
-  border-radius: 10px;
-  object-fit: cover; display: block;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.9);
-}
-.det-info { flex: 1; min-width: 0; padding-bottom: 4px; }
-.det-title {
-  font-size: 17px; font-weight: 900;
-  color: #fff; line-height: 1.25;
-  margin-bottom: 4px;
-}
-.det-title-jp {
-  font-size: 10px; color: var(--app-text2);
-  margin-bottom: 8px; line-height: 1.4;
-}
-.det-score-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 8px; flex-wrap: wrap;
-}
-.det-score {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 13px; font-weight: 900;
-  color: var(--app-gold);
-}
-.det-score i { font-size: 11px; }
-.det-meta-dot { font-size: 10px; color: var(--app-text3); }
-.det-meta-info { font-size: 11px; color: var(--app-text2); }
-.det-genre-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.det-genre-chip {
-  padding: 4px 10px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  font-size: 10px; font-weight: 700;
-  color: var(--app-text2);
-  text-decoration: none;
-}
-
-/* ── NEXT EPISODE BANNER ── */
-.det-next-ep {
-  margin: 0 14px 14px;
-  background: linear-gradient(135deg, #1e0a0d, #2a0d13);
-  border: 1px solid rgba(190,30,45,0.4);
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex; align-items: center; gap: 14px;
-}
-.det-next-ep-icon {
-  width: 44px; height: 44px;
-  background: rgba(190,30,45,0.2);
-  border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--app-salmon);
-  font-size: 18px;
-}
-.det-next-ep-label {
-  font-size: 11px; font-weight: 900; color: var(--app-salmon);
-  letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px;
-}
-.det-next-ep-time {
-  font-size: 15px; font-weight: 900; color: #fff;
-}
-.det-next-ep-time span { color: var(--app-salmon); }
-
-/* ── ACTION BUTTONS ── */
-.det-actions {
-  display: flex; gap: 10px;
-  padding: 0 14px 20px;
-}
-.det-btn-watch {
-  flex: 1;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: var(--app-salmon);
-  color: #fff; font-weight: 900; font-size: 14px;
-  padding: 13px 18px; border-radius: 14px;
-  border: none; cursor: pointer;
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.det-btn-watch i { font-size: 16px; }
-.det-btn-save {
-  width: 52px; height: 52px; border-radius: 14px;
-  background: var(--app-card);
-  border: 1px solid var(--app-border);
-  color: var(--app-text2); font-size: 18px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  flex-shrink: 0;
-}
-.det-btn-save.saved { background: rgba(190,30,45,0.15); border-color: rgba(190,30,45,0.4); color: var(--app-crimson); }
-
-/* ── SYNOPSIS ── */
-.det-section { padding: 0 14px 20px; }
-.det-section-title {
-  font-size: 16px; font-weight: 900; color: var(--app-text);
-  margin-bottom: 10px;
-}
-.det-synopsis-text {
-  font-size: 13px; color: var(--app-text2); line-height: 1.7;
-  display: -webkit-box; -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical; overflow: hidden;
-}
-.det-synopsis-text.expanded {
-  -webkit-line-clamp: unset; overflow: visible;
-}
-.det-read-more {
-  background: none; border: none; color: var(--app-salmon);
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  padding: 6px 0; display: flex; align-items: center; gap: 4px;
-  font-family: inherit;
-}
-
-/* ── TABS ── */
-.det-tabs {
-  position: sticky; bottom: var(--bottom-h); z-index: 10;
-  display: flex;
-  border-top: 1px solid var(--app-border);
-  background: var(--app-black);
-}
-.det-tab {
-  flex: 1; padding: 14px 0;
-  text-align: center; font-size: 12px; font-weight: 700;
-  color: var(--app-text3); cursor: pointer;
-  border: none; background: none; font-family: inherit;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
-}
-.det-tab.active { color: var(--app-salmon); }
-.det-tab.active::after {
-  content: '';
-  position: absolute; bottom: 0; left: 20%; right: 20%;
-  height: 2px; background: var(--app-salmon);
-  border-radius: 2px;
-}
-.det-tab-panel { display: none; }
-.det-tab-panel.active { display: block; }
-
-/* ── EPISODES TAB ── */
-.ep-header {
-  padding: 16px 14px 12px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.ep-header-title { font-size: 15px; font-weight: 900; color: var(--app-text); }
-.ep-header-right { display: flex; gap: 8px; align-items: center; }
-.ep-layout-btn {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--app-card); border: 1px solid var(--app-border);
-  color: var(--app-text2); font-size: 13px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-}
-
-.ep-filter-row {
-  display: flex; gap: 8px; padding: 0 14px 12px;
-  overflow-x: auto; scrollbar-width: none;
-}
-.ep-filter-row::-webkit-scrollbar { display: none; }
-.ep-filter-pill {
-  display: flex; align-items: center; gap: 5px;
-  padding: 7px 14px; border-radius: 20px; flex-shrink: 0;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  border: 1px solid var(--app-border);
-  background: var(--app-card); color: var(--app-text2);
-  -webkit-tap-highlight-color: transparent;
-}
-.ep-filter-pill.active { background: var(--app-crimson); border-color: var(--app-crimson); color: #fff; }
-.ep-filter-pill i { font-size: 10px; }
-
-/* Episode list items */
-.ep-list { padding: 0 14px; }
-.ep-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--app-border);
-  text-decoration: none; color: inherit;
-}
-.ep-item:last-child { border-bottom: none; }
-.ep-thumb {
-  width: 110px; height: 68px;
-  border-radius: 10px; overflow: hidden;
-  flex-shrink: 0; background: var(--app-card);
-  position: relative;
-}
-.ep-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ep-thumb-num {
-  position: absolute; bottom: 4px; left: 4px;
-  background: rgba(0,0,0,0.8); color: #fff;
-  font-size: 9px; font-weight: 900;
-  width: 18px; height: 18px; border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
-}
-.ep-info { flex: 1; min-width: 0; }
-.ep-name { font-size: 13px; font-weight: 800; color: var(--app-text); margin-bottom: 4px; }
-.ep-meta { font-size: 11px; color: var(--app-text3); }
-.ep-more-btn {
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--app-text3); font-size: 16px;
-  flex-shrink: 0;
-}
-
-/* ── CHARACTERS TAB ── */
-.char-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  padding: 16px 14px;
-}
-.char-card {
-  background: var(--app-card);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--app-border);
-}
-.char-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
-.char-name {
-  padding: 8px 10px;
-  font-size: 11px; font-weight: 800; color: var(--app-text);
-}
-.char-role {
-  padding: 0 10px 8px;
-  font-size: 10px; color: var(--app-salmon); font-weight: 700;
-}
-
-/* ── STICKY WATCH NOW BTN ── */
-.det-sticky-watch {
-  position: fixed;
-  bottom: calc(var(--bottom-h) + 12px);
-  right: 14px;
-  z-index: 100;
-}
-.det-sticky-watch a {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--app-salmon);
-  color: #fff; font-weight: 900; font-size: 13px;
-  padding: 12px 18px; border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(240,128,128,0.4);
-  text-decoration: none;
-}
-.det-sticky-watch i { font-size: 15px; }
-</style>
-{% endblock %}
-
+{% block tw_title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
+{% block tw_description %}{{ data.detail.synopsis[:150] ~ '...' if data and data.detail and data.detail.synopsis else 'Nonton anime subtitle Indonesia gratis di Dayynime.' }}{% endblock %}
+{% block tw_image %}{{ data.detail.poster if data and data.detail and data.detail.poster else 'https://dayynime.vercel.app/static/banner.png' }}{% endblock %}
 {% block content %}
+
+<div id="adBanner320x50"></div>
+<script>
+fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d){
+  if(d.premium) return;
+  var wrap = document.getElementById('adBanner320x50');
+  if(!wrap) return;
+  window.atOptions = {'key':'49b66fd4a15bc23683f26a1c8eed2930','format':'iframe','height':50,'width':320,'params':{}};
+  var s = document.createElement('script');
+  s.src = 'https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js';
+  wrap.appendChild(s);
+}).catch(function(){
+  window.atOptions = {'key':'49b66fd4a15bc23683f26a1c8eed2930','format':'iframe','height':50,'width':320,'params':{}};
+  var s = document.createElement('script');
+  s.src = 'https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js';
+  document.body.appendChild(s);
+});
+</script>
+
 {% if data and data.detail %}
 {% set d = data.detail %}
 {% set info = d.info %}
 
-<!-- ── HERO ── -->
-<div class="det-hero">
-  <div class="det-hero-backdrop">
-    <img src="{{ d.poster }}" alt="">
+<!-- ═══ HERO — Crunchyroll style ═══ -->
+<div style="position:relative;width:100%;min-height:260px;overflow:hidden;margin-bottom:0;">
+  <!-- Full blurred backdrop -->
+  <div style="position:absolute;inset:0;overflow:hidden;">
+    <img src="{{ d.poster }}" alt=""
+      style="width:100%;height:100%;object-fit:cover;filter:blur(18px) brightness(0.25);transform:scale(1.15);">
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(20,21,25,0.1) 0%,rgba(20,21,25,0.6) 60%,rgba(20,21,25,1) 100%);"></div>
   </div>
 
-  <!-- Top bar -->
-  <div class="det-top-bar">
-    <button class="det-top-btn" onclick="history.back()">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-    <div class="det-top-actions">
-      <button class="det-top-btn" id="bookmarkBtn" onclick="toggleKoleksi()">
-        <i class="far fa-heart" id="bookmarkIcon"></i>
-      </button>
-      <button class="det-top-btn">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- Hero body: poster + info -->
-  <div class="det-hero-body">
-    <div class="det-poster">
-      <img src="{{ d.poster }}" alt="{{ d.title }}" onerror="this.src='/static/no-image.svg'">
-    </div>
-    <div class="det-info">
-      <div class="det-title">{{ d.title }}</div>
-      {% if d.title_jp %}<div class="det-title-jp">{{ d.title_jp }}</div>{% endif %}
-      <div class="det-score-row">
-        {% if info.score %}
-        <div class="det-score"><i class="fas fa-star"></i> {{ info.score }}</div>
-        <span class="det-meta-dot">·</span>
-        {% endif %}
-        {% if info.released %}<span class="det-meta-info">{{ info.released[:4] if info.released|length > 4 else info.released }}</span><span class="det-meta-dot">·</span>{% endif %}
-        {% if info.type %}<span class="det-meta-info">{{ info.type }}</span>{% endif %}
-        {% if info.total_episode %}<span class="det-meta-dot">·</span><span class="det-meta-info">{{ info.total_episode }} eps</span>{% endif %}
-        {% if info.status %}<span class="det-meta-dot">·</span><span class="det-meta-info" style="color:{% if 'ongoing' in info.status|lower or 'airing' in info.status|lower %}#4ade80{% else %}#60a5fa{% endif %};">{{ info.status|upper }}</span>{% endif %}
+  <!-- Content: poster left + info right -->
+  <div style="position:relative;z-index:2;display:flex;gap:14px;padding:20px 14px 0;align-items:flex-end;">
+    <!-- Poster -->
+    <div style="flex-shrink:0;width:110px;">
+      <div style="width:110px;border-radius:8px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.08);aspect-ratio:2/3;">
+        <img src="{{ d.poster }}" alt="{{ d.title }}"
+          style="width:100%;height:100%;object-fit:cover;display:block;"
+          onerror="this.src='/static/no-image.svg'">
       </div>
+    </div>
+
+    <!-- Info -->
+    <div style="flex:1;min-width:0;padding-bottom:16px;">
+      <!-- Badge row -->
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+        {% if info.type %}
+        <span style="padding:2px 8px;background:var(--accent);border-radius:3px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#fff;">{{ info.type }}</span>
+        {% endif %}
+        {% if info.status %}
+        <span style="padding:2px 8px;border-radius:3px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;
+          {% if 'ongoing' in info.status|lower or 'airing' in info.status|lower %}background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);{% else %}background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);{% endif %}">
+          {{ info.status }}
+        </span>
+        {% endif %}
+      </div>
+
+      <!-- Title -->
+      <h1 style="font-size:16px;font-weight:900;color:#fff;line-height:1.25;margin-bottom:8px;
+        display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">{{ d.title }}</h1>
+
+      <!-- Score + episode -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        {% if info.score %}
+        <div style="display:flex;align-items:center;gap:4px;">
+          <i class="fas fa-star" style="color:#F59E0B;font-size:11px;"></i>
+          <span style="font-size:13px;font-weight:900;color:#F59E0B;">{{ info.score }}</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.4);">/10</span>
+        </div>
+        {% endif %}
+        {% if info.total_episode %}
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:3px;">
+          <i class="fas fa-play-circle" style="font-size:10px;"></i> {{ info.total_episode }} Ep
+        </div>
+        {% endif %}
+        {% if info.released %}
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);">{{ info.released }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Genres -->
       {% if d.genres %}
-      <div class="det-genre-chips">
-        {% for g in d.genres[:3] %}
-        <a href="/genre/{{ g.slug }}" class="det-genre-chip">{{ g.name }}</a>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        {% for g in d.genres[:4] %}
+        <a href="/genre/{{ g.slug }}" style="padding:3px 8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:3px;font-size:9px;font-weight:700;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.3px;">{{ g.name }}</a>
         {% endfor %}
       </div>
       {% endif %}
+
+      <!-- Live Viewer Count -->
+      <div id="detailViewerBar" class="live-viewer-bar" style="display:none;margin-top:10px;">
+        <span class="live-viewer-bar-dot"></span>
+        <span id="detailViewerCount">0</span>
+        <span style="color:rgba(255,255,255,0.6);">orang lagi nonton ini</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ── NEXT EP COUNTDOWN (if ongoing) ── -->
-{% if info.status and ('ongoing' in info.status|lower or 'airing' in info.status|lower) %}
-{% if d.episodes %}
-<div class="det-next-ep">
-  <div class="det-next-ep-icon"><i class="fas fa-clock"></i></div>
-  <div>
-    <div class="det-next-ep-label">Episode {{ (d.episodes|length + 1) }}</div>
-    <div class="det-next-ep-time">Airing in <span id="detCountdown">loading...</span></div>
-  </div>
-</div>
-<script>
-(function() {
-  // Simulate countdown (7 days from now by default)
-  var target = new Date(Date.now() + 7 * 24 * 3600 * 1000);
-  function update() {
-    var diff = Math.max(0, target - Date.now());
-    var d = Math.floor(diff / 86400000);
-    var h = Math.floor((diff % 86400000) / 3600000);
-    var m = Math.floor((diff % 3600000) / 60000);
-    document.getElementById('detCountdown').textContent = d + 'd ' + h + 'h ' + m + 'm';
-  }
-  update(); setInterval(update, 60000);
-})();
-</script>
-{% endif %}
-{% endif %}
-
-<!-- ── ACTIONS ── -->
-<div class="det-actions">
+<!-- ═══ ACTION BUTTONS ═══ -->
+<div style="padding:14px 14px 0;display:flex;gap:8px;flex-wrap:wrap;">
   {% if d.episodes %}
   {% set last_ep = d.episodes[0] %}
   {% if is_locked and not is_premium %}
-  <a href="/premium" class="det-btn-watch">
-    <i class="fas fa-lock"></i> Premium Only
+  <a href="/premium" style="
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(90deg,#F47521,#e05a00);color:#fff;
+    padding:11px 22px;border-radius:var(--radius-md);
+    font-size:13px;font-weight:900;flex-shrink:0;
+    letter-spacing:0.3px;
+  ">
+    <i class="fas fa-lock" style="font-size:11px;"></i> Premium Only
   </a>
   {% else %}
-  <a href="/episode/{{ last_ep.slug }}?anime={{ slug }}" class="det-btn-watch">
-    <i class="fas fa-play"></i> Watch Now
+  <a href="/episode/{{ last_ep.slug }}?anime={{ slug }}" style="
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent);color:#fff;
+    padding:11px 22px;border-radius:var(--radius-md);
+    font-size:13px;font-weight:900;flex-shrink:0;
+    letter-spacing:0.3px;
+  ">
+    <i class="fas fa-play" style="font-size:11px;"></i> Tonton Sekarang
   </a>
   {% endif %}
   {% endif %}
-  <button class="det-btn-save" id="saveBtn" onclick="toggleKoleksi()">
-    <i class="fas fa-bookmark"></i>
+  <button id="bookmarkBtn" onclick="toggleKoleksi()" style="
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+    color:rgba(255,255,255,0.7);padding:11px 18px;border-radius:var(--radius-md);
+    font-size:13px;font-weight:700;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:all 0.2s;
+  ">
+    <i class="far fa-bookmark" id="bookmarkIcon"></i>
+    <span id="bookmarkLabel">Simpan</span>
   </button>
 </div>
 
-<!-- ── TABS ── -->
-<div class="det-tabs" id="detTabs">
-  <button class="det-tab active" data-tab="about" onclick="switchTab('about')">About</button>
-  <button class="det-tab" data-tab="episodes" onclick="switchTab('episodes')">Episodes</button>
-  <button class="det-tab" data-tab="characters" onclick="switchTab('characters')">Characters</button>
+<!-- ═══ SYNOPSIS ═══ -->
+{% if d.synopsis %}
+<div style="padding:16px 14px 0;">
+  <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+    <span style="width:3px;height:12px;background:var(--accent);border-radius:2px;display:inline-block;flex-shrink:0;"></span>Sinopsis
+  </div>
+  <div id="synopsisText" style="font-size:13px;color:var(--text2);line-height:1.75;
+    display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">{{ d.synopsis }}</div>
+  <button id="synopsisToggle" onclick="toggleSynopsis()" style="
+    margin-top:6px;padding:0;background:none;border:none;
+    color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;gap:4px;font-family:inherit;">
+    Selengkapnya <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+  </button>
+</div>
+{% endif %}
+
+<!-- ═══ META INFO ═══ -->
+<div style="padding:14px 14px 0;">
+  <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+    <span style="width:3px;height:12px;background:var(--accent);border-radius:2px;display:inline-block;flex-shrink:0;"></span>Informasi
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    {% if info.studio %}<div class="detail-meta-item"><div class="detail-meta-label">Studio</div><div class="detail-meta-val">{{ info.studio }}</div></div>{% endif %}
+    {% if info.duration %}<div class="detail-meta-item"><div class="detail-meta-label">Durasi</div><div class="detail-meta-val">{{ info.duration }}</div></div>{% endif %}
+    {% if info.season %}<div class="detail-meta-item"><div class="detail-meta-label">Season</div><div class="detail-meta-val">{{ info.season }}</div></div>{% endif %}
+    {% if info.released %}<div class="detail-meta-item"><div class="detail-meta-label">Tayang</div><div class="detail-meta-val">{{ info.released }}</div></div>{% endif %}
+  </div>
 </div>
 
-<!-- ── TAB: ABOUT ── -->
-<div class="det-tab-panel active" id="tabAbout">
-  <!-- Synopsis -->
-  {% if d.synopsis %}
-  <div class="det-section">
-    <div class="det-section-title">Synopsis</div>
-    <div class="det-synopsis-text" id="synopsisText">{{ d.synopsis }}</div>
-    <button class="det-read-more" id="synopsisToggle" onclick="toggleSynopsis()">
-      Read More <i class="fas fa-chevron-down" style="font-size:10px;" id="synopsisArrow"></i>
-    </button>
+<!-- ═══ TRAILER ═══ -->
+{% if d.trailer %}
+<div style="padding:16px 14px 0;">
+  <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+    <span style="width:3px;height:12px;background:#ef4444;border-radius:2px;display:inline-block;flex-shrink:0;"></span>Trailer
   </div>
-  {% endif %}
-
-  <!-- Meta Info -->
-  <div class="det-section">
-    <div class="det-section-title">Information</div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      {% if info.studio %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Studio</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.studio }}</span>
-      </div>
-      {% endif %}
-      {% if info.duration %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Duration</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.duration }}</span>
-      </div>
-      {% endif %}
-      {% if info.released %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Aired</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.released }}</span>
-      </div>
-      {% endif %}
-      {% if info.season %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Season</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.season }}</span>
-      </div>
-      {% endif %}
-      {% if info.total_episode %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Episodes</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.total_episode }}</span>
-      </div>
-      {% endif %}
-    </div>
+  <div style="aspect-ratio:16/9;border-radius:var(--radius-md);overflow:hidden;">
+    <iframe src="https://www.youtube.com/embed/{{ d.trailer.split('v=')[-1] if 'v=' in d.trailer else d.trailer.split('/')[-1] }}"
+      width="100%" height="100%" style="border:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
   </div>
-
-  <!-- Trailer -->
-  {% if d.trailer %}
-  <div class="det-section">
-    <div class="det-section-title">Trailer</div>
-    <div style="aspect-ratio:16/9;border-radius:14px;overflow:hidden;">
-      <iframe src="https://www.youtube.com/embed/{{ d.trailer.split('v=')[-1] if 'v=' in d.trailer else d.trailer.split('/')[-1] }}"
-        width="100%" height="100%" style="border:none;" allowfullscreen></iframe>
-    </div>
-  </div>
-  {% endif %}
 </div>
+{% endif %}
 
-<!-- ── TAB: EPISODES ── -->
-<div class="det-tab-panel" id="tabEpisodes">
-  {% if d.episodes %}
-  <div class="ep-header">
-    <div class="ep-header-title">{{ d.episodes|length }} Episodes</div>
-    <div class="ep-header-right">
-      <button class="ep-layout-btn"><i class="fas fa-list"></i></button>
-      <button class="ep-layout-btn" style="transform:scaleY(-1);"><i class="fas fa-arrow-up"></i></button>
-    </div>
-  </div>
-
-  <!-- Filter pills -->
-  <div class="ep-filter-row">
-    <div class="ep-filter-pill active">
-      <i class="fas fa-check"></i> All
-    </div>
-    {% if d.episodes|length > 50 %}
-    <div class="ep-filter-pill">1–50</div>
-    <div class="ep-filter-pill">51–{{ d.episodes|length }}</div>
-    {% elif d.episodes|length > 25 %}
-    <div class="ep-filter-pill">1–25</div>
-    <div class="ep-filter-pill">26–{{ d.episodes|length }}</div>
+<!-- ═══ EPISODE LIST ═══ -->
+{% if d.episodes %}
+<div style="padding:16px 0 0;">
+  <div class="ep-section-title">
+    <span style="display:flex;align-items:center;gap:6px;">
+      <span style="width:3px;height:12px;background:var(--accent);border-radius:2px;display:inline-block;flex-shrink:0;"></span>
+      Episode <span style="color:var(--accent);margin-left:2px;">{{ d.episodes|length }}</span>
+    </span>
+    {% if d.episodes|length > 20 %}
+    <button onclick="toggleEps()" id="epToggleBtn" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;font-weight:700;">Tampilkan Semua</button>
     {% endif %}
   </div>
-
-  <!-- Episode items -->
-  <div class="ep-list">
+  <div class="ep-thumb-grid" id="epGrid">
     {% for ep in d.episodes %}
-    <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="ep-item">
-      <div class="ep-thumb">
-        <img src="{{ d.poster }}" alt="{{ ep.name }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        <div class="ep-thumb-num">{{ loop.index }}</div>
+    {% if is_locked and not is_premium %}
+    <div class="ep-thumb-item" style="cursor:pointer;" onclick="window.location='/premium'" {% if loop.index > 20 %}data-hidden style="display:none"{% endif %}>
+      <div class="ep-thumb-img" style="position:relative;">
+        <img src="{{ d.poster }}" alt="{{ ep.name }}" loading="lazy" onerror="this.src='/static/no-image.svg'" style="opacity:0.5;">
+        <div class="ep-thumb-play" style="background:rgba(0,0,0,0.7);"><i class="fas fa-lock" style="font-size:10px;"></i></div>
       </div>
-      <div class="ep-info">
-        <div class="ep-name">{{ ep.name or 'Episode ' ~ loop.index }}</div>
-        <div class="ep-meta">
-          <i class="fas fa-clock" style="font-size:9px;margin-right:3px;"></i>
-          {% if ep.date %}{{ ep.date }}{% else %}Episode {{ loop.index }}{% endif %}
-        </div>
+      <div class="ep-thumb-info">
+        <div class="ep-thumb-num">{{ ep.name|replace('Episode','Ep') }}</div>
+        <div class="ep-thumb-title" style="color:#F47521;font-size:10px;">👑 Premium Only</div>
       </div>
-      <div class="ep-more-btn"><i class="fas fa-ellipsis-v"></i></div>
-    </a>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div style="padding:40px 14px;text-align:center;color:var(--app-text3);">
-    <i class="fas fa-film" style="font-size:32px;margin-bottom:12px;display:block;"></i>
-    Belum ada episode
-  </div>
-  {% endif %}
-</div>
-
-<!-- ── TAB: CHARACTERS ── -->
-<div class="det-tab-panel" id="tabCharacters">
-  {% if d.characters %}
-  <div class="char-grid">
-    {% for char in d.characters[:12] %}
-    <div class="char-card">
-      <img src="{{ char.image or '/static/no-image.svg' }}" alt="{{ char.name }}" class="char-img"
-           onerror="this.src='/static/no-image.svg'">
-      <div class="char-name">{{ char.name }}</div>
-      <div class="char-role">{{ char.role or 'Main' }}</div>
+      <i class="fas fa-lock" style="color:#F47521;font-size:11px;flex-shrink:0;"></i>
     </div>
+    {% else %}
+    <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="ep-thumb-item" {% if loop.index > 20 %}data-hidden style="display:none"{% endif %}>
+      <div class="ep-thumb-img">
+        <img src="{{ d.poster }}" alt="{{ ep.name }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        <div class="ep-thumb-play"><i class="fas fa-play"></i></div>
+      </div>
+      <div class="ep-thumb-info">
+        <div class="ep-thumb-num">{{ ep.name|replace('Episode','Ep') }}</div>
+        <div class="ep-thumb-title">{{ d.title }}</div>
+      </div>
+      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:11px;flex-shrink:0;"></i>
+    </a>
+    {% endif %}
     {% endfor %}
   </div>
-  {% else %}
-  <div style="padding:40px 14px;text-align:center;color:var(--app-text3);">
-    <i class="fas fa-users" style="font-size:32px;margin-bottom:12px;display:block;"></i>
-    Data karakter tidak tersedia
-  </div>
-  {% endif %}
-</div>
-
-<!-- ── STICKY WATCH NOW ── -->
-{% if d.episodes and (not is_locked or is_premium) %}
-{% set last_ep = d.episodes[0] %}
-<div class="det-sticky-watch">
-  <a href="/episode/{{ last_ep.slug }}?anime={{ slug }}">
-    <i class="fas fa-play"></i> Watch Now
-  </a>
 </div>
 {% endif %}
+
+<div style="height:24px;"></div>
 
 {% else %}
-<div style="padding:60px 14px;text-align:center;color:var(--app-text3);">
-  <i class="fas fa-exclamation-circle" style="font-size:40px;margin-bottom:16px;display:block;color:var(--app-crimson);"></i>
-  <div style="font-size:16px;font-weight:700;color:var(--app-text);">Anime tidak ditemukan</div>
+<div class="empty" style="padding-top:80px;">
+  <i class="fas fa-exclamation-triangle"></i>
+  <h3>Anime tidak ditemukan</h3>
+  <a href="/home" style="display:inline-block;margin-top:16px;color:var(--accent);">← Home</a>
 </div>
 {% endif %}
 
-<script>
-// ── Tab switching
-function switchTab(tab) {
-  document.querySelectorAll('.det-tab').forEach(function(t) {
-    t.classList.toggle('active', t.getAttribute('data-tab') === tab);
-  });
-  document.querySelectorAll('.det-tab-panel').forEach(function(p) {
-    p.classList.toggle('active', p.id === 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-  });
-}
+<style>
+#synopsisText.expanded { display:block !important; -webkit-line-clamp:unset !important; }
+</style>
+{% endblock %}
 
-// ── Synopsis toggle
-function toggleSynopsis() {
-  var text = document.getElementById('synopsisText');
-  var btn = document.getElementById('synopsisToggle');
-  var arrow = document.getElementById('synopsisArrow');
-  if (text.classList.toggle('expanded')) {
-    btn.childNodes[0].textContent = 'Show Less ';
-    arrow.style.transform = 'rotate(180deg)';
+{% block scripts %}
+<script>
+const KOLEKSI_KEY = 'dayynime_koleksi';
+const ANIME_SLUG = '{{ slug }}';
+const ANIME_DATA = {
+  slug: '{{ slug }}',
+  title: {{ (data.detail.title if data and data.detail else '') | tojson }},
+  poster: {{ (data.detail.poster if data and data.detail else '') | tojson }},
+  status: {{ (data.detail.info.status if data and data.detail and data.detail.info else '') | tojson }}
+};
+
+function getKoleksi() { try { return JSON.parse(localStorage.getItem(KOLEKSI_KEY)) || []; } catch { return []; } }
+function isInKoleksi() { return getKoleksi().some(a => a.slug === ANIME_SLUG); }
+function updateBookmarkUI() {
+  const btn = document.getElementById('bookmarkBtn');
+  const icon = document.getElementById('bookmarkIcon');
+  const label = document.getElementById('bookmarkLabel');
+  if (!btn) return;
+  if (isInKoleksi()) {
+    btn.style.background = 'var(--accent-dim)';
+    btn.style.borderColor = 'rgba(244,117,33,0.5)';
+    btn.style.color = 'var(--accent)';
+    icon.className = 'fas fa-bookmark';
+    label.textContent = 'Tersimpan';
   } else {
-    btn.childNodes[0].textContent = 'Read More ';
-    arrow.style.transform = '';
+    btn.style.background = 'rgba(255,255,255,0.08)';
+    btn.style.borderColor = 'rgba(255,255,255,0.12)';
+    btn.style.color = 'rgba(255,255,255,0.7)';
+    icon.className = 'far fa-bookmark';
+    label.textContent = 'Simpan';
   }
 }
-
-// ── Bookmark/Koleksi
-var bookmarked = false;
 function toggleKoleksi() {
-  fetch('/api/koleksi/{{ slug }}', { method: bookmarked ? 'DELETE' : 'POST' })
-    .then(function(r){ return r.json(); })
-    .then(function(d) {
-      if (d.ok) {
-        bookmarked = !bookmarked;
-        var icon = document.getElementById('bookmarkIcon');
-        if (icon) icon.className = bookmarked ? 'fas fa-heart' : 'far fa-heart';
-        var saveBtn = document.getElementById('saveBtn');
-        if (saveBtn) saveBtn.classList.toggle('saved', bookmarked);
-      }
-    }).catch(function(){});
+  let data = getKoleksi();
+  if (isInKoleksi()) { data = data.filter(a => a.slug !== ANIME_SLUG); showToast('Dihapus dari koleksi'); }
+  else { data.unshift(ANIME_DATA); showToast('Ditambahkan ke koleksi!'); }
+  localStorage.setItem(KOLEKSI_KEY, JSON.stringify(data));
+  updateBookmarkUI();
+}
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 20px;border-radius:50px;font-size:13px;font-weight:700;z-index:99999;white-space:nowrap;pointer-events:none;opacity:1;transition:opacity 0.3s;';
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 1800);
 }
 
-// Check koleksi status
-fetch('/api/koleksi/check/{{ slug }}')
-  .then(function(r){ return r.json(); })
-  .then(function(d) {
-    if (d.saved) {
-      bookmarked = true;
-      var icon = document.getElementById('bookmarkIcon');
-      if (icon) icon.className = 'fas fa-heart';
-      var saveBtn = document.getElementById('saveBtn');
-      if (saveBtn) saveBtn.classList.add('saved');
-    }
-  }).catch(function(){});
+let synExpanded = false;
+function toggleSynopsis() {
+  const el = document.getElementById('synopsisText');
+  const btn = document.getElementById('synopsisToggle');
+  synExpanded = !synExpanded;
+  el.classList.toggle('expanded', synExpanded);
+  btn.innerHTML = synExpanded
+    ? 'Sembunyikan <i class="fas fa-chevron-up" style="font-size:10px;"></i>'
+    : 'Selengkapnya <i class="fas fa-chevron-down" style="font-size:10px;"></i>';
+}
+
+function toggleEps() {
+  const hidden = document.querySelectorAll('#epGrid [data-hidden]');
+  const btn = document.getElementById('epToggleBtn');
+  const isHidden = hidden[0]?.style.display === 'none';
+  hidden.forEach(el => el.style.display = isHidden ? '' : 'none');
+  if (btn) btn.textContent = isHidden ? 'Sembunyikan' : 'Tampilkan Semua';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  updateBookmarkUI();
+  const syn = document.getElementById('synopsisText');
+  const btn = document.getElementById('synopsisToggle');
+  if (syn && btn && syn.scrollHeight <= syn.clientHeight + 5) btn.style.display = 'none';
+});
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function() {
+  var SUPABASE_URL = 'https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+
+  var animeSlug = '{{ data.detail.slug if data and data.detail else "" }}';
+  if (!animeSlug) return;
+
+  var client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  var uid = sessionStorage.getItem('dyn_uid');
+  if (!uid) {
+    uid = 'u_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    sessionStorage.setItem('dyn_uid', uid);
+  }
+
+  var channel = client.channel('anime-viewers:' + animeSlug, {
+    config: { presence: { key: uid } }
+  });
+
+  channel.on('presence', { event: 'sync' }, function() {
+    var state = channel.presenceState();
+    var count = Object.keys(state).length;
+    var bar = document.getElementById('detailViewerBar');
+    var countEl = document.getElementById('detailViewerCount');
+    if (!bar || !countEl) return;
+    if (count >= 1) {
+      countEl.textContent = count;
+      bar.style.display = 'inline-flex';
+    } else {
+      bar.style.display = 'none';
+    }
+  });
+
+  channel.subscribe(function(status) {
+    if (status === 'SUBSCRIBED') {
+      channel.track({ page: 'detail', slug: animeSlug, at: Date.now() });
+    }
+  });
+
+  window.addEventListener('beforeunload', function() {
+    try { channel.untrack(); client.removeChannel(channel); } catch(e) {}
+  });
+})();
+</script>
+
+<!-- CHAT: set room & user lalu load chat.js -->
+<script>
+  window.CHAT_ROOM_ID = 'anime-{{ slug }}';
+  {% if session.get('user') %}
+  window.CHAT_USER = {
+    id:     '{{ session["user"]["id"] }}',
+    name:   '{{ session["user"]["name"] | e }}',
+    avatar: '{{ session["user"].get("avatar", "") | e }}'
+  };
+  {% else %}
+  window.CHAT_USER = null;
+  {% endif %}
+</script>
+<script src="{{ url_for('static', filename='js/chat.js') }}?v=1"></script>
 {% endblock %}
