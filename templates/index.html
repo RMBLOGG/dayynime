@@ -1,15 +1,11 @@
 {% extends "base.html" %}
-{% block title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
-{% block og_type %}video.tv_show{% endblock %}
-{% block og_title %}{{ data.detail.title if data else 'Detail' }} - Dayynime{% endblock %}
-{% block og_description %}{{ data.detail.synopsis[:150] ~ '...' if data and data.detail and data.detail.synopsis else 'Nonton anime subtitle Indonesia gratis di Dayynime.' }}{% endblock %}
-{% block og_image %}{{ data.detail.poster if data and data.detail and data.detail.poster else 'https://dayynime.vercel.app/static/banner.png' }}{% endblock %}
+{% block title %}Dayynime — Nonton Anime Sub Indo{% endblock %}
 
 {% block head %}
 <style>
 /* ════════════════════════════════════════
-   DETAIL PAGE — APP CLONE STYLE
-   Black + Crimson + Salmon palette
+   APP CLONE REDESIGN — Black + Crimson/Salmon
+   Inspired by the app screenshots provided
    ════════════════════════════════════════ */
 
 :root {
@@ -28,617 +24,646 @@
   --app-text3:    #606068;
 }
 
+/* Override body background */
 body { background: var(--app-black) !important; }
 
-/* ── HERO BACKDROP ── */
-.det-hero {
+/* ── USER GREETING CARD ─── */
+.app-greeting-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 14px 0;
+  padding: 12px 14px;
+  background: var(--app-card);
+  border-radius: 14px;
+  border: 1px solid var(--app-border);
+}
+.app-greeting-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.app-greeting-avatar {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: #2a1a1e;
+  border: 1px solid var(--app-crimson);
+  display: flex; align-items: center; justify-content: center;
+}
+.app-greeting-avatar i { color: var(--app-salmon); font-size: 18px; }
+.app-greeting-welcome { font-size: 11px; color: var(--app-text2); font-weight: 600; }
+.app-greeting-name { font-size: 14px; color: var(--app-text); font-weight: 900; margin-top: 1px; }
+
+.app-greeting-actions { display: flex; gap: 8px; }
+.app-greeting-btn {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; cursor: pointer;
+  font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--app-crimson);
+  color: #fff;
+}
+.app-greeting-btn.secondary { background: #2a1520; color: var(--app-salmon); border: 1px solid rgba(190,30,45,0.3); }
+
+/* ── DISCOVER ANIME BANNER ─── */
+.app-discover-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 14px;
+  padding: 12px 14px;
+  background: var(--app-card);
+  border-radius: 14px;
+  border: 1px solid var(--app-border);
+}
+.app-discover-left { display: flex; align-items: center; gap: 12px; }
+.app-discover-icon {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: linear-gradient(135deg, #e85c72, #c23050);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #fff;
+  flex-shrink: 0;
+}
+.app-discover-title { font-size: 14px; font-weight: 900; color: var(--app-text); }
+.app-discover-sub { font-size: 11px; color: var(--app-text2); margin-top: 2px; }
+.app-discover-right { display: flex; align-items: center; gap: 8px; }
+.app-discover-count {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--app-card2); border-radius: 10px;
+  padding: 6px 10px; position: relative;
+}
+.app-discover-count-badge {
+  position: absolute; top: -6px; right: -6px;
+  background: var(--app-crimson); color: #fff;
+  font-size: 9px; font-weight: 900;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.app-discover-count i { color: var(--app-text2); font-size: 16px; }
+.app-discover-arrow { color: var(--app-text3); font-size: 13px; }
+
+/* ── TRENDING PILL ─── */
+.app-trending-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 14px 12px;
+  background: var(--app-crimson);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+.app-trending-pill i { font-size: 11px; }
+.app-trending-pill span { font-size: 10px; opacity: 0.8; margin-left: 2px; }
+
+/* ── HERO BANNER (APP STYLE) ─── */
+.app-hero-slider {
   position: relative;
-  width: 100%;
-  min-height: 280px;
   overflow: hidden;
+  margin: 0 14px;
+  border-radius: 18px;
 }
-.det-hero-backdrop {
-  position: absolute; inset: 0;
+.app-hero-track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
 }
-.det-hero-backdrop img {
+.app-hero-slide {
+  min-width: 100%;
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  text-decoration: none;
+}
+.app-hero-slide img.app-hero-bg {
   width: 100%; height: 100%;
   object-fit: cover;
-  filter: blur(20px) brightness(0.2);
-  transform: scale(1.2);
+  object-position: center 20%;
+  display: block;
 }
-.det-hero-backdrop::after {
+.app-hero-slide::after {
   content: '';
   position: absolute; inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(13,13,13,0.2) 0%,
-    rgba(13,13,13,0.7) 60%,
-    rgba(13,13,13,1) 100%
+    transparent 30%,
+    rgba(13,13,13,0.5) 60%,
+    rgba(13,13,13,0.95) 100%
   );
+  border-radius: 18px;
 }
-
-/* Back + action btns top row */
-.det-top-bar {
-  position: relative; z-index: 4;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px;
+.app-hero-rating {
+  position: absolute; top: 12px; right: 12px; z-index: 3;
+  background: var(--app-crimson);
+  color: #fff; font-size: 12px; font-weight: 900;
+  padding: 5px 10px; border-radius: 10px;
+  display: flex; align-items: center; gap: 4px;
 }
-.det-top-btn {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: rgba(255,255,255,0.12);
-  border: none; color: #fff; font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  backdrop-filter: blur(10px);
+.app-hero-content {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  padding: 16px;
 }
-.det-top-actions { display: flex; gap: 10px; }
-
-/* Poster + Info Layout */
-.det-hero-body {
-  position: relative; z-index: 4;
-  display: flex; gap: 14px;
-  padding: 0 16px 20px;
-  align-items: flex-end;
-}
-.det-poster {
-  width: 110px; flex-shrink: 0;
-}
-.det-poster img {
-  width: 110px; height: 155px;
-  border-radius: 10px;
-  object-fit: cover; display: block;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.9);
-}
-.det-info { flex: 1; min-width: 0; padding-bottom: 4px; }
-.det-title {
+.app-hero-title {
   font-size: 17px; font-weight: 900;
   color: #fff; line-height: 1.25;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+.app-hero-meta {
+  display: flex; gap: 7px; flex-wrap: wrap;
+}
+.app-hero-meta-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 11px; color: #fff; font-weight: 700;
+}
+.app-hero-meta-pill i { font-size: 10px; opacity: 0.8; }
+
+/* Hero dots */
+.app-hero-dots {
+  display: flex; justify-content: center;
+  gap: 5px; margin: 10px 0 0;
+  padding: 0 14px;
+}
+.app-hero-dot {
+  width: 6px; height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,0.2);
+  border: none; cursor: pointer; padding: 0;
+  transition: all 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.app-hero-dot.active {
+  width: 22px;
+  background: var(--app-salmon);
+}
+
+/* ── SECTION HEADING ─── */
+.app-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 14px 12px;
+}
+.app-section-title {
+  font-size: 17px; font-weight: 900; color: var(--app-text);
+}
+.app-section-more {
+  font-size: 11px; color: var(--app-salmon);
+  font-weight: 700; text-decoration: none;
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* ── TRENDING ANIME CARDS (Portrait) ─── */
+.app-trending-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.app-trending-row::-webkit-scrollbar { display: none; }
+
+.app-tcard {
+  flex-shrink: 0;
+  width: 140px;
+  text-decoration: none;
+  color: inherit;
+}
+.app-tcard-poster {
+  width: 140px; height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  background: var(--app-card);
+}
+.app-tcard-poster img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.app-tcard-poster::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(13,13,13,0.85) 100%);
+}
+.app-tcard-rating {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  background: var(--app-crimson);
+  color: #fff; font-size: 10px; font-weight: 900;
+  padding: 3px 7px; border-radius: 7px;
+  display: flex; align-items: center; gap: 3px;
+}
+.app-tcard-info {
+  position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 2;
+  color: #fff;
+}
+.app-tcard-info-title {
+  font-size: 11px; font-weight: 900;
+  line-height: 1.25;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
   margin-bottom: 4px;
 }
-.det-title-jp {
-  font-size: 10px; color: var(--app-text2);
-  margin-bottom: 8px; line-height: 1.4;
-}
-.det-score-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 8px; flex-wrap: wrap;
-}
-.det-score {
+.app-tcard-info-ep {
   display: flex; align-items: center; gap: 4px;
-  font-size: 13px; font-weight: 900;
-  color: var(--app-gold);
+  font-size: 10px; color: rgba(255,255,255,0.65);
 }
-.det-score i { font-size: 11px; }
-.det-meta-dot { font-size: 10px; color: var(--app-text3); }
-.det-meta-info { font-size: 11px; color: var(--app-text2); }
-.det-genre-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.det-genre-chip {
-  padding: 4px 10px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  font-size: 10px; font-weight: 700;
-  color: var(--app-text2);
-  text-decoration: none;
-}
+.app-tcard-info-ep i { font-size: 9px; }
 
-/* ── NEXT EPISODE BANNER ── */
-.det-next-ep {
-  margin: 0 14px 14px;
-  background: linear-gradient(135deg, #1e0a0d, #2a0d13);
-  border: 1px solid rgba(190,30,45,0.4);
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex; align-items: center; gap: 14px;
+/* ── POPULAR ANIME CARDS (Horizontal List) ─── */
+.app-popular-list {
+  padding: 0 14px;
+  display: flex; flex-direction: column; gap: 0;
 }
-.det-next-ep-icon {
-  width: 44px; height: 44px;
-  background: rgba(190,30,45,0.2);
-  border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--app-salmon);
-  font-size: 18px;
-}
-.det-next-ep-label {
-  font-size: 11px; font-weight: 900; color: var(--app-salmon);
-  letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px;
-}
-.det-next-ep-time {
-  font-size: 15px; font-weight: 900; color: #fff;
-}
-.det-next-ep-time span { color: var(--app-salmon); }
-
-/* ── ACTION BUTTONS ── */
-.det-actions {
-  display: flex; gap: 10px;
-  padding: 0 14px 20px;
-}
-.det-btn-watch {
-  flex: 1;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: var(--app-salmon);
-  color: #fff; font-weight: 900; font-size: 14px;
-  padding: 13px 18px; border-radius: 14px;
-  border: none; cursor: pointer;
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.det-btn-watch i { font-size: 16px; }
-.det-btn-save {
-  width: 52px; height: 52px; border-radius: 14px;
-  background: var(--app-card);
-  border: 1px solid var(--app-border);
-  color: var(--app-text2); font-size: 18px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  flex-shrink: 0;
-}
-.det-btn-save.saved { background: rgba(190,30,45,0.15); border-color: rgba(190,30,45,0.4); color: var(--app-crimson); }
-
-/* ── SYNOPSIS ── */
-.det-section { padding: 0 14px 20px; }
-.det-section-title {
-  font-size: 16px; font-weight: 900; color: var(--app-text);
-  margin-bottom: 10px;
-}
-.det-synopsis-text {
-  font-size: 13px; color: var(--app-text2); line-height: 1.7;
-  display: -webkit-box; -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical; overflow: hidden;
-}
-.det-synopsis-text.expanded {
-  -webkit-line-clamp: unset; overflow: visible;
-}
-.det-read-more {
-  background: none; border: none; color: var(--app-salmon);
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  padding: 6px 0; display: flex; align-items: center; gap: 4px;
-  font-family: inherit;
-}
-
-/* ── TABS ── */
-.det-tabs {
-  position: sticky; bottom: var(--bottom-h); z-index: 10;
-  display: flex;
-  border-top: 1px solid var(--app-border);
-  background: var(--app-black);
-}
-.det-tab {
-  flex: 1; padding: 14px 0;
-  text-align: center; font-size: 12px; font-weight: 700;
-  color: var(--app-text3); cursor: pointer;
-  border: none; background: none; font-family: inherit;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
-}
-.det-tab.active { color: var(--app-salmon); }
-.det-tab.active::after {
-  content: '';
-  position: absolute; bottom: 0; left: 20%; right: 20%;
-  height: 2px; background: var(--app-salmon);
-  border-radius: 2px;
-}
-.det-tab-panel { display: none; }
-.det-tab-panel.active { display: block; }
-
-/* ── EPISODES TAB ── */
-.ep-header {
-  padding: 16px 14px 12px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.ep-header-title { font-size: 15px; font-weight: 900; color: var(--app-text); }
-.ep-header-right { display: flex; gap: 8px; align-items: center; }
-.ep-layout-btn {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--app-card); border: 1px solid var(--app-border);
-  color: var(--app-text2); font-size: 13px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-}
-
-.ep-filter-row {
-  display: flex; gap: 8px; padding: 0 14px 12px;
-  overflow-x: auto; scrollbar-width: none;
-}
-.ep-filter-row::-webkit-scrollbar { display: none; }
-.ep-filter-pill {
-  display: flex; align-items: center; gap: 5px;
-  padding: 7px 14px; border-radius: 20px; flex-shrink: 0;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  border: 1px solid var(--app-border);
-  background: var(--app-card); color: var(--app-text2);
-  -webkit-tap-highlight-color: transparent;
-}
-.ep-filter-pill.active { background: var(--app-crimson); border-color: var(--app-crimson); color: #fff; }
-.ep-filter-pill i { font-size: 10px; }
-
-/* Episode list items */
-.ep-list { padding: 0 14px; }
-.ep-item {
+.app-pcard {
   display: flex; align-items: center; gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid var(--app-border);
   text-decoration: none; color: inherit;
 }
-.ep-item:last-child { border-bottom: none; }
-.ep-thumb {
-  width: 110px; height: 68px;
-  border-radius: 10px; overflow: hidden;
-  flex-shrink: 0; background: var(--app-card);
-  position: relative;
+.app-pcard:last-child { border-bottom: none; }
+.app-pcard-rank {
+  width: 32px; flex-shrink: 0;
+  font-size: 22px; font-weight: 900;
+  text-align: center; line-height: 1;
+  color: var(--app-crimson);
 }
-.ep-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ep-thumb-num {
-  position: absolute; bottom: 4px; left: 4px;
-  background: rgba(0,0,0,0.8); color: #fff;
-  font-size: 9px; font-weight: 900;
-  width: 18px; height: 18px; border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
+.app-pcard-rank.r1 { color: #ffd700; }
+.app-pcard-rank.r2 { color: #c0c0c0; }
+.app-pcard-rank.r3 { color: #cd7f32; }
+.app-pcard-thumb {
+  width: 52px; height: 72px; border-radius: 10px;
+  overflow: hidden; flex-shrink: 0; background: var(--app-card);
 }
-.ep-info { flex: 1; min-width: 0; }
-.ep-name { font-size: 13px; font-weight: 800; color: var(--app-text); margin-bottom: 4px; }
-.ep-meta { font-size: 11px; color: var(--app-text3); }
-.ep-more-btn {
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--app-text3); font-size: 16px;
-  flex-shrink: 0;
+.app-pcard-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.app-pcard-info { flex: 1; min-width: 0; }
+.app-pcard-title {
+  font-size: 13px; font-weight: 800; color: var(--app-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 5px;
 }
+.app-pcard-rating {
+  display: flex; align-items: center; gap: 5px;
+}
+.app-pcard-rating-stars { display: flex; gap: 2px; }
+.app-pcard-rating-stars i { color: var(--app-gold); font-size: 9px; }
+.app-pcard-rating-num { font-size: 11px; color: var(--app-text2); font-weight: 700; }
+.app-pcard-bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.07); margin-top: 5px; overflow: hidden; }
+.app-pcard-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--app-crimson), var(--app-salmon)); }
 
-/* ── CHARACTERS TAB ── */
-.char-grid {
+/* ── GENRE CHIPS ─── */
+.app-genre-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  padding: 16px 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 14px;
 }
-.char-card {
+.app-genre-chip {
+  display: flex; align-items: center; justify-content: center;
+  gap: 5px;
+  padding: 10px 6px;
   background: var(--app-card);
-  border-radius: 12px;
-  overflow: hidden;
   border: 1px solid var(--app-border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--app-text2);
+  font-size: 11px; font-weight: 700;
+  transition: all 0.18s;
+  text-align: center;
 }
-.char-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
-.char-name {
-  padding: 8px 10px;
+.app-genre-chip i { font-size: 10px; color: var(--app-salmon); }
+.app-genre-chip:active { background: rgba(190,30,45,0.1); border-color: rgba(190,30,45,0.3); color: var(--app-salmon); }
+
+/* ── ONGOING HORIZONTAL SCROLL ─── */
+.app-ongoing-row {
+  display: flex; gap: 10px;
+  padding: 0 14px;
+  overflow-x: auto; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.app-ongoing-row::-webkit-scrollbar { display: none; }
+.app-ocard {
+  flex-shrink: 0; width: 120px;
+  text-decoration: none; color: inherit;
+}
+.app-ocard-thumb {
+  width: 120px; height: 168px; border-radius: 12px;
+  overflow: hidden; position: relative;
+  background: var(--app-card);
+}
+.app-ocard-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.app-ocard-ep {
+  position: absolute; bottom: 6px; left: 6px;
+  background: var(--app-crimson); color: #fff;
+  font-size: 9px; font-weight: 900;
+  padding: 2px 6px; border-radius: 5px;
+}
+.app-ocard-title {
   font-size: 11px; font-weight: 800; color: var(--app-text);
+  margin-top: 7px; line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
 }
-.char-role {
-  padding: 0 10px 8px;
-  font-size: 10px; color: var(--app-salmon); font-weight: 700;
+.app-ocard-sub {
+  font-size: 9px; color: var(--app-text3); margin-top: 2px;
 }
 
-/* ── STICKY WATCH NOW BTN ── */
-.det-sticky-watch {
-  position: fixed;
-  bottom: calc(var(--bottom-h) + 12px);
-  right: 14px;
-  z-index: 100;
-}
-.det-sticky-watch a {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--app-salmon);
-  color: #fff; font-weight: 900; font-size: 13px;
-  padding: 12px 18px; border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(240,128,128,0.4);
-  text-decoration: none;
-}
-.det-sticky-watch i { font-size: 15px; }
+/* ── SECTION SPACER ─── */
+.app-section { margin-bottom: 4px; }
+.app-bottom-space { height: 20px; }
 </style>
 {% endblock %}
 
 {% block content %}
-{% if data and data.detail %}
-{% set d = data.detail %}
-{% set info = d.info %}
 
-<!-- ── HERO ── -->
-<div class="det-hero">
-  <div class="det-hero-backdrop">
-    <img src="{{ d.poster }}" alt="">
-  </div>
-
-  <!-- Top bar -->
-  <div class="det-top-bar">
-    <button class="det-top-btn" onclick="history.back()">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-    <div class="det-top-actions">
-      <button class="det-top-btn" id="bookmarkBtn" onclick="toggleKoleksi()">
-        <i class="far fa-heart" id="bookmarkIcon"></i>
-      </button>
-      <button class="det-top-btn">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- Hero body: poster + info -->
-  <div class="det-hero-body">
-    <div class="det-poster">
-      <img src="{{ d.poster }}" alt="{{ d.title }}" onerror="this.src='/static/no-image.svg'">
-    </div>
-    <div class="det-info">
-      <div class="det-title">{{ d.title }}</div>
-      {% if d.title_jp %}<div class="det-title-jp">{{ d.title_jp }}</div>{% endif %}
-      <div class="det-score-row">
-        {% if info.score %}
-        <div class="det-score"><i class="fas fa-star"></i> {{ info.score }}</div>
-        <span class="det-meta-dot">·</span>
-        {% endif %}
-        {% if info.released %}<span class="det-meta-info">{{ info.released[:4] if info.released|length > 4 else info.released }}</span><span class="det-meta-dot">·</span>{% endif %}
-        {% if info.type %}<span class="det-meta-info">{{ info.type }}</span>{% endif %}
-        {% if info.total_episode %}<span class="det-meta-dot">·</span><span class="det-meta-info">{{ info.total_episode }} eps</span>{% endif %}
-        {% if info.status %}<span class="det-meta-dot">·</span><span class="det-meta-info" style="color:{% if 'ongoing' in info.status|lower or 'airing' in info.status|lower %}#4ade80{% else %}#60a5fa{% endif %};">{{ info.status|upper }}</span>{% endif %}
-      </div>
-      {% if d.genres %}
-      <div class="det-genre-chips">
-        {% for g in d.genres[:3] %}
-        <a href="/genre/{{ g.slug }}" class="det-genre-chip">{{ g.name }}</a>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-  </div>
-</div>
-
-<!-- ── NEXT EP COUNTDOWN (if ongoing) ── -->
-{% if info.status and ('ongoing' in info.status|lower or 'airing' in info.status|lower) %}
-{% if d.episodes %}
-<div class="det-next-ep">
-  <div class="det-next-ep-icon"><i class="fas fa-clock"></i></div>
-  <div>
-    <div class="det-next-ep-label">Episode {{ (d.episodes|length + 1) }}</div>
-    <div class="det-next-ep-time">Airing in <span id="detCountdown">loading...</span></div>
-  </div>
-</div>
-<script>
-(function() {
-  // Simulate countdown (7 days from now by default)
-  var target = new Date(Date.now() + 7 * 24 * 3600 * 1000);
-  function update() {
-    var diff = Math.max(0, target - Date.now());
-    var d = Math.floor(diff / 86400000);
-    var h = Math.floor((diff % 86400000) / 3600000);
-    var m = Math.floor((diff % 3600000) / 60000);
-    document.getElementById('detCountdown').textContent = d + 'd ' + h + 'h ' + m + 'm';
-  }
-  update(); setInterval(update, 60000);
-})();
-</script>
+{% set banner_animes = [] %}
+{% if popular and popular.animes %}
+  {% for a in popular.animes[:5] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
+{% if banner_animes|length < 3 and data and data.ongoing %}
+  {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 
-<!-- ── ACTIONS ── -->
-<div class="det-actions">
-  {% if d.episodes %}
-  {% set last_ep = d.episodes[0] %}
-  {% if is_locked and not is_premium %}
-  <a href="/premium" class="det-btn-watch">
-    <i class="fas fa-lock"></i> Premium Only
-  </a>
-  {% else %}
-  <a href="/episode/{{ last_ep.slug }}?anime={{ slug }}" class="det-btn-watch">
-    <i class="fas fa-play"></i> Watch Now
-  </a>
-  {% endif %}
-  {% endif %}
-  <button class="det-btn-save" id="saveBtn" onclick="toggleKoleksi()">
-    <i class="fas fa-bookmark"></i>
-  </button>
-</div>
-
-<!-- ── TABS ── -->
-<div class="det-tabs" id="detTabs">
-  <button class="det-tab active" data-tab="about" onclick="switchTab('about')">About</button>
-  <button class="det-tab" data-tab="episodes" onclick="switchTab('episodes')">Episodes</button>
-  <button class="det-tab" data-tab="characters" onclick="switchTab('characters')">Characters</button>
-</div>
-
-<!-- ── TAB: ABOUT ── -->
-<div class="det-tab-panel active" id="tabAbout">
-  <!-- Synopsis -->
-  {% if d.synopsis %}
-  <div class="det-section">
-    <div class="det-section-title">Synopsis</div>
-    <div class="det-synopsis-text" id="synopsisText">{{ d.synopsis }}</div>
-    <button class="det-read-more" id="synopsisToggle" onclick="toggleSynopsis()">
-      Read More <i class="fas fa-chevron-down" style="font-size:10px;" id="synopsisArrow"></i>
+<!-- ── USER GREETING ── -->
+<div class="app-greeting-bar">
+  <div class="app-greeting-left">
+    <div class="app-greeting-avatar">
+      <i class="fas fa-user"></i>
+    </div>
+    <div>
+      <div class="app-greeting-welcome">Selamat datang!</div>
+      <div class="app-greeting-name" id="appGreetingName">Guest</div>
+    </div>
+  </div>
+  <div class="app-greeting-actions">
+    <button class="app-greeting-btn secondary" onclick="openHeaderSearch()" title="Cari">
+      <i class="fas fa-search"></i>
+    </button>
+    <button class="app-greeting-btn" onclick="openSidebar()" title="Menu">
+      <i class="fas fa-bars"></i>
     </button>
   </div>
-  {% endif %}
-
-  <!-- Meta Info -->
-  <div class="det-section">
-    <div class="det-section-title">Information</div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      {% if info.studio %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Studio</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.studio }}</span>
-      </div>
-      {% endif %}
-      {% if info.duration %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Duration</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.duration }}</span>
-      </div>
-      {% endif %}
-      {% if info.released %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Aired</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.released }}</span>
-      </div>
-      {% endif %}
-      {% if info.season %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Season</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.season }}</span>
-      </div>
-      {% endif %}
-      {% if info.total_episode %}
-      <div style="display:flex;gap:12px;">
-        <span style="font-size:12px;color:var(--app-text3);width:80px;flex-shrink:0;">Episodes</span>
-        <span style="font-size:12px;color:var(--app-text);font-weight:700;">{{ info.total_episode }}</span>
-      </div>
-      {% endif %}
-    </div>
-  </div>
-
-  <!-- Trailer -->
-  {% if d.trailer %}
-  <div class="det-section">
-    <div class="det-section-title">Trailer</div>
-    <div style="aspect-ratio:16/9;border-radius:14px;overflow:hidden;">
-      <iframe src="https://www.youtube.com/embed/{{ d.trailer.split('v=')[-1] if 'v=' in d.trailer else d.trailer.split('/')[-1] }}"
-        width="100%" height="100%" style="border:none;" allowfullscreen></iframe>
-    </div>
-  </div>
-  {% endif %}
 </div>
 
-<!-- ── TAB: EPISODES ── -->
-<div class="det-tab-panel" id="tabEpisodes">
-  {% if d.episodes %}
-  <div class="ep-header">
-    <div class="ep-header-title">{{ d.episodes|length }} Episodes</div>
-    <div class="ep-header-right">
-      <button class="ep-layout-btn"><i class="fas fa-list"></i></button>
-      <button class="ep-layout-btn" style="transform:scaleY(-1);"><i class="fas fa-arrow-up"></i></button>
+<!-- ── DISCOVER ANIME BAR ── -->
+<a href="/animelist" class="app-discover-bar">
+  <div class="app-discover-left">
+    <div class="app-discover-icon">
+      <i class="fas fa-compass"></i>
+    </div>
+    <div>
+      <div class="app-discover-title">Discover Anime</div>
+      <div class="app-discover-sub">Temukan serial favoritmu</div>
     </div>
   </div>
-
-  <!-- Filter pills -->
-  <div class="ep-filter-row">
-    <div class="ep-filter-pill active">
-      <i class="fas fa-check"></i> All
+  <div class="app-discover-right">
+    <div class="app-discover-count">
+      <i class="fas fa-layer-group"></i>
+      <div class="app-discover-count-badge">96</div>
     </div>
-    {% if d.episodes|length > 50 %}
-    <div class="ep-filter-pill">1–50</div>
-    <div class="ep-filter-pill">51–{{ d.episodes|length }}</div>
-    {% elif d.episodes|length > 25 %}
-    <div class="ep-filter-pill">1–25</div>
-    <div class="ep-filter-pill">26–{{ d.episodes|length }}</div>
-    {% endif %}
+    <i class="fas fa-chevron-right app-discover-arrow"></i>
   </div>
+</a>
 
-  <!-- Episode items -->
-  <div class="ep-list">
-    {% for ep in d.episodes %}
-    <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="ep-item">
-      <div class="ep-thumb">
-        <img src="{{ d.poster }}" alt="{{ ep.name }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        <div class="ep-thumb-num">{{ loop.index }}</div>
+<!-- ── TRENDING PILL ── -->
+<div>
+  <div class="app-trending-pill">
+    <i class="fas fa-star"></i> Trending
+    <span>25</span>
+  </div>
+</div>
+
+<!-- ── HERO BANNER ── -->
+{% if banner_animes %}
+<div class="app-hero-slider" id="appHeroSlider">
+  <div class="app-hero-track" id="appHeroTrack">
+    {% for anime in banner_animes[:6] %}
+    <a href="/anime/{{ anime.slug }}" class="app-hero-slide">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" class="app-hero-bg"
+           onerror="this.src='/static/no-image.svg'">
+      <div class="app-hero-rating">
+        <i class="fas fa-star"></i>
+        {{ anime.score or '7.2' }}
       </div>
-      <div class="ep-info">
-        <div class="ep-name">{{ ep.name or 'Episode ' ~ loop.index }}</div>
-        <div class="ep-meta">
-          <i class="fas fa-clock" style="font-size:9px;margin-right:3px;"></i>
-          {% if ep.date %}{{ ep.date }}{% else %}Episode {{ loop.index }}{% endif %}
+      <div class="app-hero-content">
+        <div class="app-hero-title">{{ anime.title }}</div>
+        <div class="app-hero-meta">
+          {% if anime.episode %}
+          <div class="app-hero-meta-pill">
+            <i class="fas fa-film"></i> {{ anime.episode }} Episodes
+          </div>
+          {% endif %}
+          <div class="app-hero-meta-pill">
+            <i class="fas fa-clock"></i> 24 min
+          </div>
+          {% if anime.type %}
+          <div class="app-hero-meta-pill">
+            <i class="fas fa-tv"></i> {{ anime.type }}
+          </div>
+          {% endif %}
         </div>
       </div>
-      <div class="ep-more-btn"><i class="fas fa-ellipsis-v"></i></div>
     </a>
     {% endfor %}
   </div>
-  {% else %}
-  <div style="padding:40px 14px;text-align:center;color:var(--app-text3);">
-    <i class="fas fa-film" style="font-size:32px;margin-bottom:12px;display:block;"></i>
-    Belum ada episode
-  </div>
-  {% endif %}
 </div>
 
-<!-- ── TAB: CHARACTERS ── -->
-<div class="det-tab-panel" id="tabCharacters">
-  {% if d.characters %}
-  <div class="char-grid">
-    {% for char in d.characters[:12] %}
-    <div class="char-card">
-      <img src="{{ char.image or '/static/no-image.svg' }}" alt="{{ char.name }}" class="char-img"
-           onerror="this.src='/static/no-image.svg'">
-      <div class="char-name">{{ char.name }}</div>
-      <div class="char-role">{{ char.role or 'Main' }}</div>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div style="padding:40px 14px;text-align:center;color:var(--app-text3);">
-    <i class="fas fa-users" style="font-size:32px;margin-bottom:12px;display:block;"></i>
-    Data karakter tidak tersedia
-  </div>
-  {% endif %}
+<!-- Hero Dots -->
+<div class="app-hero-dots" id="appHeroDots">
+  {% for anime in banner_animes[:6] %}
+  <button class="app-hero-dot {% if loop.first %}active{% endif %}" data-idx="{{ loop.index0 }}"></button>
+  {% endfor %}
 </div>
-
-<!-- ── STICKY WATCH NOW ── -->
-{% if d.episodes and (not is_locked or is_premium) %}
-{% set last_ep = d.episodes[0] %}
-<div class="det-sticky-watch">
-  <a href="/episode/{{ last_ep.slug }}?anime={{ slug }}">
-    <i class="fas fa-play"></i> Watch Now
-  </a>
-</div>
-{% endif %}
-
-{% else %}
-<div style="padding:60px 14px;text-align:center;color:var(--app-text3);">
-  <i class="fas fa-exclamation-circle" style="font-size:40px;margin-bottom:16px;display:block;color:var(--app-crimson);"></i>
-  <div style="font-size:16px;font-weight:700;color:var(--app-text);">Anime tidak ditemukan</div>
-</div>
-{% endif %}
 
 <script>
-// ── Tab switching
-function switchTab(tab) {
-  document.querySelectorAll('.det-tab').forEach(function(t) {
-    t.classList.toggle('active', t.getAttribute('data-tab') === tab);
-  });
-  document.querySelectorAll('.det-tab-panel').forEach(function(p) {
-    p.classList.toggle('active', p.id === 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-  });
-}
+(function() {
+  var track = document.getElementById('appHeroTrack');
+  var dots = document.querySelectorAll('.app-hero-dot');
+  var total = dots.length;
+  var cur = 0;
+  var timer;
 
-// ── Synopsis toggle
-function toggleSynopsis() {
-  var text = document.getElementById('synopsisText');
-  var btn = document.getElementById('synopsisToggle');
-  var arrow = document.getElementById('synopsisArrow');
-  if (text.classList.toggle('expanded')) {
-    btn.childNodes[0].textContent = 'Show Less ';
-    arrow.style.transform = 'rotate(180deg)';
-  } else {
-    btn.childNodes[0].textContent = 'Read More ';
-    arrow.style.transform = '';
+  function go(idx) {
+    cur = (idx + total) % total;
+    track.style.transform = 'translateX(-' + (cur * 100) + '%)';
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === cur); });
   }
-}
 
-// ── Bookmark/Koleksi
-var bookmarked = false;
-function toggleKoleksi() {
-  fetch('/api/koleksi/{{ slug }}', { method: bookmarked ? 'DELETE' : 'POST' })
-    .then(function(r){ return r.json(); })
-    .then(function(d) {
-      if (d.ok) {
-        bookmarked = !bookmarked;
-        var icon = document.getElementById('bookmarkIcon');
-        if (icon) icon.className = bookmarked ? 'fas fa-heart' : 'far fa-heart';
-        var saveBtn = document.getElementById('saveBtn');
-        if (saveBtn) saveBtn.classList.toggle('saved', bookmarked);
-      }
-    }).catch(function(){});
-}
+  function autoPlay() { timer = setTimeout(function() { go(cur + 1); autoPlay(); }, 4000); }
 
-// Check koleksi status
-fetch('/api/koleksi/check/{{ slug }}')
-  .then(function(r){ return r.json(); })
-  .then(function(d) {
-    if (d.saved) {
-      bookmarked = true;
-      var icon = document.getElementById('bookmarkIcon');
-      if (icon) icon.className = 'fas fa-heart';
-      var saveBtn = document.getElementById('saveBtn');
-      if (saveBtn) saveBtn.classList.add('saved');
+  dots.forEach(function(d) {
+    d.addEventListener('click', function() {
+      clearTimeout(timer);
+      go(parseInt(this.getAttribute('data-idx')));
+      autoPlay();
+    });
+  });
+
+  var slider = document.getElementById('appHeroSlider');
+  var startX = 0;
+  slider.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; clearTimeout(timer); }, {passive: true});
+  slider.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) go(dx < 0 ? cur + 1 : cur - 1);
+    autoPlay();
+  }, {passive: true});
+
+  autoPlay();
+})();
+</script>
+{% endif %}
+
+<!-- ── TRENDING ANIME ── -->
+{% if popular and popular.animes %}
+<div class="app-section">
+  <div class="app-section-head">
+    <div class="app-section-title">Trending Anime</div>
+    <a href="/popular" class="app-section-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+  </div>
+  <div class="app-trending-row">
+    {% for anime in popular.animes[:10] %}
+    <a href="/anime/{{ anime.slug }}" class="app-tcard">
+      <div class="app-tcard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.score %}
+        <div class="app-tcard-rating">
+          <i class="fas fa-star"></i> {{ anime.score }}
+        </div>
+        {% endif %}
+        <div class="app-tcard-info">
+          <div class="app-tcard-info-title">{{ anime.title }}</div>
+          {% if anime.episode %}
+          <div class="app-tcard-info-ep">
+            <i class="fas fa-circle-play"></i> {{ anime.episode }} episodes
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── POPULAR ANIME (List with rank) ── -->
+{% if popular and popular.animes %}
+<div class="app-section">
+  <div class="app-section-head">
+    <div class="app-section-title">Popular Anime</div>
+    <a href="/popular" class="app-section-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+  </div>
+  <div class="app-popular-list">
+    {% for anime in popular.animes[:8] %}
+    <a href="/anime/{{ anime.slug }}" class="app-pcard">
+      <div class="app-pcard-rank {% if loop.index == 1 %}r1{% elif loop.index == 2 %}r2{% elif loop.index == 3 %}r3{% endif %}">
+        {{ loop.index }}
+      </div>
+      <div class="app-pcard-thumb">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+      </div>
+      <div class="app-pcard-info">
+        <div class="app-pcard-title">{{ anime.title }}</div>
+        <div class="app-pcard-rating">
+          <div class="app-pcard-rating-stars">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <span class="app-pcard-rating-num">{{ anime.score or '—' }}</span>
+        </div>
+        <div class="app-pcard-bar">
+          <div class="app-pcard-bar-fill" style="width:{{ ((anime.score|float / 10) * 100)|int if anime.score else (90 - loop.index * 4) }}%;"></div>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── SEDANG TAYANG ── -->
+{% if data and data.ongoing %}
+<div class="app-section">
+  <div class="app-section-head">
+    <div class="app-section-title">Sedang Tayang</div>
+    <a href="/ongoing" class="app-section-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+  </div>
+  <div class="app-ongoing-row">
+    {% for anime in data.ongoing[:12] %}
+    <a href="/anime/{{ anime.slug }}" class="app-ocard">
+      <div class="app-ocard-thumb">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.episode %}
+        <div class="app-ocard-ep">Ep {{ anime.episode }}</div>
+        {% endif %}
+      </div>
+      <div class="app-ocard-title">{{ anime.title }}</div>
+      <div class="app-ocard-sub">{{ anime.type or 'Anime' }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── GENRE ── -->
+{% set genre_icons = {
+  'Action':'fas fa-fist-raised','Adventure':'fas fa-map-marked-alt',
+  'Comedy':'fas fa-laugh-beam','Drama':'fas fa-theater-masks',
+  'Fantasy':'fas fa-hat-wizard','Horror':'fas fa-skull',
+  'Magic':'fas fa-magic','Mecha':'fas fa-robot',
+  'Mystery':'fas fa-search','Psychological':'fas fa-brain',
+  'Romance':'fas fa-heart','School':'fas fa-graduation-cap',
+  'Sci-Fi':'fas fa-atom','Shounen':'fas fa-fire',
+  'Slice of Life':'fas fa-coffee','Sports':'fas fa-running',
+  'Supernatural':'fas fa-ghost','Isekai':'fas fa-door-open'
+} %}
+{% set fallback_genres = [
+  {'name':'Action','slug':'action'},{'name':'Adventure','slug':'adventure'},
+  {'name':'Comedy','slug':'comedy'},{'name':'Drama','slug':'drama'},
+  {'name':'Fantasy','slug':'fantasy'},{'name':'Horror','slug':'horror'},
+  {'name':'Isekai','slug':'isekai'},{'name':'Magic','slug':'magic'},
+  {'name':'Mecha','slug':'mecha'},{'name':'Mystery','slug':'mystery'},
+  {'name':'Psychological','slug':'psychological'},{'name':'Romance','slug':'romance'},
+  {'name':'School','slug':'school'},{'name':'Sci-Fi','slug':'sci-fi'},
+  {'name':'Shounen','slug':'shounen'},{'name':'Slice of Life','slug':'slice-of-life'},
+  {'name':'Sports','slug':'sports'},{'name':'Supernatural','slug':'supernatural'}
+] %}
+{% set genre_data = genres if genres else fallback_genres %}
+
+<div class="app-section">
+  <div class="app-section-head">
+    <div class="app-section-title">Genre</div>
+    <a href="/genres" class="app-section-more">Semua <i class="fas fa-chevron-right" style="font-size:9px;"></i></a>
+  </div>
+  <div class="app-genre-grid">
+    {% for g in genre_data[:9] %}
+    <a href="/genre/{{ g.slug }}" class="app-genre-chip">
+      <i class="{{ genre_icons.get(g.name, 'fas fa-play') }}"></i>
+      <span>{{ g.name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="app-bottom-space"></div>
+
+<script>
+// Update greeting with username
+(function() {
+  fetch('/api/me').then(function(r){ return r.json(); }).then(function(d) {
+    if (d.user) {
+      var el = document.getElementById('appGreetingName');
+      if (el) el.textContent = d.user.name || 'Guest';
     }
   }).catch(function(){});
+})();
 </script>
+
 {% endblock %}
