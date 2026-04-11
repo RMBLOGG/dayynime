@@ -99,11 +99,12 @@ body { padding-top: 0 !important; }
     <a href="/anime/{{ anime.slug }}" class="idx-slide">
       <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'">
       <div class="idx-slide-overlay"></div>
-      {% if anime.score %}<div class="idx-slide-score"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
+      {% if anime.score %}<div class="idx-slide-score" style="position:absolute;top:10px;right:10px;left:auto;background:rgba(232,65,90,0.92);border-radius:10px;padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900;color:#fff;backdrop-filter:blur(4px);"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
       <div class="idx-slide-content">
         <div class="idx-slide-title">{{ anime.title }}</div>
         <div class="idx-slide-chips">
-          {% if anime.episode %}<div class="idx-slide-chip"><i class="fas fa-play-circle" style="font-size:10px;"></i> {{ anime.episode }} Episodes</div>{% endif %}
+          {% if anime.episode %}<div class="idx-slide-chip"><i class="fas fa-th-list" style="font-size:10px;"></i> {{ anime.episode }} Episodes</div>{% endif %}
+          {% if anime.duration %}<div class="idx-slide-chip"><i class="fas fa-clock" style="font-size:10px;"></i> {{ anime.duration }}</div>{% elif anime.episode %}<div class="idx-slide-chip"><i class="fas fa-clock" style="font-size:10px;"></i> 24 min</div>{% endif %}
           {% if anime.type %}<div class="idx-slide-chip"><i class="fas fa-tv" style="font-size:10px;"></i> {{ anime.type }}</div>{% endif %}
         </div>
       </div>
@@ -115,7 +116,32 @@ body { padding-top: 0 !important; }
   </div>
 </div>
 <script>
-(function(){var s=document.getElementById('idxSlider');var dots=document.querySelectorAll('#idxDots .idx-dot');if(!s)return;s.addEventListener('scroll',function(){var w=s.firstElementChild?(s.firstElementChild.offsetWidth+12):s.scrollWidth;var i=Math.round(s.scrollLeft/w);dots.forEach(function(d,j){d.classList.toggle('active',i===j);});},{passive:true});dots.forEach(function(d){d.addEventListener('click',function(){var i=parseInt(this.getAttribute('data-i'));var w=s.firstElementChild?(s.firstElementChild.offsetWidth+12):0;s.scrollTo({left:i*w,behavior:'smooth'});});});})();
+(function(){
+  var s=document.getElementById('idxSlider');
+  var dots=document.querySelectorAll('#idxDots .idx-dot');
+  if(!s)return;
+  var cur=0,total=s.querySelectorAll('.idx-slide').length,timer=null,isDragging=false;
+  function getW(){return s.firstElementChild?(s.firstElementChild.offsetWidth+12):0;}
+  function goTo(n){
+    cur=(n+total)%total;
+    s.scrollTo({left:cur*getW(),behavior:'smooth'});
+    dots.forEach(function(d,j){d.classList.toggle('active',j===cur);});
+  }
+  function startAuto(){timer=setInterval(function(){goTo(cur+1);},5000);}
+  function resetAuto(){clearInterval(timer);startAuto();}
+  /* sync dots on manual scroll */
+  s.addEventListener('scroll',function(){
+    if(isDragging)return;
+    var i=Math.round(s.scrollLeft/getW());
+    if(i!==cur){cur=i;dots.forEach(function(d,j){d.classList.toggle('active',j===cur);});}
+  },{passive:true});
+  /* dot click */
+  dots.forEach(function(d){d.addEventListener('click',function(){goTo(parseInt(this.getAttribute('data-i')));resetAuto();});});
+  /* pause on touch */
+  s.addEventListener('touchstart',function(){clearInterval(timer);isDragging=true;},{passive:true});
+  s.addEventListener('touchend',function(){isDragging=false;resetAuto();},{passive:true});
+  startAuto();
+})();
 </script>
 {% endif %}
 
