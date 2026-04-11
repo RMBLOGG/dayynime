@@ -1,768 +1,1128 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="google-site-verification" content="pTKv7RdKpXBtLCnGaf4YM9U_aXpx4uzHnyL2mm3Kn3s" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>{% block title %}Dayynime{% endblock %}</title>
-  <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia gratis di Dayynime. Streaming anime ongoing, completed, dan movie dengan subtitle Indonesia berkualitas.{% endblock %}">
-  <!-- Open Graph -->
-  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-  <meta property="og:site_name" content="DayyNime">
-  <meta property="og:title" content="{% block og_title %}Dayynime - Nonton Anime Sub Indo Gratis{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}Nonton anime subtitle Indonesia gratis di Dayynime. Streaming anime ongoing, completed, dan movie dengan subtitle Indonesia berkualitas.{% endblock %}">
-  <meta property="og:image" content="{% block og_image %}https://dayynime.vercel.app/static/banner.png{% endblock %}">
-  <meta property="og:url" content="{{ request.url }}">
-  <meta property="og:locale" content="id_ID">
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{% block tw_title %}Dayynime - Nonton Anime Sub Indo Gratis{% endblock %}">
-  <meta name="twitter:description" content="{% block tw_description %}Nonton anime subtitle Indonesia gratis di Dayynime.{% endblock %}">
-  <meta name="twitter:image" content="{% block tw_image %}https://dayynime.vercel.app/static/banner.png{% endblock %}">
-  <!-- Canonical -->
-  <link rel="canonical" href="{{ request.url }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" type="image/png" href="/static/icon.png">
-  <link rel="apple-touch-icon" href="/static/icon.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#141519">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="DayyNime">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10">
-  {% block head %}{% endblock %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Cinevu{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0d0d0f;
+  --bg2:#141416;
+  --bg3:#1c1c1f;
+  --bg4:#252528;
+  --accent:#c8184a;
+  --accent2:#e8205e;
+  --accent-glow:rgba(200,24,74,0.35);
+  --gold:#f5a623;
+  --green:#27c469;
+  --text:#ffffff;
+  --text2:#c2c2cc;
+  --muted:#6b6b78;
+  --border:rgba(255,255,255,0.07);
+  --card-radius:14px;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --nav-h:72px;
+  --bottom-h:72px;
+}
+
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  overflow-x:hidden;
+  min-height:100vh;
+  padding-bottom:var(--bottom-h);
+}
+
+/* ═══════════════════════
+   TOP NAVBAR
+═══════════════════════ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  height:var(--nav-h);
+  padding:0 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(180deg, rgba(13,13,15,0.98) 0%, rgba(13,13,15,0.85) 100%);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+
+.topbar-left{display:flex;align-items:center;gap:12px;flex:1;}
+
+/* User profile pill */
+.user-pill{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:50px;
+  padding:7px 14px 7px 7px;
+  cursor:pointer;
+  transition:border-color 0.2s;
+  flex:1;max-width:200px;
+}
+.user-pill:hover{border-color:rgba(255,255,255,0.15);}
+.user-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#8b0d2e);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:#fff;
+  flex-shrink:0;
+}
+.user-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+.user-info{min-width:0;}
+.user-greeting{font-size:10px;color:var(--muted);font-weight:500;line-height:1;}
+.user-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Top right icons */
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.topbar-btn{
+  width:42px;height:42px;border-radius:14px;
+  background:var(--bg3);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text2);font-size:16px;
+  transition:all 0.2s;position:relative;
+}
+.topbar-btn:hover{background:var(--bg4);border-color:rgba(255,255,255,0.15);color:var(--text);}
+.topbar-badge{
+  position:absolute;top:-3px;right:-3px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--accent);color:#fff;
+  font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg);
+}
+
+/* Desktop nav logo */
+.desktop-logo{
+  display:none;
+  font-size:22px;font-weight:900;
+  color:var(--accent);letter-spacing:-1px;
+  text-decoration:none;
+}
+
+/* ═══════════════════════
+   DISCOVER BANNER
+═══════════════════════ */
+.discover-banner{
+  margin:calc(var(--nav-h) + 12px) 18px 0;
+  background:linear-gradient(135deg, var(--bg3) 0%, rgba(200,24,74,0.12) 100%);
+  border:1px solid rgba(200,24,74,0.2);
+  border-radius:16px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  text-decoration:none;cursor:pointer;
+  transition:border-color 0.2s, transform 0.15s;
+}
+.discover-banner:hover{border-color:rgba(200,24,74,0.4);transform:translateY(-1px);}
+.discover-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),#8b0d2e);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.discover-text{flex:1;min-width:0;}
+.discover-title{font-size:14px;font-weight:700;color:var(--text);}
+.discover-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+.discover-right{display:flex;align-items:center;gap:6px;}
+.discover-count{
+  background:var(--accent);color:#fff;
+  font-size:11px;font-weight:700;
+  padding:3px 8px;border-radius:20px;
+}
+.discover-chevron{color:var(--muted);font-size:14px;}
+
+/* ═══════════════════════
+   SECTION LABELS
+═══════════════════════ */
+.section-label{
+  display:inline-flex;align-items:center;gap:7px;
+  margin:20px 18px 10px;
+  font-size:13px;font-weight:700;color:#fff;
+  background:var(--accent);
+  padding:6px 14px 6px 10px;
+  border-radius:50px;
+}
+.section-label i{font-size:12px;}
+
+/* ═══════════════════════
+   HERO SLIDESHOW
+═══════════════════════ */
+.hero-slider{
+  position:relative;
+  margin:0 18px;
+  border-radius:20px;
+  overflow:hidden;
+  aspect-ratio:9/11;
+  max-height:460px;
+}
+.hero-slide{
+  position:absolute;inset:0;opacity:0;
+  transition:opacity 0.8s ease;pointer-events:none;
+}
+.hero-slide.active{opacity:1;pointer-events:auto;}
+.hero-bg{position:absolute;inset:0;}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center top;}
+.hero-grad{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(0deg, rgba(13,13,15,1) 0%, rgba(13,13,15,0.7) 30%, rgba(13,13,15,0.1) 60%, transparent 100%);
+}
+.hero-content{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:20px 18px;
+  z-index:2;
+}
+.hero-rating-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--accent);
+  padding:4px 10px;border-radius:8px;
+  font-size:12px;font-weight:700;
+  margin-bottom:10px;
+}
+.hero-rating-badge i{font-size:10px;}
+.hero-title{
+  font-size:22px;font-weight:900;
+  line-height:1.15;
+  margin-bottom:10px;
+  text-shadow:0 2px 8px rgba(0,0,0,0.5);
+}
+.hero-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.hero-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(8px);
+  padding:5px 11px;border-radius:8px;
+  font-size:11px;font-weight:600;color:rgba(255,255,255,0.9);
+}
+.hero-pill i{font-size:10px;color:var(--muted);}
+
+/* Dots */
+.hero-dots{
+  display:flex;gap:5px;
+  position:absolute;top:14px;right:14px;
+  z-index:3;
+}
+.hero-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,0.3);
+  border:none;cursor:pointer;padding:0;
+  transition:all 0.3s;
+}
+.hero-dot.active{background:#fff;width:20px;border-radius:3px;}
+
+/* ═══════════════════════
+   ROWS / SECTIONS
+═══════════════════════ */
+.rows-wrap{padding-bottom:16px;}
+
+.row{margin-bottom:28px;}
+.row-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;margin-bottom:12px;
+}
+.row-title{font-size:17px;font-weight:800;color:var(--text);}
+.see-all{
+  font-size:12px;font-weight:600;color:var(--accent2);
+  text-decoration:none;
+  display:flex;align-items:center;gap:3px;
+  opacity:0.85;transition:opacity 0.2s;
+}
+.see-all:hover{opacity:1;}
+
+/* Slider */
+.slider-wrap{position:relative;}
+.slider{
+  display:flex;gap:10px;
+  overflow-x:auto;scroll-behavior:smooth;
+  scrollbar-width:none;
+  padding:4px 18px 8px;
+}
+.slider::-webkit-scrollbar{display:none;}
+
+/* Cards */
+.acard{
+  flex-shrink:0;
+  width:140px;
+  text-decoration:none;color:inherit;
+  cursor:pointer;
+}
+.acard-img-wrap{
+  position:relative;
+  width:140px;height:195px;
+  border-radius:var(--card-radius);
+  overflow:hidden;
+  background:var(--bg3);
+  margin-bottom:8px;
+}
+.acard-img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform 0.3s ease;
+  display:block;
+}
+.acard:hover .acard-img{transform:scale(1.05);}
+.acard-rating{
+  position:absolute;top:8px;right:8px;
+  background:var(--accent);
+  color:#fff;font-size:10px;font-weight:700;
+  padding:3px 7px;border-radius:7px;
+  display:flex;align-items:center;gap:3px;
+}
+.acard-rating i{font-size:9px;}
+.acard-badge{
+  position:absolute;top:8px;left:8px;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(6px);
+  color:#fff;font-size:9px;font-weight:700;
+  padding:3px 7px;border-radius:7px;
+  letter-spacing:0.3px;
+}
+.acard-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  height:50%;
+  background:linear-gradient(0deg, rgba(13,13,15,0.9) 0%, transparent 100%);
+}
+.acard-foot-title{
+  font-size:12px;font-weight:700;
+  color:var(--text);
+  line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-bottom:3px;
+}
+.acard-foot-meta{
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;color:var(--muted);font-weight:500;
+}
+.acard-foot-meta .dot{width:3px;height:3px;border-radius:50%;background:var(--muted);}
+
+/* Wide cards */
+.wcard{
+  flex-shrink:0;
+  width:220px;
+  text-decoration:none;color:inherit;
+}
+.wcard-img-wrap{
+  position:relative;
+  width:220px;height:145px;
+  border-radius:var(--card-radius);
+  overflow:hidden;
+  background:var(--bg3);
+  margin-bottom:8px;
+}
+.wcard-img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s;}
+.wcard:hover .wcard-img{transform:scale(1.05);}
+.wcard-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(13,13,15,0.85) 0%, transparent 60%);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:10px 12px;
+}
+.wcard-title{font-size:13px;font-weight:700;color:#fff;line-height:1.3;}
+.wcard-meta{font-size:10px;color:rgba(255,255,255,0.6);margin-top:3px;}
+.wcard-rating{
+  position:absolute;top:8px;right:8px;
+  background:var(--accent);color:#fff;
+  font-size:10px;font-weight:700;
+  padding:3px 7px;border-radius:7px;
+  display:flex;align-items:center;gap:3px;
+}
+
+/* Top10 cards */
+.top10-card{
+  flex-shrink:0;width:160px;
+  display:flex;align-items:flex-end;
+  cursor:pointer;text-decoration:none;color:inherit;
+  position:relative;
+}
+.top10-num{
+  position:absolute;bottom:24px;left:-4px;
+  font-size:100px;font-weight:900;
+  color:var(--bg);
+  -webkit-text-stroke:3px var(--bg4);
+  line-height:1;z-index:0;
+  font-style:italic;user-select:none;
+}
+.top10-img{
+  width:120px;height:175px;
+  object-fit:cover;border-radius:var(--card-radius);
+  z-index:1;margin-left:auto;
+  transition:transform 0.3s;
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);
+}
+.top10-card:hover .top10-img{transform:scale(1.04);}
+
+/* Genre pills */
+.genre-bar{
+  display:flex;gap:8px;
+  overflow-x:auto;padding:0 18px 4px;
+  scrollbar-width:none;
+  margin-bottom:4px;
+}
+.genre-bar::-webkit-scrollbar{display:none;}
+.genre-pill{
+  flex-shrink:0;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  color:var(--text2);
+  padding:8px 16px;border-radius:50px;
+  font-size:12px;font-weight:600;
+  text-decoration:none;
+  transition:all 0.2s;white-space:nowrap;
+}
+.genre-pill:hover,.genre-pill.active{
+  background:var(--accent);border-color:var(--accent);color:#fff;
+}
+
+/* ═══════════════════════
+   BOTTOM NAV
+═══════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:900;
+  height:var(--bottom-h);
+  display:flex;align-items:center;
+  padding:0 8px;
+  background:rgba(13,13,15,0.92);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+}
+.bottom-nav-inner{
+  display:flex;align-items:center;justify-content:space-around;
+  width:100%;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:6px 8px;
+  gap:4px;
+}
+.bnav-item{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:4px;padding:6px 4px;
+  text-decoration:none;
+  cursor:pointer;border:none;background:none;
+  border-radius:14px;
+  transition:all 0.2s;
+  min-width:0;
+}
+.bnav-item:hover{background:rgba(255,255,255,0.05);}
+.bnav-item.active{background:rgba(200,24,74,0.12);}
+.bnav-icon{
+  width:38px;height:38px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:var(--muted);
+  transition:all 0.2s;
+}
+.bnav-item.active .bnav-icon,.bnav-item:hover .bnav-icon{color:var(--accent);}
+
+/* Home button special */
+.bnav-home{
+  background:linear-gradient(135deg,var(--accent),#8b0d2e) !important;
+  border-radius:50% !important;
+  color:#fff !important;
+  box-shadow:0 4px 18px var(--accent-glow);
+  width:44px;height:44px;
+}
+.bnav-item.active .bnav-home{color:#fff !important;}
+
+/* ═══════════════════════
+   SIDEBAR (desktop / drawer)
+═══════════════════════ */
+.sidebar-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.sidebar-overlay.open{opacity:1;pointer-events:all;}
+.sidebar{
+  position:fixed;top:0;left:-300px;width:280px;
+  height:100%;background:var(--bg2);z-index:1001;
+  display:flex;flex-direction:column;
+  transition:left 0.35s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+  border-right:1px solid var(--border);
+}
+.sidebar.open{left:0;}
+.sidebar-head{
+  padding:20px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-logo{
+  font-size:22px;font-weight:900;
+  color:var(--accent);letter-spacing:-1px;
+  text-decoration:none;
+}
+.sidebar-close{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;color:var(--text2);
+  cursor:pointer;font-size:16px;
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.sidebar-close:hover{color:#fff;border-color:rgba(255,255,255,0.2);}
+
+.sidebar-search{padding:14px 18px;border-bottom:1px solid var(--border);}
+.sidebar-search form{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:12px;padding:10px 14px;
+  transition:border-color 0.2s;
+}
+.sidebar-search form:focus-within{border-color:var(--accent);}
+.sidebar-search svg{width:15px;height:15px;fill:var(--muted);flex-shrink:0;}
+.sidebar-search input{
+  background:none;border:none;color:#fff;
+  font-size:13px;font-family:var(--font);outline:none;width:100%;
+}
+.sidebar-search input::placeholder{color:var(--muted);}
+
+.sidebar-section-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--muted);font-weight:700;
+  padding:16px 18px 6px;
+}
+.sidebar-nav a{
+  display:flex;align-items:center;gap:12px;
+  color:var(--text2);text-decoration:none;
+  font-size:14px;font-weight:600;
+  padding:11px 18px;
+  transition:all 0.2s;
+  border-radius:0;
+}
+.sidebar-nav a:hover{background:rgba(255,255,255,0.04);color:#fff;}
+.sidebar-nav a.active{
+  background:rgba(200,24,74,0.1);
+  color:var(--accent2);
+  border-left:3px solid var(--accent);
+}
+.sidebar-nav a .icon{
+  width:32px;height:32px;border-radius:10px;
+  background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+  transition:background 0.2s;
+}
+.sidebar-nav a.active .icon{background:rgba(200,24,74,0.2);}
+.sidebar-genre-wrap{padding:6px 18px 16px;display:flex;flex-wrap:wrap;gap:6px;}
+.sidebar-genre-wrap a{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);padding:6px 12px;
+  border-radius:50px;font-size:12px;font-weight:600;
+  text-decoration:none;transition:all 0.2s;
+}
+.sidebar-genre-wrap a:hover{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* ═══════════════════════
+   DESKTOP LAYOUT
+═══════════════════════ */
+@media(min-width:769px){
+  :root{--nav-h:64px;--bottom-h:0px;}
+  body{padding-bottom:0;}
+  .bottom-nav{display:none;}
+  .desktop-logo{display:block;}
+  .user-pill{display:none;}
+  .topbar{
+    padding:0 32px;
+    gap:24px;
+  }
+  .topbar-left{gap:32px;}
+  .desktop-nav-links{
+    display:flex;align-items:center;gap:4px;
+  }
+  .desktop-nav-links a{
+    color:var(--text2);text-decoration:none;
+    font-size:13px;font-weight:600;
+    padding:6px 12px;border-radius:8px;
+    transition:all 0.15s;white-space:nowrap;
+  }
+  .desktop-nav-links a:hover,.desktop-nav-links a.active{
+    color:#fff;background:rgba(255,255,255,0.06);
+  }
+  .hero-slider{margin:0;border-radius:0;aspect-ratio:21/9;max-height:520px;}
+  .discover-banner{margin-top:calc(var(--nav-h) + 0px);border-radius:0;border-left:none;border-right:none;max-width:100%;}
+  .slider{padding:4px 32px 8px;}
+  .row-header{padding:0 32px;}
+  .genre-bar{padding:0 32px 4px;}
+  .section-label{margin-left:32px;}
+  :root{--card-w:160px;}
+}
+
+/* Utility */
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeUp 0.35s ease forwards;}
+.spin{width:22px;height:22px;border:2px solid var(--bg4);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+.loading-screen{display:flex;align-items:center;justify-content:center;min-height:240px;gap:12px;color:var(--muted);}
+
+/* ═══════════════════════
+   WATCH PAGE
+═══════════════════════ */
+.watch-page{padding-top:var(--nav-h);}
+.watch-player-wrap{background:#000;}
+.player-frame{position:relative;width:100%;padding-top:56.25%;background:#000;}
+.player-frame iframe,.player-frame>div:last-child{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.player-placeholder{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#0a0a0a,#1a0000);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;cursor:pointer;
+}
+.player-placeholder:hover .big-play{transform:scale(1.08);}
+.big-play{
+  width:68px;height:68px;background:var(--accent);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 0.2s;
+  box-shadow:0 0 40px var(--accent-glow);
+}
+.big-play svg{width:28px;height:28px;fill:#fff;margin-left:4px;}
+.placeholder-label{color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;}
+.player-controls{
+  background:var(--bg2);padding:12px 18px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+}
+.server-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-right:4px;}
+.server-tab{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);padding:6px 14px;border-radius:8px;
+  cursor:pointer;font-size:12px;font-weight:600;
+  font-family:var(--font);transition:all 0.2s;
+}
+.server-tab:hover{background:var(--bg4);color:#fff;}
+.server-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.watch-body{max-width:1000px;margin:0 auto;padding:20px 18px;}
+.watch-detail{display:grid;grid-template-columns:120px 1fr;gap:18px;margin-bottom:28px;}
+.watch-poster{width:100%;border-radius:14px;object-fit:cover;aspect-ratio:2/3;box-shadow:0 8px 32px rgba(0,0,0,0.6);}
+.watch-title{font-size:clamp(18px,4vw,30px);font-weight:900;letter-spacing:-0.3px;margin-bottom:10px;line-height:1.15;}
+.watch-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.b-rating{color:var(--gold);font-weight:700;font-size:13px;display:flex;align-items:center;gap:4px;}
+.b-pill{
+  color:var(--text2);font-size:11px;
+  background:var(--bg3);padding:3px 9px;
+  border-radius:7px;font-weight:600;
+}
+.watch-syn{font-size:13px;line-height:1.8;color:var(--text2);margin-bottom:16px;}
+.meta-rows{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+.meta-row{font-size:12px;color:var(--muted);}
+.meta-row strong{color:#fff;margin-right:6px;}
+.watch-cta{display:flex;gap:8px;flex-wrap:wrap;}
+.eps-section{margin-bottom:22px;}
+.eps-title{font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text);}
+.eps-grid{display:flex;gap:6px;flex-wrap:wrap;}
+.eps-btn{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);padding:7px 14px;border-radius:8px;
+  text-decoration:none;font-size:12px;font-weight:600;
+  transition:all 0.2s;
+}
+.eps-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* Buttons */
+.btn-play{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--accent);color:#fff;
+  border:none;font-size:14px;font-weight:700;
+  font-family:var(--font);padding:11px 22px;
+  border-radius:10px;cursor:pointer;
+  transition:all 0.15s;text-decoration:none;
+  box-shadow:0 4px 18px var(--accent-glow);
+}
+.btn-play:hover{background:var(--accent2);transform:translateY(-1px);}
+.btn-play svg{width:18px;height:18px;fill:#fff;}
+.btn-info{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--bg3);color:var(--text2);
+  border:1px solid var(--border);
+  font-size:14px;font-weight:600;
+  font-family:var(--font);padding:11px 22px;
+  border-radius:10px;cursor:pointer;
+  transition:all 0.15s;text-decoration:none;
+}
+.btn-info:hover{background:var(--bg4);color:#fff;}
+.btn-info svg{width:18px;height:18px;fill:currentColor;}
+
+/* List / Search page */
+.list-wrap{padding:calc(var(--nav-h) + 16px) 18px 32px;}
+.list-heading{
+  font-size:22px;font-weight:900;margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+}
+.list-heading::before{content:'';width:4px;height:22px;background:var(--accent);border-radius:2px;flex-shrink:0;}
+.grid-movies{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
+.grid-movies .acard{width:100%;}
+.grid-movies .acard-img-wrap{width:100%;}
+.pagination{display:flex;justify-content:center;gap:6px;margin-top:28px;flex-wrap:wrap;}
+.pag-btn{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);padding:8px 18px;border-radius:8px;
+  text-decoration:none;font-size:13px;font-weight:600;
+  transition:all 0.2s;
+}
+.pag-btn:hover,.pag-btn.cur{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* Watchlist page */
+.watchlist-empty{
+  text-align:center;padding:60px 18px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.watchlist-empty-icon{font-size:48px;color:var(--muted);}
+.watchlist-empty-text{font-size:15px;font-weight:600;color:var(--text2);}
+.watchlist-empty-sub{font-size:13px;color:var(--muted);}
+
+/* ═══════════════════════
+   FOOTER
+═══════════════════════ */
+footer{
+  padding:40px 18px 28px;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  background:var(--bg2);
+}
+.footer-logo{
+  font-size:20px;font-weight:900;
+  color:var(--accent);letter-spacing:-1px;
+  display:inline-block;text-decoration:none;
+  margin-bottom:18px;
+}
+.footer-social{display:flex;gap:12px;margin-bottom:24px;}
+.footer-social a{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--bg3);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:16px;text-decoration:none;
+  transition:all 0.2s;
+}
+.footer-social a:hover{background:var(--accent);border-color:var(--accent);color:#fff;}
+.footer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px;}
+.footer-col-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;font-weight:700;}
+.footer-col a{display:block;color:var(--text2);text-decoration:none;font-size:12px;margin-bottom:8px;transition:color 0.2s;font-weight:500;}
+.footer-col a:hover{color:#fff;}
+.footer-copy{font-size:11px;color:var(--muted);line-height:1.7;margin-top:16px;}
+
+/* Popups */
+.fpopup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px;}
+.fpopup-overlay.open{display:flex;}
+.fpopup-box{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:20px;max-width:480px;width:100%;
+  max-height:85vh;overflow-y:auto;
+  position:relative;padding:28px 24px 24px;
+  animation:fadeUp 0.25s ease;
+}
+.fpopup-close{
+  position:absolute;top:14px;right:14px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:9px;color:var(--muted);
+  font-size:16px;cursor:pointer;
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.fpopup-close:hover{color:#fff;}
+.fpopup-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:14px;padding-right:30px;}
+.fpopup-body{font-size:13px;line-height:1.8;color:var(--text2);}
+.fpopup-body h4{color:#fff;font-size:14px;font-weight:700;margin:14px 0 6px;}
+.fpopup-body p{margin-bottom:10px;}
+.fpopup-body ul{padding-left:18px;margin-bottom:10px;}
+.fpopup-body ul li{margin-bottom:6px;}
+.fpopup-form input,.fpopup-form textarea,.fpopup-form select{
+  width:100%;background:var(--bg3);border:1px solid var(--border);color:#fff;
+  font-family:var(--font);font-size:13px;padding:10px 14px;border-radius:10px;
+  outline:none;transition:border-color 0.2s;margin-bottom:10px;
+}
+.fpopup-form input:focus,.fpopup-form textarea:focus,.fpopup-form select:focus{border-color:var(--accent);}
+.fpopup-form select option{background:var(--bg3);}
+.fpopup-form textarea{resize:vertical;min-height:90px;}
+.fpopup-form label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;font-weight:600;}
+.fpopup-btn{
+  background:var(--accent);color:#fff;border:none;
+  font-family:var(--font);font-size:14px;font-weight:700;
+  padding:12px 24px;border-radius:10px;cursor:pointer;
+  transition:all 0.15s;width:100%;
+  box-shadow:0 4px 18px var(--accent-glow);
+}
+.fpopup-btn:hover{background:var(--accent2);}
+.fpopup-success{display:none;text-align:center;padding:24px 0;}
+.fpopup-success .check{font-size:48px;margin-bottom:10px;}
+.fpopup-success p{color:var(--green);font-weight:700;font-size:15px;}
+
+/* Watchlist btn */
+.wl-active{color:var(--green) !important;}
+</style>
+{% block extra_css %}{% endblock %}
 </head>
 <body>
 
-<!-- SIDEBAR OVERLAY -->
-<div id="sidebarOverlay" onclick="closeSidebar()" style="
-  display:none; position:fixed; inset:0; z-index:10000;
-  background:rgba(0,0,0,0.7); backdrop-filter:blur(3px);
-  -webkit-tap-highlight-color:transparent;
-"></div>
-
-<!-- SIDEBAR PANEL — Crunchyroll style: left side -->
-<aside id="sidebarPanel" style="
-  position:fixed; top:0; left:-280px; width:260px; height:100%;
-  max-height:100vh; z-index:10001;
-  background:#141519;
-  border-right:1px solid rgba(244,117,33,0.15);
-  transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
-  display:flex; flex-direction:column; overflow:hidden;
-">
-  <!-- Sidebar Header -->
-  <div style="padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between; background:#1a1a23;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <img src="/static/icon.png" style="width:30px;height:30px;border-radius:6px;object-fit:cover;">
-      <div>
-        <div style="font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.3px;">Dayy<span style="color:#F47521;">nime</span></div>
-        <div style="font-size:9px;color:#5a5a72;text-transform:uppercase;letter-spacing:0.5px;">Nonton anime sub indo</div>
+<!-- TOP BAR -->
+<nav class="topbar" id="navbar">
+  <div class="topbar-left">
+    <!-- Mobile: user pill -->
+    <a href="#" class="user-pill" onclick="openSidebar();return false;">
+      <div class="user-avatar">C</div>
+      <div class="user-info">
+        <div class="user-greeting">Selamat datang!</div>
+        <div class="user-name">Guest</div>
       </div>
+    </a>
+    <!-- Desktop: logo + links -->
+    <a href="/" class="desktop-logo">CINEVU</a>
+    <div class="desktop-nav-links">
+      <a href="/" class="{% if active=='home' %}active{% endif %}">Beranda</a>
+      <a href="/series" class="{% if active=='series' %}active{% endif %}">Series</a>
+      <a href="/anime" class="{% if active=='anime' %}active{% endif %}">Anime</a>
+      <a href="/watchlist" class="{% if active=='watchlist' %}active{% endif %}">My List</a>
     </div>
-    <button onclick="closeSidebar()" style="background:rgba(255,255,255,0.06);border:none;color:#A0A0B0;font-size:14px;cursor:pointer;padding:6px 8px;border-radius:6px;-webkit-tap-highlight-color:transparent;">
-      <i class="fas fa-times"></i>
-    </button>
   </div>
-
-  <!-- Sidebar Menu -->
-  <nav style="flex:1; overflow-y:auto; overflow-x:hidden; padding:8px 0; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;">
-
-    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Jelajahi</div>
-
-    <a href="/ongoing" onclick="closeSidebar()" class="sb-item">
-      <span class="sb-dot" style="background:#10B981;"></span>
-      <span>Ongoing</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/completed" onclick="closeSidebar()" class="sb-item">
-      <span class="sb-dot" style="background:#60a5fa;"></span>
-      <span>Completed</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/movies" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-film sb-icon" style="color:#F47521;"></i>
-      <span>Movie</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/genres" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-tag sb-icon" style="color:#a78bfa;"></i>
-      <span>Genre</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/animelist" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-list sb-icon" style="color:#F47521;"></i>
-      <span>A-Z List</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/popular" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-fire sb-icon" style="color:#F47521;"></i>
-      <span>Populer</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/jadwal" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-calendar-alt sb-icon" style="color:#10B981;"></i>
-      <span>Jadwal Rilis</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-    <a href="/ruang-ngobrol" onclick="closeSidebar()" class="sb-item">
-      <i class="fas fa-comments sb-icon" style="color:#7C3AED;"></i>
-      <span>Ruang Ngobrol</span>
-      <i class="fas fa-chevron-right sb-arr"></i>
-    </a>
-
-    <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
-    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Akun</div>
-
-    <!-- Jika sudah login -->
-    <div id="sbLoggedIn" style="display:block;">
-      <a href="/profile" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-user sb-icon" style="color:#A0A0B0;"></i>
-        <span id="sbUsername">Profile</span>
-        <i class="fas fa-chevron-right sb-arr"></i>
-      </a>
-      <a href="/koleksi" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-bookmark sb-icon" style="color:#A0A0B0;"></i>
-        <span>Koleksi</span>
-        <i class="fas fa-chevron-right sb-arr"></i>
-      </a>
+  <div class="topbar-right">
+    <div class="topbar-btn" id="searchBtnTop" style="cursor:pointer;" onclick="toggleSearch()">
+      <i class="fa-solid fa-magnifying-glass"></i>
     </div>
-
-    <!-- Jika belum login -->
-    <div id="sbLoggedOut" style="display:none;"><!-- hidden until JS confirms not logged in -->
-      <a href="/auth/login" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-sign-in-alt sb-icon" style="color:#f47521;"></i>
-        <span style="color:#f47521;font-weight:700;">Masuk</span>
-        <i class="fas fa-chevron-right sb-arr"></i>
-      </a>
-      <a href="/auth/register" onclick="closeSidebar()" class="sb-item">
-        <i class="fas fa-user-plus sb-icon" style="color:#A0A0B0;"></i>
-        <span>Daftar</span>
-        <i class="fas fa-chevron-right sb-arr"></i>
-      </a>
+    <div class="topbar-btn">
+      <i class="fa-regular fa-bell"></i>
+      <span class="topbar-badge">3</span>
     </div>
-
-    <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
-    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Server</div>
-    {% for key, src in all_sources.items() %}
-    <button onclick="switchSource('{{ key }}')" id="sbBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
-      <i class="fas fa-server" style="font-size:12px;opacity:0.5;"></i>
-      <span>{{ src.label }}</span>
-      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
-    </button>
-    {% endfor %}
-  </nav>
-
-  <!-- Sidebar Footer -->
-  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.05);font-size:10px;color:#5a5a72;display:flex;align-items:center;justify-content:space-between;">
-    <span style="text-transform:uppercase;letter-spacing:0.3px;">Server Aktif</span>
-    <span id="srcActiveLabel" style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
   </div>
-</aside>
-
-<!-- TOP HEADER — Crunchyroll style -->
-<header class="top-header">
-  <!-- Hamburger (mobile only) -->
-  <button onclick="openSidebar()" class="mobile-hamburger" style="background:none;border:none;color:#A0A0B0;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
-    <i class="fas fa-bars"></i>
-  </button>
-  <!-- Logo + Brand -->
-  <a href="/home" style="display:flex;align-items:center;gap:7px;flex-shrink:0;text-decoration:none;">
-    <img src="/static/icon.png" style="width:26px;height:26px;border-radius:6px;object-fit:cover;">
-    <span class="header-brand">Dayy<span>nime</span></span>
-  </a>
-  <!-- Desktop Nav Links -->
-  <nav class="desktop-nav">
-    <a href="/home" class="desktop-nav-item" data-href="/home"><i class="fas fa-home"></i> Home</a>
-    <a href="/ongoing" class="desktop-nav-item" data-href="/ongoing"><i class="fas fa-play-circle"></i> Ongoing</a>
-    <a href="/jadwal" class="desktop-nav-item" data-href="/jadwal"><i class="fas fa-calendar-alt"></i> Jadwal</a>
-    <a href="/genres" class="desktop-nav-item" data-href="/genres"><i class="fas fa-tag"></i> Genre</a>
-    <a href="/movies" class="desktop-nav-item" data-href="/movies"><i class="fas fa-film"></i> Movie</a>
-    <a href="/popular" class="desktop-nav-item" data-href="/popular"><i class="fas fa-fire"></i> Populer</a>
-  </nav>
-  <!-- Desktop Search Bar (inline, hidden on mobile) -->
-  <form class="desktop-search-bar" action="/search" method="get" style="display:none;">
-    <i class="fas fa-search"></i>
-    <input type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off">
-  </form>
-  <!-- Mobile: spacer + search icon -->
-  <div style="flex:1;" class="mobile-spacer"></div>
-  <button id="searchToggleBtn" onclick="openHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
-    <i class="fas fa-search"></i>
-  </button>
-
-  <!-- Blur backdrop -->
-  <div id="searchBackdrop" onclick="closeHeaderSearch()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:298;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity 0.25s ease;"></div>
-
-  <!-- Search overlay (mobile) -->
-  <div id="searchOverlay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:299;background:var(--bg);border-bottom:1px solid var(--border);height:var(--nav-h);align-items:center;padding:0 12px;gap:10px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s ease;">
-    <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--radius);padding:0 12px;height:36px;border:1px solid var(--accent);">
-      <i class="fas fa-search" style="color:var(--accent);font-size:13px;"></i>
-      <input id="searchOverlayInput" type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;">
-    </form>
-    <button onclick="closeHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:6px;white-space:nowrap;-webkit-tap-highlight-color:transparent;">Batal</button>
-  </div>
-  <!-- User avatar / premium badge -->
-  <a href="/profile" id="headerUserBtn" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);overflow:hidden;text-decoration:none;position:relative;">
-    <img id="headerAvatar" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
-    <i id="headerAvatarFallback" class="fas fa-user" style="color:var(--text3);font-size:13px;"></i>
-    <div id="headerPremiumDot" style="display:none;position:absolute;bottom:0;right:0;width:9px;height:9px;background:#fbbf24;border-radius:50%;border:1.5px solid var(--bg);"></div>
-  </a>
-</header>
-
-<!-- PAGE CONTENT -->
-{% block content %}{% endblock %}
-
-<!-- BOTTOM NAV — Crunchyroll 5-tab -->
-<nav class="bottom-nav">
-  <a href="/home" class="bnav-item" data-href="/home">
-    <i class="fas fa-home"></i><span>Home</span>
-  </a>
-  <a href="/jadwal" class="bnav-item" data-href="/jadwal">
-    <i class="fas fa-calendar-alt"></i><span>Jadwal</span>
-  </a>
-  <a href="/search" class="bnav-item" data-href="/search">
-    <i class="fas fa-search"></i><span>Cari</span>
-  </a>
-  <a href="/genres" class="bnav-item" data-href="/genres">
-    <i class="fas fa-tag"></i><span>Genre</span>
-  </a>
-  <a href="/ruang-ngobrol" class="bnav-item" data-href="/ruang-ngobrol" id="bnavNgobrol" style="position:relative;">
-    <span style="position:relative;display:inline-block;">
-      <i class="fas fa-comments"></i>
-      <span id="chatUnreadDot" style="
-        display:none;
-        position:absolute;top:-3px;right:-4px;
-        width:8px;height:8px;border-radius:50%;
-        background:#e53e3e;
-        border:1.5px solid var(--bg);
-        animation:chatDotPulse 1.5s ease-in-out infinite;
-      "></span>
-    </span>
-    <span>Ngobrol</span>
-  </a>
-  <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-    <i class="fas fa-bars"></i><span>Menu</span>
-  </button>
 </nav>
 
-<script src="{{ url_for('static', filename='js/main.js') }}?v=10"></script>
-{% block scripts %}{% endblock %}
+<!-- Search overlay -->
+<div id="searchOverlay" style="display:none;position:fixed;top:var(--nav-h);left:0;right:0;z-index:850;background:rgba(13,13,15,0.97);backdrop-filter:blur(16px);padding:16px 18px;border-bottom:1px solid var(--border);">
+  <form action="/search" method="get" style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:12px 16px;">
+    <i class="fa-solid fa-magnifying-glass" style="color:var(--muted);font-size:15px;flex-shrink:0;"></i>
+    <input id="searchInputMain" name="q" placeholder="Cari film, anime, series..." 
+           value="{{ request.args.get('q','') }}" autocomplete="off"
+           style="background:none;border:none;color:#fff;font-size:14px;font-family:var(--font);outline:none;width:100%;font-weight:500;">
+    <button type="button" onclick="toggleSearch()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0;">✕</button>
+  </form>
+</div>
+
+<!-- SIDEBAR (mobile drawer) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <a href="/" class="sidebar-logo">CINEVU</a>
+    <button class="sidebar-close" onclick="closeSidebar()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="sidebar-search">
+    <form action="/search" method="get">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input name="q" placeholder="Cari judul, genre..." value="{{ request.args.get('q','') }}" autocomplete="off">
+    </form>
+  </div>
+  <div class="sidebar-section-label">Navigasi</div>
+  <div class="sidebar-nav">
+    <a href="/" class="{% if active=='home' %}active{% endif %}"><span class="icon"><i class="fa-solid fa-house"></i></span> Beranda</a>
+    <a href="/series" class="{% if active=='series' %}active{% endif %}"><span class="icon"><i class="fa-solid fa-tv"></i></span> Series & TV</a>
+    <a href="/anime" class="{% if active=='anime' %}active{% endif %}"><span class="icon"><i class="fa-solid fa-star-and-crescent"></i></span> Anime</a>
+    <a href="/watchlist" class="{% if active=='watchlist' %}active{% endif %}"><span class="icon"><i class="fa-regular fa-bookmark"></i></span> My List</a>
+    <a href="/year/2025"><span class="icon"><i class="fa-solid fa-calendar-days"></i></span> Terbaru 2025</a>
+  </div>
+  <div class="sidebar-section-label">Genre</div>
+  <div class="sidebar-genre-wrap">
+    <a href="/genre/action">⚡ Action</a><a href="/genre/horror">💀 Horror</a>
+    <a href="/genre/drama">🎭 Drama</a><a href="/genre/comedy">😂 Comedy</a>
+    <a href="/genre/thriller">🔪 Thriller</a><a href="/genre/romance">💕 Romance</a>
+    <a href="/genre/science-fiction">🚀 Sci-Fi</a><a href="/genre/fantasy">🧙 Fantasy</a>
+    <a href="/genre/crime">🕵️ Crime</a>
+  </div>
+  <div class="sidebar-section-label">Negara</div>
+  <div class="sidebar-genre-wrap">
+    <a href="/country/korea">🇰🇷 Korea</a><a href="/country/indonesia">🇮🇩 Indonesia</a>
+    <a href="/country/japan">🇯🇵 Jepang</a><a href="/country/usa">🇺🇸 USA</a>
+    <a href="/country/china">🇨🇳 China</a><a href="/country/thailand">🇹🇭 Thailand</a>
+  </div>
+  <div class="sidebar-section-label">Khusus</div>
+  <div class="sidebar-nav">
+    <a href="/semi" class="{% if active=='semi' %}active{% endif %}"><span class="icon"><i class="fa-solid fa-film"></i></span> Film Semi</a>
+    <a href="/pasang-iklan" style="color:var(--accent);"><span class="icon"><i class="fa-solid fa-rectangle-ad"></i></span> Pasang Iklan</a>
+  </div>
+  <div style="height:24px;"></div>
+</div>
+
+<main>{% block content %}{% endblock %}</main>
+
+{% if iklan is defined and iklan.get('footer_banner') %}
+<div style="padding:0 18px 12px;text-align:center;">
+{% for ad in iklan['footer_banner'] %}
+  {% if ad.tipe == 'gambar' %}<a href="{{ ad.link_url or '#' }}" target="_blank" rel="noopener"><img src="{{ ad.konten }}" style="max-width:100%;border-radius:10px;display:block;margin:0 auto;"></a>
+  {% elif ad.tipe in ('html','script') %}{{ ad.konten | safe }}{% endif %}
+{% endfor %}
+</div>
+{% endif %}
+
+<!-- FOOTER -->
+<footer>
+  <a href="/" class="footer-logo">CINEVU</a>
+  <div class="footer-social">
+    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" aria-label="X/Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+    <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+  </div>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <p class="footer-col-title">Kategori</p>
+      <a href="/genre/action">Action</a><a href="/genre/drama">Drama</a>
+      <a href="/genre/horror">Horror</a><a href="/genre/comedy">Comedy</a>
+      <a href="/genre/thriller">Thriller</a><a href="/genre/romance">Romance</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Jelajahi</p>
+      <a href="/anime">Anime</a><a href="/series">Series & TV</a>
+      <a href="/semi">Film Semi</a><a href="/country/korea">Korea</a>
+      <a href="/country/indonesia">Indonesia</a><a href="/year/2025">Terbaru 2025</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Informasi</p>
+      <a href="/pasang-iklan">Pasang Iklan</a>
+      <a href="#" onclick="showPopup('hubungi');return false;">Hubungi Kami</a>
+      <a href="#" onclick="showPopup('privasi');return false;">Kebijakan Privasi</a>
+      <a href="#" onclick="showPopup('syarat');return false;">Syarat Penggunaan</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Bantuan</p>
+      <a href="#" onclick="showPopup('faq');return false;">FAQ</a>
+      <a href="#" onclick="showPopup('cara');return false;">Cara Menonton</a>
+      <a href="#" onclick="showPopup('lapor');return false;">Laporkan Masalah</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2025 Cinevu. Streaming film & series online gratis. Semua konten untuk tujuan hiburan.</p>
+</footer>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="/" class="bnav-item {% if active=='home' %}active{% endif %}">
+      <div class="bnav-icon bnav-home"><i class="fa-solid fa-house"></i></div>
+    </a>
+    <a href="/search" class="bnav-item {% if active=='search' %}active{% endif %}">
+      <div class="bnav-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    </a>
+    <a href="/watchlist" class="bnav-item {% if active=='watchlist' %}active{% endif %}">
+      <div class="bnav-icon"><i class="fa-regular fa-bookmark"></i></div>
+    </a>
+    <a href="/anime" class="bnav-item {% if active=='anime' %}active{% endif %}">
+      <div class="bnav-icon"><i class="fa-solid fa-star-and-crescent"></i></div>
+    </a>
+  </div>
+</nav>
+
+{% if iklan is defined and iklan.get('popup') %}
+{% for ad in iklan['popup'] %}
+<div id="popup-ad-{{ loop.index }}" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;">
+  <div style="position:relative;max-width:480px;width:100%;">
+    <button onclick="this.parentElement.parentElement.remove()" style="position:absolute;top:-12px;right:-12px;background:var(--accent);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;">✕</button>
+    {% if ad.tipe == 'gambar' %}<a href="{{ ad.link_url or '#' }}" target="_blank" rel="noopener"><img src="{{ ad.konten }}" style="width:100%;border-radius:14px;display:block;"></a>
+    {% else %}{{ ad.konten | safe }}{% endif %}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Footer popups -->
+<style>
+.fpopup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px;}
+.fpopup-overlay.open{display:flex;}
+</style>
+
+<!-- Popup: Hubungi -->
+<div class="fpopup-overlay" id="popup-hubungi" onclick="if(event.target===this)closePopup('hubungi')">
+  <div class="fpopup-box">
+    <button class="fpopup-close" onclick="closePopup('hubungi')">✕</button>
+    <div class="fpopup-title">📬 Hubungi Kami</div>
+    <div class="fpopup-body"><p>Ada pertanyaan atau saran? Kirim pesan ke tim Cinevu.</p></div>
+    <div class="fpopup-form" id="form-hubungi">
+      <label>Nama</label><input type="text" placeholder="Nama kamu...">
+      <label>Email</label><input type="email" placeholder="email@contoh.com">
+      <label>Subjek</label>
+      <select><option>Pertanyaan Umum</option><option>Laporkan Bug</option><option>Kerjasama Iklan</option><option>Lainnya</option></select>
+      <label>Pesan</label><textarea placeholder="Tulis pesanmu di sini..."></textarea>
+      <button class="fpopup-btn" onclick="submitForm('hubungi')">Kirim Pesan</button>
+    </div>
+    <div class="fpopup-success" id="success-hubungi">
+      <div class="check">✅</div>
+      <p>Pesan berhasil dikirim!<br><span style="color:var(--muted);font-weight:400;font-size:13px;">Kami akan membalas dalam 1-2 hari kerja.</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: Privasi -->
+<div class="fpopup-overlay" id="popup-privasi" onclick="if(event.target===this)closePopup('privasi')">
+  <div class="fpopup-box">
+    <button class="fpopup-close" onclick="closePopup('privasi')">✕</button>
+    <div class="fpopup-title">🔒 Kebijakan Privasi</div>
+    <div class="fpopup-body">
+      <p>Terakhir diperbarui: 1 Januari 2025</p>
+      <h4>1. Informasi yang Kami Kumpulkan</h4><p>Cinevu hanya mengumpulkan data minimal yang diperlukan untuk operasional layanan, termasuk data teknis seperti alamat IP dan browser.</p>
+      <h4>2. Penggunaan Data</h4><p>Data digunakan untuk meningkatkan performa situs, menganalisis trafik, dan menampilkan iklan yang relevan.</p>
+      <h4>3. Cookie</h4><p>Kami menggunakan cookie untuk menyimpan preferensi pengguna dan data sesi.</p>
+      <h4>4. Pihak Ketiga</h4><p>Cinevu menggunakan layanan Vercel (hosting), Supabase (database), dan jaringan iklan.</p>
+      <h4>5. Kontak</h4><p>Untuk pertanyaan seputar privasi, hubungi kami melalui menu Hubungi Kami.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: Syarat -->
+<div class="fpopup-overlay" id="popup-syarat" onclick="if(event.target===this)closePopup('syarat')">
+  <div class="fpopup-box">
+    <button class="fpopup-close" onclick="closePopup('syarat')">✕</button>
+    <div class="fpopup-title">📄 Syarat Penggunaan</div>
+    <div class="fpopup-body">
+      <h4>1. Layanan</h4><p>Cinevu menyediakan akses ke konten streaming secara gratis. Layanan dapat berubah sewaktu-waktu.</p>
+      <h4>2. Penggunaan yang Diizinkan</h4><ul><li>Menonton konten untuk keperluan pribadi</li><li>Berbagi link situs kepada teman</li></ul>
+      <h4>3. Larangan</h4><ul><li>Mengunduh atau mendistribusikan konten secara ilegal</li><li>Menggunakan bot atau scraper</li></ul>
+      <h4>4. Konten</h4><p>Cinevu tidak menyimpan file video di server kami. Konten bersumber dari pihak ketiga.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: FAQ -->
+<div class="fpopup-overlay" id="popup-faq" onclick="if(event.target===this)closePopup('faq')">
+  <div class="fpopup-box">
+    <button class="fpopup-close" onclick="closePopup('faq')">✕</button>
+    <div class="fpopup-title">❓ FAQ</div>
+    <div class="fpopup-body">
+      <h4>Apakah Cinevu gratis?</h4><p>Ya! Cinevu sepenuhnya gratis. Tidak perlu daftar atau bayar apapun.</p>
+      <h4>Kenapa video tidak bisa diputar?</h4><p>Coba ganti server video dengan menekan tombol server lain di bawah player.</p>
+      <h4>Apakah ada aplikasi Android/iOS?</h4><p>Kamu bisa install sebagai PWA dengan menekan "Tambah ke Layar Utama" di browser.</p>
+      <h4>Bagaimana cara request film?</h4><p>Hubungi kami melalui menu Hubungi Kami dengan menyebutkan judul film.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: Cara Menonton -->
+<div class="fpopup-overlay" id="popup-cara" onclick="if(event.target===this)closePopup('cara')">
+  <div class="fpopup-box">
+    <button class="fpopup-close" onclick="closePopup('cara')">✕</button>
+    <div class="fpopup-title">▶️ Cara Menonton di Cinevu</div>
+    <div class="fpopup-body">
+      <h4>Langkah 1 — Cari Film</h4><p>Gunakan kolom pencarian atau jelajahi kategori/genre di halaman utama.</p>
+      <h4>Langkah 2 — Pilih Film</h4><p>Klik poster film yang ingin kamu tonton.</p>
+      <h4>Langkah 3 — Klik Tonton</h4><p>Tekan tombol ▶ Tonton untuk memulai streaming.</p>
+      <h4>Langkah 4 — Pilih Server</h4><p>Jika video tidak muncul, coba pilih server lain di bawah player.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: Laporan -->
+<div class="fpopup-overlay" id="popup-lapor" onclick="if(event.target===this)closePopup('lapor')">
+  <div class="fpopup-box">
+    <button class="fpopup-close" onclick="closePopup('lapor')">✕</button>
+    <div class="fpopup-title">🚨 Laporkan Masalah</div>
+    <div class="fpopup-body"><p>Temukan bug atau konten bermasalah? Laporkan ke kami!</p></div>
+    <div class="fpopup-form" id="form-lapor">
+      <label>Jenis Masalah</label>
+      <select><option>Video tidak bisa diputar</option><option>Link rusak</option><option>Konten tidak sesuai</option><option>Lainnya</option></select>
+      <label>URL Halaman</label><input type="text" id="lapor-url" placeholder="https://cinevu.vercel.app/...">
+      <label>Deskripsi</label><textarea placeholder="Ceritakan masalah yang kamu alami..."></textarea>
+      <button class="fpopup-btn" onclick="submitForm('lapor')">Kirim Laporan</button>
+    </div>
+    <div class="fpopup-success" id="success-lapor">
+      <div class="check">✅</div>
+      <p>Laporan terkirim!<br><span style="color:var(--muted);font-weight:400;font-size:13px;">Terima kasih, kami akan segera memeriksa.</span></p>
+    </div>
+  </div>
+</div>
 
 <script>
-// ── Header Search ────────────────────────────────
-function openHeaderSearch() {
-  var overlay = document.getElementById('searchOverlay');
-  var backdrop = document.getElementById('searchBackdrop');
-  overlay.style.display = 'flex';
-  backdrop.style.display = 'block';
-  requestAnimationFrame(function() {
-    overlay.style.opacity = '1';
-    overlay.style.transform = 'translateY(0)';
-    backdrop.style.opacity = '1';
-  });
-  setTimeout(function() { document.getElementById('searchOverlayInput').focus(); }, 100);
+// Sidebar
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
-function closeHeaderSearch() {
-  var overlay = document.getElementById('searchOverlay');
-  var backdrop = document.getElementById('searchBackdrop');
-  overlay.style.opacity = '0';
-  overlay.style.transform = 'translateY(-8px)';
-  backdrop.style.opacity = '0';
-  setTimeout(function() {
-    overlay.style.display = 'none';
-    backdrop.style.display = 'none';
-  }, 250);
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  document.body.style.overflow='';
 }
-// Close on Escape key
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeHeaderSearch();
+
+// Search overlay
+function toggleSearch(){
+  const o = document.getElementById('searchOverlay');
+  const showing = o.style.display !== 'none';
+  o.style.display = showing ? 'none' : 'block';
+  if(!showing) document.getElementById('searchInputMain').focus();
+}
+
+// Sliders
+document.querySelectorAll('.slider-wrap').forEach(wrap => {
+  const slider = wrap.querySelector('.slider');
+  const prev = wrap.querySelector('.slider-btn-prev');
+  const next = wrap.querySelector('.slider-btn-next');
+  if(prev) prev.addEventListener('click', () => slider.scrollBy({left:-Math.floor(slider.offsetWidth*0.8),behavior:'smooth'}));
+  if(next) next.addEventListener('click', () => slider.scrollBy({left:Math.floor(slider.offsetWidth*0.8),behavior:'smooth'}));
 });
 
-// ── Sidebar ──────────────────────────────────────
-var sidebarOpen = false;
-function openSidebar() {
-  sidebarOpen = true;
-  document.getElementById('sidebarOverlay').style.display = 'block';
-  document.getElementById('sidebarPanel').style.left = '0';
-  document.body.style.overflow = 'hidden';
+// Popups
+function showPopup(id){
+  const el = document.getElementById('popup-'+id);
+  if(!el) return;
+  el.classList.add('open');
+  document.body.style.overflow='hidden';
+  if(id==='lapor'){const u=document.getElementById('lapor-url');if(u&&!u.value)u.value=window.location.href;}
 }
-function closeSidebar() {
-  sidebarOpen = false;
-  document.getElementById('sidebarOverlay').style.display = 'none';
-  document.getElementById('sidebarPanel').style.left = '-280px';
-  document.body.style.overflow = '';
+function closePopup(id){
+  const el = document.getElementById('popup-'+id);
+  if(!el) return;
+  el.classList.remove('open');
+  document.body.style.overflow='';
 }
-// Swipe kiri untuk tutup sidebar
-(function() {
-  var startX = 0;
-  var panel = document.getElementById('sidebarPanel');
-  panel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
-  panel.addEventListener('touchend', function(e){
-    if (startX - e.changedTouches[0].clientX > 60) closeSidebar();
-  }, {passive:true});
-})();
-
-// ── Source Switcher ──────────────────────────────
-function switchSource(key) {
-  var btns = document.querySelectorAll('.sb-src-btn');
-  btns.forEach(function(b){ b.style.opacity='0.5'; b.disabled=true; });
-  fetch('/api/source/switch', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({source: key})
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data) {
-    if (data.ok) {
-      var lbl = document.getElementById('srcActiveLabel');
-      if (lbl) lbl.textContent = data.label;
-      setTimeout(function(){ location.reload(); }, 400);
-    } else {
-      btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
-    }
-  })
-  .catch(function() {
-    btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
-  });
+function submitForm(id){
+  const form = document.getElementById('form-'+id);
+  const success = document.getElementById('success-'+id);
+  if(!form||!success) return;
+  form.style.display='none';
+  success.style.display='block';
+  setTimeout(()=>closePopup(id),3000);
 }
-
-// ── Bottom nav active ────────────────────────────
-(function(){
-  var path = location.pathname;
-  document.querySelectorAll('.bnav-item[data-href]').forEach(function(item) {
-    var href = item.getAttribute('data-href') || '';
-    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
-      item.classList.add('active');
-    }
-  });
-  // Desktop nav active
-  document.querySelectorAll('.desktop-nav-item[data-href]').forEach(function(item) {
-    var href = item.getAttribute('data-href') || '';
-    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
-      item.classList.add('active');
-    }
-  });
-  var sidebarPages = ['/ongoing','/completed','/movies','/popular','/animelist','/genres','/genre','/profile','/koleksi'];
-  var trigger = document.getElementById('sidebarTrigger');
-  if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) {
-    trigger.classList.add('active');
-  }
-})();
-
-// ── Inject hover overlay ke semua .acard-poster ──
-(function() {
-  function injectOverlays() {
-    document.querySelectorAll('.acard-poster:not([data-overlay])').forEach(function(poster) {
-      poster.setAttribute('data-overlay', '1');
-      var overlay = document.createElement('div');
-      overlay.className = 'acard-hover-overlay';
-      overlay.innerHTML = '<div class="acard-play-btn"><i class="fas fa-play"></i></div><div class="acard-hover-label">Tonton</div>';
-      poster.appendChild(overlay);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.fpopup-overlay.open').forEach(el=>{
+      closePopup(el.id.replace('popup-',''));
     });
-  }
-  document.addEventListener('DOMContentLoaded', injectOverlays);
-  setTimeout(injectOverlays, 800);
-  setTimeout(injectOverlays, 2500);
-})();
-</script>
-
-
-<!-- FAB -->
-<style>
-#fabWrap { position:fixed; bottom:76px; right:14px; z-index:99998; display:flex; flex-direction:column; align-items:flex-end; gap:10px; pointer-events:none; }
-#fabMain, #fabMenu.open .fab-item { pointer-events:all; }
-#fabMain {
-  width:44px; height:44px; border-radius:50%;
-  background:#F47521; color:#fff; border:none;
-  display:flex; align-items:center; justify-content:center;
-  font-size:17px; cursor:pointer;
-  box-shadow:0 4px 20px rgba(244,117,33,0.5);
-  transition:transform 0.3s, background 0.2s;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation; position:relative; z-index:2;
-}
-#fabMain.open { transform:rotate(45deg); background:#22222e; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
-#fabMenu {
-  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
-  pointer-events:none; opacity:0;
-  transform:translateY(10px) scale(0.95);
-  transition:opacity 0.25s, transform 0.25s;
-}
-#fabMenu.open { pointer-events:none; opacity:1; transform:translateY(0) scale(1); }
-#fabMenu.open .fab-item { pointer-events:all; }
-.fab-item { display:flex; align-items:center; gap:8px; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
-.fab-item-label {
-  background:#1a1a23; color:#fff; font-size:11px; font-weight:700; font-family:'Lato',sans-serif;
-  padding:6px 12px; border-radius:20px; box-shadow:0 2px 12px rgba(0,0,0,0.5);
-  white-space:nowrap; border:1px solid rgba(255,255,255,0.08);
-  text-transform:uppercase; letter-spacing:0.3px;
-}
-.fab-item-icon {
-  width:38px; height:38px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:14px; color:#fff; border:none; cursor:pointer;
-  box-shadow:0 2px 12px rgba(0,0,0,0.4); -webkit-tap-highlight-color:transparent; flex-shrink:0;
-}
-.fab-item-icon.tr  { background:#be1e2d; }
-.fab-item-icon.srv { background:#F47521; }
-
-#srcPanel {
-  display:none; position:fixed; bottom:76px; right:14px; z-index:99999;
-  background:#1a1a23; border:1px solid rgba(244,117,33,0.4);
-  border-radius:12px; padding:12px 10px; min-width:190px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.8);
-}
-
-#trModal { display:none; position:fixed; inset:0; z-index:999999; background:rgba(0,0,0,0.85); align-items:flex-end; justify-content:center; }
-#trModal.open { display:flex; }
-#trModalBox {
-  background:#1a1a23; border-radius:16px 16px 0 0; overflow:hidden;
-  width:100%; max-width:480px; height:90vh;
-  display:flex; flex-direction:column;
-  box-shadow:0 -8px 40px rgba(0,0,0,0.8);
-  animation:trSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
-  border-top:1px solid rgba(244,117,33,0.2);
-}
-@keyframes trSlideUp { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
-#trModalHead { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#be1e2d; flex-shrink:0; }
-#trModalHead span { font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:0.3px; }
-#trModalClose { background:rgba(255,255,255,0.2); border:none; color:#fff; width:26px; height:26px; border-radius:50%; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
-#trFrame { flex:1; border:none; width:100%; height:100%; }
-</style>
-
-<div id="fabWrap">
-  <div id="fabMenu">
-    <div class="fab-item" onclick="openTrakteer(); closeFab();">
-      <span class="fab-item-label">Support Dayynime</span>
-      <button class="fab-item-icon tr" title="Support">
-        <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" style="width:18px;height:18px;border-radius:50%;" alt="">
-      </button>
-    </div>
-    <div class="fab-item" onclick="toggleSrcPanel(); closeFab();">
-      <span class="fab-item-label">Ganti Server</span>
-      <button class="fab-item-icon srv" title="Server">
-        <i class="fas fa-server" style="font-size:13px;"></i>
-      </button>
-    </div>
-  </div>
-  <button id="fabMain" onclick="toggleFab()">
-    <i class="fas fa-plus" id="fabIcon"></i>
-  </button>
-</div>
-
-<div id="trModal" onclick="closeTrakteer(event)">
-  <div id="trModalBox">
-    <div id="trModalHead">
-      <span>❤️ Support Dayynime</span>
-      <button id="trModalClose" onclick="closeTrakteer()">✕</button>
-    </div>
-    <iframe id="trFrame" src="" allow="payment" loading="lazy"></iframe>
-  </div>
-</div>
-
-<div id="srcPanel">
-  <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;margin-bottom:10px;text-align:center;text-transform:uppercase;">Ganti Server</div>
-  {% for key, src in all_sources.items() %}
-  <button id="srcBtn-{{ key }}" onclick="switchSource('{{ key }}')" style="
-    width:100%;margin-bottom:5px;padding:9px 12px;border-radius:8px;
-    border:1px solid {% if active_source == key %}#F47521{% else %}rgba(255,255,255,0.08){% endif %};
-    background:{% if active_source == key %}rgba(244,117,33,0.15){% else %}rgba(255,255,255,0.03){% endif %};
-    color:{% if active_source == key %}#F47521{% else %}#A0A0B0{% endif %};
-    font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
-    display:flex;align-items:center;justify-content:space-between;gap:8px;
-    -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-    text-transform:uppercase;letter-spacing:0.3px;">
-    <span>{{ src.label }}</span>
-    {% if active_source == key %}
-    <span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;"></span>
-    {% endif %}
-  </button>
-  {% endfor %}
-  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);font-size:9px;color:#5a5a72;text-align:center;text-transform:uppercase;letter-spacing:0.3px;">
-    Aktif: <span style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
-  </div>
-</div>
-
-<script>
-var fabOpen = false;
-function toggleFab() {
-  fabOpen = !fabOpen;
-  document.getElementById('fabMain').classList.toggle('open', fabOpen);
-  document.getElementById('fabMenu').classList.toggle('open', fabOpen);
-  document.getElementById('fabIcon').className = fabOpen ? 'fas fa-times' : 'fas fa-plus';
-  if (!fabOpen) document.getElementById('srcPanel').style.display = 'none';
-}
-function closeFab() {
-  fabOpen = false;
-  document.getElementById('fabMain').classList.remove('open');
-  document.getElementById('fabMenu').classList.remove('open');
-  document.getElementById('fabIcon').className = 'fas fa-plus';
-}
-function openTrakteer() {
-  var modal = document.getElementById('trModal');
-  var frame = document.getElementById('trFrame');
-  frame.src = '';
-  setTimeout(function() { frame.src = 'https://trakteer.id/v1/Dayynimee/tip/embed/modal'; }, 50);
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeTrakteer(e) {
-  if (e && e.target !== document.getElementById('trModal') && e.target !== document.getElementById('trModalClose')) return;
-  document.getElementById('trFrame').src = '';
-  document.getElementById('trModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-var srcPanelOpen = false;
-function toggleSrcPanel() {
-  srcPanelOpen = !srcPanelOpen;
-  document.getElementById('srcPanel').style.display = srcPanelOpen ? 'block' : 'none';
-}
-document.addEventListener('click', function(e) {
-  var wrap = document.getElementById('fabWrap');
-  var panel = document.getElementById('srcPanel');
-  if (fabOpen && wrap && !wrap.contains(e.target)) closeFab();
-  if (srcPanelOpen && panel && !panel.contains(e.target) && wrap && !wrap.contains(e.target)) {
-    srcPanelOpen = false;
-    panel.style.display = 'none';
+    document.getElementById('searchOverlay').style.display='none';
   }
 });
-</script>
 
-<!-- Trakteer Donation Notif -->
-<div id="trNotif" style="display:none;position:fixed;bottom:76px;right:14px;z-index:99997;background:#1a1a23;border:1px solid rgba(190,30,45,0.4);border-radius:12px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.7);animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;">
-  <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px;">
-    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,#ff6b6b);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;" id="trNotifAvatar">?</div>
-    <div style="flex:1;min-width:0;">
-      <div style="font-size:9px;color:#be1e2d;font-weight:900;letter-spacing:0.5px;text-transform:uppercase;">❤️ Donasi Masuk!</div>
-      <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="trNotifName">-</div>
-    </div>
-    <button onclick="hidetrNotif()" style="background:none;border:none;color:#5a5a72;font-size:14px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;">✕</button>
-  </div>
-  <div style="font-size:11px;color:#A0A0B0;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div style="font-size:14px;font-weight:900;color:#F47521;" id="trNotifAmount">-</div>
-    <button onclick="openTrakteer();hidetrNotif();" style="background:#be1e2d;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.3px;">Dukung</button>
-  </div>
-</div>
-<style>
-@keyframes trNotifIn { from{opacity:0;transform:translateX(20px);} to{opacity:1;transform:translateX(0);} }
-</style>
-<script>
-(function() {
-  var lastId = localStorage.getItem('trLastDonorId') || '';
-  var notifTimer = null;
-  function fmtAmount(v) {
-    var n = parseInt(v) || 0;
-    if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace('.0','') + 'jt';
-    if (n >= 1000) return 'Rp ' + (n/1000).toFixed(0) + 'rb';
-    return 'Rp ' + n;
-  }
-  function showNotif(s) {
-    document.getElementById('trNotifAvatar').textContent = (s.name||'A')[0].toUpperCase();
-    document.getElementById('trNotifName').textContent = s.name || 'Anonim';
-    document.getElementById('trNotifMsg').textContent = s.message || '🎉 Terima kasih!';
-    document.getElementById('trNotifAmount').textContent = fmtAmount(s.amount);
-    var el = document.getElementById('trNotif');
-    el.style.display = 'block';
-    el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
-    if (notifTimer) clearTimeout(notifTimer);
-    notifTimer = setTimeout(hidetrNotif, 8000);
-  }
-  window.hidetrNotif = function() {
-    document.getElementById('trNotif').style.display = 'none';
-    if (notifTimer) clearTimeout(notifTimer);
-  };
-  function checkLatest() {
-    fetch('/api/trakteer/latest').then(function(r){ return r.json(); }).then(function(d) {
-      if (!d.ok || !d.latest) return;
-      var s = d.latest;
-      if (s.id && s.id !== lastId) {
-        lastId = s.id; localStorage.setItem('trLastDonorId', lastId); showNotif(s);
-      }
-    }).catch(function(){});
-  }
-  setTimeout(checkLatest, 5000); setInterval(checkLatest, 60000);
-})();
-</script>
-
-
-<script>
-// ── Header user avatar + sidebar auth state ───────────────────────────
-(function() {
-  fetch('/api/me').then(function(r){ return r.json(); }).then(function(d) {
-    var user = d.user;
-    var btn = document.getElementById('headerUserBtn');
-
-    if (!user) {
-      // Belum login: arahkan icon user ke halaman login
-      if(btn) btn.href = '/auth/login';
-      var sbOut = document.getElementById('sbLoggedOut');
-      var sbIn  = document.getElementById('sbLoggedIn');
-      if(sbOut) sbOut.style.display = 'block';
-      if(sbIn)  sbIn.style.display  = 'none';
-      return;
-    }
-
-    // Sudah login: tampilkan avatar & username di sidebar
-    var sbOut = document.getElementById('sbLoggedOut');
-    var sbIn  = document.getElementById('sbLoggedIn');
-    if(sbOut) sbOut.style.display = 'none';
-    if(sbIn)  sbIn.style.display  = 'block';
-
-    var sbName = document.getElementById('sbUsername');
-    if(sbName) sbName.textContent = user.name || 'Profile';
-
-    var avatar = document.getElementById('headerAvatar');
-    var fallback = document.getElementById('headerAvatarFallback');
-    if (user.avatar && avatar) {
-      avatar.src = user.avatar;
-      avatar.style.display = 'block';
-      if(fallback) fallback.style.display = 'none';
-      if(btn) btn.style.border = '1.5px solid var(--accent)';
-    }
-
-    // Check premium for dot
-    fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(p) {
-      if(p.premium) {
-        var dot = document.getElementById('headerPremiumDot');
-        if(dot) dot.style.display = 'block';
-        if(btn) btn.style.border = '1.5px solid #fbbf24';
-      }
-    }).catch(function(){});
-  }).catch(function(){
-    // Error fetch: fallback ke tampilkan tombol login
-    var sbOut = document.getElementById('sbLoggedOut');
-    if(sbOut) sbOut.style.display = 'block';
-    var btn = document.getElementById('headerUserBtn');
-    if(btn) btn.href = '/auth/login';
-  });
-})();
-</script>
-
-<script>
-// ── Ads: hanya tampil jika bukan premium ──
-(function() {
-  fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(d) {
-    if (d.premium) return; // premium = no ads
-    var s1 = document.createElement('script');
-    s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
-    document.head.appendChild(s1);
-    var s2 = document.createElement('script');
-    s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
-    document.head.appendChild(s2);
-  }).catch(function() {
-    // Gagal cek = anggap bukan premium, tampilkan iklan
-    var s1 = document.createElement('script');
-    s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
-    document.head.appendChild(s1);
-    var s2 = document.createElement('script');
-    s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
-    document.head.appendChild(s2);
-  });
-})();
-</script>
-
-<!-- ── Chat Unread Dot ─────────────────────────────── -->
-<style>
-@keyframes chatDotPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%       { transform: scale(1.35); opacity: 0.7; }
+// Watchlist engine
+const WL_KEY='cinevu_watchlist';
+function wlGet(){try{return JSON.parse(localStorage.getItem(WL_KEY)||'[]');}catch{return[];}}
+function wlSave(list){localStorage.setItem(WL_KEY,JSON.stringify(list));}
+function wlHas(url){return wlGet().some(i=>i.url===url);}
+function wlAdd(item){
+  const list=wlGet();
+  if(!list.some(i=>i.url===item.url)){list.unshift({...item,added:Date.now()});wlSave(list);wlToast('✅ Ditambahkan ke My List');}
+  wlSyncAll();
 }
-</style>
-<script>
-(function() {
-  if (window.location.pathname === '/ruang-ngobrol') {
-    // Kalau di halaman ngobrol, update last_seen ke sekarang
-    localStorage.setItem('dayy_chat_seen', new Date().toISOString());
-    return;
-  }
-
-  var dot = document.getElementById('chatUnreadDot');
-  if (!dot) return;
-
-  var SEEN_KEY  = 'dayy_chat_seen';
-  var UNREAD_KEY = 'dayy_chat_unread';
-
-  // Tampilkan dot kalau ada unread tersimpan
-  if (localStorage.getItem(UNREAD_KEY) === '1') dot.style.display = 'block';
-
-  // Klik Ngobrol → hapus dot + update last seen
-  var navBtn = document.getElementById('bnavNgobrol');
-  if (navBtn) navBtn.addEventListener('click', function() {
-    dot.style.display = 'none';
-    localStorage.removeItem(UNREAD_KEY);
-    localStorage.setItem(SEEN_KEY, new Date().toISOString());
+function wlRemove(url){wlSave(wlGet().filter(i=>i.url!==url));wlToast('🗑️ Dihapus dari My List');wlSyncAll();}
+function wlToggle(item){wlHas(item.url)?wlRemove(item.url):wlAdd(item);}
+function wlToast(msg){
+  let t=document.getElementById('wl-toast');
+  if(!t){t=document.createElement('div');t.id='wl-toast';t.style.cssText='position:fixed;bottom:calc(var(--bottom-h) + 16px);left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border);color:#fff;padding:10px 20px;border-radius:50px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5);';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';clearTimeout(t._tid);t._tid=setTimeout(()=>{t.style.opacity='0';},2200);
+}
+function wlSyncAll(){
+  document.querySelectorAll('[data-wl-url]').forEach(btn=>{
+    const url=btn.getAttribute('data-wl-url');
+    const inList=wlHas(url);
+    const ico=btn.querySelector('i');
+    if(ico){ico.className=inList?'fa-solid fa-check':'fa-solid fa-plus';}
+    btn.classList.toggle('wl-active',inList);
+    btn.title=inList?'Hapus dari My List':'Tambah ke My List';
   });
-
-  function checkUnread() {
-    var lastSeen = localStorage.getItem(SEEN_KEY);
-    // Kalau belum pernah buka chat, anggap last seen = 1 jam lalu
-    if (!lastSeen) {
-      lastSeen = new Date(Date.now() - 3600000).toISOString();
-    }
-
-    fetch('/api/globalchat?limit=1')
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (!d.messages || !d.messages.length) return;
-        var latestTime = d.messages[0].created_at;
-        if (latestTime && latestTime > lastSeen) {
-          dot.style.display = 'block';
-          localStorage.setItem(UNREAD_KEY, '1');
-        }
-      })
-      .catch(function() {});
-  }
-
-  // Cek langsung saat load, lalu tiap 30 detik
-  checkUnread();
-  setInterval(checkUnread, 30000);
-})();
+  document.querySelectorAll('[data-wl-count]').forEach(el=>{el.textContent=wlGet().length;});
+}
+document.addEventListener('DOMContentLoaded',wlSyncAll);
 </script>
+
+{% block extra_js %}{% endblock %}
 </body>
-<script>
-// ── Service Worker ───────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' })
-      .catch(function(err) { console.warn('[SW] Register gagal:', err); });
-  });
-}
-
-// ── PWA Install Prompt ───────────────────────────
-var deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Simpan supaya bisa dipanggil dari halaman lain
-  window._pwaPrompt = e;
-});
-
-function installPWA() {
-  var p = deferredPrompt || window._pwaPrompt;
-  if (!p) return;
-  p.prompt();
-  p.userChoice.then(function() {
-    deferredPrompt = null;
-    window._pwaPrompt = null;
-    var banner = document.getElementById('pwaBannerSection');
-    if (banner) banner.style.display = 'none';
-  });
-}
-
-window.addEventListener('appinstalled', function() {
-  deferredPrompt = null;
-  window._pwaPrompt = null;
-  var banner = document.getElementById('pwaBannerSection');
-  if (banner) banner.style.display = 'none';
-});
-</script>
-
-<style>
-
-</style>
 </html>
