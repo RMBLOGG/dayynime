@@ -116,6 +116,31 @@ body { padding-top: 0 !important; }
 </script>
 {% endif %}
 
+<!-- Quick Nav -->
+<div style="padding:10px 14px 4px;">
+  <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px;">
+    <a href="/ongoing" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;flex-shrink:0;"></span> Ongoing</a>
+    <a href="/completed" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#60a5fa;display:inline-block;flex-shrink:0;"></span> Completed</a>
+    <a href="/movies" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-film" style="font-size:10px;color:#e8415a;"></i> Movie</a>
+    <a href="/popular" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-fire" style="font-size:10px;color:#e8415a;"></i> Populer</a>
+    <a href="/jadwal" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-calendar-alt" style="font-size:10px;color:#10B981;"></i> Jadwal</a>
+    <a href="/animelist" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-list" style="font-size:10px;color:#888;"></i> A-Z List</a>
+  </div>
+</div>
+
+<!-- PWA Install Banner -->
+<div id="pwaBannerSection" style="margin:10px 14px 0;display:none;">
+  <div style="background:#161618;border:1px solid rgba(232,65,90,0.2);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;">
+    <img src="/static/icon.png" style="width:44px;height:44px;border-radius:11px;flex-shrink:0;">
+    <div style="flex:1;min-width:0;">
+      <div style="font-weight:900;font-size:13px;color:#fff;">Install Dayynime</div>
+      <div style="font-size:11px;color:#888;margin-top:2px;">Nonton anime lebih nyaman</div>
+    </div>
+    <button onclick="installPWA()" style="background:#e8415a;border:none;border-radius:10px;color:#fff;font-weight:900;font-size:12px;padding:9px 14px;cursor:pointer;flex-shrink:0;font-family:inherit;">Install</button>
+  </div>
+</div>
+<script>window.addEventListener('beforeinstallprompt',function(){var b=document.getElementById('pwaBannerSection');if(b)b.style.display='block';});</script>
+
 <!-- Lanjutkan Nonton -->
 <div id="cwSection" style="display:none;padding:4px 0 0;">
   <div class="idx-sec-head"><div class="idx-sec-title">Lanjutkan Nonton</div><button onclick="clearAllHistory()" style="font-size:12px;color:#e8415a;background:none;border:none;cursor:pointer;font-family:inherit;">Hapus ›</button></div>
@@ -187,6 +212,128 @@ body { padding-top: 0 !important; }
 
 
 
+<!-- Genre -->
+{% set genre_icons = {
+  'Action':'fas fa-fist-raised','Adventure':'fas fa-map-marked-alt',
+  'Comedy':'fas fa-laugh-beam','Drama':'fas fa-theater-masks',
+  'Fantasy':'fas fa-hat-wizard','Horror':'fas fa-skull',
+  'Magic':'fas fa-magic','Mecha':'fas fa-robot',
+  'Mystery':'fas fa-search','Psychological':'fas fa-brain',
+  'Romance':'fas fa-heart','School':'fas fa-graduation-cap',
+  'Sci-Fi':'fas fa-atom','Shounen':'fas fa-fire',
+  'Slice of Life':'fas fa-coffee','Sports':'fas fa-running',
+  'Supernatural':'fas fa-ghost','Thriller':'fas fa-bolt',
+  'Music':'fas fa-music','Isekai':'fas fa-door-open',
+  'Demons':'fas fa-dragon','Game':'fas fa-gamepad',
+  'Historical':'fas fa-landmark','Space':'fas fa-rocket',
+  'Vampire':'fas fa-tint','Aksi':'fas fa-fist-raised',
+  'Petualangan':'fas fa-map-marked-alt','Komedi':'fas fa-laugh-beam',
+  'Romansa':'fas fa-heart','Misteri':'fas fa-search','Sekolah':'fas fa-graduation-cap'
+} %}
+{% set fallback_genres = [
+  {'name':'Action','slug':'action'},{'name':'Adventure','slug':'adventure'},
+  {'name':'Comedy','slug':'comedy'},{'name':'Drama','slug':'drama'},
+  {'name':'Fantasy','slug':'fantasy'},{'name':'Horror','slug':'horror'},
+  {'name':'Isekai','slug':'isekai'},{'name':'Magic','slug':'magic'},
+  {'name':'Mecha','slug':'mecha'},{'name':'Mystery','slug':'mystery'},
+  {'name':'Psychological','slug':'psychological'},{'name':'Romance','slug':'romance'},
+  {'name':'School','slug':'school'},{'name':'Sci-Fi','slug':'sci-fi'},
+  {'name':'Shounen','slug':'shounen'},{'name':'Slice of Life','slug':'slice-of-life'},
+  {'name':'Sports','slug':'sports'},{'name':'Supernatural','slug':'supernatural'}
+] %}
+{% set genre_data = genres if genres else fallback_genres %}
+<div>
+  <div class="idx-sec-head"><div class="idx-sec-title">Genre</div><a href="/genres" class="idx-sec-more">Semua ›</a></div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 4px;">
+    {% for g in genre_data %}
+    <a href="/genre/{{ g.slug }}" style="display:inline-flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#C0C0C8;transition:border-color 0.2s;" class="idx-genre-chip">
+      <i class="{{ genre_icons.get(g.name, 'fas fa-play') }}" style="font-size:11px;color:#e8415a;"></i>
+      <span>{{ g.name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Top Populer -->
+{% if popular and popular.animes %}
+<div style="margin-top:8px;">
+  <div class="idx-sec-head">
+    <div style="display:flex;align-items:center;gap:8px;"><div class="idx-sec-title">Top Populer</div><div style="background:rgba(245,197,24,0.12);color:#f5c518;font-size:9px;font-weight:900;padding:3px 8px;border-radius:10px;letter-spacing:0.3px;">CHART</div></div>
+    <a href="/popular" class="idx-sec-more">Lihat Semua ›</a>
+  </div>
+  <div style="padding:0 14px;">
+    {% for anime in popular.animes[:8] %}
+    <a href="/anime/{{ anime.slug }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none;color:inherit;" class="idx-rank-item">
+      <div style="width:28px;text-align:center;flex-shrink:0;font-size:{% if loop.index <= 3 %}17{% else %}14{% endif %}px;font-weight:900;color:{% if loop.index == 1 %}#f5c518{% elif loop.index == 2 %}#C0C0C8{% elif loop.index == 3 %}#cd7f32{% else %}#555{% endif %};">{{ loop.index }}</div>
+      <div style="width:44px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#1e1e21;">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div style="flex:1;min-width:0;" class="idx-rank-info">
+        <div style="font-size:13px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;" class="idx-rank-title">{{ anime.title }}</div>
+        <div style="display:flex;align-items:center;gap:8px;" class="idx-rank-score">
+          <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;" class="idx-rank-score-bar">
+            <div style="height:100%;background:linear-gradient(90deg,#e8415a,#ff6b6b);border-radius:4px;width:{{ ((anime.score|float / 10) * 100)|int if anime.score else (90 - loop.index * 5) }}%;" class="idx-rank-score-fill"></div>
+          </div>
+          <span style="font-size:11px;font-weight:900;color:#f5c518;flex-shrink:0;" class="idx-rank-score-num">{{ anime.score or '—' }}</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Jadwal Rilis -->
+{% if schedule and schedule.schedule %}
+<div style="margin-top:8px;">
+  <div class="idx-sec-head"><div class="idx-sec-title">Jadwal Rilis</div><a href="/jadwal" class="idx-sec-more" style="color:#10B981;">Lengkap ›</a></div>
+  <div style="display:flex;gap:8px;overflow-x:auto;padding:0 14px 12px;scrollbar-width:none;">
+    {% for day in schedule.schedule.keys() %}
+    <button class="idx-sday" data-sday="{{ day }}" style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:8px 12px;cursor:pointer;font-family:inherit;color:#888;font-size:10px;font-weight:700;transition:all 0.2s;min-width:52px;">
+      <div style="font-size:12px;font-weight:900;">{{ day[:3] }}</div>
+      <div style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.15);"></div>
+    </button>
+    {% endfor %}
+  </div>
+  {% for day, animes in schedule.schedule.items() %}
+  <div class="idx-schedule-panel" id="idx-panel-{{ day }}" style="display:none;padding:0 14px;">
+    {% for anime in animes[:8] %}
+    <a href="/anime/{{ anime.slug }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none;color:inherit;" class="idx-schedule-item">
+      <div style="width:48px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#1e1e21;">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ anime.title }}</div>
+        {% if anime.episode %}<div style="font-size:11px;color:#888;">Episode {{ anime.episode }}</div>{% endif %}
+        {% if anime.time %}<div style="font-size:10px;color:#10B981;margin-top:3px;"><i class="fas fa-clock"></i> {{ anime.time }}</div>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+<style>
+.idx-sday.active { background:rgba(232,65,90,0.12) !important; border-color:rgba(232,65,90,0.3) !important; color:#e8415a !important; }
+.idx-sday.active div:last-child { background:#e8415a !important; }
+</style>
+<script>
+(function(){
+  var days=document.querySelectorAll('.idx-sday'),panels=document.querySelectorAll('.idx-schedule-panel');
+  function activate(dayEl){
+    days.forEach(function(d){d.classList.remove('active');});
+    panels.forEach(function(p){p.style.display='none';});
+    dayEl.classList.add('active');
+    var panel=document.getElementById('idx-panel-'+dayEl.getAttribute('data-sday'));
+    if(panel)panel.style.display='block';
+  }
+  days.forEach(function(d){d.addEventListener('click',function(){activate(d);});});
+  var today=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][new Date().getDay()];
+  var todayEl=document.querySelector('[data-sday="'+today+'"]');
+  if(todayEl){activate(todayEl);}else if(days[0]){activate(days[0]);}
+})();
+</script>
+{% endif %}
+
 <!-- Premium -->
 {% if not is_premium %}
 <div style="margin:16px 14px;">
@@ -225,6 +372,38 @@ body { padding-top: 0 !important; }
 (function(){function timeAgo(iso){var diff=(Date.now()-new Date(iso).getTime())/1000;if(diff<60)return'Baru saja';if(diff<3600)return Math.floor(diff/60)+' menit lalu';if(diff<86400)return Math.floor(diff/3600)+' jam lalu';return Math.floor(diff/86400)+' hari lalu';}function renderHistory(history){var sec=document.getElementById('cwSection');var list=document.getElementById('cwList');if(!sec||!list)return;if(!history||!history.length){sec.style.display='none';return;}list.innerHTML=history.map(function(item){var epNum=parseInt((item.ep_name||'').match(/\d+/)||[1])||1;var pct=Math.min(92,Math.max(6,(epNum%24)/24*100));return'<a href="/episode/'+item.ep_slug+'?anime='+item.anime_slug+'" class="cw-card"><div class="cw-thumb"><img src="'+(item.anime_poster||'/static/no-image.svg')+'" loading="lazy" onerror="this.src=\'/static/no-image.svg\'"><div class="cw-play-overlay"><i class="fas fa-play" style="font-size:9px;"></i></div><div class="cw-progress-bar"><div class="cw-progress-fill" style="width:'+pct+'%"></div></div></div><div class="cw-info"><div class="cw-title">'+(item.anime_title||'Anime')+'</div><div class="cw-ep-name">'+(item.ep_name||'Episode')+'</div><div class="cw-meta"><i class="fas fa-clock"></i>'+timeAgo(item.watched_at)+'</div></div><button class="cw-del" title="Hapus" onclick="event.preventDefault();event.stopPropagation();delHistory(\''+item.anime_slug+'\')">×</button></a>';}).join('');sec.style.display='';}function loadHistory(){fetch('/api/history?limit=10').then(function(r){return r.json();}).then(function(d){if(!d.ok||!d.history||!d.history.length)return;renderHistory(d.history);}).catch(function(){});}window.delHistory=function(slug){fetch('/api/history/'+slug,{method:'DELETE'}).then(function(){loadHistory();}).catch(function(){});};window.clearAllHistory=function(){if(!confirm('Hapus semua riwayat nonton?'))return;fetch('/api/history/all',{method:'DELETE'}).then(function(){document.getElementById('cwSection').style.display='none';}).catch(function(){});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',loadHistory);else loadHistory();})();
 </script>
 
+<script>
+/* RANK BARS ANIMATION */
+(function(){
+  var bars=document.querySelectorAll('.idx-rank-score-fill');
+  if(!bars.length)return;
+  bars.forEach(function(bar){bar._tw=bar.style.width||'70%';bar.style.width='0%';bar.style.transition='none';});
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(!entry.isIntersecting)return;
+      var bar=entry.target,i=Array.from(bars).indexOf(bar);
+      setTimeout(function(){bar.style.transition='width 0.9s cubic-bezier(0.4,0,0.2,1)';bar.style.width=bar._tw;},200+i*80);
+      obs.unobserve(bar);
+    });
+  },{threshold:0.4});
+  bars.forEach(function(b){obs.observe(b);});
+})();
+/* GENRE CHIP REVEAL */
+(function(){
+  var chips=document.querySelectorAll('.idx-genre-chip');
+  if(!chips.length)return;
+  chips.forEach(function(chip){chip.style.opacity='0';chip.style.transform='translateY(6px)';});
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(!entry.isIntersecting)return;
+      var el=entry.target,idx=Array.from(chips).indexOf(el);
+      setTimeout(function(){el.style.transition='opacity 0.3s,transform 0.3s';el.style.opacity='1';el.style.transform='translateY(0)';},idx*30);
+      obs.unobserve(el);
+    });
+  },{threshold:0.1});
+  chips.forEach(function(c){obs.observe(c);});
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (function(){var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';var client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);var slugs=[];document.querySelectorAll('.idx-card[data-anime-slug]').forEach(function(el){var s=el.getAttribute('data-anime-slug');if(s&&slugs.indexOf(s)===-1)slugs.push(s);});var uid=sessionStorage.getItem('dyn_uid');if(!uid){uid='u_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();sessionStorage.setItem('dyn_uid',uid);}var channels={};function updateBadge(slug,count){var badge=document.getElementById('viewers-'+slug);var countEl=document.getElementById('viewers-count-'+slug);if(!badge||!countEl)return;if(count>=1){countEl.textContent=count;badge.classList.add('visible');}else{badge.classList.remove('visible');}}function subscribeToSlug(slug){if(channels[slug])return;var ch=client.channel('anime-viewers:'+slug,{config:{presence:{key:uid}}});ch.on('presence',{event:'sync'},function(){updateBadge(slug,Object.keys(ch.presenceState()).length);});ch.subscribe();channels[slug]=ch;}slugs.forEach(subscribeToSlug);window.addEventListener('beforeunload',function(){Object.values(channels).forEach(function(ch){try{client.removeChannel(ch);}catch(e){}});});})();
