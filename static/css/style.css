@@ -1071,3 +1071,68 @@ button { font-family:inherit; cursor:pointer; }
 .an-recent-title { font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .an-recent-ep { font-size: 10px; color: var(--text3); margin-top: 1px; }
 .an-recent-time { font-size: 9px; color: var(--text3); flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════
+   EFFECTS — Page Transition, Parallax, Scroll Reveal, Ripple
+   ══════════════════════════════════════════════════ */
+
+/* ── PAGE TRANSITION ─────────────────────────────── */
+#page-transition-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+#page-transition-overlay.fade-out {
+  opacity: 1; pointer-events: all;
+}
+body {
+  animation: pageEnter 0.3s ease both;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SCROLL REVEAL ───────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: opacity, transform;
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* stagger children */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.reveal-stagger.revealed > *:nth-child(1) { opacity:1; transform:none; transition-delay: 0.05s; }
+.reveal-stagger.revealed > *:nth-child(2) { opacity:1; transform:none; transition-delay: 0.10s; }
+.reveal-stagger.revealed > *:nth-child(3) { opacity:1; transform:none; transition-delay: 0.15s; }
+.reveal-stagger.revealed > *:nth-child(4) { opacity:1; transform:none; transition-delay: 0.20s; }
+.reveal-stagger.revealed > *:nth-child(5) { opacity:1; transform:none; transition-delay: 0.25s; }
+.reveal-stagger.revealed > *:nth-child(6) { opacity:1; transform:none; transition-delay: 0.30s; }
+
+/* ── RIPPLE ──────────────────────────────────────── */
+.ripple-host { position: relative; overflow: hidden; }
+.ripple-wave {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  pointer-events: none;
+  transform: scale(0);
+  animation: rippleAnim 0.55s linear;
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── PARALLAX HERO ───────────────────────────────── */
+.idx-slide img,
+.banner-slide .slide-bg {
+  will-change: transform;
+}
