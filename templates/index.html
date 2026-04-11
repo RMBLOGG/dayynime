@@ -26,15 +26,17 @@
 
 <!-- DISCOVER BANNER -->
 <a href="/animelist" class="discover-banner" style="margin-top:10px;">
-  <div class="discover-icon">🔍</div>
+  <div class="discover-icon" style="background:rgba(192,24,74,0.15);border:1.5px solid rgba(192,24,74,0.3);font-size:0;display:flex;align-items:center;justify-content:center;">
+    <i class="fas fa-compass" style="font-size:20px;color:var(--accent);"></i>
+  </div>
   <div style="flex:1;min-width:0;">
     <div class="discover-title">Discover Anime</div>
     <div class="discover-sub">Find your next favorite series</div>
   </div>
   {% if data and data.ongoing %}
-  <div class="discover-count-badge">{{ (data.ongoing|length * 8)|string }} <i class="fas fa-chevron-right" style="font-size:9px;margin-left:2px;"></i></div>
+  <div class="discover-count-badge" style="display:flex;align-items:center;gap:5px;background:rgba(192,24,74,0.15);border:1px solid rgba(192,24,74,0.3);color:var(--accent);"><i class="fas fa-list" style="font-size:10px;"></i>{{ (data.ongoing|length * 8)|string }} <i class="fas fa-chevron-right" style="font-size:9px;"></i></div>
   {% else %}
-  <div class="discover-count-badge">96 <i class="fas fa-chevron-right" style="font-size:9px;margin-left:2px;"></i></div>
+  <div class="discover-count-badge" style="display:flex;align-items:center;gap:5px;background:rgba(192,24,74,0.15);border:1px solid rgba(192,24,74,0.3);color:var(--accent);"><i class="fas fa-list" style="font-size:10px;"></i>96 <i class="fas fa-chevron-right" style="font-size:9px;"></i></div>
   {% endif %}
 </a>
 
