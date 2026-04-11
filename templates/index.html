@@ -4,7 +4,7 @@
 
 {% set banner_animes = [] %}
 {% if popular and popular.animes %}
-  {% for a in popular.animes[:5] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+  {% for a in popular.animes[:8] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 {% if banner_animes|length < 3 and data and data.ongoing %}
   {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
@@ -89,7 +89,7 @@ body { padding-top: 0 !important; }
 </div>
 
 <!-- Trending label -->
-<div style="padding:0 14px 12px;"><div class="idx-trending-pill"><i class="fas fa-star"></i> Trending {% if popular and popular.animes %}{{ popular.animes|length }}{% else %}25{% endif %}</div></div>
+<div style="padding:0 14px 12px;"><div class="idx-trending-pill"><i class="fas fa-star"></i> Trending {% if banner_animes %}{{ banner_animes|length }}{% else %}25{% endif %}</div></div>
 
 <!-- Hero Slider -->
 {% if banner_animes %}
