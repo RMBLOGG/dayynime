@@ -430,7 +430,8 @@ window.addEventListener('beforeinstallprompt', function() {
   var cur=0,total=slides.length,timer=null;
   function goTo(n){
     cur=(n+total)%total;
-    track.style.transform='translateX(-'+cur*100+'%)';
+    var slideW=slides[0].offsetWidth+10; /* slide width + gap */
+    track.style.transform='translateX(-'+(cur*slideW)+'px)';
     dots.forEach(function(d,i){d.classList.toggle('active',i===cur);});
   }
   function startAuto(){timer=setInterval(function(){goTo(cur+1);},5000);}
