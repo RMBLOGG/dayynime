@@ -1,184 +1,1093 @@
 {% extends "base.html" %}
-{% block title %}Cinevu — Streaming Film Gratis{% endblock %}
+{% block title %}Dayynime — Nonton Anime Sub Indo{% endblock %}
 {% block content %}
 
-{% set hero_movies = [] %}
-{% for sec in sections %}
-  {% for m in sec.movies %}
-    {% if hero_movies|length < 8 %}
-      {% set _ = hero_movies.append(m) %}
-    {% endif %}
-  {% endfor %}
-{% endfor %}
+{% set banner_animes = [] %}
+{% if popular and popular.animes %}
+  {% for a in popular.animes[:5] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+{% endif %}
+{% if banner_animes|length < 3 and data and data.ongoing %}
+  {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+{% endif %}
 
-<!-- DISCOVER ANIME BANNER -->
-<a href="/anime" class="discover-banner">
-  <div class="discover-icon">🎌</div>
-  <div class="discover-text">
-    <div class="discover-title">Discover Anime</div>
-    <div class="discover-sub">Temukan anime favoritemu berikutnya</div>
-  </div>
-  <div class="discover-right">
-    <span class="discover-count">{{ sections|length * 12 }}</span>
-    <i class="fa-solid fa-chevron-right discover-chevron"></i>
-  </div>
-</a>
+<!-- ═══ ANNOUNCEMENT BAR ═══ -->
+<div id="announcementBar" style="
+  background: linear-gradient(90deg, #1a1a23 0%, #1e1a2e 50%, #1a1a23 100%);
+  border-bottom: 1px solid rgba(244,117,33,0.25);
+  padding: 0 12px;
+  position: relative;
+  overflow: hidden;
+">
+  <!-- shimmer line -->
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F47521,transparent);opacity:0.6;"></div>
 
-<!-- TRENDING LABEL -->
-<div class="section-label">
-  <i class="fa-solid fa-fire"></i>
-  Trending {{ sections[0].movies|length if sections else 0 }}
+  <div style="display:flex;align-items:center;gap:8px;padding:7px 0;">
+    <!-- label -->
+    <div style="
+      flex-shrink:0;
+      background:#F47521;color:#fff;
+      font-size:9px;font-weight:900;
+      padding:3px 7px;border-radius:4px;
+      letter-spacing:0.5px;text-transform:uppercase;
+    ">📢 INFO</div>
+
+    <!-- scrolling text -->
+    <div style="flex:1;overflow:hidden;position:relative;">
+      <div id="announceTicker" style="
+        display:inline-flex;gap:0;
+        white-space:nowrap;
+        animation: tickerScroll 18s linear infinite;
+        font-size:11px;color:#C0C0C8;
+      ">
+        <span style="padding-right:60px;">Setiap server memiliki kelengkapan anime berbeda &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+        <span style="padding-right:60px;">Setiap server memiliki koleksi berbeda &nbsp;·&nbsp;
+          <span style="color:#F47521;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp;
+          <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp;
+          <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp;
+          Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+      </div>
+    </div>
+
+    <!-- close button -->
+    <button onclick="document.getElementById('announcementBar').style.display='none'" style="
+      flex-shrink:0;background:none;border:none;
+      color:#666;font-size:14px;cursor:pointer;
+      padding:0 2px;line-height:1;
+    ">×</button>
+  </div>
 </div>
+<style>
+@keyframes tickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+#announceTicker { will-change: transform; }
+#announceTicker:hover { animation-play-state: paused; }
+</style>
 
-<!-- HERO SLIDESHOW -->
-{% if hero_movies %}
-<div class="hero-slider fade-in" id="heroSlider">
-  {% for m in hero_movies %}
-  <div class="hero-slide{% if loop.first %} active{% endif %}" data-url="/watch?url={{ m.url | urlencode }}">
-    <div class="hero-bg">
-      <img src="{{ m.poster }}" alt="{{ m.title }}" onerror="this.style.display='none'">
-    </div>
-    <div class="hero-grad"></div>
-    <div class="hero-content">
-      {% if m.rating %}
-      <div class="hero-rating-badge">
-        <i class="fa-solid fa-star"></i> {{ m.rating }}
+<!-- ═══ HERO BANNER ═══ -->
+<div class="banner-slider">
+  <div class="banner-track">
+    <!-- Slide 0: Promo -->
+    <a href="https://trakteer.id/Dayynimee" target="_blank" rel="noopener" class="banner-slide">
+      <img src="/static/banner.png" alt="Dukung Dayynime" class="slide-bg">
+      <div class="banner-content">
+        <div class="banner-badge"><i class="fas fa-heart"></i> Support Kami</div>
+        <div class="banner-title">Dukung Dayynime</div>
+        <div class="banner-meta"><span><i class="fas fa-star"></i> Platform Anime Sub Indo</span></div>
+        <div class="banner-play"><i class="fas fa-heart"></i> Dukung Sekarang</div>
       </div>
-      {% endif %}
-      <div class="hero-title">{{ m.title }}</div>
-      <div class="hero-pills">
-        {% if m.episodes %}<div class="hero-pill"><i class="fa-regular fa-calendar"></i> {{ m.episodes }} Episodes</div>{% endif %}
-        {% if m.duration %}<div class="hero-pill"><i class="fa-regular fa-clock"></i> {{ m.duration }}</div>{% endif %}
-        <div class="hero-pill"><i class="fa-solid fa-tv"></i> TV</div>
-      </div>
-      <div style="display:flex;gap:10px;">
-        <a href="/watch?url={{ m.url | urlencode }}" class="btn-play" style="font-size:13px;padding:10px 20px;">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Tonton
-        </a>
-        <button class="btn-info" style="font-size:13px;padding:10px 16px;"
-          data-wl-url="{{ m.url }}"
-          onclick="event.preventDefault();wlToggle({url:'{{ m.url }}',title:{{ m.title|tojson }},poster:'{{ m.poster }}',quality:'{{ m.quality }}',rating:'{{ m.rating }}'})">
-          <i class="fa-solid fa-plus"></i>
-        </button>
-      </div>
-    </div>
+    </a>
+    {% if banner_animes %}
+      {% for anime in banner_animes[:5] %}
+      <a href="/anime/{{ anime.slug }}" class="banner-slide">
+        <img src="{{ anime.poster }}" alt="" class="slide-bg">
+        <div class="banner-content">
+          <div class="banner-badge">
+            {% if loop.index == 1 %}<i class="fas fa-fire"></i> Trending
+            {% elif loop.index == 2 %}<i class="fas fa-star"></i> Populer
+            {% else %}<i class="fas fa-play"></i> Unggulan{% endif %}
+          </div>
+          <div class="banner-title">{{ anime.title }}</div>
+          <div class="banner-meta">
+            {% if anime.type %}<span>{{ anime.type }}</span>{% endif %}
+            {% if anime.episode %}<span><i class="fas fa-circle" style="font-size:4px;"></i> Ep {{ anime.episode }}</span>{% endif %}
+          </div>
+          <div class="banner-play"><i class="fas fa-play"></i> Tonton</div>
+        </div>
+      </a>
+      {% endfor %}
+    {% endif %}
   </div>
-  {% endfor %}
-
-  <!-- Dots -->
-  <div class="hero-dots">
-    {% for m in hero_movies %}
-    <button class="hero-dot{% if loop.first %} active{% endif %}" data-idx="{{ loop.index0 }}"></button>
+  <button class="banner-arrow left" id="bannerPrev"><i class="fas fa-chevron-left"></i></button>
+  <button class="banner-arrow right" id="bannerNext"><i class="fas fa-chevron-right"></i></button>
+  <div class="banner-dots-wrap" id="bannerDots">
+    {% set count = (banner_animes|length if banner_animes else 0) + 1 %}
+    {% for i in range([count, 6]|min) %}
+    <button class="banner-dot {% if loop.first %}active{% endif %}"></button>
     {% endfor %}
   </div>
 </div>
 
+<!-- ═══ QUICK NAV ═══ -->
+<div style="padding:16px 0 0;">
+  <div class="quick-nav">
+    <a href="/ongoing" class="quick-nav-item"><span class="dot" style="background:#10B981;"></span> Ongoing</a>
+    <a href="/completed" class="quick-nav-item"><span class="dot" style="background:#60a5fa;"></span> Completed</a>
+    <a href="/movies" class="quick-nav-item"><i class="fas fa-film"></i> Movie</a>
+    <a href="/popular" class="quick-nav-item"><i class="fas fa-fire" style="color:#F47521;"></i> Populer</a>
+    <a href="/jadwal" class="quick-nav-item"><i class="fas fa-calendar-alt" style="color:#10B981;"></i> Jadwal</a>
+    <a href="/animelist" class="quick-nav-item"><i class="fas fa-list"></i> A-Z List</a>
+  </div>
+</div>
+
+<!-- ═══ PROMO PREMIUM ═══ -->
+{% if not is_premium %}
+<div style="margin:16px 12px 32px;">
+  <div style="
+    position:relative;overflow:hidden;
+    background:#111118;
+    border:1px solid rgba(244,117,33,0.3);
+    border-radius:14px;
+    padding:16px;
+  ">
+    <!-- top accent line -->
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#F47521,#ffd700,#F47521);border-radius:14px 14px 0 0;"></div>
+
+    <!-- baris atas: icon + teks -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+
+      <!-- icon.png + mahkota -->
+      <div style="flex-shrink:0;position:relative;width:52px;height:58px;">
+        <!-- mahkota nongol di atas -->
+        <svg style="position:absolute;top:0;left:50%;transform:translateX(-50%);display:block;filter:drop-shadow(0 1px 4px #000);"
+          width="32" height="18" viewBox="0 0 32 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 16 L6 4 L12 11 L16 1 L20 11 L26 4 L30 16 Z" fill="#F47521" stroke="#FFD700" stroke-width="1.3" stroke-linejoin="round"/>
+          <circle cx="2.5" cy="16" r="2.5" fill="#FFD700"/>
+          <circle cx="16" cy="1.5" r="2.5" fill="#FFD700"/>
+          <circle cx="29.5" cy="16" r="2.5" fill="#FFD700"/>
+        </svg>
+        <!-- icon.png -->
+        <img src="/static/icon.png" alt="Dayynime"
+          style="position:absolute;bottom:0;left:0;width:52px;height:52px;border-radius:13px;display:block;box-shadow:0 3px 12px rgba(0,0,0,0.5);">
+      </div>
+
+      <!-- teks kanan -->
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:900;font-size:15px;color:#fff;margin-bottom:2px;">Dayynime Premium</div>
+        <div style="font-size:11px;color:#888;line-height:1.5;">Bebas iklan & nonton tanpa batas</div>
+      </div>
+
+      <!-- label PREMIUM -->
+      <div style="flex-shrink:0;background:linear-gradient(135deg,#F47521,#e05a00);color:#fff;font-size:9px;font-weight:900;padding:4px 8px;border-radius:6px;letter-spacing:0.6px;text-transform:uppercase;">PREMIUM</div>
+    </div>
+
+    <!-- divider tipis -->
+    <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:12px;"></div>
+
+    <!-- fitur pills -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:4px;background:rgba(244,117,33,0.08);border:1px solid rgba(244,117,33,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#F47521;white-space:nowrap;">
+        <i class="fas fa-ban" style="font-size:9px;"></i> No Iklan
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#10B981;white-space:nowrap;">
+        <i class="fas fa-bolt" style="font-size:9px;"></i> Server Cepat
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#60a5fa;white-space:nowrap;">
+        <i class="fas fa-infinity" style="font-size:9px;"></i> Unlimited
+      </div>
+    </div>
+
+    <!-- tombol -->
+    <a href="/premium" style="
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      background:linear-gradient(90deg,#F47521,#e05a00);
+      color:#fff;font-weight:900;font-size:13px;
+      padding:11px;border-radius:9px;text-decoration:none;
+      letter-spacing:0.3px;
+    ">
+      <svg width="14" height="14" viewBox="0 0 32 18" fill="none" style="margin-bottom:1px;">
+        <path d="M2 16 L6 4 L12 11 L16 1 L20 11 L26 4 L30 16 Z" fill="#fff" stroke="#FFD700" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      Upgrade ke Premium
+    </a>
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══ PWA INSTALL BANNER ═══ -->
+<div id="pwaBannerSection" style="margin:0 12px 16px;display:none;">
+  <div style="
+    background: linear-gradient(135deg, #1e1a2e 0%, #1a1a23 100%);
+    border: 1px solid rgba(244,117,33,0.35);
+    border-radius: 14px;
+    padding: 14px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  ">
+    <img src="/static/icon.png" style="width:46px;height:46px;border-radius:12px;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.4);">
+    <div style="flex:1;min-width:0;">
+      <div style="font-weight:900;font-size:14px;color:#fff;">Install DayyNime</div>
+      <div style="font-size:11px;color:#A0A0B0;margin-top:2px;">Nonton anime lebih nyaman lewat homescreen</div>
+    </div>
+    <button onclick="installPWA()" style="
+      background:#F47521;border:none;border-radius:10px;
+      color:#fff;font-weight:900;font-size:12px;
+      padding:9px 14px;cursor:pointer;flex-shrink:0;
+      white-space:nowrap;letter-spacing:0.2px;
+    ">Install</button>
+  </div>
+</div>
+
+<!-- ═══ LANJUTKAN NONTON ═══ -->
+<div id="cwSection" style="display:none; padding:18px 0 0;">
+  <div class="section-head">
+    <div class="section-title">
+      <span style="display:inline-block;width:3px;height:16px;background:var(--accent);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>
+      Lanjutkan Nonton
+    </div>
+    <button onclick="clearAllHistory()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;">
+      Hapus semua ›
+    </button>
+  </div>
+  <div class="cw-strip" id="cwList"></div>
+</div>
+
 <script>
-(function(){
-  const slides = document.querySelectorAll('.hero-slide');
-  const dots   = document.querySelectorAll('.hero-dot');
-  let cur = 0, timer;
-  function goTo(n){
-    slides[cur].classList.remove('active');
-    dots[cur].classList.remove('active');
-    cur = (n + slides.length) % slides.length;
-    slides[cur].classList.add('active');
-    dots[cur].classList.add('active');
+(function() {
+  function timeAgo(iso) {
+    var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60)   return 'Baru saja';
+    if (diff < 3600) return Math.floor(diff/60) + ' menit lalu';
+    if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
+    return Math.floor(diff/86400) + ' hari lalu';
   }
-  function next(){ goTo(cur+1); }
-  function startTimer(){ clearInterval(timer); timer = setInterval(next,5000); }
-  dots.forEach(d => d.addEventListener('click',()=>{goTo(+d.dataset.idx);startTimer();}));
-  startTimer();
+
+  function renderHistory(history) {
+    var sec  = document.getElementById('cwSection');
+    var list = document.getElementById('cwList');
+    if (!sec || !list) return;
+    if (!history || !history.length) { sec.style.display = 'none'; return; }
+
+    list.innerHTML = history.map(function(item) {
+      var epNum = parseInt((item.ep_name || '').match(/\d+/) || [1]) || 1;
+      var pct   = Math.min(92, Math.max(6, (epNum % 24) / 24 * 100));
+      return '<a href="/episode/' + item.ep_slug + '?anime=' + item.anime_slug + '" class="cw-card">' +
+        '<div class="cw-thumb">' +
+          '<img src="' + (item.anime_poster||'/static/no-image.svg') + '" loading="lazy" onerror="this.src=\'/static/no-image.svg\'">' +
+          '<div class="cw-play-overlay"><i class="fas fa-play" style="font-size:9px;"></i></div>' +
+          '<div class="cw-progress-bar"><div class="cw-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="cw-info">' +
+          '<div class="cw-title">' + (item.anime_title||'Anime') + '</div>' +
+          '<div class="cw-ep-name">' + (item.ep_name||'Episode') + '</div>' +
+          '<div class="cw-meta"><i class="fas fa-clock"></i>' + timeAgo(item.watched_at) + '</div>' +
+        '</div>' +
+        '<button class="cw-del" title="Hapus" onclick="event.preventDefault();event.stopPropagation();delHistory(\'' + item.anime_slug + '\')">×</button>' +
+      '</a>';
+    }).join('');
+    sec.style.display = '';
+  }
+
+  function loadHistory() {
+    fetch('/api/history?limit=10')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (!d.ok || !d.history || !d.history.length) return;
+        renderHistory(d.history);
+      }).catch(function(){});
+  }
+
+  window.delHistory = function(slug) {
+    fetch('/api/history/' + slug, { method: 'DELETE' })
+      .then(function() { loadHistory(); })
+      .catch(function(){});
+  };
+
+  window.clearAllHistory = function() {
+    if (!confirm('Hapus semua riwayat nonton?')) return;
+    fetch('/api/history/all', { method: 'DELETE' })
+      .then(function(){ document.getElementById('cwSection').style.display='none'; })
+      .catch(function(){});
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadHistory);
+  else loadHistory();
+})();
+</script>
+
+<!-- ═══ SEDANG TAYANG ═══ -->
+{% if data and data.ongoing %}
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <span class="section-title idx-title-pill">Sedang Tayang</span>
+      <div class="idx-section-badge">Live</div>
+    </div>
+    <a href="/ongoing" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="scroll-row">
+    {% for anime in data.ongoing[:12] %}
+    <a href="/anime/{{ anime.slug }}" class="acard" data-anime-slug="{{ anime.slug }}">
+      <div class="acard-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.type %}<div class="acard-type">{{ anime.type }}</div>{% endif %}
+        {% if anime.episode %}<div class="acard-ep"><i class="fas fa-play-circle"></i> Ep {{ anime.episode }}</div>{% endif %}
+        <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+          <span class="acard-viewers-dot"></span>
+          <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+          <span>nonton</span>
+        </div>
+      </div>
+      <div class="acard-genre">{{ anime.type or 'Anime' }}</div>
+      <div class="acard-title">{{ anime.title }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══ BARU DITAMBAHKAN ═══ -->
+{% if data and data.recent %}
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <span class="section-title idx-title-pill">Baru Ditambahkan</span>
+      <div class="idx-section-badge" style="background:rgba(59,130,246,0.15);color:#60a5fa;">NEW</div>
+    </div>
+    <a href="/completed" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="idx-wcard-grid">
+    {% for anime in data.recent[:10] %}
+    <a href="/anime/{{ anime.slug }}" class="idx-wcard">
+      <div class="idx-wcard-thumb">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+        {% if anime.episode %}<div class="idx-wcard-ep">Ep {{ anime.episode }}</div>{% elif anime.type %}<div class="idx-wcard-ep">{{ anime.type }}</div>{% endif %}
+      </div>
+      <div class="idx-wcard-info">
+        <div class="idx-wcard-title">{{ anime.title }}</div>
+        <div class="idx-wcard-sub">{{ anime.type or 'Anime' }}</div>
+        <div class="idx-wcard-time">
+          <i class="fas fa-circle-play" style="font-size:9px;"></i>
+          {{ anime.status_or_day or 'Update Terbaru' }}
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══ GENRE ═══ -->
+{% set genre_icons = {
+  'Action':'fas fa-fist-raised','Adventure':'fas fa-map-marked-alt',
+  'Comedy':'fas fa-laugh-beam','Drama':'fas fa-theater-masks',
+  'Fantasy':'fas fa-hat-wizard','Horror':'fas fa-skull',
+  'Magic':'fas fa-magic','Mecha':'fas fa-robot',
+  'Military':'fas fa-fighter-jet','Mystery':'fas fa-search',
+  'Psychological':'fas fa-brain','Romance':'fas fa-heart',
+  'School':'fas fa-graduation-cap','Sci-Fi':'fas fa-atom',
+  'Seinen':'fas fa-mars','Shoujo':'fas fa-venus',
+  'Shounen':'fas fa-fire','Slice of Life':'fas fa-coffee',
+  'Sports':'fas fa-running','Supernatural':'fas fa-ghost',
+  'Thriller':'fas fa-bolt','Music':'fas fa-music',
+  'Ecchi':'fas fa-star','Isekai':'fas fa-door-open',
+  'Demons':'fas fa-dragon','Game':'fas fa-gamepad',
+  'Harem':'fas fa-users','Historical':'fas fa-landmark',
+  'Josei':'fas fa-female','Martial Arts':'fas fa-hand-rock',
+  'Parody':'fas fa-mask','Police':'fas fa-shield-alt',
+  'Samurai':'fas fa-sword','Shoujo Ai':'fas fa-heart',
+  'Space':'fas fa-rocket','Super Power':'fas fa-bolt',
+  'Vampire':'fas fa-tint','Aksi':'fas fa-fist-raised',
+  'Petualangan':'fas fa-map-marked-alt','Komedi':'fas fa-laugh-beam',
+  'Romansa':'fas fa-heart','Misteri':'fas fa-search','Sekolah':'fas fa-graduation-cap'
+} %}
+{% set fallback_genres = [
+  {'name':'Action','slug':'action'},{'name':'Adventure','slug':'adventure'},
+  {'name':'Comedy','slug':'comedy'},{'name':'Drama','slug':'drama'},
+  {'name':'Fantasy','slug':'fantasy'},{'name':'Horror','slug':'horror'},
+  {'name':'Isekai','slug':'isekai'},{'name':'Magic','slug':'magic'},
+  {'name':'Mecha','slug':'mecha'},{'name':'Mystery','slug':'mystery'},
+  {'name':'Psychological','slug':'psychological'},{'name':'Romance','slug':'romance'},
+  {'name':'School','slug':'school'},{'name':'Sci-Fi','slug':'sci-fi'},
+  {'name':'Shounen','slug':'shounen'},{'name':'Slice of Life','slug':'slice-of-life'},
+  {'name':'Sports','slug':'sports'},{'name':'Supernatural','slug':'supernatural'}
+] %}
+{% set genre_data = genres if genres else fallback_genres %}
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <span class="section-title idx-title-pill">Genre</span>
+    </div>
+    <a href="/genres" class="section-more">Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div class="idx-genre-scroll">
+    {% for g in genre_data %}
+    <a href="/genre/{{ g.slug }}" class="idx-genre-chip">
+      <i class="{{ genre_icons.get(g.name, 'fas fa-play') }} idx-genre-icon"></i>
+      <span>{{ g.name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ POPULER ═══ -->
+{% if popular and popular.animes %}
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <span class="section-title idx-title-pill">Top Populer</span>
+      <div class="idx-section-badge" style="background:rgba(255,215,0,0.12);color:#ffd700;">Chart</div>
+    </div>
+    <a href="/popular" class="section-more">Lihat Semua <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  {% for anime in popular.animes[:8] %}
+  <a href="/anime/{{ anime.slug }}" class="idx-rank-item" data-anime-slug="{{ anime.slug }}">
+    <div class="idx-rank-num {% if loop.index == 1 %}top1{% elif loop.index == 2 %}top2{% elif loop.index == 3 %}top3{% else %}other{% endif %}">{{ anime.rank or loop.index }}</div>
+    <div class="idx-rank-thumb">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+    </div>
+    <div class="idx-rank-info">
+      <div class="idx-rank-title">{{ anime.title }}</div>
+      <div class="idx-rank-score">
+        <div class="idx-rank-score-bar">
+          <div class="idx-rank-score-fill" style="width:{{ ((anime.score|float / 10) * 100)|int if anime.score else (90 - loop.index * 5) }}%;"></div>
+        </div>
+        <span class="idx-rank-score-num">{{ anime.score or '—' }}</span>
+      </div>
+    </div>
+    <div class="acard-viewers" id="viewers-{{ anime.slug }}">
+      <span class="acard-viewers-dot"></span>
+      <span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span>
+      <span>nonton</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ═══ JADWAL RILIS ═══ -->
+{% if schedule and schedule.schedule %}
+<div class="section idx-section-wrap">
+  <div class="section-head idx-section-head">
+    <div class="idx-section-title-group">
+      <span class="section-title idx-title-pill">Jadwal Rilis</span>
+    </div>
+    <a href="/jadwal" class="section-more" style="color:#00d4aa;">Lengkap <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <!-- Day circles selector -->
+  <div class="idx-schedule-days">
+    {% for day in schedule.schedule.keys() %}
+    <div class="idx-sday" data-sday="{{ day }}">
+      <div class="idx-sday-circle">{{ day[:3] }}</div>
+      <div class="idx-sday-dot"></div>
+      <div class="idx-sday-label">{{ day }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <!-- Panels per hari -->
+  {% for day, animes in schedule.schedule.items() %}
+  <div class="idx-schedule-panel" id="idx-panel-{{ day }}" style="display:none;">
+    {% for anime in animes[:8] %}
+    <a href="/anime/{{ anime.slug }}" class="idx-schedule-item">
+      <div class="idx-schedule-thumb">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+      </div>
+      <div class="idx-schedule-info">
+        <div class="idx-schedule-title">{{ anime.title }}</div>
+        {% if anime.episode %}<div class="idx-schedule-ep">Episode {{ anime.episode }}</div>{% endif %}
+        {% if anime.time %}<div class="idx-schedule-time"><i class="fas fa-clock" style="font-size:9px;"></i> {{ anime.time }}</div>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+<script>
+(function() {
+  var days = document.querySelectorAll('.idx-sday');
+  var panels = document.querySelectorAll('.idx-schedule-panel');
+  function activate(dayEl) {
+    days.forEach(function(d) { d.classList.remove('active'); });
+    panels.forEach(function(p) { p.style.display = 'none'; });
+    dayEl.classList.add('active');
+    var panel = document.getElementById('idx-panel-' + dayEl.getAttribute('data-sday'));
+    if (panel) panel.style.display = 'block';
+  }
+  days.forEach(function(d) { d.addEventListener('click', function() { activate(this); }); });
+  if (days.length) activate(days[0]);
 })();
 </script>
 {% endif %}
 
-<!-- ROWS -->
-<div class="rows-wrap" style="margin-top:24px;">
-
-  {% if iklan is defined and iklan.get('header_banner') %}
-  <div style="padding:0 18px 16px;text-align:center;">
-  {% for ad in iklan['header_banner'] %}
-    {% if ad.tipe == 'gambar' %}<a href="{{ ad.link_url or '#' }}" target="_blank" rel="noopener"><img src="{{ ad.konten }}" style="max-width:100%;border-radius:12px;"></a>
-    {% else %}{{ ad.konten | safe }}{% endif %}
-  {% endfor %}
-  </div>
-  {% endif %}
-
-  <!-- Genre pills -->
-  <div class="genre-bar" style="margin-bottom:20px;">
-    <a class="genre-pill active" href="/">Semua</a>
-    <a class="genre-pill" href="/genre/action">⚡ Action</a>
-    <a class="genre-pill" href="/genre/horror">💀 Horror</a>
-    <a class="genre-pill" href="/genre/drama">🎭 Drama</a>
-    <a class="genre-pill" href="/genre/comedy">😂 Comedy</a>
-    <a class="genre-pill" href="/genre/thriller">🔪 Thriller</a>
-    <a class="genre-pill" href="/genre/romance">💕 Romance</a>
-    <a class="genre-pill" href="/anime">🎌 Anime</a>
-    <a class="genre-pill" href="/genre/fantasy">🧙 Fantasy</a>
-    <a class="genre-pill" href="/genre/crime">🕵️ Crime</a>
-    <a class="genre-pill" href="/country/korea">🇰🇷 Korea</a>
-    <a class="genre-pill" href="/country/indonesia">🇮🇩 Indonesia</a>
-    <a class="genre-pill" href="/year/2025">📅 2025</a>
-  </div>
-
-  {% for sec in sections %}
-  {% if sec.movies %}
-
-  {% if loop.index == 3 and iklan is defined and iklan.get('home_mid') %}
-  <div style="padding:0 18px 16px;text-align:center;">
-  {% for ad in iklan['home_mid'] %}
-    {% if ad.tipe == 'gambar' %}<a href="{{ ad.link_url or '#' }}" target="_blank" rel="noopener"><img src="{{ ad.konten }}" style="max-width:100%;border-radius:12px;"></a>
-    {% else %}{{ ad.konten | safe }}{% endif %}
-  {% endfor %}
-  </div>
-  {% endif %}
-
-  <div class="row fade-in" style="animation-delay:{{ loop.index0 * 0.06 }}s">
-    <div class="row-header">
-      <div class="row-title">{{ sec.title }}</div>
-      <a class="see-all" href="{{ sec.more }}">Lihat Semua <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></a>
-    </div>
-    <div class="slider-wrap">
-      <div class="slider">
-        {% if sec.id == 'trending' %}
-          {% for m in sec.movies %}
-          <a href="/watch?url={{ m.url | urlencode }}" class="top10-card">
-            <div class="top10-num">{{ loop.index }}</div>
-            <img class="top10-img" src="{{ m.poster }}" alt="{{ m.title }}"
-                 onerror="this.src='https://placehold.co/120x175/141416/252528?text={{ loop.index }}'">
-          </a>
-          {% endfor %}
-        {% else %}
-          {% for m in sec.movies %}
-          {% set match_val = (loop.index * 7 + 87) % 12 + 88 %}
-          <a href="/watch?url={{ m.url | urlencode }}" class="acard">
-            <div class="acard-img-wrap">
-              <img class="acard-img" src="{{ m.poster }}" alt="{{ m.title }}" loading="lazy"
-                   onerror="this.src='https://placehold.co/140x195/141416/252528?text=No+Image'">
-              {% if m.rating %}
-              <div class="acard-rating"><i class="fa-solid fa-star"></i> {{ m.rating }}</div>
-              {% endif %}
-              {% if m.quality %}
-              <div class="acard-badge">{{ m.quality }}</div>
-              {% endif %}
-              <div class="acard-overlay"></div>
-            </div>
-            <div class="acard-foot-title">{{ m.title | truncate(26) }}</div>
-            <div class="acard-foot-meta">
-              {% if m.episodes %}<span>{{ m.episodes }} Eps</span><span class="dot"></span>{% endif %}
-              {% if m.duration %}<span>{{ m.duration }}</span>{% endif %}
-              {% if not m.episodes and not m.duration %}<span>{{ match_val }}% Cocok</span>{% endif %}
-            </div>
-          </a>
-          {% endfor %}
-        {% endif %}
-      </div>
+<!-- ═══ KOMUNITAS ═══ -->
+<div style="padding:0 14px 28px;">
+  <div style="background:#1a1a23;border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.07);">
+    <div style="font-size:11px;font-weight:900;color:#A0A0B0;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
+    <div style="display:flex;gap:8px;">
+      <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener"
+         style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;">
+        <i class="fab fa-facebook-f"></i> FB Page
+      </a>
+      <a href="https://facebook.com/groups/1569311164620890/" target="_blank" rel="noopener"
+         style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;">
+        <i class="fas fa-users"></i> Grup FB
+      </a>
+      <a href="https://discord.gg/bChVdNUzh" target="_blank" rel="noopener"
+         style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.2);border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;color:#7983f5;text-transform:uppercase;letter-spacing:0.3px;">
+        <i class="fab fa-discord"></i> Discord
+      </a>
     </div>
   </div>
-
-  {% endif %}
-  {% endfor %}
-
 </div>
+
+<!-- ═══ SUPPORTER ═══ -->
+<div class="section" id="supporterSection" style="display:none;">
+  <div class="section-head">
+    <div class="section-title">Supporter Terbaru</div>
+    <a href="javascript:void(0)" onclick="openTrakteer()" class="section-more">Dukung <i class="fas fa-chevron-right fa-xs"></i></a>
+  </div>
+  <div id="supporterList" style="display:flex;flex-direction:column;gap:6px;padding:0 14px;"></div>
+</div>
+
+<style>
+/* ══════════════════════════════════════
+   INDEX PAGE — CUSTOM LAYOUT STYLES
+   (prefix idx- supaya ga nabrak style.css)
+   ══════════════════════════════════════ */
+
+/* ── SECTION WRAPPER ── */
+.idx-section-wrap { padding: 0; margin-bottom: 20px; }
+.idx-section-wrap .idx-wcard-grid { padding: 0 14px; }
+.idx-section-wrap .idx-rank-item { padding-left: 14px; padding-right: 14px; }
+.idx-section-wrap .idx-schedule-days { padding-left: 14px; padding-right: 14px; }
+.idx-section-wrap .idx-schedule-item { padding-left: 14px; padding-right: 14px; }
+.idx-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+.idx-section-title-group { display:flex; align-items:center; gap:10px; }
+.idx-title-pill {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: #fff;
+  position: relative;
+  padding: 4px 18px 4px 12px;
+  background: linear-gradient(100deg, var(--accent), #ff9a00);
+  clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+  border-radius: 2px 0 0 2px;
+}
+
+.idx-section-badge {
+  background: rgba(244,117,33,0.15); color: var(--accent);
+  font-size: 9px; font-weight: 900; padding: 2px 8px;
+  border-radius: 20px; letter-spacing: 0.3px; text-transform: uppercase;
+}
+
+/* ── WCARD GRID (Baru Ditambahkan) — 2 kolom ── */
+.idx-wcard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.idx-wcard {
+  display: flex; gap: 8px;
+  text-decoration: none; color: inherit;
+  padding: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+.idx-wcard:hover { border-color: rgba(244,117,33,0.35); background: rgba(244,117,33,0.05); }
+.idx-wcard-thumb {
+  width: 56px; height: 76px; border-radius: 6px;
+  overflow: hidden; flex-shrink: 0;
+  background: #1a1a23; position: relative;
+}
+.idx-wcard-thumb img { width: 100%; height: 100%; object-fit: cover; display:block; }
+.idx-wcard-ep {
+  position: absolute; bottom: 3px; right: 3px;
+  background: var(--accent);
+  color: #fff; font-size: 7px; font-weight: 900;
+  padding: 1px 4px; border-radius: 3px;
+}
+.idx-wcard-info { flex: 1; min-width: 0; display:flex; flex-direction:column; justify-content:center; gap:3px; }
+.idx-wcard-title {
+  font-size: 11px; font-weight: 800; color: #fff;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  line-height: 1.3;
+}
+.idx-wcard-sub { font-size: 9px; color: #6060a0; font-weight: 600; }
+.idx-wcard-time { font-size: 9px; color: var(--accent); font-weight: 700; display:flex; align-items:center; gap:3px; }
+
+/* ── RANKING LIST (Populer) ── */
+.idx-rank-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  text-decoration: none; color: inherit;
+  transition: transform 0.2s;
+}
+.idx-rank-item:last-child { border-bottom: none; }
+.idx-rank-item:hover { transform: translateX(4px); }
+.idx-rank-num {
+  width: 28px; font-size: 20px; font-weight: 900;
+  flex-shrink: 0; text-align: center; line-height: 1;
+}
+.idx-rank-num.top1 { color: #ffd700; }
+.idx-rank-num.top2 { color: #c0c0c0; }
+.idx-rank-num.top3 { color: #cd7f32; }
+.idx-rank-num.other { color: #6060a0; font-size: 14px; }
+.idx-rank-thumb {
+  width: 42px; height: 58px; border-radius: 8px;
+  overflow: hidden; flex-shrink: 0; background: #1a1a23;
+}
+.idx-rank-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.idx-rank-info { flex: 1; min-width: 0; }
+.idx-rank-title {
+  font-size: 12px; font-weight: 800; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 6px;
+}
+.idx-rank-score { display: flex; align-items: center; gap: 6px; }
+.idx-rank-score-bar {
+  flex: 1; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.08); overflow: hidden;
+}
+.idx-rank-score-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), #ffd700);
+}
+.idx-rank-score-num { font-size: 10px; color: var(--accent); font-weight: 800; flex-shrink: 0; }
+
+/* ── SCHEDULE VERTIKAL (Jadwal) ── */
+.idx-schedule-days {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding-bottom: 14px; scrollbar-width: none;
+}
+.idx-schedule-days::-webkit-scrollbar { display: none; }
+.idx-sday {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; flex-shrink: 0; cursor: pointer;
+}
+.idx-sday-circle {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 900;
+  background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.08);
+  color: #A0A0B0; transition: all 0.2s;
+}
+.idx-sday.active .idx-sday-circle, .idx-sday:hover .idx-sday-circle {
+  background: linear-gradient(135deg, var(--accent), #b36000);
+  border-color: var(--accent); color: #fff;
+  box-shadow: 0 4px 14px rgba(244,117,33,0.35);
+}
+.idx-sday-label { font-size: 9px; color: #6060a0; font-weight: 700; }
+.idx-sday.active .idx-sday-label { color: var(--accent); }
+.idx-sday-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0; }
+.idx-sday.active .idx-sday-dot { opacity: 1; }
+.idx-schedule-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  text-decoration: none; color: inherit; transition: transform 0.2s;
+}
+.idx-schedule-item:last-child { border-bottom: none; }
+.idx-schedule-item:hover { transform: translateX(3px); }
+.idx-schedule-thumb {
+  width: 50px; height: 70px; border-radius: 8px;
+  overflow: hidden; flex-shrink: 0; background: #1a1a23;
+}
+.idx-schedule-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.idx-schedule-info { flex: 1; min-width: 0; }
+.idx-schedule-title {
+  font-size: 12px; font-weight: 800; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.idx-schedule-ep { font-size: 10px; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+.idx-schedule-time { font-size: 10px; color: #6060a0; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+/* ── SUPPORTER ── */
+.supporter-card {
+  display:flex; align-items:center; gap:10px;
+  background:#1a1a23; border-radius:8px;
+  padding:10px 12px; border:1px solid rgba(255,255,255,0.06);
+  animation:fadeInUp 0.4s ease both;
+}
+.supporter-avatar {
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,#be1e2d,#F47521);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:900; color:#fff;
+}
+.supporter-name { font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.supporter-msg  { font-size:11px; color:#A0A0B0; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.supporter-amount { font-size:13px; font-weight:900; color:#F47521; white-space:nowrap; flex-shrink:0; }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── GENRE CHIPS ── */
+.idx-genre-scroll {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 0 14px;
+}
+.idx-genre-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  text-decoration: none;
+  color: #a0a0b8;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  transition: all 0.18s ease;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.idx-genre-chip:hover,
+.idx-genre-chip:active {
+  background: rgba(244,117,33,0.1);
+  border-color: rgba(244,117,33,0.3);
+  color: var(--accent);
+}
+.idx-genre-icon {
+  font-size: 9px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ── GENRE REVEAL ANIMATION ── */
+.idx-genre-chip {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.18s ease, opacity 0.35s ease, transform 0.35s ease;
+}
+.idx-genre-chip.genre-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── end custom styles ── */
+</style>
+<script>
+(function() {
+  function fmtAmount(v) {
+    var n = parseInt(v) || 0;
+    if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace('.0','') + 'jt';
+    if (n >= 1000) return 'Rp ' + (n/1000).toFixed(0) + 'rb';
+    return 'Rp ' + n;
+  }
+  function loadSupporters() {
+    fetch('/api/trakteer/supporters')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (!d.ok || !d.supporters || !d.supporters.length) return;
+        var list = document.getElementById('supporterList');
+        var sec  = document.getElementById('supporterSection');
+        if (!list || !sec) return;
+        list.innerHTML = '';
+        d.supporters.slice(0,5).forEach(function(s, i) {
+          var card = document.createElement('div');
+          card.className = 'supporter-card';
+          card.style.animationDelay = (i * 0.07) + 's';
+          card.innerHTML =
+            '<div class="supporter-avatar">' + (s.name||'A')[0].toUpperCase() + '</div>' +
+            '<div style="flex:1;min-width:0;"><div class="supporter-name">' + (s.name||'Anonim') + '</div>' +
+            '<div class="supporter-msg">' + (s.message||'') + '</div></div>' +
+            '<div class="supporter-amount">' + fmtAmount(s.amount) + '</div>';
+          list.appendChild(card);
+        });
+        sec.style.display = '';
+      }).catch(function(){});
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadSupporters);
+  else loadSupporters();
+})();
+</script>
+
+<div style="height:8px;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function() {
+  var SUPABASE_URL = 'https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+
+  var client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Kumpulkan semua slug anime yang ada di halaman
+  var slugs = [];
+  document.querySelectorAll('.acard[data-anime-slug]').forEach(function(el) {
+    var s = el.getAttribute('data-anime-slug');
+    if (s && slugs.indexOf(s) === -1) slugs.push(s);
+  });
+
+  // Generate user ID unik per sesi
+  var uid = sessionStorage.getItem('dyn_uid');
+  if (!uid) {
+    uid = 'u_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    sessionStorage.setItem('dyn_uid', uid);
+  }
+
+  // Track tiap channel per slug
+  var channels = {};
+
+  function updateBadge(slug, count) {
+    var badge = document.getElementById('viewers-' + slug);
+    var countEl = document.getElementById('viewers-count-' + slug);
+    if (!badge || !countEl) return;
+    if (count >= 1) {
+      countEl.textContent = count;
+      badge.classList.add('visible');
+    } else {
+      badge.classList.remove('visible');
+    }
+  }
+
+  function subscribeToSlug(slug) {
+    if (channels[slug]) return;
+    var ch = client.channel('anime-viewers:' + slug, {
+      config: { presence: { key: uid } }
+    });
+
+    ch.on('presence', { event: 'sync' }, function() {
+      var state = ch.presenceState();
+      var count = Object.keys(state).length;
+      updateBadge(slug, count);
+    });
+
+    ch.subscribe(function(status) {
+      if (status === 'SUBSCRIBED') {
+        // Kita subscribe sebagai passive observer — tidak track diri sendiri
+        // (kita hanya ingin lihat berapa yg ada di channel ini)
+      }
+    });
+
+    channels[slug] = ch;
+  }
+
+  // Subscribe ke semua slug yang ada di halaman
+  slugs.forEach(subscribeToSlug);
+
+  // Cleanup waktu user meninggalkan halaman
+  window.addEventListener('beforeunload', function() {
+    Object.values(channels).forEach(function(ch) {
+      try { client.removeChannel(ch); } catch(e) {}
+    });
+  });
+})();
+</script>
+<script>
+// Tampilkan banner install kalau belum terinstall sebagai PWA
+(function() {
+  // Kalau sudah jalan sebagai standalone (sudah install), sembunyikan
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
+  var banner = document.getElementById('pwaBannerSection');
+  if (banner) banner.style.display = 'block';
+})();
+</script>
+<script>
+/* ═══════════════════════════════════════════════
+   EFEK JS — DayyNime Index
+   1. Scroll Reveal (sections fade+slide masuk)
+   2. Parallax Banner (bg bergerak saat scroll)
+   3. Rank score bar animate on scroll
+   4. Rank number pop-in
+   5. Rank item ripple on tap
+   ═══════════════════════════════════════════════ */
+(function() {
+
+  /* ── 1. SCROLL REVEAL ─────────────────────── */
+  var revealStyle = document.createElement('style');
+  revealStyle.textContent =
+    '.sr-hidden{opacity:0;transform:translateY(22px);transition:opacity 0.5s ease,transform 0.5s ease;}' +
+    '.sr-visible{opacity:1!important;transform:translateY(0)!important;}' +
+    '.idx-rank-item.sr-hidden{transform:translateX(-18px);}' +
+    '.idx-rank-item.sr-visible{transform:translateX(0)!important;}' +
+    '.idx-wcard.sr-hidden{transform:translateY(16px) scale(0.97);}' +
+    '.idx-wcard.sr-visible{transform:translateY(0) scale(1)!important;}' +
+    '@keyframes rankRipple{to{transform:scale(30);opacity:0;}}';
+  document.head.appendChild(revealStyle);
+
+  var revealSelectors = [
+    '.idx-section-wrap', '.section',
+    '.idx-rank-item', '.idx-wcard', '.idx-schedule-item'
+  ];
+
+  function initReveal() {
+    revealSelectors.forEach(function(sel) {
+      document.querySelectorAll(sel).forEach(function(el) {
+        if (el.style.display === 'none') return;
+        el.classList.add('sr-hidden');
+      });
+    });
+
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var delay = 0;
+        if (el.classList.contains('idx-rank-item') ||
+            el.classList.contains('idx-wcard') ||
+            el.classList.contains('idx-schedule-item')) {
+          var idx = Array.from(el.parentElement.children).indexOf(el);
+          delay = idx * 65;
+        }
+        setTimeout(function() {
+          el.classList.remove('sr-hidden');
+          el.classList.add('sr-visible');
+        }, delay);
+        obs.unobserve(el);
+      });
+    }, { threshold: 0.07, rootMargin: '0px 0px -20px 0px' });
+
+    revealSelectors.forEach(function(sel) {
+      document.querySelectorAll(sel + '.sr-hidden').forEach(function(el) {
+        obs.observe(el);
+      });
+    });
+
+    // Re-observe section yg muncul dinamis
+    var mutObs = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === 'attributes' && m.attributeName === 'style') {
+          var el = m.target;
+          if (el.style.display !== 'none' && !el.classList.contains('sr-visible')) {
+            el.classList.add('sr-hidden');
+            setTimeout(function() { obs.observe(el); }, 50);
+          }
+        }
+      });
+    });
+    ['cwSection','supporterSection','pwaBannerSection'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) mutObs.observe(el, { attributes: true });
+    });
+  }
+
+  /* ── 2. PARALLAX BANNER ───────────────────── */
+  function initParallax() {
+    var slider = document.querySelector('.banner-slider');
+    if (!slider) return;
+    var bgs = slider.querySelectorAll('.slide-bg');
+    var contents = slider.querySelectorAll('.banner-content');
+    var ticking = false;
+
+    function apply() {
+      var sy = window.scrollY || window.pageYOffset;
+      if (sy < slider.offsetHeight * 1.6) {
+        bgs.forEach(function(img) {
+          img.style.transform = 'translateY(' + (sy * 0.32) + 'px) scale(1.08)';
+        });
+        contents.forEach(function(c) {
+          c.style.transform = 'translateY(' + (sy * 0.12) + 'px)';
+          c.style.opacity = Math.max(0, 1 - sy / (slider.offsetHeight * 0.9));
+        });
+      }
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) { requestAnimationFrame(apply); ticking = true; }
+    }, { passive: true });
+  }
+
+  /* ── 3. RANK SCORE BAR ANIMATE ───────────── */
+  function initRankBars() {
+    var bars = document.querySelectorAll('.idx-rank-score-fill');
+    if (!bars.length) return;
+    bars.forEach(function(bar) {
+      bar._tw = bar.style.width || '70%';
+      bar.style.cssText += ';width:0%;transition:none;';
+    });
+    var barObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var bar = entry.target;
+        var i = Array.from(bars).indexOf(bar);
+        setTimeout(function() {
+          bar.style.transition = 'width 1s cubic-bezier(0.4,0,0.2,1)';
+          bar.style.width = bar._tw;
+        }, 250 + i * 90);
+        barObs.unobserve(bar);
+      });
+    }, { threshold: 0.4 });
+    bars.forEach(function(b) { barObs.observe(b); });
+  }
+
+  /* ── 4. RANK NUMBER POP-IN ────────────────── */
+  function initRankPop() {
+    var nums = document.querySelectorAll('.idx-rank-num');
+    var popObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var i = Array.from(nums).indexOf(el);
+        el.style.transition = 'none';
+        el.style.transform = 'scale(0.3)';
+        el.style.opacity = '0';
+        setTimeout(function() {
+          el.style.transition = 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease';
+          el.style.transform = 'scale(1)';
+          el.style.opacity = '1';
+        }, 100 + i * 70);
+        popObs.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    nums.forEach(function(n) { popObs.observe(n); });
+  }
+
+  /* ── 5. RANK ITEM RIPPLE ON TAP ───────────── */
+  function initRipple() {
+    document.querySelectorAll('.idx-rank-item').forEach(function(item) {
+      item.style.position = 'relative';
+      item.style.overflow = 'hidden';
+      item.addEventListener('click', function(e) {
+        var r = document.createElement('span');
+        r.style.cssText = 'position:absolute;border-radius:50%;background:rgba(244,117,33,0.2);' +
+          'width:8px;height:8px;pointer-events:none;transform:scale(0);' +
+          'animation:rankRipple 0.5s ease-out forwards;';
+        var rect = item.getBoundingClientRect();
+        r.style.left = (e.clientX - rect.left - 4) + 'px';
+        r.style.top  = (e.clientY - rect.top  - 4) + 'px';
+        item.appendChild(r);
+        setTimeout(function() { r.remove(); }, 550);
+      });
+    });
+  }
+
+  /* ── INIT ─────────────────────────────────── */
+  function init() {
+    initParallax();
+    initReveal();
+    initRankBars();
+    initRankPop();
+    initRipple();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
+})();
+</script>
+
+<script>
+// Genre scroll reveal
+(function() {
+  var chips = document.querySelectorAll('.idx-genre-chip');
+  if (!chips.length) return;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var idx = parseInt(el.getAttribute('data-gi')) || 0;
+        setTimeout(function() {
+          el.classList.add('genre-visible');
+        }, idx * 40);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.1 });
+  chips.forEach(function(chip, i) {
+    chip.setAttribute('data-gi', i);
+    observer.observe(chip);
+  });
+})();
+</script>
 {% endblock %}
