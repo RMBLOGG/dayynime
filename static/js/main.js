@@ -1,5 +1,121 @@
 // DAYYNIME - Main JS
 
+// ══════════════════════════════════════════════════
+// EFFECT 1 — PAGE TRANSITION
+// ══════════════════════════════════════════════════
+function initPageTransition() {
+  // Create overlay element
+  const overlay = document.createElement('div');
+  overlay.id = 'page-transition-overlay';
+  document.body.appendChild(overlay);
+
+  // Intercept all internal link clicks
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript') ||
+        href.startsWith('http') || a.target === '_blank') return;
+
+    e.preventDefault();
+    overlay.classList.add('fade-out');
+    setTimeout(() => { window.location.href = href; }, 230);
+  });
+}
+
+// ══════════════════════════════════════════════════
+// EFFECT 2 — HERO PARALLAX
+// ══════════════════════════════════════════════════
+function initParallax() {
+  const heroImgs = document.querySelectorAll('.idx-slide img, .banner-slide .slide-bg');
+  if (!heroImgs.length) return;
+
+  // Only on non-mobile for performance
+  if (window.matchMedia('(max-width: 600px)').matches) return;
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const scrollY = window.scrollY;
+      heroImgs.forEach(img => {
+        const parent = img.closest('.idx-slide, .banner-slide');
+        if (!parent) return;
+        const rect = parent.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) { ticking = false; return; }
+        const offset = rect.top * 0.18;
+        img.style.transform = `translateY(${offset}px) scale(1.08)`;
+      });
+      ticking = false;
+    });
+  }, { passive: true });
+}
+
+// ══════════════════════════════════════════════════
+// EFFECT 3 — SCROLL REVEAL
+// ══════════════════════════════════════════════════
+function initScrollReveal() {
+  // Auto-tag sections and cards
+  document.querySelectorAll(
+    '.section, .page-head, .acard, .wcard, .ncard, .cw-card, ' +
+    '.an-stat, .detail-body, .ep-section-title, .search-result-label, ' +
+    '.genre-pill, .quick-nav-item, .day-tab'
+  ).forEach(el => {
+    if (!el.closest('.reveal') && !el.classList.contains('reveal')) {
+      el.classList.add('reveal');
+    }
+  });
+
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed'));
+    return;
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('revealed');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// ══════════════════════════════════════════════════
+// EFFECT 4 — RIPPLE on buttons & cards
+// ══════════════════════════════════════════════════
+function initRipple() {
+  const targets = [
+    '.banner-play', '.ep-btn', '.server-btn', '.pag-btn',
+    '.day-tab', '.landing-cta', '.chat-send', '.chat-login-btn',
+    '.bnav-item', '.quick-nav-item', '.genre-pill', '.acard-play-btn',
+    '.ep-nav-btn', '.az-letter-btn'
+  ].join(', ');
+
+  function spawnRipple(el, x, y) {
+    el.classList.add('ripple-host');
+    const rect = el.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.6;
+    const wave = document.createElement('span');
+    wave.className = 'ripple-wave';
+    wave.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${x - rect.left - size/2}px;
+      top:${y - rect.top - size/2}px;
+    `;
+    el.appendChild(wave);
+    wave.addEventListener('animationend', () => wave.remove());
+  }
+
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest(targets);
+    if (el) spawnRipple(el, e.clientX, e.clientY);
+  });
+}
+
 // ── Banner Slider ──────────────────────────────────────────────────────────────
 function initBanner() {
   const track = document.querySelector('.banner-track');
@@ -147,6 +263,10 @@ function initSearch() {
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  initPageTransition();
+  initParallax();
+  initScrollReveal();
+  initRipple();
   initBanner();
   initScheduleTabs();
   initPlayer();
