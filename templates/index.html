@@ -50,6 +50,9 @@ body { padding-top: 0 !important; }
 .idx-card-bottom { position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,transparent 100%);padding:28px 8px 8px; }
 .idx-card-btitle { font-size:11px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
 .idx-card-eps { display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,0.7); }
+.genre-visible { opacity:1 !important; transform:scale(1) !important; transition:opacity 0.3s ease,transform 0.3s ease; }
+.idx-sday.active { background:rgba(232,65,90,0.12) !important; border-color:rgba(232,65,90,0.3) !important; color:#e8415a !important; }
+.idx-sday.active div:last-child { background:#e8415a !important; }
 </style>
 
 <div class="idx-page">
@@ -244,10 +247,10 @@ body { padding-top: 0 !important; }
 {% set genre_data = genres if genres else fallback_genres %}
 <div>
   <div class="idx-sec-head"><div class="idx-sec-title">Genre</div><a href="/genres" class="idx-sec-more">Semua ›</a></div>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 4px;">
+  <div style="display:flex;gap:8px;overflow-x:auto;padding:0 14px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
     {% for g in genre_data %}
-    <a href="/genre/{{ g.slug }}" style="display:inline-flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#C0C0C8;transition:border-color 0.2s;" class="idx-genre-chip">
-      <i class="{{ genre_icons.get(g.name, 'fas fa-play') }}" style="font-size:11px;color:#e8415a;"></i>
+    <a href="/genre/{{ g.slug }}" class="idx-genre-chip" style="display:inline-flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:7px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#C0C0C8;white-space:nowrap;flex-shrink:0;opacity:0;transform:scale(0.9);">
+      <i class="{{ genre_icons.get(g.name, 'fas fa-play') }}" style="font-size:11px;color:#e8415a;opacity:0.8;"></i>
       <span>{{ g.name }}</span>
     </a>
     {% endfor %}
@@ -312,10 +315,6 @@ body { padding-top: 0 !important; }
   </div>
   {% endfor %}
 </div>
-<style>
-.idx-sday.active { background:rgba(232,65,90,0.12) !important; border-color:rgba(232,65,90,0.3) !important; color:#e8415a !important; }
-.idx-sday.active div:last-child { background:#e8415a !important; }
-</style>
 <script>
 (function(){
   var days=document.querySelectorAll('.idx-sday'),panels=document.querySelectorAll('.idx-schedule-panel');
@@ -392,16 +391,15 @@ body { padding-top: 0 !important; }
 (function(){
   var chips=document.querySelectorAll('.idx-genre-chip');
   if(!chips.length)return;
-  chips.forEach(function(chip){chip.style.opacity='0';chip.style.transform='translateY(6px)';});
   var obs=new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
       if(!entry.isIntersecting)return;
-      var el=entry.target,idx=Array.from(chips).indexOf(el);
-      setTimeout(function(){el.style.transition='opacity 0.3s,transform 0.3s';el.style.opacity='1';el.style.transform='translateY(0)';},idx*30);
+      var el=entry.target,idx=parseInt(el.getAttribute('data-gi'))||0;
+      setTimeout(function(){el.classList.add('genre-visible');},idx*40);
       obs.unobserve(el);
     });
   },{threshold:0.1});
-  chips.forEach(function(c){obs.observe(c);});
+  chips.forEach(function(chip,i){chip.setAttribute('data-gi',i);obs.observe(chip);});
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
