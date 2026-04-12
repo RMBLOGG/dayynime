@@ -2883,6 +2883,18 @@ def admin_analytics():
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
+@app.route("/api/comments/recent")
+def get_recent_comments():
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/anime_comments",
+            headers=supabase_headers(),
+            params={"order": "created_at.desc", "limit": "20", "select": "*"}
+        )
+        return jsonify(r.json() if r.ok else [])
+    except Exception as e:
+        return jsonify([])
+
 @app.route("/sitemap.xml")
 def sitemap():
     return send_from_directory("static", "sitemap.xml", mimetype="application/xml")
