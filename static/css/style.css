@@ -112,7 +112,37 @@ button { font-family:inherit; cursor:pointer; }
 /* header search moved to overlay — no static bar */
 
 /* ── BOTTOM NAV ──────────────────────────────────── */
-/* bottom-nav + bnav-item styles defined in base.html <style> block */
+.bottom-nav {
+  position: fixed; bottom:0; left:0; right:0; z-index:200;
+  background: transparent;
+  display: flex; height: var(--bottom-h);
+  padding: 8px 14px 14px;
+  pointer-events: none;
+}
+.bottom-nav > * { pointer-events: all; }
+.bnav-inner {
+  display: flex; width: 100%; align-items: center; justify-content: space-around;
+  background: rgba(22,22,24,0.96);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  padding: 6px 8px;
+}
+.bnav-item {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:3px; color:var(--text3); font-size:9px; font-weight:700;
+  letter-spacing:0.3px; text-transform:uppercase;
+  transition: color 0.2s; border:none; background:none;
+  border-radius: 20px; padding: 6px 4px;
+}
+.bnav-item i { font-size:20px; transition:transform 0.2s; }
+.bnav-item.active {
+  color:var(--accent2);
+  background: rgba(232,65,90,0.12);
+}
+.bnav-item.active i { transform:scale(1.1); }
 
 /* ── HERO BANNER SLIDER ──────────────────────────── */
 .banner-slider { position:relative; overflow:hidden; margin-bottom:0; }
@@ -1076,36 +1106,27 @@ body {
   transform: translateY(0);
 }
 /* Elemen fixed/sticky JANGAN kena reveal */
-.bottom-nav .reveal,
-.top-header .reveal,
-#chatFab.reveal,
-#chatPopup.reveal,
-#srcPanel.reveal,
-#srcTrigger.reveal {
+.bottom-nav, .bottom-nav *,
+.top-header, .top-header *,
+#chatFab, #chatPopup,
+#srcPanel, #srcTrigger,
+#page-transition-overlay {
+  animation: none !important;
+}
+.bottom-nav.reveal, .top-header.reveal,
+#chatFab.reveal, #chatPopup.reveal {
   opacity: 1 !important;
   transform: none !important;
 }
-/* stagger children */
-.reveal-stagger > * {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.reveal-stagger.revealed > *:nth-child(1) { opacity:1; transform:none; transition-delay: 0.05s; }
-.reveal-stagger.revealed > *:nth-child(2) { opacity:1; transform:none; transition-delay: 0.10s; }
-.reveal-stagger.revealed > *:nth-child(3) { opacity:1; transform:none; transition-delay: 0.15s; }
-.reveal-stagger.revealed > *:nth-child(4) { opacity:1; transform:none; transition-delay: 0.20s; }
-.reveal-stagger.revealed > *:nth-child(5) { opacity:1; transform:none; transition-delay: 0.25s; }
-.reveal-stagger.revealed > *:nth-child(6) { opacity:1; transform:none; transition-delay: 0.30s; }
 
 /* ── RIPPLE ──────────────────────────────────────── */
 .ripple-host { position: relative; overflow: hidden; }
 .ripple-wave {
   position: absolute; border-radius: 50%;
-  background: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.22);
   pointer-events: none;
   transform: scale(0);
-  animation: rippleAnim 0.55s linear;
+  animation: rippleAnim 0.55s linear forwards;
 }
 @keyframes rippleAnim {
   to { transform: scale(4); opacity: 0; }
