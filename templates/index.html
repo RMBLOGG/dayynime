@@ -440,6 +440,68 @@ body { padding-top: 0 !important; }
   chips.forEach(function(chip,i){chip.setAttribute('data-gi',i);obs.observe(chip);});
 })();
 </script>
+<style>
+.rc-tab { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); color:rgba(255,255,255,0.45); padding:6px 14px; border-radius:50px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; -webkit-tap-highlight-color:transparent; transition:all 0.2s; }
+.rc-tab.active { background:#e8415a; border-color:#e8415a; color:#fff; box-shadow:0 3px 10px rgba(232,65,90,0.35); }
+.rc-card { flex-shrink:0; width:240px; background:#16161a; border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:border-color 0.2s; }
+.rc-card:active { border-color:rgba(232,65,90,0.4); }
+.rc-card-top { display:flex; align-items:center; gap:8px; }
+.rc-avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0; background:#222; }
+.rc-avatar-placeholder { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#e8415a,#ff6b6b); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; color:#fff; flex-shrink:0; }
+.rc-user { font-size:12px; font-weight:800; color:#fff; }
+.rc-time { font-size:10px; color:rgba(255,255,255,0.3); margin-top:1px; }
+.rc-content { font-size:12px; color:rgba(255,255,255,0.7); line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; flex:1; }
+.rc-anime-link { display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:rgba(255,255,255,0.3); border-top:1px solid rgba(255,255,255,0.06); padding-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rc-anime-link i { color:#e8415a; flex-shrink:0; }
+</style>
+<script>
+(function(){
+  var allComments=[], currentTab='newest';
+  function timeAgoRc(iso){
+    var diff=(Date.now()-new Date(iso).getTime())/1000;
+    if(diff<60)return'Baru saja';
+    if(diff<3600)return Math.floor(diff/60)+' menit lalu';
+    if(diff<86400)return Math.floor(diff/3600)+' jam lalu';
+    return Math.floor(diff/86400)+' hari lalu';
+  }
+  function renderRc(comments){
+    var list=document.getElementById('rcList');
+    if(!list)return;
+    if(!comments||!comments.length){
+      list.innerHTML='<div style="color:rgba(255,255,255,0.2);font-size:12px;padding:20px 0;">Belum ada komentar</div>';
+      return;
+    }
+    list.innerHTML=comments.map(function(c){
+      var initial=(c.user_name||'?')[0].toUpperCase();
+      var avatar=c.user_avatar
+        ?'<img class="rc-avatar" src="'+c.user_avatar+'" onerror="this.outerHTML=\'<div class=rc-avatar-placeholder>'+initial+'</div>\'">'
+        :'<div class="rc-avatar-placeholder">'+initial+'</div>';
+      var slug=c.anime_slug||'';
+      var animeName=slug.replace(/-/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase();});
+      return '<div class="rc-card" onclick="location.href=\'/anime/'+slug+'\'">'
+        +'<div class="rc-card-top">'+avatar
+        +'<div><div class="rc-user">'+(c.user_name||'User')+'</div><div class="rc-time">'+timeAgoRc(c.created_at)+'</div></div></div>'
+        +'<div class="rc-content">'+(c.content||'')+'</div>'
+        +'<div class="rc-anime-link"><i class="fas fa-file-alt"></i>'+animeName+'</div>'
+        +'</div>';
+    }).join('');
+  }
+  window.rcSwitchTab=function(tab){
+    currentTab=tab;
+    document.getElementById('rcTabNewest').classList.toggle('active',tab==='newest');
+    document.getElementById('rcTabTop').classList.toggle('active',tab==='top');
+    var sorted=allComments.slice();
+    if(tab==='top'){sorted.sort(function(a,b){return(b.likes||0)-(a.likes||0);});}
+    renderRc(sorted.slice(0,10));
+  };
+  fetch('/api/comments/recent').then(function(r){return r.json();}).then(function(data){
+    if(!data||!data.length)return;
+    allComments=data;
+    document.getElementById('recentCommentsSec').style.display='';
+    renderRc(data.slice(0,10));
+  }).catch(function(){});
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (function(){var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';var client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);var slugs=[];document.querySelectorAll('.idx-card[data-anime-slug]').forEach(function(el){var s=el.getAttribute('data-anime-slug');if(s&&slugs.indexOf(s)===-1)slugs.push(s);});var uid=sessionStorage.getItem('dyn_uid');if(!uid){uid='u_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();sessionStorage.setItem('dyn_uid',uid);}var channels={};function updateBadge(slug,count){var badge=document.getElementById('viewers-'+slug);var countEl=document.getElementById('viewers-count-'+slug);if(!badge||!countEl)return;if(count>=1){countEl.textContent=count;badge.classList.add('visible');}else{badge.classList.remove('visible');}}function subscribeToSlug(slug){if(channels[slug])return;var ch=client.channel('anime-viewers:'+slug,{config:{presence:{key:uid}}});ch.on('presence',{event:'sync'},function(){updateBadge(slug,Object.keys(ch.presenceState()).length);});ch.subscribe();channels[slug]=ch;}slugs.forEach(subscribeToSlug);window.addEventListener('beforeunload',function(){Object.values(channels).forEach(function(ch){try{client.removeChannel(ch);}catch(e){}});});})();
