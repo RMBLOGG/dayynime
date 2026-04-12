@@ -558,9 +558,6 @@ def service_worker():
     return resp
 
 @app.route("/")
-def landing():
-    return render_template("landing.html")
-
 @app.route("/home")
 def home():
     source = get_active_source()
