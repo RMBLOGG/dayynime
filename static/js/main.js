@@ -60,8 +60,10 @@ function initScrollReveal() {
   document.querySelectorAll(
     '.section, .page-head, .acard, .wcard, .ncard, .cw-card, ' +
     '.an-stat, .detail-body, .ep-section-title, .search-result-label, ' +
-    '.genre-pill, .quick-nav-item, .day-tab'
+    '.genre-pill, .quick-nav-item'
   ).forEach(el => {
+    // Skip elemen fixed/sticky agar ga hilang (bottom nav, top header, dll)
+    if (el.closest('.bottom-nav, .top-header, #chatFab, #chatPopup, #srcPanel, #srcTrigger')) return;
     if (!el.closest('.reveal') && !el.classList.contains('reveal')) {
       el.classList.add('reveal');
     }
