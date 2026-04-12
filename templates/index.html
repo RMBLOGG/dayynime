@@ -179,7 +179,7 @@ body { padding-top: 0 !important; }
 <!-- Trending / Ongoing -->
 {% if data and data.ongoing %}
 <div>
-  <div class="idx-sec-head"><div class="idx-sec-title">Trending Anime</div><a href="/ongoing" class="idx-sec-more">Lihat Semua ›</a></div>
+  <div class="idx-sec-head"><div class="idx-sec-title">Anime Ongoing</div><a href="/ongoing" class="idx-sec-more">Lihat Semua ›</a></div>
   <div class="idx-cards">
     {% for anime in data.ongoing[:12] %}
     <a href="/anime/{{ anime.slug }}" class="idx-card" data-anime-slug="{{ anime.slug }}">
