@@ -53,9 +53,15 @@
 .det-tab { flex: 1; background: none; border: none; cursor: pointer; padding: 11px 0; font-size: 13px; font-weight: 700; text-transform: capitalize; color: rgba(255,255,255,0.38); border-bottom: 2px solid transparent; transition: color 0.2s; font-family: inherit; -webkit-tap-highlight-color: transparent; }
 .det-tab.active { color: #f0f0f0; border-bottom-color: #e8415a; }
 
+/* Panels wrapper */
+.det-panels-wrapper { overflow: hidden; position: relative; }
+.det-panels-track {
+  display: flex;
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
 /* Panels */
-.det-panel { display: none; padding: 18px 16px 0; }
-.det-panel.active { display: block; }
+.det-panel { flex: 0 0 100%; width: 100%; padding: 18px 16px 0; box-sizing: border-box; display: block; }
 
 /* Synopsis */
 .det-section-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 12px; }
@@ -153,6 +159,10 @@
   <button class="det-tab" data-tab="characters" onclick="switchTab('characters',this)">Characters</button>
 </div>
 
+<!-- Panels -->
+<div class="det-panels-wrapper">
+<div class="det-panels-track" id="detPanelsTrack">
+
 <!-- About -->
 <div class="det-panel active" id="tab-about">
   {% if d.synopsis %}
@@ -216,10 +226,13 @@
   {% endif %}
 </div>
 
-<!-- Characters -->
+</div><!-- Characters -->
 <div class="det-panel" id="tab-characters">
   <div class="det-empty"><i class="fas fa-users"></i><p>Data karakter belum tersedia</p></div>
 </div>
+
+</div><!-- /det-panels-track -->
+</div><!-- /det-panels-wrapper -->
 
 </div>
 
@@ -235,28 +248,55 @@
 {% block scripts %}
 <script>
 function switchTab(name,btn){
+  var tabOrder=['about','episodes','characters'];
+  var idx=tabOrder.indexOf(name);
+  if(idx<0)return;
   document.querySelectorAll('.det-tab').forEach(function(t){t.classList.remove('active');});
-  document.querySelectorAll('.det-panel').forEach(function(p){p.classList.remove('active');});
   if(btn)btn.classList.add('active');
   else{document.querySelectorAll('.det-tab').forEach(function(t){if(t.getAttribute('data-tab')===name)t.classList.add('active');});}
-  var panel=document.getElementById('tab-'+name);
-  if(panel)panel.classList.add('active');
+  var track=document.getElementById('detPanelsTrack');
+  if(track)track.style.transform='translateX(-'+idx+'00%)';
 }
-/* Swipe antar tab */
+/* Swipe antar tab — smooth */
 (function(){
   var tabOrder=['about','episodes','characters'];
-  var container=document.querySelector('.det-tabs').parentElement;
-  var tx=0,ty=0;
-  container.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
-  container.addEventListener('touchend',function(e){
+  var track=document.getElementById('detPanelsTrack');
+  var tabs=document.querySelectorAll('.det-tab');
+  var tx=0,ty=0,startIdx=0,dragging=false,liveX=0;
+  function curIdx(){
+    var active=document.querySelector('.det-tab.active');
+    var arr=Array.from(tabs);
+    return arr.indexOf(active);
+  }
+  document.querySelector('.det-panels-wrapper').addEventListener('touchstart',function(e){
+    tx=e.touches[0].clientX; ty=e.touches[0].clientY;
+    startIdx=curIdx(); dragging=true;
+    if(track)track.style.transition='none';
+  },{passive:true});
+  document.querySelector('.det-panels-wrapper').addEventListener('touchmove',function(e){
+    if(!dragging)return;
+    var dx=e.touches[0].clientX-tx;
+    var dy=e.touches[0].clientY-ty;
+    if(!liveX&&Math.abs(dy)>Math.abs(dx)){dragging=false;return;}
+    liveX=dx;
+    var base=startIdx*100;
+    var pct=base-(dx/window.innerWidth*100);
+    pct=Math.max(0,Math.min((tabOrder.length-1)*100,pct));
+    if(track)track.style.transform='translateX(-'+pct+'%)';
+  },{passive:true});
+  document.querySelector('.det-panels-wrapper').addEventListener('touchend',function(e){
+    if(!dragging){liveX=0;return;}
+    dragging=false;
     var dx=tx-e.changedTouches[0].clientX;
     var dy=ty-e.changedTouches[0].clientY;
-    if(Math.abs(dx)<Math.abs(dy)||Math.abs(dx)<50)return;
-    var active=document.querySelector('.det-tab.active');
-    var tabs=Array.from(document.querySelectorAll('.det-tab'));
-    var cur=tabs.indexOf(active);
-    var next=dx>0?Math.min(cur+1,tabOrder.length-1):Math.max(cur-1,0);
-    if(next!==cur)switchTab(tabOrder[next],tabs[next]);
+    if(track)track.style.transition='';
+    liveX=0;
+    if(Math.abs(dx)<Math.abs(dy)||Math.abs(dx)<40){
+      if(track)track.style.transform='translateX(-'+startIdx+'00%)';
+      return;
+    }
+    var next=dx>0?Math.min(startIdx+1,tabOrder.length-1):Math.max(startIdx-1,0);
+    switchTab(tabOrder[next],Array.from(tabs)[next]);
   },{passive:true});
 })();
 var synExpanded=false;
