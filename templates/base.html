@@ -659,7 +659,7 @@
 </nav>
 
 <!-- TRAKTEER SUPPORT BUTTON -->
-<div id="trakteerModal" onclick="closeTrakteer(this)">
+<div id="trakteerModal" onclick="if(event.target===this)closeTrakteer()">
   <div class="tr-modal-box">
     <button class="tr-modal-close" onclick="closeTrakteer()"><i class="fas fa-times"></i></button>
     <iframe src="https://trakteer.id/v1/Dayynime/tip/embed/modal"
@@ -700,7 +700,6 @@
   transition: opacity 0.25s ease;
 }
 #trakteerModal.open {
-  display: flex;
   opacity: 1;
 }
 .tr-modal-box {
@@ -778,8 +777,8 @@ window.addEventListener('appinstalled',function(){deferredPrompt=null;var b=docu
 </script>
 <script>
 // === TRAKTEER ===
-function openTrakteer(){var m=document.getElementById('trakteerModal');m.style.display='flex';requestAnimationFrame(function(){m.classList.add('open');});document.body.style.overflow='hidden';}
-function closeTrakteer(el){if(el&&el.id==='trakteerModal'&&event&&event.target!==el)return;var m=document.getElementById('trakteerModal');m.classList.remove('open');m.style.opacity='0';setTimeout(function(){m.style.display='none';m.style.opacity='';document.body.style.overflow='';},250);}
+function openTrakteer(){var m=document.getElementById('trakteerModal');m.style.display='flex';m.style.opacity='0';m.classList.remove('open');requestAnimationFrame(function(){requestAnimationFrame(function(){m.classList.add('open');m.style.opacity='';});});document.body.style.overflow='hidden';}
+function closeTrakteer(el){if(el&&el.id==='trakteerModal'&&event&&event.target!==el)return;var m=document.getElementById('trakteerModal');m.classList.remove('open');setTimeout(function(){m.style.display='none';document.body.style.overflow='';},260);}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTrakteer();});
 </script>
 </body>
