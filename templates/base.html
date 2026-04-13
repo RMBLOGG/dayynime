@@ -658,6 +658,155 @@
   <button class="bnav-item" onclick="openSidebar()"><i class="fas fa-bars"></i><span>Menu</span></button>
 </nav>
 
+<!-- TRAKTEER SUPPORT BUTTON -->
+<div id="trakteerBtn" onclick="openTrakteer()" title="Dukung Dayynime di Trakteer">
+  <div class="tr-pulse"></div>
+  <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="Trakteer" class="tr-icon">
+  <span class="tr-label">Support</span>
+</div>
+
+<div id="trakteerModal" onclick="closeTrakteer(this)">
+  <div class="tr-modal-box">
+    <button class="tr-modal-close" onclick="closeTrakteer()"><i class="fas fa-times"></i></button>
+    <iframe src="https://trakteer.id/v1/Dayynime/tip/embed/modal"
+      frameborder="0" scrolling="no" width="100%" height="100%"
+      style="border:none;"></iframe>
+  </div>
+</div>
+
+<style>
+/* === TRAKTEER FLOATING BUTTON === */
+#trakteerBtn {
+  position: fixed;
+  right: 18px;
+  bottom: calc(var(--bottom-h) + 20px);
+  z-index: 190;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #be1e2d 0%, #e8415a 60%, #f0607a 100%);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 28px;
+  padding: 10px 16px 10px 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 28px rgba(190,30,45,0.55), 0 2px 8px rgba(0,0,0,0.4);
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, opacity 0.3s ease;
+  animation: trEnter 0.6s 1.2s cubic-bezier(0.34,1.56,0.64,1) both;
+  overflow: visible;
+}
+#trakteerBtn:hover {
+  transform: scale(1.06) translateY(-2px);
+  box-shadow: 0 10px 36px rgba(190,30,45,0.7), 0 4px 12px rgba(0,0,0,0.5);
+}
+#trakteerBtn:active {
+  transform: scale(0.94);
+}
+.tr-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 32px;
+  background: radial-gradient(circle, rgba(232,65,90,0.4) 0%, transparent 70%);
+  animation: trPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+.tr-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+}
+.tr-label {
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Desktop position */
+@media (min-width: 768px) {
+  #trakteerBtn {
+    bottom: 28px;
+    right: 28px;
+  }
+}
+
+/* Hide label on very small screens */
+@media (max-width: 360px) {
+  .tr-label { display: none; }
+  #trakteerBtn { padding: 11px; border-radius: 50%; }
+}
+
+/* === TRAKTEER MODAL === */
+#trakteerModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10500;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+#trakteerModal.open {
+  display: flex;
+  opacity: 1;
+}
+.tr-modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  height: min(520px, calc(100vh - 80px));
+  background: var(--bg2, #161618);
+  border-radius: 20px;
+  border: 1px solid rgba(232,65,90,0.3);
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(232,65,90,0.15);
+  animation: trModalIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.tr-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(20,20,22,0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+.tr-modal-close:hover { background: rgba(232,65,90,0.4); }
+
+/* === ANIMATIONS === */
+@keyframes trEnter {
+  from { opacity: 0; transform: scale(0.4) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes trPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 0.7; transform: scale(1.08); }
+}
+@keyframes trModalIn {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+</style>
+
 <script src="{{ url_for('static', filename='js/main.js') }}?v=20"></script>
 {% block scripts %}{% endblock %}
 
@@ -687,6 +836,12 @@ var deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;window._pwaPrompt=e;});
 function installPWA(){var p=deferredPrompt||window._pwaPrompt;if(!p)return;p.prompt();p.userChoice.then(function(){deferredPrompt=null;window._pwaPrompt=null;var b=document.getElementById('pwaBannerSection');if(b)b.style.display='none';});}
 window.addEventListener('appinstalled',function(){deferredPrompt=null;var b=document.getElementById('pwaBannerSection');if(b)b.style.display='none';});
+</script>
+<script>
+// === TRAKTEER ===
+function openTrakteer(){var m=document.getElementById('trakteerModal');m.style.display='flex';requestAnimationFrame(function(){m.classList.add('open');});document.body.style.overflow='hidden';}
+function closeTrakteer(el){if(el&&el.id==='trakteerModal'&&event&&event.target!==el)return;var m=document.getElementById('trakteerModal');m.classList.remove('open');m.style.opacity='0';setTimeout(function(){m.style.display='none';m.style.opacity='';document.body.style.overflow='';},250);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTrakteer();});
 </script>
 </body>
 </html>
