@@ -647,7 +647,7 @@
     <div class="bnav-home-pill"><i class="fas fa-home"></i></div>
   </a>
   <a href="/ongoing" class="bnav-item" data-href="/ongoing"><i class="fas fa-play-circle"></i><span>Ongoing</span></a>
-  <a href="/search" class="bnav-item" data-href="/search"><i class="fas fa-compass"></i><span>Discover</span></a>
+  <button class="bnav-item bnav-trakteer" onclick="openTrakteer()"><div class="bnav-tr-pill"><img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="" style="width:16px;height:16px;object-fit:contain;filter:brightness(0) invert(1);"></div><span>Support</span></button>
   <a href="/koleksi" class="bnav-item" data-href="/koleksi">
     <span style="position:relative;display:inline-block;">
       <i class="fas fa-bookmark"></i>
@@ -659,12 +659,6 @@
 </nav>
 
 <!-- TRAKTEER SUPPORT BUTTON -->
-<div id="trakteerBtn" onclick="openTrakteer()" title="Dukung Dayynime di Trakteer">
-  <div class="tr-pulse"></div>
-  <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="Trakteer" class="tr-icon">
-  <span class="tr-label">Support</span>
-</div>
-
 <div id="trakteerModal" onclick="closeTrakteer(this)">
   <div class="tr-modal-box">
     <button class="tr-modal-close" onclick="closeTrakteer()"><i class="fas fa-times"></i></button>
@@ -675,72 +669,21 @@
 </div>
 
 <style>
-/* === TRAKTEER FLOATING BUTTON === */
-#trakteerBtn {
-  position: fixed;
-  right: 18px;
-  bottom: calc(var(--bottom-h) + 20px);
-  z-index: 190;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: linear-gradient(135deg, #be1e2d 0%, #e8415a 60%, #f0607a 100%);
-  border: 1.5px solid rgba(255,255,255,0.12);
-  border-radius: 28px;
-  padding: 10px 16px 10px 12px;
-  cursor: pointer;
-  box-shadow: 0 6px 28px rgba(190,30,45,0.55), 0 2px 8px rgba(0,0,0,0.4);
-  user-select: none;
-  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, opacity 0.3s ease;
-  animation: trEnter 0.6s 1.2s cubic-bezier(0.34,1.56,0.64,1) both;
-  overflow: visible;
-}
-#trakteerBtn:hover {
-  transform: scale(1.06) translateY(-2px);
-  box-shadow: 0 10px 36px rgba(190,30,45,0.7), 0 4px 12px rgba(0,0,0,0.5);
-}
-#trakteerBtn:active {
-  transform: scale(0.94);
-}
-.tr-pulse {
-  position: absolute;
-  inset: -4px;
-  border-radius: 32px;
-  background: radial-gradient(circle, rgba(232,65,90,0.4) 0%, transparent 70%);
-  animation: trPulse 2.5s ease-in-out infinite;
-  pointer-events: none;
-  z-index: -1;
-}
-.tr-icon {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
+/* === TRAKTEER NAV BUTTON === */
+.bnav-trakteer { background: none; border: none; font-family: inherit; }
+.bnav-tr-pill {
+  width: 46px; height: 30px;
+  background: linear-gradient(135deg, #be1e2d 0%, #e8415a 100%);
+  border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 12px rgba(190,30,45,0.55);
+  transition: transform 0.2s, box-shadow 0.2s;
   flex-shrink: 0;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
 }
-.tr-label {
-  font-size: 12px;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+.bnav-trakteer:active .bnav-tr-pill {
+  transform: scale(0.9);
+  box-shadow: 0 1px 6px rgba(190,30,45,0.4);
 }
-
-/* Desktop position */
-@media (min-width: 768px) {
-  #trakteerBtn {
-    bottom: 28px;
-    right: 28px;
-  }
-}
-
-/* Hide label on very small screens */
-@media (max-width: 360px) {
-  .tr-label { display: none; }
-  #trakteerBtn { padding: 11px; border-radius: 50%; }
-}
-
 /* === TRAKTEER MODAL === */
 #trakteerModal {
   display: none;
@@ -793,12 +736,8 @@
 .tr-modal-close:hover { background: rgba(232,65,90,0.4); }
 
 /* === ANIMATIONS === */
-@keyframes trEnter {
-  from { opacity: 0; transform: scale(0.4) translateY(20px); }
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
-@keyframes trPulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
   50%       { opacity: 0.7; transform: scale(1.08); }
 }
 @keyframes trModalIn {
