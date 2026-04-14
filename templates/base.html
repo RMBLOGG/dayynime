@@ -662,6 +662,7 @@
 <div id="trakteerModal" onclick="if(event.target===this)closeTrakteer()">
   <div class="tr-modal-box">
     <button class="tr-modal-close" onclick="closeTrakteer()"><i class="fas fa-times"></i></button>
+    <div class="tr-x-blocker" onclick="closeTrakteer()"></div>
     <iframe src="https://trakteer.id/v1/Dayynime/tip/embed/modal"
       frameborder="0" scrolling="no" width="100%" height="100%"
       style="border:none;"></iframe>
@@ -733,6 +734,13 @@
   transition: background 0.2s;
 }
 .tr-modal-close:hover { background: rgba(232,65,90,0.4); }
+.tr-x-blocker {
+  position: absolute;
+  top: 0; right: 0;
+  width: 60px; height: 56px;
+  z-index: 20;
+  cursor: pointer;
+}
 
 /* === ANIMATIONS === */
   to   { opacity: 1; transform: scale(1) translateY(0); }
