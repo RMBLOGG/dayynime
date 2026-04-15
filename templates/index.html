@@ -25,6 +25,7 @@ body { padding-top: 0 !important; }
 .idx-slider { display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 14px 2px; }
 .idx-slider::-webkit-scrollbar { display:none; }
 .idx-slide { flex-shrink:0;width:calc(100% - 60px);scroll-snap-align:center;border-radius:16px;overflow:hidden;position:relative;aspect-ratio:3/2;cursor:pointer;background:#161618;text-decoration:none;display:block; }
+@media (min-width:768px) { .idx-slide { width:420px;aspect-ratio:16/9; } .idx-slider { padding:0 20px 2px; } }
 .idx-slide img { width:100%;height:100%;object-fit:cover;display:block; }
 .idx-slide-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.15) 55%,transparent 100%); }
 .idx-slide-content { position:absolute;bottom:0;left:0;right:0;padding:12px 14px 14px; }
