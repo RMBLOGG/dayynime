@@ -210,7 +210,8 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
           <div class="player-loading-dots"><span></span><span></span><span></span></div>
           <span>Memuat video...</span>
         </div>
-        <iframe id="playerFrame" allowfullscreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture">
+        <iframe id="playerFrame" allowfullscreen allow="autoplay; fullscreen; encrypted-media"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-popups-to-escape-sandbox">
         </iframe>
       </div>
     </div>

@@ -5,13 +5,21 @@
   <meta name="google-site-verification" content="pTKv7RdKpXBtLCnGaf4YM9U_aXpx4uzHnyL2mm3Kn3s" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>{% block title %}Dayynime{% endblock %}</title>
-  <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia gratis di Dayynime.{% endblock %}">
+  <meta name="description" content="{% block description %}Nonton anime subtitle Indonesia gratis di Dayynime. Streaming anime ongoing, completed, dan movie dengan subtitle Indonesia berkualitas.{% endblock %}">
+  <!-- Open Graph -->
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:site_name" content="DayyNime">
   <meta property="og:title" content="{% block og_title %}Dayynime - Nonton Anime Sub Indo Gratis{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}Nonton anime subtitle Indonesia gratis di Dayynime.{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Nonton anime subtitle Indonesia gratis di Dayynime. Streaming anime ongoing, completed, dan movie dengan subtitle Indonesia berkualitas.{% endblock %}">
   <meta property="og:image" content="{% block og_image %}https://dayynime.vercel.app/static/banner.png{% endblock %}">
   <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:locale" content="id_ID">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block tw_title %}Dayynime - Nonton Anime Sub Indo Gratis{% endblock %}">
+  <meta name="twitter:description" content="{% block tw_description %}Nonton anime subtitle Indonesia gratis di Dayynime.{% endblock %}">
+  <meta name="twitter:image" content="{% block tw_image %}https://dayynime.vercel.app/static/banner.png{% endblock %}">
+  <!-- Canonical -->
   <link rel="canonical" href="{{ request.url }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -19,582 +27,153 @@
   <link rel="icon" type="image/png" href="/static/icon.png">
   <link rel="apple-touch-icon" href="/static/icon.png">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0d0d0f">
+  <meta name="theme-color" content="#141519">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DayyNime">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20">
-  <style>
-  :root {
-    --bg:           #0d0d0f;
-    --bg2:          #161618;
-    --bg3:          #1e1e21;
-    --bg4:          #262629;
-    --card:         #161618;
-    --border:       rgba(255,255,255,0.07);
-    --accent:       #e8415a;
-    --accent2:      #f0607a;
-    --accent-dim:   rgba(232,65,90,0.15);
-    --accent-glow:  rgba(232,65,90,0.35);
-    --green:        #22c55e;
-    --blue:         #60a5fa;
-    --gold:         #f5c518;
-    --text:         #f0f0f0;
-    --text2:        #a0a0aa;
-    --text3:        #55556a;
-    --radius:       8px;
-    --radius-sm:    8px;
-    --radius-xs:    6px;
-    --nav-h:        0px;
-    --bottom-h:     68px;
-    --page-pad:     14px;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
-  html { scroll-behavior:smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Lato', sans-serif;
-    font-size: 14px;
-    min-height: 100vh;
-    padding-bottom: calc(var(--bottom-h) + 12px);
-    padding-top: 0;
-    overflow-x: hidden;
-  }
-  a { color:inherit; text-decoration:none; }
-  img { display:block; max-width:100%; }
-  button { font-family:inherit; cursor:pointer; }
-  ::-webkit-scrollbar { width:2px; height:2px; }
-  ::-webkit-scrollbar-track { background:transparent; }
-  ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:2px; }
-
-  /* APP HEADER */
-  .app-header {
-    padding: 14px var(--page-pad) 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--bg);
-  }
-  .header-user-card {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--bg2);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    text-decoration: none;
-    color: inherit;
-    min-width: 0;
-    transition: background 0.2s;
-  }
-  .header-user-card:active { background: var(--bg3); }
-  .header-avatar {
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    background: var(--bg3);
-    border: 1.5px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; overflow: hidden; position: relative;
-  }
-  .header-avatar img { width:100%; height:100%; object-fit:cover; }
-  .header-avatar i { color: var(--text3); font-size: 16px; }
-  .header-user-greeting { font-size:11px; color:var(--text3); font-weight:600; line-height:1; margin-bottom:2px; }
-  .header-user-name { font-size:14px; font-weight:800; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .header-action-btn {
-    width: 46px; height: 46px;
-    border-radius: var(--radius);
-    background: #e8415a;
-    border: none; color: #fff; font-size: 17px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    text-decoration: none;
-  }
-  .header-action-btn:active { transform: scale(0.93); }
-  .header-action-btn.secondary {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    color: var(--text2);
-  }
-
-  /* DISCOVER BANNER */
-  .discover-banner {
-    margin: 0 var(--page-pad) 14px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    display: flex; align-items: center; gap: 12px;
-    text-decoration: none; color: inherit;
-    transition: background 0.2s;
-  }
-  .discover-banner:active { background: var(--bg3); }
-  .discover-icon {
-    width: 46px; height: 46px;
-    border-radius: var(--radius-sm);
-    background: rgba(232,65,90,0.15);
-    border: 1.5px solid rgba(232,65,90,0.3);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .discover-title { font-size:14px; font-weight:800; color:var(--text); }
-  .discover-sub { font-size:11px; color:var(--text3); margin-top:1px; }
-  .discover-count-badge {
-    background: rgba(232,65,90,0.15);
-    border: 1px solid rgba(232,65,90,0.3);
-    color: #e8415a;
-    font-size: 10px; font-weight: 900;
-    padding: 4px 10px; border-radius: 20px; white-space: nowrap;
-    display: flex; align-items: center; gap: 4px;
-  }
-
-  /* SECTION PILL LABEL */
-  .section-pill-label {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: #e8415a; color: #fff;
-    font-size: 12px; font-weight: 900;
-    padding: 6px 14px 6px 10px;
-    border-radius: 20px;
-    margin: 0 var(--page-pad) 10px;
-    letter-spacing: 0.2px;
-  }
-
-  /* HERO BANNER */
-  .banner-slider { position:relative; overflow:hidden; margin:0 var(--page-pad) 0; }
-  .banner-track { display:flex; gap:10px; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1); }
-  .banner-slide {
-    min-width:calc(100% - 30px); flex-shrink:0; aspect-ratio:16/9;
-    background:var(--bg2);
-    display:flex; align-items:flex-end;
-    position:relative; overflow:hidden;
-    text-decoration:none; color:#fff;
-    border-radius:16px;
-  }
-  .banner-slide .slide-bg {
-    position:absolute; inset:0;
-    width:100%; height:100%;
-    object-fit:cover; object-position:center top;
-  }
-  .banner-slide::after {
-    content:''; position:absolute; inset:0;
-    background: linear-gradient(to bottom, transparent 0%, rgba(13,13,15,0.4) 50%, rgba(13,13,15,0.97) 100%);
-  }
-  .banner-rating {
-    position:absolute; top:12px; right:12px; z-index:3;
-    background:#e8415a; color:#fff;
-    font-size:12px; font-weight:900;
-    padding:5px 11px; border-radius:20px;
-    display:flex; align-items:center; gap:5px;
-    box-shadow: 0 4px 16px rgba(232,65,90,0.45);
-  }
-  .banner-rating i { font-size:10px; color:#f5c518; }
-  .banner-content { position:relative; z-index:2; padding:0 14px 14px; width:100%; }
-  .banner-title {
-    font-size:1.1rem; font-weight:900; line-height:1.2;
-    margin-bottom:8px;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-  }
-  .banner-pills { display:flex; gap:6px; flex-wrap:wrap; }
-  .banner-pill {
-    display:inline-flex; align-items:center; gap:5px;
-    background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,0.15);
-    border-radius:20px; padding:5px 10px;
-    font-size:11px; font-weight:700;
-    color:rgba(255,255,255,0.9);
-  }
-  .banner-pill i { font-size:10px; opacity:0.8; }
-  .banner-dots-wrap { display:flex; gap:5px; justify-content:center; padding:10px 0 4px; }
-  .banner-dot {
-    width:6px; height:6px; border-radius:50%;
-    background:rgba(255,255,255,0.2);
-    transition:all 0.3s; border:none; cursor:pointer; padding:0;
-  }
-  .banner-dot.active { width:22px; border-radius:4px; background:#e8415a; }
-  .banner-arrow {
-    position:absolute; top:50%; transform:translateY(-50%);
-    background:rgba(0,0,0,0.55); border:none; color:#fff;
-    width:30px; height:30px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:11px; z-index:3; cursor:pointer;
-  }
-  .banner-arrow.left { left:8px; }
-  .banner-arrow.right { right:8px; }
-
-  /* SECTIONS */
-  .section { padding:20px 0 0; }
-  .section-head {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:0 var(--page-pad); margin-bottom:12px;
-  }
-  .section-title { font-size:16px; font-weight:900; color:var(--text); letter-spacing:-0.2px; }
-  .section-more {
-    font-size:11px; color:var(--text3); font-weight:700;
-    display:flex; align-items:center; gap:3px;
-  }
-  .idx-section-badge {
-    display:inline-flex; align-items:center;
-    background:var(--accent-dim); color:var(--accent);
-    font-size:9px; font-weight:900;
-    padding:2px 7px; border-radius:4px;
-    letter-spacing:0.5px; text-transform:uppercase;
-    margin-left:6px;
-  }
-
-  /* SCROLL ROW */
-  .scroll-row {
-    display:flex; gap:10px; overflow-x:auto;
-    padding:2px var(--page-pad) 6px;
-    scrollbar-width:none; -ms-overflow-style:none;
-    scroll-snap-type:x mandatory;
-  }
-  .scroll-row::-webkit-scrollbar { display:none; }
-
-  /* ANIME CARD */
-  .acard { flex-shrink:0; width:130px; text-decoration:none; color:inherit; scroll-snap-align:start; }
-  .acard-poster {
-    position:relative; width:100%; aspect-ratio:2/3;
-    border-radius:var(--radius); overflow:hidden;
-    background:var(--bg2); margin-bottom:7px;
-  }
-  .acard-poster img { width:100%; height:100%; object-fit:cover; transition:transform 0.3s; }
-  .acard:active .acard-poster img { transform:scale(1.04); }
-  .acard-rating {
-    position:absolute; top:7px; right:7px;
-    background:#e8415a; color:#fff;
-    font-size:10px; font-weight:900;
-    padding:3px 8px; border-radius:20px;
-    display:flex; align-items:center; gap:4px;
-    box-shadow:0 2px 8px rgba(232,65,90,0.5); z-index:2;
-  }
-  .acard-rating i { font-size:8px; color:#f5c518; }
-  .acard-ep {
-    position:absolute; bottom:7px; left:7px;
-    background:rgba(0,0,0,0.75); color:#fff;
-    font-size:9px; font-weight:700;
-    padding:2px 7px; border-radius:10px;
-    display:flex; align-items:center; gap:3px;
-  }
-  .acard-type {
-    position:absolute; top:7px; left:7px;
-    background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.1);
-    color:var(--text2); font-size:8px; font-weight:700;
-    padding:2px 6px; border-radius:6px;
-    text-transform:uppercase; letter-spacing:0.3px;
-  }
-  .acard-title {
-    font-size:12px; font-weight:700; color:var(--text);
-    line-height:1.3;
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-    overflow:hidden; margin-bottom:2px;
-  }
-  .acard-genre { font-size:10px; color:var(--text3); font-weight:600; }
-  .acard-viewers { display:none; }
-
-  /* WIDE CARD GRID */
-  .idx-wcard-grid {
-    display:grid; grid-template-columns:1fr 1fr;
-    gap:10px; padding:0 var(--page-pad);
-  }
-  .idx-wcard {
-    display:flex; flex-direction:column;
-    text-decoration:none; color:inherit;
-    background:var(--card);
-    border-radius:var(--radius); overflow:hidden;
-    border:1px solid var(--border); transition:transform 0.2s;
-  }
-  .idx-wcard:active { transform:scale(0.97); }
-  .idx-wcard-thumb { position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--bg2); }
-  .idx-wcard-thumb img { width:100%; height:100%; object-fit:cover; }
-  .idx-wcard-ep {
-    position:absolute; bottom:5px; right:5px;
-    background:var(--accent); color:#fff;
-    font-size:9px; font-weight:800; padding:2px 6px; border-radius:6px;
-  }
-  .idx-wcard-info { padding:8px 9px 9px; }
-  .idx-wcard-title {
-    font-size:12px; font-weight:800; color:var(--text);
-    display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;
-    overflow:hidden; margin-bottom:3px;
-  }
-  .idx-wcard-sub { font-size:10px; color:var(--text3); font-weight:600; }
-  .idx-wcard-time { font-size:10px; color:var(--text3); font-weight:600; display:flex; align-items:center; gap:3px; margin-top:3px; }
-
-  /* RANK LIST */
-  .idx-rank-item {
-    display:flex; align-items:center; gap:12px;
-    padding:10px var(--page-pad); text-decoration:none; color:inherit;
-    transition:background 0.15s; border-radius:var(--radius-sm);
-    margin:0 8px 2px;
-  }
-  .idx-rank-item:active { background:var(--bg2); }
-  .idx-rank-num { font-size:18px; font-weight:900; width:28px; text-align:center; flex-shrink:0; font-style:italic; }
-  .idx-rank-num.top1 { color:var(--gold); }
-  .idx-rank-num.top2 { color:#c0c0c0; }
-  .idx-rank-num.top3 { color:#cd7f32; }
-  .idx-rank-num.other { color:var(--text3); }
-  .idx-rank-thumb { width:52px; height:70px; border-radius:var(--radius-sm); overflow:hidden; flex-shrink:0; background:var(--bg2); }
-  .idx-rank-thumb img { width:100%; height:100%; object-fit:cover; }
-  .idx-rank-info { flex:1; min-width:0; }
-  .idx-rank-title {
-    font-size:13px; font-weight:800;
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-    overflow:hidden; margin-bottom:6px;
-  }
-  .idx-rank-score { display:flex; align-items:center; gap:8px; }
-  .idx-rank-score-bar { flex:1; height:3px; background:var(--bg4); border-radius:2px; overflow:hidden; }
-  .idx-rank-score-fill { height:100%; background:linear-gradient(90deg,var(--accent),#ff6b9d); border-radius:2px; transition:width 1s cubic-bezier(0.4,0,0.2,1); }
-  .idx-rank-score-num { font-size:11px; font-weight:800; color:var(--gold); }
-
-  /* GENRE CHIPS */
-  .idx-genre-scroll { display:flex; gap:8px; overflow-x:auto; padding:0 var(--page-pad) 4px; scrollbar-width:none; }
-  .idx-genre-scroll::-webkit-scrollbar { display:none; }
-  .idx-genre-chip {
-    display:inline-flex; align-items:center; gap:6px;
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:20px; padding:7px 14px;
-    font-size:12px; font-weight:700; color:var(--text2);
-    text-decoration:none; white-space:nowrap; flex-shrink:0;
-    transition:all 0.2s;
-    opacity:0; transform:scale(0.9);
-  }
-  .idx-genre-chip:active { background:var(--accent-dim); color:var(--accent); }
-  .genre-visible { opacity:1 !important; transform:scale(1) !important; transition:opacity 0.3s ease,transform 0.3s ease; }
-  .idx-genre-icon { font-size:11px; opacity:0.7; }
-
-  /* SCHEDULE */
-  .idx-schedule-days { display:flex; gap:6px; overflow-x:auto; padding:0 var(--page-pad) 12px; scrollbar-width:none; }
-  .idx-schedule-days::-webkit-scrollbar { display:none; }
-  .idx-sday {
-    display:flex; flex-direction:column; align-items:center; gap:4px;
-    flex-shrink:0; cursor:pointer; padding:8px 12px;
-    border-radius:var(--radius-sm);
-    background:var(--bg2); border:1px solid var(--border);
-    transition:all 0.2s; min-width:52px;
-  }
-  .idx-sday.active { background:var(--accent-dim); border-color:var(--accent); }
-  .idx-sday-circle { font-size:11px; font-weight:900; color:var(--text2); text-transform:uppercase; letter-spacing:0.3px; }
-  .idx-sday.active .idx-sday-circle { color:var(--accent); }
-  .idx-sday-dot { width:5px; height:5px; border-radius:50%; background:var(--text3); transition:background 0.2s; }
-  .idx-sday.active .idx-sday-dot { background:var(--accent); }
-  .idx-sday-label { display:none; }
-  .idx-schedule-item { display:flex; align-items:center; gap:10px; padding:10px var(--page-pad); text-decoration:none; color:inherit; }
-  .idx-schedule-thumb { width:54px; height:70px; border-radius:var(--radius-sm); overflow:hidden; flex-shrink:0; background:var(--bg2); }
-  .idx-schedule-thumb img { width:100%; height:100%; object-fit:cover; }
-  .idx-schedule-info { flex:1; min-width:0; }
-  .idx-schedule-title { font-size:13px; font-weight:800; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px; }
-  .idx-schedule-ep { font-size:11px; color:var(--accent); font-weight:700; }
-  .idx-schedule-time { font-size:10px; color:var(--text3); font-weight:600; margin-top:3px; }
-
-  /* CW STRIP */
-  .cw-strip { display:flex; gap:10px; overflow-x:auto; padding:0 var(--page-pad) 4px; scrollbar-width:none; }
-  .cw-strip::-webkit-scrollbar { display:none; }
-  .cw-card { flex-shrink:0; width:140px; text-decoration:none; color:inherit; position:relative; }
-  .cw-thumb { position:relative; width:100%; aspect-ratio:16/9; border-radius:var(--radius-sm); overflow:hidden; background:var(--bg2); margin-bottom:6px; }
-  .cw-thumb img { width:100%; height:100%; object-fit:cover; }
-  .cw-play-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; }
-  .cw-play-overlay i { color:#fff; font-size:16px; }
-  .cw-progress-bar { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(255,255,255,0.15); }
-  .cw-progress-fill { height:100%; background:var(--accent); }
-  .cw-title { font-size:12px; font-weight:800; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
-  .cw-ep-name { font-size:10px; color:var(--text3); font-weight:600; margin-top:1px; }
-  .cw-meta { font-size:10px; color:var(--text3); display:flex; align-items:center; gap:4px; margin-top:2px; }
-  .cw-del { position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.65); border:none; color:#fff; font-size:14px; line-height:1; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:2; }
-
-  /* QUICK NAV */
-  .quick-nav { display:flex; gap:8px; overflow-x:auto; padding:0 var(--page-pad) 4px; scrollbar-width:none; }
-  .quick-nav::-webkit-scrollbar { display:none; }
-  .quick-nav-item {
-    display:inline-flex; align-items:center; gap:5px;
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:20px; padding:7px 13px;
-    font-size:12px; font-weight:700; color:var(--text2);
-    text-decoration:none; white-space:nowrap; flex-shrink:0; transition:all 0.2s;
-  }
-  .quick-nav-item .dot { width:6px; height:6px; border-radius:50%; display:inline-block; }
-  .quick-nav-item:active { background:var(--accent-dim); color:var(--accent); }
-
-  /* BOTTOM NAV — Pill style */
-  .bottom-nav {
-    position:fixed; bottom:12px;
-    left:50%; transform:translateX(-50%);
-    z-index:200;
-    background:rgba(20,20,22,0.55);
-    backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-    border:1.5px solid rgba(232,65,90,0.5);
-    border-radius:32px;
-    display:flex; align-items:center;
-    height:62px; padding:0 10px; gap:0;
-    box-shadow:0 8px 40px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
-    min-width:min(340px,calc(100vw - 28px));
-    max-width:calc(100vw - 28px);
-  }
-  .bnav-item {
-    flex:1; display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    gap:4px; color:rgba(255,255,255,0.45);
-    font-size:9px; font-weight:700; letter-spacing:0.3px; text-transform:uppercase;
-    border:none; background:none;
-    padding:6px 4px; border-radius:22px;
-    cursor:pointer; transition:all 0.2s; min-height:46px;
-    text-decoration:none;
-  }
-  .bnav-item i { font-size:17px; transition:transform 0.2s; }
-  .bnav-item.active { color:#e8415a; }
-  .bnav-item.active i { transform:scale(1.15); }
-  .bnav-home-pill {
-    width:72px; height:46px;
-    background:#e8415a;
-    border-radius:23px; display:flex; align-items:center; justify-content:center;
-    color:#fff; font-size:22px; border:none; cursor:pointer;
-    box-shadow:0 4px 20px rgba(232,65,90,0.6);
-    flex-shrink:0; transition:transform 0.2s,box-shadow 0.2s;
-    text-decoration:none;
-  }
-  .bnav-home-pill:active { transform:scale(0.93); box-shadow:0 2px 10px rgba(232,65,90,0.4); }
-
-  /* SIDEBAR */
-  #sidebarOverlay { display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
-  #sidebarPanel {
-    position:fixed; top:0; left:-290px; width:270px; height:100%;
-    max-height:100vh; z-index:10001;
-    background:var(--bg2); border-right:1px solid rgba(192,24,74,0.12);
-    transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
-    display:flex; flex-direction:column; overflow:hidden;
-  }
-  .sb-item {
-    display:flex; align-items:center; gap:10px;
-    padding:12px 16px; color:var(--text2); text-decoration:none;
-    font-size:13px; font-weight:700; transition:background 0.15s;
-    border-radius:var(--radius-sm); margin:0 8px 1px;
-  }
-  .sb-item:active { background:var(--bg3); }
-  .sb-icon { width:18px; text-align:center; font-size:13px; }
-  .sb-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .sb-arr { margin-left:auto; font-size:9px; color:var(--text3); }
-  .sb-src-btn {
-    display:flex; align-items:center; gap:10px;
-    width:calc(100% - 16px); margin:0 8px 1px;
-    padding:10px 16px; background:none; border:none;
-    color:var(--text2); font-size:12px; font-weight:700;
-    border-radius:var(--radius-sm); cursor:pointer; transition:background 0.15s;
-    font-family:inherit;
-  }
-  .sb-src-btn:active, .sb-src-btn.active { background:var(--accent-dim); color:var(--accent); }
-
-  /* SEARCH OVERLAY */
-  #searchOverlay {
-    display:none; position:fixed; top:0; left:0; right:0; z-index:299;
-    background:var(--bg); border-bottom:1px solid var(--border);
-    height:64px; align-items:center; padding:0 14px; gap:10px;
-    opacity:0; transform:translateY(-8px); transition:opacity 0.25s ease,transform 0.25s ease;
-  }
-  #searchBackdrop {
-    display:none; position:fixed; inset:0; z-index:298;
-    background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-    opacity:0; transition:opacity 0.25s ease;
-  }
-
-  /* ANIMATIONS */
-  .sr-hidden { opacity:0; transform:translateY(12px); }
-  .sr-visible { opacity:1 !important; transform:translateY(0) !important; transition:opacity 0.4s ease,transform 0.4s ease; }
-  @keyframes tickerScroll { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
-  @keyframes chatDotPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.35);opacity:0.7;} }
-  @keyframes rankRipple { to{transform:scale(30);opacity:0;} }
-
-  /* DESKTOP */
-  .top-header-desktop { display:none; }
-  .desktop-nav { display:none; }
-  @media(min-width:768px) {
-    body { padding-top:64px; }
-    .app-header { display:none; }
-    .bottom-nav { display:none; }
-    .top-header-desktop {
-      display:flex !important; position:fixed; top:0; left:0; right:0; z-index:200;
-      background:var(--bg); border-bottom:1px solid var(--border);
-      height:64px; align-items:center; padding:0 24px; gap:12px;
-    }
-    .desktop-nav { display:flex !important; align-items:center; gap:2px; margin-left:8px; }
-    .desktop-nav-item {
-      display:flex; align-items:center; gap:6px;
-      padding:7px 12px; border-radius:var(--radius-xs);
-      font-size:12px; font-weight:800; color:var(--text2);
-      text-decoration:none; transition:all 0.2s;
-      text-transform:uppercase; letter-spacing:0.3px; white-space:nowrap;
-    }
-    .desktop-nav-item:hover { color:var(--text); background:var(--bg3); }
-    .desktop-nav-item.active { color:var(--accent); }
-    :root { --page-pad:24px; }
-    .banner-slider { margin:0 var(--page-pad); }
-  }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10">
   {% block head %}{% endblock %}
 </head>
 <body>
 
-<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+<!-- SIDEBAR OVERLAY -->
+<div id="sidebarOverlay" onclick="closeSidebar()" style="
+  display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(3px);
+  -webkit-tap-highlight-color:transparent;
+"></div>
 
-<aside id="sidebarPanel">
-  <div style="padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+<!-- SIDEBAR PANEL — Crunchyroll style: left side -->
+<aside id="sidebarPanel" style="
+  position:fixed; top:0; left:-280px; width:260px; height:100%;
+  max-height:100vh; z-index:10001;
+  background:#141519;
+  border-right:1px solid rgba(244,117,33,0.15);
+  transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
+  display:flex; flex-direction:column; overflow:hidden;
+">
+  <!-- Sidebar Header -->
+  <div style="padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between; background:#1a1a23;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <img src="/static/icon.png" style="width:32px;height:32px;border-radius:8px;object-fit:cover;">
+      <img src="/static/icon.png" style="width:30px;height:30px;border-radius:6px;object-fit:cover;">
       <div>
-        <div style="font-size:15px;font-weight:900;color:#fff;">Dayy<span style="color:var(--accent);">nime</span></div>
-        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Nonton anime sub indo</div>
+        <div style="font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.3px;">Dayy<span style="color:#F47521;">nime</span></div>
+        <div style="font-size:9px;color:#5a5a72;text-transform:uppercase;letter-spacing:0.5px;">Nonton anime sub indo</div>
       </div>
     </div>
-    <button onclick="closeSidebar()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:13px;cursor:pointer;padding:7px 9px;border-radius:8px;"><i class="fas fa-times"></i></button>
+    <button onclick="closeSidebar()" style="background:rgba(255,255,255,0.06);border:none;color:#A0A0B0;font-size:14px;cursor:pointer;padding:6px 8px;border-radius:6px;-webkit-tap-highlight-color:transparent;">
+      <i class="fas fa-times"></i>
+    </button>
   </div>
-  <nav style="flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;">
-    <div style="font-size:9px;color:var(--text3);font-weight:900;letter-spacing:1.5px;padding:10px 24px 6px;text-transform:uppercase;">Jelajahi</div>
-    <a href="/ongoing" onclick="closeSidebar()" class="sb-item"><span class="sb-dot" style="background:var(--green);"></span><span>Ongoing</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <a href="/completed" onclick="closeSidebar()" class="sb-item"><span class="sb-dot" style="background:var(--blue);"></span><span>Completed</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <a href="/movies" onclick="closeSidebar()" class="sb-item"><i class="fas fa-film sb-icon" style="color:var(--accent);"></i><span>Movie</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <a href="/genres" onclick="closeSidebar()" class="sb-item"><i class="fas fa-tag sb-icon" style="color:#a78bfa;"></i><span>Genre</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <a href="/animelist" onclick="closeSidebar()" class="sb-item"><i class="fas fa-list sb-icon" style="color:var(--accent);"></i><span>A-Z List</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <a href="/popular" onclick="closeSidebar()" class="sb-item"><i class="fas fa-fire sb-icon" style="color:var(--accent);"></i><span>Populer</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <a href="/jadwal" onclick="closeSidebar()" class="sb-item"><i class="fas fa-calendar-alt sb-icon" style="color:var(--green);"></i><span>Jadwal Rilis</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <a href="/ruang-ngobrol" onclick="closeSidebar()" class="sb-item"><i class="fas fa-comments sb-icon" style="color:#7c3aed;"></i><span>Ruang Ngobrol</span><i class="fas fa-chevron-right sb-arr"></i></a>
-    <div style="height:1px;background:var(--border);margin:8px 16px;"></div>
-    <div style="font-size:9px;color:var(--text3);font-weight:900;letter-spacing:1.5px;padding:10px 24px 6px;text-transform:uppercase;">Akun</div>
+
+  <!-- Sidebar Menu -->
+  <nav style="flex:1; overflow-y:auto; overflow-x:hidden; padding:8px 0; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;">
+
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Jelajahi</div>
+
+    <a href="/ongoing" onclick="closeSidebar()" class="sb-item">
+      <span class="sb-dot" style="background:#10B981;"></span>
+      <span>Ongoing</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/completed" onclick="closeSidebar()" class="sb-item">
+      <span class="sb-dot" style="background:#60a5fa;"></span>
+      <span>Completed</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/movies" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-film sb-icon" style="color:#F47521;"></i>
+      <span>Movie</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/genres" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-tag sb-icon" style="color:#a78bfa;"></i>
+      <span>Genre</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/animelist" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-list sb-icon" style="color:#F47521;"></i>
+      <span>A-Z List</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/popular" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-fire sb-icon" style="color:#F47521;"></i>
+      <span>Populer</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/jadwal" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-calendar-alt sb-icon" style="color:#10B981;"></i>
+      <span>Jadwal Rilis</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+    <a href="/ruang-ngobrol" onclick="closeSidebar()" class="sb-item">
+      <i class="fas fa-comments sb-icon" style="color:#7C3AED;"></i>
+      <span>Ruang Ngobrol</span>
+      <i class="fas fa-chevron-right sb-arr"></i>
+    </a>
+
+    <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Akun</div>
+
+    <!-- Jika sudah login -->
     <div id="sbLoggedIn" style="display:block;">
-      <a href="/profile" onclick="closeSidebar()" class="sb-item"><i class="fas fa-user sb-icon" style="color:var(--text3);"></i><span id="sbUsername">Profile</span><i class="fas fa-chevron-right sb-arr"></i></a>
-      <a href="/koleksi" onclick="closeSidebar()" class="sb-item"><i class="fas fa-bookmark sb-icon" style="color:var(--text3);"></i><span>Koleksi</span><i class="fas fa-chevron-right sb-arr"></i></a>
+      <a href="/profile" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-user sb-icon" style="color:#A0A0B0;"></i>
+        <span id="sbUsername">Profile</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
+      <a href="/koleksi" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-bookmark sb-icon" style="color:#A0A0B0;"></i>
+        <span>Koleksi</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
     </div>
-    <div id="sbLoggedOut" style="display:none;">
-      <a href="/auth/login" onclick="closeSidebar()" class="sb-item"><i class="fas fa-sign-in-alt sb-icon" style="color:var(--accent);"></i><span style="color:var(--accent);font-weight:800;">Masuk</span><i class="fas fa-chevron-right sb-arr"></i></a>
-      <a href="/auth/register" onclick="closeSidebar()" class="sb-item"><i class="fas fa-user-plus sb-icon" style="color:var(--text3);"></i><span>Daftar</span><i class="fas fa-chevron-right sb-arr"></i></a>
+
+    <!-- Jika belum login -->
+    <div id="sbLoggedOut" style="display:none;"><!-- hidden until JS confirms not logged in -->
+      <a href="/auth/login" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-sign-in-alt sb-icon" style="color:#f47521;"></i>
+        <span style="color:#f47521;font-weight:700;">Masuk</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
+      <a href="/auth/register" onclick="closeSidebar()" class="sb-item">
+        <i class="fas fa-user-plus sb-icon" style="color:#A0A0B0;"></i>
+        <span>Daftar</span>
+        <i class="fas fa-chevron-right sb-arr"></i>
+      </a>
     </div>
-    <div style="height:1px;background:var(--border);margin:8px 16px;"></div>
-    <div style="font-size:9px;color:var(--text3);font-weight:900;letter-spacing:1.5px;padding:10px 24px 6px;text-transform:uppercase;">Server</div>
+
+    <div style="height:1px;background:rgba(255,255,255,0.05);margin:8px 16px;"></div>
+    <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;padding:10px 16px 6px;text-transform:uppercase;">Server</div>
     {% for key, src in all_sources.items() %}
     <button onclick="switchSource('{{ key }}')" id="sbBtn-{{ key }}" class="sb-src-btn {% if active_source == key %}active{% endif %}">
-      <i class="fas fa-server" style="font-size:11px;opacity:0.5;"></i>
+      <i class="fas fa-server" style="font-size:12px;opacity:0.5;"></i>
       <span>{{ src.label }}</span>
-      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
+      {% if active_source == key %}<span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;margin-left:auto;"></span>{% endif %}
     </button>
     {% endfor %}
   </nav>
-  <div style="padding:12px 16px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:space-between;">
+
+  <!-- Sidebar Footer -->
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.05);font-size:10px;color:#5a5a72;display:flex;align-items:center;justify-content:space-between;">
     <span style="text-transform:uppercase;letter-spacing:0.3px;">Server Aktif</span>
-    <span id="srcActiveLabel" style="color:var(--accent);font-weight:900;">{{ active_source_label }}</span>
+    <span id="srcActiveLabel" style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
   </div>
 </aside>
 
-<!-- DESKTOP HEADER -->
-<header class="top-header-desktop">
-  <a href="/home" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;">
-    <img src="/static/icon.png" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
-    <span style="font-size:16px;font-weight:900;color:#fff;">Dayy<span style="color:var(--accent);">nime</span></span>
+<!-- TOP HEADER — Crunchyroll style -->
+<header class="top-header">
+  <!-- Hamburger (mobile only) -->
+  <button onclick="openSidebar()" class="mobile-hamburger" style="background:none;border:none;color:#A0A0B0;font-size:18px;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
+    <i class="fas fa-bars"></i>
+  </button>
+  <!-- Logo + Brand -->
+  <a href="/home" style="display:flex;align-items:center;gap:7px;flex-shrink:0;text-decoration:none;">
+    <img src="/static/icon.png" style="width:26px;height:26px;border-radius:6px;object-fit:cover;">
+    <span class="header-brand">Dayy<span>nime</span></span>
   </a>
+  <!-- Desktop Nav Links -->
   <nav class="desktop-nav">
     <a href="/home" class="desktop-nav-item" data-href="/home"><i class="fas fa-home"></i> Home</a>
     <a href="/ongoing" class="desktop-nav-item" data-href="/ongoing"><i class="fas fa-play-circle"></i> Ongoing</a>
@@ -603,191 +182,587 @@
     <a href="/movies" class="desktop-nav-item" data-href="/movies"><i class="fas fa-film"></i> Movie</a>
     <a href="/popular" class="desktop-nav-item" data-href="/popular"><i class="fas fa-fire"></i> Populer</a>
   </nav>
-  <div style="flex:1;"></div>
-  <form action="/search" method="get" style="display:flex;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;height:36px;gap:8px;max-width:300px;flex:1;" onfocusin="this.style.borderColor='var(--accent)'" onfocusout="this.style.borderColor='var(--border)'">
-    <i class="fas fa-search" style="color:var(--text3);font-size:12px;"></i>
-    <input type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:13px;font-family:inherit;">
+  <!-- Desktop Search Bar (inline, hidden on mobile) -->
+  <form class="desktop-search-bar" action="/search" method="get" style="display:none;">
+    <i class="fas fa-search"></i>
+    <input type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off">
   </form>
-  <a href="/profile" id="headerUserBtnDesktop" style="width:34px;height:34px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;text-decoration:none;flex-shrink:0;margin-left:8px;">
-    <i class="fas fa-user" style="color:var(--text3);font-size:13px;"></i>
+  <!-- Mobile: spacer + search icon -->
+  <div style="flex:1;" class="mobile-spacer"></div>
+  <button id="searchToggleBtn" onclick="openHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;flex-shrink:0;">
+    <i class="fas fa-search"></i>
+  </button>
+
+  <!-- Blur backdrop -->
+  <div id="searchBackdrop" onclick="closeHeaderSearch()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:298;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity 0.25s ease;"></div>
+
+  <!-- Search overlay (mobile) -->
+  <div id="searchOverlay" style="display:none;position:fixed;top:0;left:0;right:0;z-index:299;background:var(--bg);border-bottom:1px solid var(--border);height:var(--nav-h);align-items:center;padding:0 12px;gap:10px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s ease;">
+    <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--radius);padding:0 12px;height:36px;border:1px solid var(--accent);">
+      <i class="fas fa-search" style="color:var(--accent);font-size:13px;"></i>
+      <input id="searchOverlayInput" type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;">
+    </form>
+    <button onclick="closeHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:6px;white-space:nowrap;-webkit-tap-highlight-color:transparent;">Batal</button>
+  </div>
+  <!-- User avatar / premium badge -->
+  <a href="/profile" id="headerUserBtn" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);overflow:hidden;text-decoration:none;position:relative;">
+    <img id="headerAvatar" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
+    <i id="headerAvatarFallback" class="fas fa-user" style="color:var(--text3);font-size:13px;"></i>
+    <div id="headerPremiumDot" style="display:none;position:absolute;bottom:0;right:0;width:9px;height:9px;background:#fbbf24;border-radius:50%;border:1.5px solid var(--bg);"></div>
   </a>
 </header>
 
-<!-- MOBILE HEADER -->
-<header class="app-header">
-  <a href="/profile" class="header-user-card" id="headerUserBtn">
-    <div class="header-avatar">
-      <img id="headerAvatar" src="" alt="" style="display:none;">
-      <i id="headerAvatarFallback" class="fas fa-user"></i>
-      <div id="headerPremiumDot" style="display:none;position:absolute;bottom:0;right:0;width:9px;height:9px;background:var(--gold);border-radius:50%;border:1.5px solid var(--bg);"></div>
-    </div>
-    <div>
-      <div class="header-user-greeting">Welcome!</div>
-      <div class="header-user-name" id="headerUsername">Guest</div>
-    </div>
-  </a>
-  <button onclick="openHeaderSearch()" class="header-action-btn secondary" id="searchToggleBtn"><i class="fas fa-search"></i></button>
-  <button onclick="openSidebar()" class="header-action-btn secondary"><i class="fas fa-sliders-h"></i></button>
-</header>
-
-<div id="searchBackdrop" onclick="closeHeaderSearch()"></div>
-<div id="searchOverlay">
-  <form action="/search" method="get" style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg2);border-radius:var(--radius-sm);padding:0 12px;height:40px;border:1.5px solid var(--accent);">
-    <i class="fas fa-search" style="color:var(--accent);font-size:13px;"></i>
-    <input id="searchOverlayInput" type="text" name="q" placeholder="Cari anime..." value="{{ request.args.get('q','') }}" autocomplete="off" style="flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:inherit;">
-  </form>
-  <button onclick="closeHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:6px;white-space:nowrap;">Batal</button>
-</div>
-
+<!-- PAGE CONTENT -->
 {% block content %}{% endblock %}
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV — Crunchyroll 5-tab -->
 <nav class="bottom-nav">
   <a href="/home" class="bnav-item" data-href="/home">
     <i class="fas fa-home"></i><span>Home</span>
   </a>
-  <a href="/ongoing" class="bnav-item" data-href="/ongoing"><i class="fas fa-play-circle"></i><span>Ongoing</span></a>
-  <button class="bnav-item bnav-trakteer" onclick="openTrakteer()"><div class="bnav-tr-pill"><img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="" style="width:16px;height:16px;object-fit:contain;filter:brightness(0) invert(1);"></div><span>Support</span></button>
-  <a href="/koleksi" class="bnav-item" data-href="/koleksi">
-    <span style="position:relative;display:inline-block;">
-      <i class="fas fa-bookmark"></i>
-      <span id="chatUnreadDot" style="display:none;position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#e53e3e;border:1.5px solid var(--bg);animation:chatDotPulse 1.5s ease-in-out infinite;"></span>
-    </span>
-    <span>Koleksi</span>
+  <a href="/jadwal" class="bnav-item" data-href="/jadwal">
+    <i class="fas fa-calendar-alt"></i><span>Jadwal</span>
   </a>
-  <button class="bnav-item" onclick="openSidebar()"><i class="fas fa-bars"></i><span>Menu</span></button>
+  <a href="/search" class="bnav-item" data-href="/search">
+    <i class="fas fa-search"></i><span>Cari</span>
+  </a>
+  <a href="/genres" class="bnav-item" data-href="/genres">
+    <i class="fas fa-tag"></i><span>Genre</span>
+  </a>
+  <a href="/ruang-ngobrol" class="bnav-item" data-href="/ruang-ngobrol" id="bnavNgobrol" style="position:relative;">
+    <span style="position:relative;display:inline-block;">
+      <i class="fas fa-comments"></i>
+      <span id="chatUnreadDot" style="
+        display:none;
+        position:absolute;top:-3px;right:-4px;
+        width:8px;height:8px;border-radius:50%;
+        background:#e53e3e;
+        border:1.5px solid var(--bg);
+        animation:chatDotPulse 1.5s ease-in-out infinite;
+      "></span>
+    </span>
+    <span>Ngobrol</span>
+  </a>
+  <button class="bnav-item" id="sidebarTrigger" onclick="openSidebar()" style="background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+    <i class="fas fa-bars"></i><span>Menu</span>
+  </button>
 </nav>
 
-<!-- TRAKTEER SUPPORT BUTTON -->
-<div id="trakteerModal" onclick="if(event.target===this)closeTrakteer()">
-  <div class="tr-modal-box">
-    <button class="tr-modal-close" onclick="closeTrakteer()"><i class="fas fa-times"></i></button>
-    <div class="tr-x-blocker" onclick="closeTrakteer()"></div>
-    <iframe src="https://trakteer.id/v1/Dayynime/tip/embed/modal"
-      frameborder="0" scrolling="no" width="100%" height="100%"
-      style="border:none;"></iframe>
-  </div>
-</div>
-
-<style>
-/* === TRAKTEER NAV BUTTON === */
-.bnav-trakteer { background: none; border: none; font-family: inherit; }
-.bnav-tr-pill {
-  width: 46px; height: 30px;
-  background: linear-gradient(135deg, #be1e2d 0%, #e8415a 100%);
-  border-radius: 15px;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 3px 12px rgba(190,30,45,0.55);
-  transition: transform 0.2s, box-shadow 0.2s;
-  flex-shrink: 0;
-}
-.bnav-trakteer:active .bnav-tr-pill {
-  transform: scale(0.9);
-  box-shadow: 0 1px 6px rgba(190,30,45,0.4);
-}
-/* === TRAKTEER MODAL === */
-#trakteerModal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 10500;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-#trakteerModal.open {
-  opacity: 1;
-}
-.tr-modal-box {
-  position: relative;
-  width: 100%;
-  max-width: 460px;
-  height: min(520px, calc(100vh - 80px));
-  background: var(--bg2, #161618);
-  border-radius: 20px;
-  border: 1px solid rgba(232,65,90,0.3);
-  overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(232,65,90,0.15);
-  animation: trModalIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
-}
-.tr-modal-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
-  background: rgba(20,20,22,0.85);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.2s;
-}
-.tr-modal-close:hover { background: rgba(232,65,90,0.4); }
-.tr-x-blocker {
-  position: absolute;
-  top: 0; right: 0;
-  width: 60px; height: 56px;
-  z-index: 20;
-  cursor: pointer;
-}
-
-/* === ANIMATIONS === */
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-  50%       { opacity: 0.7; transform: scale(1.08); }
-}
-@keyframes trModalIn {
-  from { opacity: 0; transform: scale(0.88) translateY(20px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-</style>
-
-<script src="{{ url_for('static', filename='js/main.js') }}?v=20"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=10"></script>
 {% block scripts %}{% endblock %}
 
 <script>
-function openHeaderSearch(){var o=document.getElementById('searchOverlay'),b=document.getElementById('searchBackdrop');o.style.display='flex';b.style.display='block';requestAnimationFrame(function(){o.style.opacity='1';o.style.transform='translateY(0)';b.style.opacity='1';});setTimeout(function(){document.getElementById('searchOverlayInput').focus();},100);}
-function closeHeaderSearch(){var o=document.getElementById('searchOverlay'),b=document.getElementById('searchBackdrop');o.style.opacity='0';o.style.transform='translateY(-8px)';b.style.opacity='0';setTimeout(function(){o.style.display='none';b.style.display='none';},250);}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeHeaderSearch();});
-function openSidebar(){document.getElementById('sidebarOverlay').style.display='block';document.getElementById('sidebarPanel').style.left='0';document.body.style.overflow='hidden';}
-function closeSidebar(){document.getElementById('sidebarOverlay').style.display='none';document.getElementById('sidebarPanel').style.left='-290px';document.body.style.overflow='';}
-(function(){var p=document.getElementById('sidebarPanel'),sx=0;p.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});p.addEventListener('touchend',function(e){if(sx-e.changedTouches[0].clientX>60)closeSidebar();},{passive:true});})();
-function switchSource(key){var btns=document.querySelectorAll('.sb-src-btn');btns.forEach(function(b){b.style.opacity='0.5';b.disabled=true;});fetch('/api/source/switch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:key})}).then(function(r){return r.json();}).then(function(d){if(d.ok){var lbl=document.getElementById('srcActiveLabel');if(lbl)lbl.textContent=d.label;setTimeout(function(){location.reload();},400);}else{btns.forEach(function(b){b.style.opacity='1';b.disabled=false;});}}).catch(function(){btns.forEach(function(b){b.style.opacity='1';b.disabled=false;});});}
-(function(){var path=location.pathname;function isActive(href){if(!href)return false;if(href==='/home')return path==='/'||path==='/home';return path===href||(href!=='/'&&path.startsWith(href));}document.querySelectorAll('.bnav-item[data-href]').forEach(function(item){if(isActive(item.getAttribute('data-href')))item.classList.add('active');});document.querySelectorAll('.desktop-nav-item[data-href]').forEach(function(item){if(isActive(item.getAttribute('data-href')))item.classList.add('active');});})();
+// ── Header Search ────────────────────────────────
+function openHeaderSearch() {
+  var overlay = document.getElementById('searchOverlay');
+  var backdrop = document.getElementById('searchBackdrop');
+  overlay.style.display = 'flex';
+  backdrop.style.display = 'block';
+  requestAnimationFrame(function() {
+    overlay.style.opacity = '1';
+    overlay.style.transform = 'translateY(0)';
+    backdrop.style.opacity = '1';
+  });
+  setTimeout(function() { document.getElementById('searchOverlayInput').focus(); }, 100);
+}
+function closeHeaderSearch() {
+  var overlay = document.getElementById('searchOverlay');
+  var backdrop = document.getElementById('searchBackdrop');
+  overlay.style.opacity = '0';
+  overlay.style.transform = 'translateY(-8px)';
+  backdrop.style.opacity = '0';
+  setTimeout(function() {
+    overlay.style.display = 'none';
+    backdrop.style.display = 'none';
+  }, 250);
+}
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeHeaderSearch();
+});
+
+// ── Sidebar ──────────────────────────────────────
+var sidebarOpen = false;
+function openSidebar() {
+  sidebarOpen = true;
+  document.getElementById('sidebarOverlay').style.display = 'block';
+  document.getElementById('sidebarPanel').style.left = '0';
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  sidebarOpen = false;
+  document.getElementById('sidebarOverlay').style.display = 'none';
+  document.getElementById('sidebarPanel').style.left = '-280px';
+  document.body.style.overflow = '';
+}
+// Swipe kiri untuk tutup sidebar
+(function() {
+  var startX = 0;
+  var panel = document.getElementById('sidebarPanel');
+  panel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
+  panel.addEventListener('touchend', function(e){
+    if (startX - e.changedTouches[0].clientX > 60) closeSidebar();
+  }, {passive:true});
+})();
+
+// ── Source Switcher ──────────────────────────────
+function switchSource(key) {
+  var btns = document.querySelectorAll('.sb-src-btn');
+  btns.forEach(function(b){ b.style.opacity='0.5'; b.disabled=true; });
+  fetch('/api/source/switch', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({source: key})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      var lbl = document.getElementById('srcActiveLabel');
+      if (lbl) lbl.textContent = data.label;
+      setTimeout(function(){ location.reload(); }, 400);
+    } else {
+      btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
+    }
+  })
+  .catch(function() {
+    btns.forEach(function(b){ b.style.opacity='1'; b.disabled=false; });
+  });
+}
+
+// ── Bottom nav active ────────────────────────────
+(function(){
+  var path = location.pathname;
+  document.querySelectorAll('.bnav-item[data-href]').forEach(function(item) {
+    var href = item.getAttribute('data-href') || '';
+    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
+      item.classList.add('active');
+    }
+  });
+  // Desktop nav active
+  document.querySelectorAll('.desktop-nav-item[data-href]').forEach(function(item) {
+    var href = item.getAttribute('data-href') || '';
+    if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
+      item.classList.add('active');
+    }
+  });
+  var sidebarPages = ['/ongoing','/completed','/movies','/popular','/animelist','/genres','/genre','/profile','/koleksi'];
+  var trigger = document.getElementById('sidebarTrigger');
+  if (trigger && sidebarPages.some(function(p){ return path.startsWith(p); })) {
+    trigger.classList.add('active');
+  }
+})();
+
+// ── Inject hover overlay ke semua .acard-poster ──
+(function() {
+  function injectOverlays() {
+    document.querySelectorAll('.acard-poster:not([data-overlay])').forEach(function(poster) {
+      poster.setAttribute('data-overlay', '1');
+      var overlay = document.createElement('div');
+      overlay.className = 'acard-hover-overlay';
+      overlay.innerHTML = '<div class="acard-play-btn"><i class="fas fa-play"></i></div><div class="acard-hover-label">Tonton</div>';
+      poster.appendChild(overlay);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', injectOverlays);
+  setTimeout(injectOverlays, 800);
+  setTimeout(injectOverlays, 2500);
+})();
 </script>
+
+
+<!-- FAB -->
+<style>
+#fabWrap { position:fixed; bottom:76px; right:14px; z-index:99998; display:flex; flex-direction:column; align-items:flex-end; gap:10px; pointer-events:none; }
+#fabMain, #fabMenu.open .fab-item { pointer-events:all; }
+#fabMain {
+  width:44px; height:44px; border-radius:50%;
+  background:#F47521; color:#fff; border:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; cursor:pointer;
+  box-shadow:0 4px 20px rgba(244,117,33,0.5);
+  transition:transform 0.3s, background 0.2s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation; position:relative; z-index:2;
+}
+#fabMain.open { transform:rotate(45deg); background:#22222e; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+#fabMenu {
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  pointer-events:none; opacity:0;
+  transform:translateY(10px) scale(0.95);
+  transition:opacity 0.25s, transform 0.25s;
+}
+#fabMenu.open { pointer-events:none; opacity:1; transform:translateY(0) scale(1); }
+#fabMenu.open .fab-item { pointer-events:all; }
+.fab-item { display:flex; align-items:center; gap:8px; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+.fab-item-label {
+  background:#1a1a23; color:#fff; font-size:11px; font-weight:700; font-family:'Lato',sans-serif;
+  padding:6px 12px; border-radius:20px; box-shadow:0 2px 12px rgba(0,0,0,0.5);
+  white-space:nowrap; border:1px solid rgba(255,255,255,0.08);
+  text-transform:uppercase; letter-spacing:0.3px;
+}
+.fab-item-icon {
+  width:38px; height:38px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; color:#fff; border:none; cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4); -webkit-tap-highlight-color:transparent; flex-shrink:0;
+}
+.fab-item-icon.tr  { background:#be1e2d; }
+.fab-item-icon.srv { background:#F47521; }
+
+#srcPanel {
+  display:none; position:fixed; bottom:76px; right:14px; z-index:99999;
+  background:#1a1a23; border:1px solid rgba(244,117,33,0.4);
+  border-radius:12px; padding:12px 10px; min-width:190px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.8);
+}
+
+#trModal { display:none; position:fixed; inset:0; z-index:999999; background:rgba(0,0,0,0.85); align-items:flex-end; justify-content:center; }
+#trModal.open { display:flex; }
+#trModalBox {
+  background:#1a1a23; border-radius:16px 16px 0 0; overflow:hidden;
+  width:100%; max-width:480px; height:90vh;
+  display:flex; flex-direction:column;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.8);
+  animation:trSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
+  border-top:1px solid rgba(244,117,33,0.2);
+}
+@keyframes trSlideUp { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
+#trModalHead { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#be1e2d; flex-shrink:0; }
+#trModalHead span { font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:0.3px; }
+#trModalClose { background:rgba(255,255,255,0.2); border:none; color:#fff; width:26px; height:26px; border-radius:50%; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; }
+#trFrame { flex:1; border:none; width:100%; height:100%; }
+</style>
+
+<div id="fabWrap">
+  <div id="fabMenu">
+    <div class="fab-item" onclick="openTrakteer(); closeFab();">
+      <span class="fab-item-label">Support Dayynime</span>
+      <button class="fab-item-icon tr" title="Support">
+        <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" style="width:18px;height:18px;border-radius:50%;" alt="">
+      </button>
+    </div>
+    <div class="fab-item" onclick="toggleSrcPanel(); closeFab();">
+      <span class="fab-item-label">Ganti Server</span>
+      <button class="fab-item-icon srv" title="Server">
+        <i class="fas fa-server" style="font-size:13px;"></i>
+      </button>
+    </div>
+  </div>
+  <button id="fabMain" onclick="toggleFab()">
+    <i class="fas fa-plus" id="fabIcon"></i>
+  </button>
+</div>
+
+<div id="trModal" onclick="closeTrakteer(event)">
+  <div id="trModalBox">
+    <div id="trModalHead">
+      <span>❤️ Support Dayynime</span>
+      <button id="trModalClose" onclick="closeTrakteer()">✕</button>
+    </div>
+    <iframe id="trFrame" src="" allow="payment" loading="lazy"></iframe>
+  </div>
+</div>
+
+<div id="srcPanel">
+  <div style="font-size:9px;color:#5a5a72;font-weight:900;letter-spacing:1.5px;margin-bottom:10px;text-align:center;text-transform:uppercase;">Ganti Server</div>
+  {% for key, src in all_sources.items() %}
+  <button id="srcBtn-{{ key }}" onclick="switchSource('{{ key }}')" style="
+    width:100%;margin-bottom:5px;padding:9px 12px;border-radius:8px;
+    border:1px solid {% if active_source == key %}#F47521{% else %}rgba(255,255,255,0.08){% endif %};
+    background:{% if active_source == key %}rgba(244,117,33,0.15){% else %}rgba(255,255,255,0.03){% endif %};
+    color:{% if active_source == key %}#F47521{% else %}#A0A0B0{% endif %};
+    font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+    text-transform:uppercase;letter-spacing:0.3px;">
+    <span>{{ src.label }}</span>
+    {% if active_source == key %}
+    <span style="width:6px;height:6px;border-radius:50%;background:#F47521;flex-shrink:0;display:inline-block;"></span>
+    {% endif %}
+  </button>
+  {% endfor %}
+  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);font-size:9px;color:#5a5a72;text-align:center;text-transform:uppercase;letter-spacing:0.3px;">
+    Aktif: <span style="color:#F47521;font-weight:900;">{{ active_source_label }}</span>
+  </div>
+</div>
+
 <script>
-(function(){fetch('/api/me').then(function(r){return r.json();}).then(function(d){var user=d.user,btn=document.getElementById('headerUserBtn');if(!user){if(btn)btn.href='/auth/login';var sbOut=document.getElementById('sbLoggedOut'),sbIn=document.getElementById('sbLoggedIn');if(sbOut)sbOut.style.display='block';if(sbIn)sbIn.style.display='none';return;}var sbOut=document.getElementById('sbLoggedOut'),sbIn=document.getElementById('sbLoggedIn');if(sbOut)sbOut.style.display='none';if(sbIn)sbIn.style.display='block';var sbName=document.getElementById('sbUsername');if(sbName)sbName.textContent=user.name||'Profile';var nameEl=document.getElementById('headerUsername');if(nameEl)nameEl.textContent=user.name||'User';var avatar=document.getElementById('headerAvatar'),fallback=document.getElementById('headerAvatarFallback');if(user.avatar&&avatar){avatar.src=user.avatar;avatar.style.display='block';if(fallback)fallback.style.display='none';}fetch('/api/premium/status').then(function(r){return r.json();}).then(function(p){if(p.premium){var dot=document.getElementById('headerPremiumDot');if(dot)dot.style.display='block';}}).catch(function(){});}).catch(function(){var sbOut=document.getElementById('sbLoggedOut');if(sbOut)sbOut.style.display='block';var btn=document.getElementById('headerUserBtn');if(btn)btn.href='/auth/login';});})();
+var fabOpen = false;
+function toggleFab() {
+  fabOpen = !fabOpen;
+  document.getElementById('fabMain').classList.toggle('open', fabOpen);
+  document.getElementById('fabMenu').classList.toggle('open', fabOpen);
+  document.getElementById('fabIcon').className = fabOpen ? 'fas fa-times' : 'fas fa-plus';
+  if (!fabOpen) document.getElementById('srcPanel').style.display = 'none';
+}
+function closeFab() {
+  fabOpen = false;
+  document.getElementById('fabMain').classList.remove('open');
+  document.getElementById('fabMenu').classList.remove('open');
+  document.getElementById('fabIcon').className = 'fas fa-plus';
+}
+function openTrakteer() {
+  var modal = document.getElementById('trModal');
+  var frame = document.getElementById('trFrame');
+  frame.src = '';
+  setTimeout(function() { frame.src = 'https://trakteer.id/v1/Dayynimee/tip/embed/modal'; }, 50);
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTrakteer(e) {
+  if (e && e.target !== document.getElementById('trModal') && e.target !== document.getElementById('trModalClose')) return;
+  document.getElementById('trFrame').src = '';
+  document.getElementById('trModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+var srcPanelOpen = false;
+function toggleSrcPanel() {
+  srcPanelOpen = !srcPanelOpen;
+  document.getElementById('srcPanel').style.display = srcPanelOpen ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+  var wrap = document.getElementById('fabWrap');
+  var panel = document.getElementById('srcPanel');
+  if (fabOpen && wrap && !wrap.contains(e.target)) closeFab();
+  if (srcPanelOpen && panel && !panel.contains(e.target) && wrap && !wrap.contains(e.target)) {
+    srcPanelOpen = false;
+    panel.style.display = 'none';
+  }
+});
 </script>
+
+<!-- Trakteer Donation Notif -->
+<div id="trNotif" style="display:none;position:fixed;bottom:76px;right:14px;z-index:99997;background:#1a1a23;border:1px solid rgba(190,30,45,0.4);border-radius:12px;padding:12px 14px;max-width:260px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.7);animation:trNotifIn 0.4s cubic-bezier(0.22,1,0.36,1) both;">
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px;">
+    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#be1e2d,#ff6b6b);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;" id="trNotifAvatar">?</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:9px;color:#be1e2d;font-weight:900;letter-spacing:0.5px;text-transform:uppercase;">❤️ Donasi Masuk!</div>
+      <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="trNotifName">-</div>
+    </div>
+    <button onclick="hidetrNotif()" style="background:none;border:none;color:#5a5a72;font-size:14px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0;">✕</button>
+  </div>
+  <div style="font-size:11px;color:#A0A0B0;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="trNotifMsg"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:14px;font-weight:900;color:#F47521;" id="trNotifAmount">-</div>
+    <button onclick="openTrakteer();hidetrNotif();" style="background:#be1e2d;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:900;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.3px;">Dukung</button>
+  </div>
+</div>
+<style>
+@keyframes trNotifIn { from{opacity:0;transform:translateX(20px);} to{opacity:1;transform:translateX(0);} }
+</style>
 <script>
-(function(){fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d){if(d.premium)return;var s1=document.createElement('script');s1.src='https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';document.head.appendChild(s1);var s2=document.createElement('script');s2.src='https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';document.head.appendChild(s2);}).catch(function(){});})();
+(function() {
+  var lastId = localStorage.getItem('trLastDonorId') || '';
+  var notifTimer = null;
+  function fmtAmount(v) {
+    var n = parseInt(v) || 0;
+    if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace('.0','') + 'jt';
+    if (n >= 1000) return 'Rp ' + (n/1000).toFixed(0) + 'rb';
+    return 'Rp ' + n;
+  }
+  function showNotif(s) {
+    document.getElementById('trNotifAvatar').textContent = (s.name||'A')[0].toUpperCase();
+    document.getElementById('trNotifName').textContent = s.name || 'Anonim';
+    document.getElementById('trNotifMsg').textContent = s.message || '🎉 Terima kasih!';
+    document.getElementById('trNotifAmount').textContent = fmtAmount(s.amount);
+    var el = document.getElementById('trNotif');
+    el.style.display = 'block';
+    el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+    if (notifTimer) clearTimeout(notifTimer);
+    notifTimer = setTimeout(hidetrNotif, 8000);
+  }
+  window.hidetrNotif = function() {
+    document.getElementById('trNotif').style.display = 'none';
+    if (notifTimer) clearTimeout(notifTimer);
+  };
+  function checkLatest() {
+    fetch('/api/trakteer/latest').then(function(r){ return r.json(); }).then(function(d) {
+      if (!d.ok || !d.latest) return;
+      var s = d.latest;
+      if (s.id && s.id !== lastId) {
+        lastId = s.id; localStorage.setItem('trLastDonorId', lastId); showNotif(s);
+      }
+    }).catch(function(){});
+  }
+  setTimeout(checkLatest, 5000); setInterval(checkLatest, 60000);
+})();
 </script>
+
+
 <script>
-(function(){var dot=document.getElementById('chatUnreadDot');if(!dot)return;var SEEN_KEY='dayy_chat_seen',UNREAD_KEY='dayy_chat_unread';if(localStorage.getItem(UNREAD_KEY)==='1')dot.style.display='block';function checkUnread(){var lastSeen=localStorage.getItem(SEEN_KEY)||new Date(Date.now()-3600000).toISOString();fetch('/api/globalchat?limit=1').then(function(r){return r.json();}).then(function(d){if(!d.messages||!d.messages.length)return;if(d.messages[0].created_at>lastSeen){dot.style.display='block';localStorage.setItem(UNREAD_KEY,'1');}}).catch(function(){});}
-if(window.location.pathname!=='/ruang-ngobrol'){checkUnread();setInterval(checkUnread,30000);}else{localStorage.setItem(SEEN_KEY,new Date().toISOString());}})();
+// ── Header user avatar + sidebar auth state ───────────────────────────
+(function() {
+  fetch('/api/me').then(function(r){ return r.json(); }).then(function(d) {
+    var user = d.user;
+    var btn = document.getElementById('headerUserBtn');
+
+    if (!user) {
+      // Belum login: arahkan icon user ke halaman login
+      if(btn) btn.href = '/auth/login';
+      var sbOut = document.getElementById('sbLoggedOut');
+      var sbIn  = document.getElementById('sbLoggedIn');
+      if(sbOut) sbOut.style.display = 'block';
+      if(sbIn)  sbIn.style.display  = 'none';
+      return;
+    }
+
+    // Sudah login: tampilkan avatar & username di sidebar
+    var sbOut = document.getElementById('sbLoggedOut');
+    var sbIn  = document.getElementById('sbLoggedIn');
+    if(sbOut) sbOut.style.display = 'none';
+    if(sbIn)  sbIn.style.display  = 'block';
+
+    var sbName = document.getElementById('sbUsername');
+    if(sbName) sbName.textContent = user.name || 'Profile';
+
+    var avatar = document.getElementById('headerAvatar');
+    var fallback = document.getElementById('headerAvatarFallback');
+    if (user.avatar && avatar) {
+      avatar.src = user.avatar;
+      avatar.style.display = 'block';
+      if(fallback) fallback.style.display = 'none';
+      if(btn) btn.style.border = '1.5px solid var(--accent)';
+    }
+
+    // Check premium for dot
+    fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(p) {
+      if(p.premium) {
+        var dot = document.getElementById('headerPremiumDot');
+        if(dot) dot.style.display = 'block';
+        if(btn) btn.style.border = '1.5px solid #fbbf24';
+      }
+    }).catch(function(){});
+  }).catch(function(){
+    // Error fetch: fallback ke tampilkan tombol login
+    var sbOut = document.getElementById('sbLoggedOut');
+    if(sbOut) sbOut.style.display = 'block';
+    var btn = document.getElementById('headerUserBtn');
+    if(btn) btn.href = '/auth/login';
+  });
+})();
 </script>
+
 <script>
-if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){});});}
-var deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;window._pwaPrompt=e;});
-function installPWA(){var p=deferredPrompt||window._pwaPrompt;if(!p)return;p.prompt();p.userChoice.then(function(){deferredPrompt=null;window._pwaPrompt=null;var b=document.getElementById('pwaBannerSection');if(b)b.style.display='none';});}
-window.addEventListener('appinstalled',function(){deferredPrompt=null;var b=document.getElementById('pwaBannerSection');if(b)b.style.display='none';});
+// ── Ads: hanya tampil jika bukan premium ──
+(function() {
+  fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(d) {
+    if (d.premium) return; // premium = no ads
+    var s1 = document.createElement('script');
+    s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
+    document.head.appendChild(s1);
+    var s2 = document.createElement('script');
+    s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
+    document.head.appendChild(s2);
+  }).catch(function() {
+    // Gagal cek = anggap bukan premium, tampilkan iklan
+    var s1 = document.createElement('script');
+    s1.src = 'https://pl29022125.profitablecpmratenetwork.com/18/29/47/182947404fc6dcfa39a195a215bfce9c.js';
+    document.head.appendChild(s1);
+    var s2 = document.createElement('script');
+    s2.src = 'https://pl29022124.profitablecpmratenetwork.com/d8/30/72/d830724f6b6e73f0599d89617974ad27.js';
+    document.head.appendChild(s2);
+  });
+})();
 </script>
+
+<!-- ── Chat Unread Dot ─────────────────────────────── -->
+<style>
+@keyframes chatDotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.35); opacity: 0.7; }
+}
+</style>
 <script>
-// === TRAKTEER ===
-function openTrakteer(){var m=document.getElementById('trakteerModal');m.style.display='flex';m.style.opacity='0';m.classList.remove('open');requestAnimationFrame(function(){requestAnimationFrame(function(){m.classList.add('open');m.style.opacity='';});});document.body.style.overflow='hidden';}
-function closeTrakteer(el){if(el&&el.id==='trakteerModal'&&event&&event.target!==el)return;var m=document.getElementById('trakteerModal');m.classList.remove('open');setTimeout(function(){m.style.display='none';document.body.style.overflow='';},260);}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTrakteer();});
+(function() {
+  if (window.location.pathname === '/ruang-ngobrol') {
+    // Kalau di halaman ngobrol, update last_seen ke sekarang
+    localStorage.setItem('dayy_chat_seen', new Date().toISOString());
+    return;
+  }
+
+  var dot = document.getElementById('chatUnreadDot');
+  if (!dot) return;
+
+  var SEEN_KEY  = 'dayy_chat_seen';
+  var UNREAD_KEY = 'dayy_chat_unread';
+
+  // Tampilkan dot kalau ada unread tersimpan
+  if (localStorage.getItem(UNREAD_KEY) === '1') dot.style.display = 'block';
+
+  // Klik Ngobrol → hapus dot + update last seen
+  var navBtn = document.getElementById('bnavNgobrol');
+  if (navBtn) navBtn.addEventListener('click', function() {
+    dot.style.display = 'none';
+    localStorage.removeItem(UNREAD_KEY);
+    localStorage.setItem(SEEN_KEY, new Date().toISOString());
+  });
+
+  function checkUnread() {
+    var lastSeen = localStorage.getItem(SEEN_KEY);
+    // Kalau belum pernah buka chat, anggap last seen = 1 jam lalu
+    if (!lastSeen) {
+      lastSeen = new Date(Date.now() - 3600000).toISOString();
+    }
+
+    fetch('/api/globalchat?limit=1')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.messages || !d.messages.length) return;
+        var latestTime = d.messages[0].created_at;
+        if (latestTime && latestTime > lastSeen) {
+          dot.style.display = 'block';
+          localStorage.setItem(UNREAD_KEY, '1');
+        }
+      })
+      .catch(function() {});
+  }
+
+  // Cek langsung saat load, lalu tiap 30 detik
+  checkUnread();
+  setInterval(checkUnread, 30000);
+})();
 </script>
 </body>
+<script>
+// ── Service Worker ───────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .catch(function(err) { console.warn('[SW] Register gagal:', err); });
+  });
+}
+
+// ── PWA Install Prompt ───────────────────────────
+var deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Simpan supaya bisa dipanggil dari halaman lain
+  window._pwaPrompt = e;
+});
+
+function installPWA() {
+  var p = deferredPrompt || window._pwaPrompt;
+  if (!p) return;
+  p.prompt();
+  p.userChoice.then(function() {
+    deferredPrompt = null;
+    window._pwaPrompt = null;
+    var banner = document.getElementById('pwaBannerSection');
+    if (banner) banner.style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', function() {
+  deferredPrompt = null;
+  window._pwaPrompt = null;
+  var banner = document.getElementById('pwaBannerSection');
+  if (banner) banner.style.display = 'none';
+});
+</script>
+
+<style>
+
+</style>
 </html>
