@@ -593,4 +593,300 @@ function switchSource(src, el) {
 <script>
 (function(){var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';var client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);var slugs=[];document.querySelectorAll('.idx-card[data-anime-slug]').forEach(function(el){var s=el.getAttribute('data-anime-slug');if(s&&slugs.indexOf(s)===-1)slugs.push(s);});var uid=sessionStorage.getItem('dyn_uid');if(!uid){uid='u_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();sessionStorage.setItem('dyn_uid',uid);}var channels={};function updateBadge(slug,count){var badge=document.getElementById('viewers-'+slug);var countEl=document.getElementById('viewers-count-'+slug);if(!badge||!countEl)return;if(count>=1){countEl.textContent=count;badge.classList.add('visible');}else{badge.classList.remove('visible');}}function subscribeToSlug(slug){if(channels[slug])return;var ch=client.channel('anime-viewers:'+slug,{config:{presence:{key:uid}}});ch.on('presence',{event:'sync'},function(){updateBadge(slug,Object.keys(ch.presenceState()).length);});ch.subscribe();channels[slug]=ch;}slugs.forEach(subscribeToSlug);window.addEventListener('beforeunload',function(){Object.values(channels).forEach(function(ch){try{client.removeChannel(ch);}catch(e){}});});})();
 </script>
+
+<!-- ══════════════════════════════════════════════════════════
+     SURVEY POPUP — "Gimana Dayynime?"
+     ══════════════════════════════════════════════════════════ -->
+<style>
+#surveyOverlay{display:none;position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;padding:0;opacity:0;transition:opacity 0.3s ease;}
+#surveyOverlay.open{opacity:1;}
+#surveySheet{width:100%;max-width:480px;background:linear-gradient(160deg,#1a1a1e 0%,#161618 100%);border-radius:24px 24px 0 0;border:1px solid rgba(232,65,90,0.18);border-bottom:none;box-shadow:0 -12px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(232,65,90,0.08);transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.28,0.64,1);max-height:92vh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,16px);}
+#surveyOverlay.open #surveySheet{transform:translateY(0);}
+.sv-handle{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);margin:12px auto 0;}
+.sv-header{padding:16px 20px 14px;display:flex;align-items:center;justify-content:space-between;}
+.sv-logo{display:flex;align-items:center;gap:8px;}
+.sv-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#e8415a,#c0183a);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;box-shadow:0 4px 16px rgba(232,65,90,0.45);}
+.sv-logo-text{font-size:14px;font-weight:900;color:#fff;}
+.sv-logo-text span{color:#e8415a;}
+.sv-close-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#888;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.sv-close-btn:active{background:rgba(232,65,90,0.2);color:#e8415a;}
+.sv-steps{display:flex;gap:5px;padding:0 20px 16px;}
+.sv-step-dot{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.1);transition:background 0.35s;}
+.sv-step-dot.done{background:#e8415a;}
+.sv-step-dot.active{background:#ff6b9d;}
+.sv-question{padding:0 20px 16px;display:none;animation:svSlideIn 0.3s ease both;}
+.sv-question.active{display:block;}
+@keyframes svSlideIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
+.sv-q-emoji{font-size:32px;margin-bottom:8px;line-height:1;}
+.sv-q-label{font-size:11px;font-weight:900;color:#e8415a;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;}
+.sv-q-text{font-size:17px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:16px;}
+.sv-options{display:flex;flex-direction:column;gap:8px;}
+.sv-options.grid-2{flex-direction:row;flex-wrap:wrap;}
+.sv-options.grid-2 .sv-opt{width:calc(50% - 4px);}
+.sv-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:all 0.2s;color:#c0c0c8;font-size:13px;font-weight:700;-webkit-tap-highlight-color:transparent;}
+.sv-opt:active{transform:scale(0.97);}
+.sv-opt.selected{background:rgba(232,65,90,0.12);border-color:rgba(232,65,90,0.55);color:#fff;}
+.sv-opt.selected .sv-opt-icon{color:#e8415a;}
+.sv-opt-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;transition:color 0.2s;}
+.sv-opt-check{margin-left:auto;width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;flex-shrink:0;transition:all 0.2s;}
+.sv-opt.selected .sv-opt-check{background:#e8415a;border-color:#e8415a;color:#fff;}
+.sv-stars{display:flex;gap:8px;justify-content:center;padding:8px 0 16px;}
+.sv-star{font-size:36px;cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.2s;-webkit-tap-highlight-color:transparent;line-height:1;}
+.sv-star.lit{color:#f5c518;transform:scale(1.1);}
+.sv-star:active{transform:scale(0.9);}
+.sv-star-label{text-align:center;font-size:12px;font-weight:700;color:#888;margin-top:4px;min-height:18px;transition:color 0.2s;}
+.sv-footer{display:flex;align-items:center;gap:10px;padding:14px 20px 20px;}
+.sv-btn-back{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.08);color:#888;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.sv-btn-back:active{background:rgba(255,255,255,0.1);}
+.sv-btn-next{flex:1;height:44px;border-radius:12px;background:linear-gradient(135deg,#e8415a,#c0183a);border:none;color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(232,65,90,0.45);transition:all 0.2s;font-family:inherit;letter-spacing:0.2px;}
+.sv-btn-next:active{transform:scale(0.97);box-shadow:0 2px 10px rgba(232,65,90,0.3);}
+.sv-btn-next:disabled{opacity:0.4;pointer-events:none;}
+#svResultScreen{display:none;padding:0 20px 24px;}
+#svResultScreen.active{display:block;animation:svSlideIn 0.35s ease both;}
+.sv-result-hero{text-align:center;padding:20px 0 18px;}
+.sv-result-trophy{font-size:52px;line-height:1;margin-bottom:10px;animation:svBounce 0.6s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes svBounce{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.sv-result-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;}
+.sv-result-sub{font-size:12px;color:#888;font-weight:600;}
+.sv-result-total{font-size:11px;color:#e8415a;font-weight:800;margin-top:6px;letter-spacing:0.5px;}
+.sv-stats{margin-top:6px;}
+.sv-stat-item{margin-bottom:14px;}
+.sv-stat-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.sv-stat-name{font-size:12px;font-weight:800;color:#c0c0c8;display:flex;align-items:center;gap:5px;}
+.sv-stat-pct{font-size:12px;font-weight:900;color:#e8415a;}
+.sv-stat-bar-wrap{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;}
+.sv-stat-bar{height:100%;border-radius:4px;width:0%;background:linear-gradient(90deg,#e8415a,#ff6b9d);transition:width 0.8s cubic-bezier(0.4,0,0.2,1);}
+.sv-stat-votes{font-size:10px;color:#555;font-weight:600;margin-top:3px;}
+.sv-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.sv-tabs::-webkit-scrollbar{display:none;}
+.sv-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.08);color:#888;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.sv-tab.active{background:rgba(232,65,90,0.15);border-color:rgba(232,65,90,0.4);color:#e8415a;}
+.sv-done-btn{width:100%;height:46px;border-radius:14px;margin-top:18px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);color:#c0c0c8;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:all 0.2s;}
+.sv-done-btn:active{background:rgba(255,255,255,0.1);}
+</style>
+
+<div id="surveyOverlay" onclick="if(event.target===this)closeSurvey()">
+  <div id="surveySheet">
+    <div class="sv-handle"></div>
+    <div class="sv-header">
+      <div class="sv-logo">
+        <div class="sv-logo-icon"><i class="fas fa-star"></i></div>
+        <div class="sv-logo-text">Dayy<span>nime</span> Survey</div>
+      </div>
+      <button class="sv-close-btn" onclick="closeSurvey()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sv-steps" id="svStepDots"></div>
+
+    <!-- Q1: Bintang -->
+    <div class="sv-question active" data-q="0">
+      <div class="sv-q-emoji">⭐</div>
+      <div class="sv-q-label">Pertanyaan 1 dari 5</div>
+      <div class="sv-q-text">Seberapa puas kamu dengan Dayynime secara keseluruhan?</div>
+      <div class="sv-stars" id="svStars">
+        <span class="sv-star" data-val="1">★</span>
+        <span class="sv-star" data-val="2">★</span>
+        <span class="sv-star" data-val="3">★</span>
+        <span class="sv-star" data-val="4">★</span>
+        <span class="sv-star" data-val="5">★</span>
+      </div>
+      <div class="sv-star-label" id="svStarLabel">Tap bintang untuk memberi nilai</div>
+    </div>
+
+    <!-- Q2: Fitur -->
+    <div class="sv-question" data-q="1">
+      <div class="sv-q-emoji">🎯</div>
+      <div class="sv-q-label">Pertanyaan 2 dari 5</div>
+      <div class="sv-q-text">Fitur apa yang paling sering kamu pakai?</div>
+      <div class="sv-options grid-2">
+        <div class="sv-opt" data-val="Hero Slider"><span class="sv-opt-icon">🎬</span>Hero Slider<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Pilih Server"><span class="sv-opt-icon">🖥️</span>Pilih Server<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Lanjut Nonton"><span class="sv-opt-icon">▶️</span>Lanjut Nonton<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Koleksi"><span class="sv-opt-icon">🔖</span>Koleksi<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Jadwal Rilis"><span class="sv-opt-icon">📅</span>Jadwal Rilis<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Ruang Ngobrol"><span class="sv-opt-icon">💬</span>Ruang Ngobrol<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+      </div>
+    </div>
+
+    <!-- Q3: Streaming -->
+    <div class="sv-question" data-q="2">
+      <div class="sv-q-emoji">📺</div>
+      <div class="sv-q-label">Pertanyaan 3 dari 5</div>
+      <div class="sv-q-text">Gimana kualitas video & kecepatan streaming di Dayynime?</div>
+      <div class="sv-options">
+        <div class="sv-opt" data-val="Sangat Lancar"><span class="sv-opt-icon">🚀</span>Sangat lancar, tanpa buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Cukup Baik"><span class="sv-opt-icon">👍</span>Cukup baik, sesekali buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Sering Buffering"><span class="sv-opt-icon">⏳</span>Sering buffering, agak lambat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Susah Diputar"><span class="sv-opt-icon">😤</span>Susah diputar / error melulu<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+      </div>
+    </div>
+
+    <!-- Q4: Tampilan -->
+    <div class="sv-question" data-q="3">
+      <div class="sv-q-emoji">🎨</div>
+      <div class="sv-q-label">Pertanyaan 4 dari 5</div>
+      <div class="sv-q-text">Gimana menurut kamu tampilan & desain Dayynime?</div>
+      <div class="sv-options">
+        <div class="sv-opt" data-val="Keren Banget"><span class="sv-opt-icon">🔥</span>Keren banget, enak dilihat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Lumayan Bagus"><span class="sv-opt-icon">✨</span>Lumayan bagus<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Biasa Aja"><span class="sv-opt-icon">😐</span>Biasa aja, perlu perbaikan<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Perlu Dirombak"><span class="sv-opt-icon">🛠️</span>Perlu dirombak total<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+      </div>
+    </div>
+
+    <!-- Q5: Saran -->
+    <div class="sv-question" data-q="4">
+      <div class="sv-q-emoji">💡</div>
+      <div class="sv-q-label">Pertanyaan 5 dari 5</div>
+      <div class="sv-q-text">Ada fitur yang pengen kamu minta buat Dayynime?</div>
+      <div class="sv-options grid-2">
+        <div class="sv-opt" data-val="Download Anime"><span class="sv-opt-icon">⬇️</span>Download anime<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Notif Anime Baru"><span class="sv-opt-icon">🔔</span>Notifikasi baru<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Mode Offline"><span class="sv-opt-icon">📱</span>Mode offline<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Subtitle Karaoke"><span class="sv-opt-icon">🎵</span>Subtitle karaoke<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Mini Player"><span class="sv-opt-icon">🪟</span>Mini player<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Sudah Bagus"><span class="sv-opt-icon">👏</span>Udah bagus!<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+      </div>
+    </div>
+
+    <div class="sv-footer" id="svFooter">
+      <button class="sv-btn-back" id="svBtnBack" onclick="surveyBack()" style="display:none"><i class="fas fa-arrow-left"></i></button>
+      <button class="sv-btn-next" id="svBtnNext" onclick="surveyNext()" disabled>
+        Lanjut <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Hasil Screen -->
+    <div id="svResultScreen">
+      <div class="sv-result-hero">
+        <div class="sv-result-trophy">🎉</div>
+        <div class="sv-result-title">Makasih feedbacknya!</div>
+        <div class="sv-result-sub">Ini hasil keseluruhan dari pengguna Dayynime</div>
+        <div class="sv-result-total" id="svTotalResponden"></div>
+      </div>
+      <div class="sv-tabs" id="svResultTabs"></div>
+      <div class="sv-stats" id="svResultBars"></div>
+      <button class="sv-done-btn" onclick="closeSurvey()"><i class="fas fa-check-circle"></i> Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+  var TABLE='dayynime_survey';
+  var STORAGE_KEY='dayy_survey_done';
+  var DELAY_MS=4500;
+
+  var lastDone=localStorage.getItem(STORAGE_KEY);
+  var shouldShow=!lastDone||(Date.now()-parseInt(lastDone))>7*24*3600*1000;
+  if(!shouldShow)return;
+
+  var currentQ=0,TOTAL_Q=5,answers={},starVal=0;
+  var starLabels=['','Sangat Buruk 😤','Buruk 😕','Biasa Aja 😐','Bagus 👍','Sangat Bagus 🔥'];
+
+  /* Init dots */
+  var dotsEl=document.getElementById('svStepDots');
+  for(var i=0;i<TOTAL_Q;i++){var d=document.createElement('div');d.className='sv-step-dot'+(i===0?' active':'');d.id='svDot'+i;dotsEl.appendChild(d);}
+
+  /* Stars */
+  var stars=document.querySelectorAll('.sv-star'),starLabel=document.getElementById('svStarLabel');
+  function setStars(val){starVal=val;stars.forEach(function(s){s.classList.toggle('lit',parseInt(s.getAttribute('data-val'))<=val);});starLabel.textContent=starLabels[val]||'Tap bintang untuk memberi nilai';starLabel.style.color=val?'#f5c518':'#888';answers[0]='Bintang '+val;updateNextBtn();}
+  stars.forEach(function(s){s.addEventListener('click',function(){setStars(parseInt(this.getAttribute('data-val')));});});
+
+  /* Options */
+  document.querySelectorAll('.sv-opt').forEach(function(opt){
+    opt.addEventListener('click',function(){
+      var q=parseInt(this.closest('.sv-question').getAttribute('data-q'));
+      this.closest('.sv-options').querySelectorAll('.sv-opt').forEach(function(o){o.classList.remove('selected');});
+      this.classList.add('selected');
+      answers[q]=this.getAttribute('data-val');
+      updateNextBtn();
+    });
+  });
+
+  function updateNextBtn(){
+    var btn=document.getElementById('svBtnNext');
+    btn.disabled=!(currentQ===0?starVal>0:!!answers[currentQ]);
+    btn.innerHTML=currentQ===TOTAL_Q-1?'<i class="fas fa-paper-plane"></i> Kirim Jawaban':'Lanjut <i class="fas fa-arrow-right"></i>';
+  }
+
+  function goToQ(idx){
+    document.querySelectorAll('.sv-question').forEach(function(q){q.classList.remove('active');});
+    var t=document.querySelector('.sv-question[data-q="'+idx+'"]');
+    if(t)t.classList.add('active');
+    for(var i=0;i<TOTAL_Q;i++){var dot=document.getElementById('svDot'+i);if(!dot)continue;dot.className='sv-step-dot';if(i<idx)dot.classList.add('done');else if(i===idx)dot.classList.add('active');}
+    document.getElementById('svBtnBack').style.display=idx>0?'flex':'none';
+    currentQ=idx;updateNextBtn();
+  }
+
+  window.surveyNext=function(){if(currentQ<TOTAL_Q-1){goToQ(currentQ+1);}else{submitSurvey();}};
+  window.surveyBack=function(){if(currentQ>0)goToQ(currentQ-1);};
+
+  function submitSurvey(){
+    var btn=document.getElementById('svBtnNext');
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> Menyimpan...';
+    var payload={rating:parseInt((answers[0]||'Bintang 3').replace('Bintang ','')),fitur:answers[1]||null,streaming:answers[2]||null,tampilan:answers[3]||null,saran:answers[4]||null,created_at:new Date().toISOString()};
+    fetch(SUPABASE_URL+'/rest/v1/'+TABLE,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)})
+    .then(function(r){if(!r.ok)throw new Error('err');localStorage.setItem(STORAGE_KEY,Date.now().toString());loadAndShowResults();})
+    .catch(function(){localStorage.setItem(STORAGE_KEY,Date.now().toString());showResultFallback();});
+  }
+
+  function loadAndShowResults(){
+    fetch(SUPABASE_URL+'/rest/v1/'+TABLE+'?select=rating,fitur,streaming,tampilan,saran',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
+    .then(function(r){return r.json();}).then(function(rows){if(!rows||!rows.length){showResultFallback();return;}renderResults(rows);}).catch(showResultFallback);
+  }
+
+  function showResultFallback(){renderResults(null);}
+
+  var CATS=[
+    {key:'rating',label:'⭐ Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['😤','😕','😐','👍','🔥']},
+    {key:'fitur',label:'🎯 Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['🎬','🖥️','▶️','🔖','📅','💬']},
+    {key:'streaming',label:'📺 Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['🚀','👍','⏳','😤']},
+    {key:'tampilan',label:'🎨 Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['🔥','✨','😐','🛠️']},
+    {key:'saran',label:'💡 Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['⬇️','🔔','📱','🎵','🪟','👏']}
+  ];
+
+  function renderResults(rows){
+    document.querySelectorAll('.sv-question').forEach(function(q){q.style.display='none';});
+    document.getElementById('svFooter').style.display='none';
+    document.getElementById('svStepDots').style.display='none';
+    var total=rows?rows.length:1;
+    document.getElementById('svTotalResponden').textContent=total+' responden telah mengisi survey ini';
+    var tabsEl=document.getElementById('svResultTabs');tabsEl.innerHTML='';
+    CATS.forEach(function(cat,ci){
+      var t=document.createElement('div');t.className='sv-tab'+(ci===0?' active':'');t.textContent=cat.label;t.setAttribute('data-ci',ci);
+      t.addEventListener('click',function(){document.querySelectorAll('.sv-tab').forEach(function(x){x.classList.remove('active');});this.classList.add('active');renderBars(CATS[parseInt(this.getAttribute('data-ci'))],rows,total);});
+      tabsEl.appendChild(t);
+    });
+    renderBars(CATS[0],rows,total);
+    var rs=document.getElementById('svResultScreen');rs.style.display='block';setTimeout(function(){rs.classList.add('active');},50);
+  }
+
+  function renderBars(cat,rows,total){
+    var barsEl=document.getElementById('svResultBars');barsEl.innerHTML='';
+    var counts={};cat.options.forEach(function(o){counts[o]=0;});
+    if(rows){rows.forEach(function(row){var val=row[cat.key];if(cat.isNumeric&&typeof val==='number')val='Bintang '+val;if(val&&counts.hasOwnProperty(val))counts[val]++;});}
+    cat.options.forEach(function(opt,oi){
+      var cnt=counts[opt]||0,pct=total>0?Math.round(cnt/total*100):0;
+      var item=document.createElement('div');item.className='sv-stat-item';
+      item.innerHTML='<div class="sv-stat-label"><div class="sv-stat-name">'+(cat.icons[oi]||'')+' '+opt+'</div><div class="sv-stat-pct">'+pct+'%</div></div><div class="sv-stat-bar-wrap"><div class="sv-stat-bar" id="svBar_'+oi+'"></div></div><div class="sv-stat-votes">'+cnt+' dari '+total+' responden</div>';
+      barsEl.appendChild(item);
+      setTimeout(function(){var b=document.getElementById('svBar_'+oi);if(b)b.style.width=pct+'%';},80+oi*60);
+    });
+  }
+
+  window.openSurvey=function(){
+    var o=document.getElementById('surveyOverlay');o.style.display='flex';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){o.classList.add('open');});});
+    document.body.style.overflow='hidden';
+  };
+  window.closeSurvey=function(){
+    var o=document.getElementById('surveyOverlay');o.classList.remove('open');
+    setTimeout(function(){o.style.display='none';document.body.style.overflow='';},350);
+  };
+
+  setTimeout(openSurvey,DELAY_MS);
+})();
+</script>
 {% endblock %}
