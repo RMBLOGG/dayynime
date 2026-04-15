@@ -159,16 +159,121 @@ body { padding-top: 0 !important; }
 </div>
 <script>window.addEventListener('beforeinstallprompt',function(){var b=document.getElementById('pwaBannerSection');if(b)b.style.display='block';});</script>
 
-<!-- Announcement -->
-<div id="announcementBar" style="background:linear-gradient(90deg,#161618,#1a1218,#161618);border-bottom:1px solid rgba(232,65,90,0.2);padding:0 12px;position:relative;overflow:hidden;">
-  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#e8415a,transparent);opacity:0.6;"></div>
-  <div style="display:flex;align-items:center;gap:8px;padding:7px 0;">
-    <div style="flex-shrink:0;background:#e8415a;color:#fff;font-size:9px;font-weight:900;padding:3px 7px;border-radius:4px;letter-spacing:0.5px;text-transform:uppercase;">📢 INFO</div>
-    <div style="flex:1;overflow:hidden;"><div id="announceTicker" style="display:inline-flex;white-space:nowrap;animation:tickerScroll 18s linear infinite;font-size:11px;color:#C0C0C8;"><span style="padding-right:60px;">Setiap server memiliki kelengkapan anime berbeda &nbsp;·&nbsp; <span style="color:#e8415a;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp; <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp; <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp; Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;</span><span style="padding-right:60px;">Setiap server memiliki kelengkapan anime berbeda &nbsp;·&nbsp; <span style="color:#e8415a;font-weight:700;">Dayynime-v1</span> &nbsp;·&nbsp; <span style="color:#10B981;font-weight:700;">Dayynime-v2</span> &nbsp;·&nbsp; <span style="color:#60a5fa;font-weight:700;">Dayynime-v3</span> &nbsp;·&nbsp; Ganti server lewat Menu → Ganti Server &nbsp;&nbsp;&nbsp;</span></div></div>
-    <button onclick="document.getElementById('announcementBar').style.display='none'" style="flex-shrink:0;background:none;border:none;color:#666;font-size:14px;cursor:pointer;padding:0 2px;line-height:1;">×</button>
+<!-- Server Switcher Section -->
+<style>
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.srv-section { padding: 14px 14px 4px; }
+.srv-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.srv-section-title { font-size:13px; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; }
+.srv-section-title i { color:#e8415a; font-size:11px; }
+.srv-section-sub { font-size:10px; color:#888; font-weight:400; margin-top:1px; }
+.srv-cards { display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
+.srv-cards::-webkit-scrollbar { display:none; }
+.srv-card {
+  flex-shrink:0; width:140px;
+  background:#161618; border:1.5px solid rgba(255,255,255,0.07);
+  border-radius:14px; padding:12px;
+  display:flex; flex-direction:column; gap:6px;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:border-color 0.2s, background 0.2s;
+  position:relative; overflow:hidden;
+}
+.srv-card.active {
+  border-color:rgba(232,65,90,0.6);
+  background:linear-gradient(135deg,rgba(232,65,90,0.1),rgba(22,22,24,1));
+}
+.srv-card.active::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,#e8415a,#ff7043);
+}
+.srv-card-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:9px; font-weight:900; padding:3px 7px;
+  border-radius:5px; width:fit-content; letter-spacing:0.3px;
+}
+.srv-card-name { font-size:12px; font-weight:900; color:#fff; }
+.srv-card-desc { font-size:10px; color:#888; line-height:1.4; }
+.srv-card-check {
+  position:absolute; top:8px; right:8px;
+  width:18px; height:18px; border-radius:50%;
+  background:#e8415a; display:none;
+  align-items:center; justify-content:center;
+  font-size:9px; color:#fff;
+}
+.srv-card.active .srv-card-check { display:flex; }
+.srv-card-footer { margin-top:2px; display:flex; align-items:center; gap:4px; }
+.srv-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.srv-status { font-size:9px; color:#888; }
+</style>
+
+<div class="srv-section">
+  <div class="srv-section-head">
+    <div>
+      <div class="srv-section-title"><i class="fas fa-server"></i> Pilih Server</div>
+      <div class="srv-section-sub">Setiap server punya koleksi anime berbeda</div>
+    </div>
+  </div>
+  <div class="srv-cards">
+
+    <!-- v1 Samehadaku -->
+    <div class="srv-card {% if active_source == 'samehadaku' %}active{% endif %}" onclick="switchSource('samehadaku', this)">
+      <div class="srv-card-check"><i class="fas fa-check"></i></div>
+      <div class="srv-card-badge" style="background:rgba(232,65,90,0.15);color:#e8415a;">
+        <i class="fas fa-circle" style="font-size:6px;"></i> v1
+      </div>
+      <div class="srv-card-name">Dayynime-v1</div>
+      <div class="srv-card-desc">Koleksi terlengkap, update cepat</div>
+      <div class="srv-card-footer">
+        <div class="srv-dot" style="background:#10B981;"></div>
+        <div class="srv-status">Aktif</div>
+      </div>
+    </div>
+
+    <!-- v2 Animasu -->
+    <div class="srv-card {% if active_source == 'animasu' %}active{% endif %}" onclick="switchSource('animasu', this)">
+      <div class="srv-card-check"><i class="fas fa-check"></i></div>
+      <div class="srv-card-badge" style="background:rgba(16,185,129,0.15);color:#10B981;">
+        <i class="fas fa-circle" style="font-size:6px;"></i> v2
+      </div>
+      <div class="srv-card-name">Dayynime-v2</div>
+      <div class="srv-card-desc">Alternatif, kualitas stabil</div>
+      <div class="srv-card-footer">
+        <div class="srv-dot" style="background:#10B981;"></div>
+        <div class="srv-status">Aktif</div>
+      </div>
+    </div>
+
+    <!-- v3 Otakudesu -->
+    <div class="srv-card {% if active_source == 'otakudesu' %}active{% endif %}" onclick="switchSource('otakudesu', this)">
+      <div class="srv-card-check"><i class="fas fa-check"></i></div>
+      <div class="srv-card-badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;">
+        <i class="fas fa-circle" style="font-size:6px;"></i> v3
+      </div>
+      <div class="srv-card-name">Dayynime-v3</div>
+      <div class="srv-card-desc">Sub Indo, pilihan judul berbeda</div>
+      <div class="srv-card-footer">
+        <div class="srv-dot" style="background:#10B981;"></div>
+        <div class="srv-status">Aktif</div>
+      </div>
+    </div>
+
   </div>
 </div>
-<style>@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}</style>
+
+<script>
+function switchSource(src, el) {
+  var cards = document.querySelectorAll('.srv-card');
+  cards.forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  fetch('/api/source/switch', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({source: src})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.ok) { setTimeout(function(){ location.reload(); }, 300); }
+  }).catch(function(){});
+}
+</script>
 
 <!-- Lanjutkan Nonton -->
 <div id="cwSection" style="display:none;padding:4px 0 0;">
