@@ -2,23 +2,7 @@
 {% block title %}{{ data.title if data else 'Episode' }} - Dayynime{% endblock %}
 {% block content %}
 
-<div id="adBanner320x50"></div>
-<script>
-fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d){
-  if(d.premium) return;
-  var wrap = document.getElementById('adBanner320x50');
-  if(!wrap) return;
-  window.atOptions = {'key':'49b66fd4a15bc23683f26a1c8eed2930','format':'iframe','height':50,'width':320,'params':{}};
-  var s = document.createElement('script');
-  s.src = 'https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js';
-  wrap.appendChild(s);
-}).catch(function(){
-  window.atOptions = {'key':'49b66fd4a15bc23683f26a1c8eed2930','format':'iframe','height':50,'width':320,'params':{}};
-  var s = document.createElement('script');
-  s.src = 'https://www.highperformanceformat.com/49b66fd4a15bc23683f26a1c8eed2930/invoke.js';
-  document.body.appendChild(s);
-});
-</script>
+
 
 
 <style>
@@ -49,44 +33,7 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
   40% { transform:scale(1); opacity:1; }
 }
 
-/* ── AD OVERLAY ── */
-#adOverlay {
-  position:absolute; inset:0; z-index:100;
-  background:#000; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-}
-#adOverlay .ad-top {
-  position:absolute; top:0; left:0; right:0;
-  padding:10px 14px;
-  background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent);
-  display:flex; align-items:center; gap:8px;
-  font-size:11px; color:rgba(255,255,255,0.5);
-}
-#adOverlay .ad-badge {
-  background:rgba(244,117,33,0.25); color:var(--accent);
-  border:1px solid rgba(244,117,33,0.4);
-  padding:2px 8px; border-radius:4px;
-  font-size:10px; font-weight:800; letter-spacing:1px;
-}
-#adOverlay .ad-bottom {
-  position:absolute; bottom:0; left:0; right:0; padding:12px 16px;
-  background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-}
-#adCountdown {
-  width:36px; height:36px; border-radius:50%;
-  border:2px solid var(--accent); color:var(--accent);
-  font-size:14px; font-weight:800;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; transition:border-color 0.3s,color 0.3s;
-}
-#skipBtn {
-  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
-  color:rgba(255,255,255,0.3); padding:8px 18px; border-radius:50px;
-  font-size:12px; font-weight:700; cursor:not-allowed; white-space:nowrap;
-  transition:all 0.3s; font-family:inherit;
-}
-#skipBtn.ready { background:var(--accent); border-color:var(--accent); color:#fff; cursor:pointer; }
+
 
 /* ── SERVER CHIPS ── */
 .ep-chip {
@@ -186,25 +133,6 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
     {% else %}
     <div class="ep-player-wrap">
       <div class="player-box">
-        <!-- AD OVERLAY: hanya untuk non-premium -->
-        <div id="adOverlay" style="display:none;">
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-            <div style="transform:scale(1.15);transform-origin:center;">
-              <div id="adOverlayInner"></div>
-            </div>
-          </div>
-          <div class="ad-top">
-            <span class="ad-badge">IKLAN</span>
-            <span>Dukung kami dengan menonton iklan</span>
-          </div>
-          <div class="ad-bottom">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <div id="adCountdown">15</div>
-              <span style="font-size:12px;color:rgba(255,255,255,0.5);">Video dimulai dalam <span id="adSecs">15</span> detik</span>
-            </div>
-            <button id="skipBtn" onclick="skipAd()" disabled>Lewati ›</button>
-          </div>
-        </div>
         <!-- LOADING -->
         <div class="player-loading" id="playerLoading">
           <div class="player-loading-dots"><span></span><span></span><span></span></div>
@@ -487,51 +415,6 @@ fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d
 
 {% block scripts %}
 <script>
-// ── Ad: cek premium dulu ──
-let adTimer;
-const adOverlay = document.getElementById('adOverlay');
-
-function startAdCountdown() {
-  // Load script iklan ke dalam adOverlayInner
-  var inner = document.getElementById('adOverlayInner');
-  if (inner) {
-    window.atOptions = {'key':'ab1caf329002ea60537069c534a9f8dd','format':'iframe','height':250,'width':300,'params':{}};
-    var s = document.createElement('script');
-    s.src = 'https://www.highperformanceformat.com/ab1caf329002ea60537069c534a9f8dd/invoke.js';
-    inner.appendChild(s);
-  }
-  // Tampilkan overlay
-  adOverlay.style.display = 'flex';
-  let adSecs = 15;
-  const adCountdown = document.getElementById('adCountdown');
-  const adSecsEl    = document.getElementById('adSecs');
-  const skipBtn     = document.getElementById('skipBtn');
-  adTimer = setInterval(function() {
-    adSecs--;
-    if(adCountdown) adCountdown.textContent = adSecs;
-    if(adSecsEl) adSecsEl.textContent = adSecs;
-    if (adSecs <= 5) {
-      if(adCountdown) { adCountdown.style.borderColor = '#4ade80'; adCountdown.style.color = '#4ade80'; }
-      if(skipBtn) { skipBtn.disabled = false; skipBtn.classList.add('ready'); }
-    }
-    if (adSecs <= 0) { clearInterval(adTimer); skipAd(); }
-  }, 1000);
-}
-
-fetch('/api/premium/status').then(function(r){return r.json();}).then(function(d){
-  if (!d.premium) startAdCountdown();
-  // premium = langsung skip, adOverlay tetap display:none
-}).catch(function(){
-  startAdCountdown(); // gagal cek = tampilkan iklan
-});
-
-function skipAd() {
-  clearInterval(adTimer);
-  adOverlay.style.opacity = '0';
-  adOverlay.style.transition = 'opacity 0.4s';
-  setTimeout(function() { adOverlay.style.display = 'none'; }, 400);
-}
-
 // ── Quality & Server ──
 function selectQuality(btn, quality) {
   document.querySelectorAll('#qualityTabs .ep-chip').forEach(b => b.classList.remove('active'));
