@@ -396,7 +396,7 @@ function switchSource(src, el) {
 <div id="surveySectionWrap" style="padding:14px 14px 4px;">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
     <div style="display:flex;align-items:center;gap:7px;">
-      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#e8415a,#c0183a);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">⭐</div>
+      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#e8415a,#c0183a);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;"><i class="fas fa-star" style="color:#fff;font-size:12px;"></i></div>
       <div>
         <div style="font-size:14px;font-weight:900;color:#fff;">Suara Pengguna</div>
         <div id="svsTotal" style="font-size:10px;color:#888;font-weight:600;margin-top:1px;">Memuat...</div>
@@ -421,11 +421,11 @@ function switchSource(src, el) {
   var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
   var TABLE='dayynime_survey';
   var CATS=[
-    {key:'rating',label:'⭐ Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['😤','😕','😐','👍','🔥']},
-    {key:'fitur',label:'🎯 Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['🎬','🖥️','▶️','🔖','📅','💬']},
-    {key:'streaming',label:'📺 Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['🚀','👍','⏳','😤']},
-    {key:'tampilan',label:'🎨 Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['🔥','✨','😐','🛠️']},
-    {key:'saran',label:'💡 Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['⬇️','🔔','📱','🎵','🪟','👏']}
+    {key:'rating',label:'<i class="fas fa-star"></i> Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['<i class="fas fa-angry"></i>','<i class="fas fa-frown"></i>','<i class="fas fa-meh"></i>','<i class="fas fa-thumbs-up"></i>','<i class="fas fa-fire"></i>']},
+    {key:'fitur',label:'<i class="fas fa-sliders-h"></i> Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['<i class="fas fa-film"></i>','<i class="fas fa-server"></i>','<i class="fas fa-play"></i>','<i class="fas fa-bookmark"></i>','<i class="fas fa-calendar-alt"></i>','<i class="fas fa-comments"></i>'],
+    {key:'streaming',label:'<i class="fas fa-tv"></i> Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['<i class="fas fa-rocket"></i>','<i class="fas fa-thumbs-up"></i>','<i class="fas fa-spinner"></i>','<i class="fas fa-times-circle"></i>'],
+    {key:'tampilan',label:'<i class="fas fa-paint-brush"></i> Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['<i class="fas fa-fire"></i>','<i class="fas fa-magic"></i>','<i class="fas fa-meh"></i>','<i class="fas fa-tools"></i>'],
+    {key:'saran',label:'<i class="fas fa-lightbulb"></i> Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['<i class="fas fa-download"></i>','<i class="fas fa-bell"></i>','<i class="fas fa-mobile-alt"></i>','<i class="fas fa-closed-captioning"></i>','<i class="fas fa-compress-alt"></i>','<i class="fas fa-check-double"></i>']
   ];
   var allRows=null,activeCat=0;
 
@@ -713,7 +713,7 @@ function switchSource(src, el) {
 .sv-question{padding:0 20px 16px;display:none;animation:svSlideIn 0.3s ease both;}
 .sv-question.active{display:block;}
 @keyframes svSlideIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
-.sv-q-emoji{font-size:32px;margin-bottom:8px;line-height:1;}
+.sv-q-emoji{font-size:30px;margin-bottom:8px;line-height:1;color:#e8415a;}
 .sv-q-label{font-size:11px;font-weight:900;color:#e8415a;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;}
 .sv-q-text{font-size:17px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:16px;}
 .sv-options{display:flex;flex-direction:column;gap:8px;}
@@ -775,7 +775,7 @@ function switchSource(src, el) {
 
     <!-- Q1: Bintang -->
     <div class="sv-question active" data-q="0">
-      <div class="sv-q-emoji">⭐</div>
+      <div class="sv-q-emoji"><i class="fas fa-star"></i></div>
       <div class="sv-q-label">Pertanyaan 1 dari 5</div>
       <div class="sv-q-text">Seberapa puas kamu dengan Dayynime secara keseluruhan?</div>
       <div class="sv-stars" id="svStars">
@@ -790,57 +790,57 @@ function switchSource(src, el) {
 
     <!-- Q2: Fitur -->
     <div class="sv-question" data-q="1">
-      <div class="sv-q-emoji">🎯</div>
+      <div class="sv-q-emoji"><i class="fas fa-sliders-h"></i></div>
       <div class="sv-q-label">Pertanyaan 2 dari 5</div>
       <div class="sv-q-text">Fitur apa yang paling sering kamu pakai?</div>
       <div class="sv-options grid-2">
-        <div class="sv-opt" data-val="Hero Slider"><span class="sv-opt-icon">🎬</span>Hero Slider<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Pilih Server"><span class="sv-opt-icon">🖥️</span>Pilih Server<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Lanjut Nonton"><span class="sv-opt-icon">▶️</span>Lanjut Nonton<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Koleksi"><span class="sv-opt-icon">🔖</span>Koleksi<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Jadwal Rilis"><span class="sv-opt-icon">📅</span>Jadwal Rilis<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Ruang Ngobrol"><span class="sv-opt-icon">💬</span>Ruang Ngobrol<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Hero Slider"><span class="sv-opt-icon"><i class="fas fa-film"></i></span>Hero Slider<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Pilih Server"><span class="sv-opt-icon"><i class="fas fa-server"></i></span>Pilih Server<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Lanjut Nonton"><span class="sv-opt-icon"><i class="fas fa-play"></i></span>Lanjut Nonton<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Koleksi"><span class="sv-opt-icon"><i class="fas fa-bookmark"></i></span>Koleksi<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Jadwal Rilis"><span class="sv-opt-icon"><i class="fas fa-calendar-alt"></i></span>Jadwal Rilis<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Ruang Ngobrol"><span class="sv-opt-icon"><i class="fas fa-comments"></i></span>Ruang Ngobrol<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
       </div>
     </div>
 
     <!-- Q3: Streaming -->
     <div class="sv-question" data-q="2">
-      <div class="sv-q-emoji">📺</div>
+      <div class="sv-q-emoji"><i class="fas fa-tv"></i></div>
       <div class="sv-q-label">Pertanyaan 3 dari 5</div>
       <div class="sv-q-text">Gimana kualitas video & kecepatan streaming di Dayynime?</div>
       <div class="sv-options">
-        <div class="sv-opt" data-val="Sangat Lancar"><span class="sv-opt-icon">🚀</span>Sangat lancar, tanpa buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Cukup Baik"><span class="sv-opt-icon">👍</span>Cukup baik, sesekali buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Sering Buffering"><span class="sv-opt-icon">⏳</span>Sering buffering, agak lambat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Susah Diputar"><span class="sv-opt-icon">😤</span>Susah diputar / error melulu<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Sangat Lancar"><span class="sv-opt-icon"><i class="fas fa-rocket"></i></span>Sangat lancar, tanpa buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Cukup Baik"><span class="sv-opt-icon"><i class="fas fa-thumbs-up"></i></span>Cukup baik, sesekali buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Sering Buffering"><span class="sv-opt-icon"><i class="fas fa-spinner"></i></span>Sering buffering, agak lambat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Susah Diputar"><span class="sv-opt-icon"><i class="fas fa-times-circle"></i></span>Susah diputar / error melulu<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
       </div>
     </div>
 
     <!-- Q4: Tampilan -->
     <div class="sv-question" data-q="3">
-      <div class="sv-q-emoji">🎨</div>
+      <div class="sv-q-emoji"><i class="fas fa-paint-brush"></i></div>
       <div class="sv-q-label">Pertanyaan 4 dari 5</div>
       <div class="sv-q-text">Gimana menurut kamu tampilan & desain Dayynime?</div>
       <div class="sv-options">
-        <div class="sv-opt" data-val="Keren Banget"><span class="sv-opt-icon">🔥</span>Keren banget, enak dilihat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Lumayan Bagus"><span class="sv-opt-icon">✨</span>Lumayan bagus<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Biasa Aja"><span class="sv-opt-icon">😐</span>Biasa aja, perlu perbaikan<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Perlu Dirombak"><span class="sv-opt-icon">🛠️</span>Perlu dirombak total<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Keren Banget"><span class="sv-opt-icon"><i class="fas fa-fire"></i></span>Keren banget, enak dilihat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Lumayan Bagus"><span class="sv-opt-icon"><i class="fas fa-magic"></i></span>Lumayan bagus<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Biasa Aja"><span class="sv-opt-icon"><i class="fas fa-meh"></i></span>Biasa aja, perlu perbaikan<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Perlu Dirombak"><span class="sv-opt-icon"><i class="fas fa-tools"></i></span>Perlu dirombak total<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
       </div>
     </div>
 
     <!-- Q5: Saran -->
     <div class="sv-question" data-q="4">
-      <div class="sv-q-emoji">💡</div>
+      <div class="sv-q-emoji"><i class="fas fa-lightbulb"></i></div>
       <div class="sv-q-label">Pertanyaan 5 dari 5</div>
       <div class="sv-q-text">Ada fitur yang pengen kamu minta buat Dayynime?</div>
       <div class="sv-options grid-2">
-        <div class="sv-opt" data-val="Download Anime"><span class="sv-opt-icon">⬇️</span>Download anime<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Notif Anime Baru"><span class="sv-opt-icon">🔔</span>Notifikasi baru<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Mode Offline"><span class="sv-opt-icon">📱</span>Mode offline<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Subtitle Karaoke"><span class="sv-opt-icon">🎵</span>Subtitle karaoke<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Mini Player"><span class="sv-opt-icon">🪟</span>Mini player<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Sudah Bagus"><span class="sv-opt-icon">👏</span>Udah bagus!<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Download Anime"><span class="sv-opt-icon"><i class="fas fa-download"></i></span>Download anime<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Notif Anime Baru"><span class="sv-opt-icon"><i class="fas fa-bell"></i></span>Notifikasi baru<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Mode Offline"><span class="sv-opt-icon"><i class="fas fa-mobile-alt"></i></span>Mode offline<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Subtitle Karaoke"><span class="sv-opt-icon"><i class="fas fa-closed-captioning"></i></span>Subtitle karaoke<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Mini Player"><span class="sv-opt-icon"><i class="fas fa-compress-alt"></i></span>Mini player<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
+        <div class="sv-opt" data-val="Sudah Bagus"><span class="sv-opt-icon"><i class="fas fa-check-double"></i></span>Udah bagus!<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
       </div>
     </div>
 
@@ -854,7 +854,7 @@ function switchSource(src, el) {
     <!-- Hasil Screen -->
     <div id="svResultScreen">
       <div class="sv-result-hero">
-        <div class="sv-result-trophy">🎉</div>
+        <div class="sv-result-trophy"><i class="fas fa-paper-plane"></i></div>
         <div class="sv-result-title">Makasih feedbacknya!</div>
         <div class="sv-result-sub">Ini hasil keseluruhan dari pengguna Dayynime</div>
         <div class="sv-result-total" id="svTotalResponden"></div>
@@ -886,7 +886,7 @@ function switchSource(src, el) {
   if(takeBtn)takeBtn.style.display='block';
 
   var currentQ=0,TOTAL_Q=5,answers={},starVal=0;
-  var starLabels=['','Sangat Buruk 😤','Buruk 😕','Biasa Aja 😐','Bagus 👍','Sangat Bagus 🔥'];
+  var starLabels=['','Sangat Buruk','Buruk','Biasa Aja','Bagus','Sangat Bagus!'];
 
   /* Init dots */
   var dotsEl=document.getElementById('svStepDots');
@@ -943,11 +943,11 @@ function switchSource(src, el) {
   function showResultFallback(){renderResults(null);}
 
   var CATS=[
-    {key:'rating',label:'⭐ Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['😤','😕','😐','👍','🔥']},
-    {key:'fitur',label:'🎯 Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['🎬','🖥️','▶️','🔖','📅','💬']},
-    {key:'streaming',label:'📺 Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['🚀','👍','⏳','😤']},
-    {key:'tampilan',label:'🎨 Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['🔥','✨','😐','🛠️']},
-    {key:'saran',label:'💡 Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['⬇️','🔔','📱','🎵','🪟','👏']}
+    {key:'rating',label:'<i class="fas fa-star"></i> Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['<i class="fas fa-angry"></i>','<i class="fas fa-frown"></i>','<i class="fas fa-meh"></i>','<i class="fas fa-thumbs-up"></i>','<i class="fas fa-fire"></i>']},
+    {key:'fitur',label:'<i class="fas fa-sliders-h"></i> Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['<i class="fas fa-film"></i>','<i class="fas fa-server"></i>','<i class="fas fa-play"></i>','<i class="fas fa-bookmark"></i>','<i class="fas fa-calendar-alt"></i>','<i class="fas fa-comments"></i>'],
+    {key:'streaming',label:'<i class="fas fa-tv"></i> Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['<i class="fas fa-rocket"></i>','<i class="fas fa-thumbs-up"></i>','<i class="fas fa-spinner"></i>','<i class="fas fa-times-circle"></i>'],
+    {key:'tampilan',label:'<i class="fas fa-paint-brush"></i> Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['<i class="fas fa-fire"></i>','<i class="fas fa-magic"></i>','<i class="fas fa-meh"></i>','<i class="fas fa-tools"></i>'],
+    {key:'saran',label:'<i class="fas fa-lightbulb"></i> Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['<i class="fas fa-download"></i>','<i class="fas fa-bell"></i>','<i class="fas fa-mobile-alt"></i>','<i class="fas fa-closed-captioning"></i>','<i class="fas fa-compress-alt"></i>','<i class="fas fa-check-double"></i>']
   ];
 
   function renderResults(rows){
