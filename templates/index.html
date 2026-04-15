@@ -324,26 +324,7 @@ function switchSource(src, el) {
 </div>
 {% endif %}
 
-<!-- Premium -->
-{% if not is_premium %}
-<div style="margin:16px 14px;">
-  <div style="position:relative;overflow:hidden;background:#111118;border:1px solid rgba(232,65,90,0.25);border-radius:16px;padding:16px;">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#e8415a,#ff6b6b,#e8415a);border-radius:16px 16px 0 0;"></div>
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-      <img src="/static/icon.png" alt="" style="width:52px;height:52px;border-radius:13px;box-shadow:0 3px 12px rgba(0,0,0,0.5);flex-shrink:0;">
-      <div style="flex:1;min-width:0;"><div style="font-weight:900;font-size:16px;color:#fff;margin-bottom:2px;">Dayynime Premium</div><div style="font-size:11px;color:#888;">Bebas iklan & nonton tanpa batas</div></div>
-      <div style="flex-shrink:0;background:#e8415a;color:#fff;font-size:9px;font-weight:900;padding:4px 9px;border-radius:6px;letter-spacing:0.5px;text-transform:uppercase;">PREMIUM</div>
-    </div>
-    <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:12px;"></div>
-    <div style="display:flex;gap:6px;margin-bottom:14px;">
-      <div style="display:flex;align-items:center;gap:4px;background:rgba(232,65,90,0.08);border:1px solid rgba(232,65,90,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#e8415a;white-space:nowrap;"><i class="fas fa-ban" style="font-size:9px;"></i> No Iklan</div>
-      <div style="display:flex;align-items:center;gap:4px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#10B981;white-space:nowrap;"><i class="fas fa-bolt" style="font-size:9px;"></i> Server Cepat</div>
-      <div style="display:flex;align-items:center;gap:4px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;color:#60a5fa;white-space:nowrap;"><i class="fas fa-infinity" style="font-size:9px;"></i> Unlimited</div>
-    </div>
-    <a href="/premium" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#e8415a;color:#fff;font-weight:900;font-size:13px;padding:12px;border-radius:12px;text-decoration:none;"><i class="fas fa-crown"></i> Upgrade ke Premium</a>
-  </div>
-</div>
-{% endif %}
+
 
 <!-- Recent Comments -->
 <div id="recentCommentsSec" style="padding:0 14px 28px;display:none;">
