@@ -391,6 +391,102 @@ function switchSource(src, el) {
   {'name':'Sports','slug':'sports'},{'name':'Supernatural','slug':'supernatural'}
 ] %}
 {% set genre_data = genres if genres else fallback_genres %}
+
+<!-- ══ SURVEY RESULT SECTION ══ -->
+<div id="surveySectionWrap" style="padding:14px 14px 4px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div style="display:flex;align-items:center;gap:7px;">
+      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#e8415a,#c0183a);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">⭐</div>
+      <div>
+        <div style="font-size:14px;font-weight:900;color:#fff;">Suara Pengguna</div>
+        <div id="svsTotal" style="font-size:10px;color:#888;font-weight:600;margin-top:1px;">Memuat...</div>
+      </div>
+    </div>
+    <button id="svsTakeSurveyBtn" onclick="window.openSurvey&&openSurvey()" style="display:none;background:#e8415a;border:none;border-radius:10px;color:#fff;font-weight:900;font-size:11px;padding:7px 12px;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;">Isi Survey</button>
+  </div>
+  <!-- tabs -->
+  <div id="svsTabs" style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px;-webkit-overflow-scrolling:touch;"></div>
+  <!-- bars -->
+  <div id="svsBars" style="background:#16161a;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:12px 14px;margin-top:0;"></div>
+</div>
+<style>
+.svs-tab{flex-shrink:0;padding:5px 12px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#888;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:all 0.2s;white-space:nowrap;}
+.svs-tab.active{background:rgba(232,65,90,0.15);border-color:rgba(232,65,90,0.4);color:#e8415a;}
+.svs-bar-wrap{height:5px;border-radius:3px;background:rgba(255,255,255,0.07);overflow:hidden;flex:1;}
+.svs-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,#e8415a,#ff7043);width:0%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);}
+</style>
+<script>
+(function(){
+  var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';
+  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
+  var TABLE='dayynime_survey';
+  var CATS=[
+    {key:'rating',label:'⭐ Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['😤','😕','😐','👍','🔥']},
+    {key:'fitur',label:'🎯 Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['🎬','🖥️','▶️','🔖','📅','💬']},
+    {key:'streaming',label:'📺 Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['🚀','👍','⏳','😤']},
+    {key:'tampilan',label:'🎨 Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['🔥','✨','😐','🛠️']},
+    {key:'saran',label:'💡 Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['⬇️','🔔','📱','🎵','🪟','👏']}
+  ];
+  var allRows=null,activeCat=0;
+
+  function renderSectionBars(cat,rows,total){
+    var el=document.getElementById('svsBars');
+    if(!el)return;
+    el.innerHTML='';
+    var counts={};cat.options.forEach(function(o){counts[o]=0;});
+    if(rows){rows.forEach(function(row){var val=row[cat.key];if(cat.isNumeric&&typeof val==='number')val='Bintang '+val;if(val&&counts.hasOwnProperty(val))counts[val]++;});}
+    cat.options.forEach(function(opt,oi){
+      var cnt=counts[opt]||0,pct=total>0?Math.round(cnt/total*100):0;
+      var d=document.createElement('div');
+      d.style.cssText='margin-bottom:10px;';
+      d.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
+        +'<div style="font-size:12px;font-weight:700;color:#c0c0c8;">'+(cat.icons[oi]||'')+' '+opt+'</div>'
+        +'<div style="font-size:11px;font-weight:900;color:'+(pct>=50?'#e8415a':'#888')+';">'+pct+'%</div>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px;">'
+        +'<div class="svs-bar-wrap"><div class="svs-bar" id="svsBar_'+oi+'"></div></div>'
+        +'<div style="font-size:9px;color:#555;white-space:nowrap;font-weight:600;">'+cnt+'/'+total+'</div>'
+        +'</div>';
+      el.appendChild(d);
+      setTimeout(function(){var b=document.getElementById('svsBar_'+oi);if(b)b.style.width=pct+'%';},60+oi*70);
+    });
+  }
+
+  function buildTabs(){
+    var tabsEl=document.getElementById('svsTabs');
+    if(!tabsEl)return;
+    tabsEl.innerHTML='';
+    CATS.forEach(function(cat,ci){
+      var t=document.createElement('button');
+      t.className='svs-tab'+(ci===0?' active':'');
+      t.textContent=cat.label;
+      t.onclick=function(){
+        document.querySelectorAll('.svs-tab').forEach(function(x){x.classList.remove('active');});
+        t.classList.add('active');
+        activeCat=ci;
+        renderSectionBars(CATS[ci],allRows,allRows?allRows.length:0);
+      };
+      tabsEl.appendChild(t);
+    });
+  }
+
+  fetch(SUPABASE_URL+'/rest/v1/'+TABLE+'?select=rating,fitur,streaming,tampilan,saran',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
+  .then(function(r){return r.json();})
+  .then(function(rows){
+    allRows=rows||[];
+    var total=allRows.length;
+    var tot=document.getElementById('svsTotal');
+    if(tot)tot.textContent=total+' responden telah mengisi survey';
+    buildTabs();
+    renderSectionBars(CATS[0],allRows,total);
+  })
+  .catch(function(){
+    var tot=document.getElementById('svsTotal');
+    if(tot)tot.textContent='Gagal memuat data';
+  });
+})();
+</script>
+
 <div>
   <div class="idx-sec-head"><div class="idx-sec-title">Genre</div><a href="/genres" class="idx-sec-more">Semua ›</a></div>
   <div style="display:flex;gap:8px;overflow-x:auto;padding:0 14px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
@@ -776,11 +872,18 @@ function switchSource(src, el) {
   var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
   var TABLE='dayynime_survey';
   var STORAGE_KEY='dayy_survey_done';
-  var DELAY_MS=4500;
+  var SESSION_KEY='dayy_survey_session';
 
-  var lastDone=localStorage.getItem(STORAGE_KEY);
-  var shouldShow=!lastDone||(Date.now()-parseInt(lastDone))>7*24*3600*1000;
-  if(!shouldShow)return;
+  /* Cek per session — kalau udah survey (localStorage) jangan popup lagi */
+  var alreadyDone=localStorage.getItem(STORAGE_KEY);
+  if(alreadyDone){return;}
+  /* Cek session — kalau session ini sudah ditampilkan, skip */
+  if(sessionStorage.getItem(SESSION_KEY))return;
+  sessionStorage.setItem(SESSION_KEY,'1');
+
+  /* Tampilkan tombol "Isi Survey" di section */
+  var takeBtn=document.getElementById('svsTakeSurveyBtn');
+  if(takeBtn)takeBtn.style.display='block';
 
   var currentQ=0,TOTAL_Q=5,answers={},starVal=0;
   var starLabels=['','Sangat Buruk 😤','Buruk 😕','Biasa Aja 😐','Bagus 👍','Sangat Bagus 🔥'];
@@ -886,7 +989,9 @@ function switchSource(src, el) {
     setTimeout(function(){o.style.display='none';document.body.style.overflow='';},350);
   };
 
-  setTimeout(openSurvey,DELAY_MS);
+  var _triggered=false;
+  function _onScroll(){if(_triggered)return;if(window.scrollY>120){_triggered=true;window.removeEventListener("scroll",_onScroll);setTimeout(openSurvey,400);}}
+  window.addEventListener("scroll",_onScroll,{passive:true});
 })();
 </script>
 {% endblock %}
