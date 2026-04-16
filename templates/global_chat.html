@@ -187,24 +187,10 @@
         onlineCount = Object.keys(presenceCh.presenceState()).length;
         updateOnline();
       })
-      .on('presence', { event: 'join' }, function() {
-        onlineCount = Object.keys(presenceCh.presenceState()).length;
-        updateOnline();
-      })
-      .on('presence', { event: 'leave' }, function() {
-        onlineCount = Object.keys(presenceCh.presenceState()).length;
-        updateOnline();
-      })
       .subscribe(function(status) {
         if (status === 'SUBSCRIBED') {
           presenceCh.track({ uid: uid, at: Date.now() });
-          setTimeout(function() {
-            onlineCount = Object.keys(presenceCh.presenceState()).length;
-            updateOnline();
-          }, 800);
-        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          var label = document.getElementById('gcOnlineLabel');
-          if (label) label.textContent = 'Gagal terhubung';
+          updateOnline();
         }
       });
   }
