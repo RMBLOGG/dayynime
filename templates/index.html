@@ -991,7 +991,7 @@ function switchSource(src, el) {
       /* Tampilkan donasi popup setelah survey ditutup, sekali per session */
       if(!sessionStorage.getItem('dayy_donasi_shown')){
         sessionStorage.setItem('dayy_donasi_shown','1');
-        setTimeout(function(){openDonasiPopup();},400);
+        setTimeout(function(){if(window.openTrakteer)openTrakteer();},400);
       }
     },350);
   };
@@ -1002,110 +1002,5 @@ function switchSource(src, el) {
 })();
 </script>
 
-<!-- ===== DONASI POPUP ===== -->
-<div id="donasiPopupOverlay" onclick="if(event.target===this)closeDonasiPopup()">
-  <div id="donasiPopupSheet">
-    <button class="dpop-close-btn" onclick="closeDonasiPopup()"><i class="fas fa-times"></i></button>
-    <div class="dpop-drag-handle"></div>
-    <div class="dpop-icon-wrap">
-      <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="Trakteer" class="dpop-trakteer-icon">
-    </div>
-    <h3 class="dpop-title">Dukung Dayynime! 🙏</h3>
-    <p class="dpop-desc">Dayynime gratis untuk semua orang. Bantu kami menutupi <strong>biaya server</strong> agar situs ini bisa terus berjalan!</p>
-    <div class="dpop-info-row">
-      <div class="dpop-info-item"><span>🖥️</span><span>Server</span></div>
-      <div class="dpop-info-item"><span>🔒</span><span>SSL</span></div>
-      <div class="dpop-info-item"><span>⚡</span><span>CDN</span></div>
-      <div class="dpop-info-item"><span>💾</span><span>Database</span></div>
-    </div>
-    <button class="dpop-donate-btn" onclick="openDonasiTrakteer()">
-      <img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="" style="width:18px;height:18px;object-fit:contain;filter:brightness(0) invert(1);vertical-align:middle;margin-right:6px;">
-      Dukung via Trakteer
-    </button>
-    <button class="dpop-skip-btn" onclick="closeDonasiPopup()">Lain kali saja</button>
-  </div>
-</div>
 
-<style>
-#donasiPopupOverlay{
-  display:none;position:fixed;inset:0;z-index:21000;
-  background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  align-items:flex-end;justify-content:center;padding:0;
-  opacity:0;transition:opacity 0.3s ease;
-}
-#donasiPopupOverlay.open{opacity:1;}
-#donasiPopupSheet{
-  width:100%;max-width:480px;
-  background:linear-gradient(160deg,#1a1a1e 0%,#161618 100%);
-  border-radius:24px 24px 0 0;
-  border:1px solid rgba(232,65,90,0.22);border-bottom:none;
-  box-shadow:0 -12px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(232,65,90,0.08);
-  transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.28,0.64,1);
-  padding:0 20px 28px;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));
-  position:relative;text-align:center;
-}
-#donasiPopupOverlay.open #donasiPopupSheet{transform:translateY(0);}
-.dpop-drag-handle{width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:4px;margin:12px auto 20px;}
-.dpop-close-btn{
-  position:absolute;top:14px;right:14px;
-  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
-  color:#aaa;width:30px;height:30px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:12px;transition:background 0.2s;
-}
-.dpop-close-btn:hover{background:rgba(232,65,90,0.3);color:#fff;}
-.dpop-icon-wrap{margin-bottom:12px;}
-.dpop-trakteer-icon{width:48px;height:48px;object-fit:contain;border-radius:12px;background:#be1e2d;padding:10px;}
-.dpop-title{color:#fff;font-size:18px;font-weight:800;margin:0 0 8px;letter-spacing:-0.3px;}
-.dpop-desc{color:rgba(255,255,255,0.65);font-size:13px;line-height:1.6;margin:0 0 18px;}
-.dpop-desc strong{color:rgba(255,255,255,0.85);}
-.dpop-info-row{display:flex;justify-content:center;gap:10px;margin-bottom:22px;}
-.dpop-info-item{
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
-  border-radius:10px;padding:8px 12px;
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  font-size:11px;color:rgba(255,255,255,0.55);flex:1;
-}
-.dpop-info-item span:first-child{font-size:18px;}
-.dpop-donate-btn{
-  width:100%;padding:14px;border-radius:14px;border:none;
-  background:linear-gradient(135deg,#be1e2d,#e8415a);
-  color:#fff;font-size:15px;font-weight:700;
-  cursor:pointer;font-family:inherit;
-  box-shadow:0 4px 20px rgba(232,65,90,0.35);
-  transition:transform 0.15s,box-shadow 0.15s;
-  margin-bottom:10px;
-}
-.dpop-donate-btn:active{transform:scale(0.97);box-shadow:0 2px 10px rgba(232,65,90,0.25);}
-.dpop-skip-btn{
-  background:none;border:none;color:rgba(255,255,255,0.35);
-  font-size:12px;cursor:pointer;font-family:inherit;
-  padding:4px;transition:color 0.2s;
-}
-.dpop-skip-btn:hover{color:rgba(255,255,255,0.6);}
-</style>
-
-<script>
-(function(){
-  function openDonasiPopup(){
-    var o=document.getElementById('donasiPopupOverlay');
-    if(!o)return;
-    o.style.display='flex';
-    requestAnimationFrame(function(){requestAnimationFrame(function(){o.classList.add('open');});});
-    document.body.style.overflow='hidden';
-  }
-  function closeDonasiPopup(){
-    var o=document.getElementById('donasiPopupOverlay');
-    o.classList.remove('open');
-    setTimeout(function(){o.style.display='none';document.body.style.overflow='';},350);
-  }
-  function openDonasiTrakteer(){
-    closeDonasiPopup();
-    setTimeout(function(){if(window.openTrakteer)openTrakteer();},400);
-  }
-  window.openDonasiPopup=openDonasiPopup;
-  window.closeDonasiPopup=closeDonasiPopup;
-  window.openDonasiTrakteer=openDonasiTrakteer;
-})();
-</script>
 {% endblock %}
