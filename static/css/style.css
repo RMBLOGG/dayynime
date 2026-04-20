@@ -1,3 +1,30 @@
+/* ===== DAYYNIME GREEN THEME OVERRIDE — v30 ===== */
+/* New palette: dark green-black + neon green accent */
+:root {
+  --bg:           #0a0d0a !important;
+  --bg2:          #111511 !important;
+  --bg3:          #182018 !important;
+  --bg4:          #1e2a1e !important;
+  --card:         #111511 !important;
+  --border:       rgba(0,230,118,0.08) !important;
+  --border2:      rgba(0,230,118,0.18) !important;
+  --accent:       #00e676 !important;
+  --accent2:      #00ff88 !important;
+  --accent-dim:   rgba(0,230,118,0.1) !important;
+  --accent-glow:  rgba(0,230,118,0.3) !important;
+  --text:         #eef5ee !important;
+  --text2:        #7a9a7a !important;
+  --text3:        #3a4e3a !important;
+  --gold:         #ffd700 !important;
+  --radius:       12px !important;
+  --radius-md:    14px !important;
+  --radius-sm:    10px !important;
+}
+body { font-family: 'Nunito', 'Lato', sans-serif !important; background: #0a0d0a !important; }
+/* Kill old red accent wherever it bleeds through */
+.acard-ep { background: var(--accent) !important; color: #0a0d0a !important; }
+.acard-rating { background: rgba(0,0,0,0.85) !important; color: #ffd700 !important; }
+
 /* =====================================================
    DAYYNIME — Crunchyroll-Inspired Redesign
    Colors: #141519 bg, #F47521 accent, #1a1a23 surface
