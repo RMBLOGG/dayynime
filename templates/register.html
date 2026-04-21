@@ -3,154 +3,190 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar — DayyNime</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Daftar - Dayynime</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" type="image/png" href="/static/icon.png">
   <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-    :root{
-      --bg:#0a0e0a;--bg2:#111611;--bg3:#172117;
-      --accent:#00e676;--accent-dim:rgba(0,230,118,0.12);--accent-glow:rgba(0,230,118,0.3);
-      --text:#eef2ee;--text2:#8a9e8a;--text3:#445544;
-      --border:rgba(0,230,118,0.08);--border2:rgba(255,255,255,0.07);--radius:14px;
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg: #0d0d0d; --bg2: #161616; --bg3: #1e1e1e;
+      --accent: #e8415a; --accent-dim: rgba(232,65,90,0.15);
+      --text: #f0f0f0; --text2: #aaa; --text3: #666;
+      --border: rgba(255,255,255,0.07); --radius: 14px;
     }
-    html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;}
-    .blob{position:fixed;border-radius:50%;filter:blur(100px);opacity:0.12;pointer-events:none;z-index:0;}
-    .blob-1{width:400px;height:400px;background:radial-gradient(circle,#00e676,transparent 70%);top:-100px;right:-80px;}
-    .blob-2{width:300px;height:300px;background:radial-gradient(circle,#00c853,transparent 70%);bottom:-80px;left:-60px;}
-    .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;}
-    .logo{margin-bottom:28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;}
-    .logo-icon{width:56px;height:56px;border-radius:16px;background:var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 28px var(--accent-glow);}
-    .logo-icon svg{width:32px;height:32px;}
-    .logo-name{font-size:24px;font-weight:900;color:var(--text);}
-    .logo-name span{color:var(--accent);}
-    .card{width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;}
-    .card h2{font-size:20px;font-weight:900;color:var(--text);margin-bottom:4px;}
-    .card p{font-size:13px;color:var(--text2);margin-bottom:24px;}
-    .field{margin-bottom:14px;}
-    .field label{display:block;font-size:11px;font-weight:800;color:var(--text2);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.5px;}
-    .field-wrap{position:relative;}
-    .field input{width:100%;padding:12px 14px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-size:14px;font-family:'Nunito',sans-serif;outline:none;transition:border-color .2s;}
-    .field input:focus{border-color:var(--accent);}
-    .field input::placeholder{color:var(--text3);}
-    .field-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none;}
-    .field input:focus+.field-icon{color:var(--accent);}
-    .btn-main{width:100%;padding:14px;background:var(--accent);color:#000;border:none;border-radius:50px;font-size:15px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;margin-top:8px;box-shadow:0 4px 20px var(--accent-glow);}
-    .btn-main:hover{opacity:0.88;}
-    .btn-main:active{transform:scale(0.97);}
-    .btn-main:disabled{opacity:0.45;cursor:not-allowed;box-shadow:none;}
-    .error-box{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:11px 14px;font-size:13px;color:#f87171;margin-bottom:14px;display:none;}
-    .error-box.show{display:block;}
-    .success-box{background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--accent);margin-bottom:14px;display:none;}
-    .success-box.show{display:block;}
-    .footer-link{text-align:center;font-size:13px;color:var(--text3);margin-top:20px;}
-    .footer-link a{color:var(--accent);font-weight:800;text-decoration:none;}
-    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.25);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    .password-strength{height:4px;border-radius:2px;margin-top:6px;transition:all 0.3s;background:var(--border2);}
-    .strength-text{font-size:10px;font-weight:700;margin-top:4px;}
-    .terms{font-size:12px;color:var(--text3);margin-top:14px;text-align:center;}
-    .terms a{color:var(--accent);text-decoration:none;}
+    html, body { min-height:100%; background:var(--bg); color:var(--text); font-family:'Lato',sans-serif; }
+    .blob { position:fixed; border-radius:50%; filter:blur(80px); opacity:0.15; pointer-events:none; z-index:0; }
+    .blob-1 { width:400px; height:400px; background:radial-gradient(circle,#e8415a,transparent 70%); top:-100px; left:-100px; }
+    .blob-2 { width:300px; height:300px; background:radial-gradient(circle,#be1e2d,transparent 70%); bottom:-80px; right:-80px; }
+
+    .page { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; }
+
+    .logo { margin-bottom:28px; text-align:center; }
+    .logo img { width:48px; height:48px; border-radius:12px; }
+    .logo-name { font-size:22px; font-weight:800; color:var(--text); margin-top:8px; letter-spacing:-0.5px; }
+    .logo-sub { font-size:11px; color:var(--text3); margin-top:2px; }
+
+    .card { width:100%; max-width:360px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:28px 22px; }
+    .card h2 { font-size:18px; font-weight:800; color:var(--text); margin-bottom:4px; }
+    .card p  { font-size:12px; color:var(--text2); margin-bottom:22px; }
+
+    .field { margin-bottom:14px; }
+    .field label { display:block; font-size:11px; font-weight:700; color:var(--text2); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+    .field input {
+      width:100%; padding:11px 14px; background:var(--bg3); border:1px solid var(--border);
+      border-radius:10px; color:var(--text); font-size:14px; font-family:'Lato',sans-serif;
+      outline:none; transition:border-color .2s;
+    }
+    .field input:focus { border-color:var(--accent); }
+    .field .hint { font-size:10px; color:var(--text3); margin-top:4px; }
+
+    .btn-main {
+      width:100%; padding:13px; background:var(--accent); color:#fff; border:none;
+      border-radius:10px; font-size:14px; font-weight:800; cursor:pointer;
+      font-family:'Lato',sans-serif; letter-spacing:0.3px; transition:opacity .2s; margin-top:6px;
+    }
+    .btn-main:hover { opacity:0.88; }
+    .btn-main:disabled { opacity:0.5; cursor:not-allowed; }
+
+    .error-box { background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:10px 12px; font-size:12px; color:#f87171; margin-bottom:14px; display:none; }
+    .error-box.show { display:block; }
+
+    .success-box { background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); border-radius:8px; padding:10px 12px; font-size:12px; color:#4ade80; margin-bottom:14px; display:none; }
+    .success-box.show { display:block; }
+
+    .footer-link { text-align:center; font-size:12px; color:var(--text3); margin-top:20px; }
+    .footer-link a { color:var(--accent); font-weight:700; text-decoration:none; }
+
+    .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .strength { height:3px; border-radius:2px; margin-top:6px; transition:width .3s, background .3s; width:0; }
   </style>
 </head>
 <body>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-<div class="page">
-  <div class="logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M12 2L3 8v13h6v-7h6v7h6V8L12 2z" fill="#000" opacity="0.9"/>
-      </svg>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="page">
+    <div class="logo">
+      <img src="/static/icon.png" alt="Dayynime">
+      <div class="logo-name">Dayynime</div>
+      <div class="logo-sub">Nonton Anime Sub Indo</div>
     </div>
-    <span class="logo-name">Dayy<span>Nime</span></span>
+
+    <div class="card">
+      <h2>Buat Akun</h2>
+      <p>Daftar gratis dan mulai nonton anime favoritmu!</p>
+
+      <div class="error-box" id="errorBox"></div>
+      <div class="success-box" id="successBox"></div>
+
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="usernameInput" placeholder="minimal 3 karakter" autocomplete="username" maxlength="30">
+        <div class="hint">Hanya huruf, angka, dan underscore</div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="emailInput" placeholder="email@contoh.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="passInput" placeholder="minimal 6 karakter" autocomplete="new-password" oninput="checkStrength(this.value)">
+        <div class="strength" id="strengthBar"></div>
+      </div>
+
+      <button class="btn-main" id="regBtn" onclick="doRegister()">
+        Daftar Sekarang
+      </button>
+
+      <div class="footer-link">
+        Sudah punya akun? <a href="/auth/login">Masuk di sini</a>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Buat Akun</h2>
-    <p>Daftar gratis dan mulai nonton anime favoritmu</p>
+  <script>
+    function checkStrength(val) {
+      var bar = document.getElementById('strengthBar');
+      var score = 0;
+      if (val.length >= 6) score++;
+      if (val.length >= 10) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      var colors = ['#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+      bar.style.width = (score * 20) + '%';
+      bar.style.background = colors[score - 1] || 'transparent';
+    }
 
-    <div id="errorBox" class="error-box"></div>
-    <div id="successBox" class="success-box"></div>
+    function showError(msg) {
+      var box = document.getElementById('errorBox');
+      box.textContent = msg;
+      box.classList.add('show');
+      document.getElementById('successBox').classList.remove('show');
+    }
+    function showSuccess(msg) {
+      var box = document.getElementById('successBox');
+      box.textContent = msg;
+      box.classList.add('show');
+      document.getElementById('errorBox').classList.remove('show');
+    }
+    function clearMsg() {
+      document.getElementById('errorBox').classList.remove('show');
+      document.getElementById('successBox').classList.remove('show');
+    }
 
-    <div class="field">
-      <label>Nama Lengkap</label>
-      <div class="field-wrap">
-        <input type="text" id="regName" placeholder="Nama kamu" autocomplete="name">
-        <i class="fas fa-user field-icon"></i>
-      </div>
-    </div>
-    <div class="field">
-      <label>Email</label>
-      <div class="field-wrap">
-        <input type="email" id="regEmail" placeholder="email@contoh.com" autocomplete="email">
-        <i class="fas fa-envelope field-icon"></i>
-      </div>
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <div class="field-wrap">
-        <input type="password" id="regPassword" placeholder="Min. 6 karakter" autocomplete="new-password" oninput="checkStrength(this.value)">
-        <i class="fas fa-lock field-icon"></i>
-      </div>
-      <div class="password-strength" id="strengthBar"></div>
-      <div class="strength-text" id="strengthText" style="color:var(--text3);"></div>
-    </div>
-    <div class="field">
-      <label>Konfirmasi Password</label>
-      <div class="field-wrap">
-        <input type="password" id="regConfirm" placeholder="Ulangi password" autocomplete="new-password">
-        <i class="fas fa-lock field-icon"></i>
-      </div>
-    </div>
+    function setLoading(loading) {
+      var btn = document.getElementById('regBtn');
+      btn.disabled = loading;
+      btn.innerHTML = loading ? '<span class="spinner"></span>Mendaftar...' : 'Daftar Sekarang';
+    }
 
-    <button class="btn-main" onclick="doRegister()" id="registerBtn">
-      <i class="fas fa-user-plus"></i> Daftar Sekarang
-    </button>
-    <p class="terms">Dengan mendaftar, kamu setuju dengan <a href="#">Syarat & Ketentuan</a> kami.</p>
-  </div>
+    function doRegister() {
+      clearMsg();
+      var username = document.getElementById('usernameInput').value.trim();
+      var email    = document.getElementById('emailInput').value.trim();
+      var pass     = document.getElementById('passInput').value;
 
-  <div class="footer-link">Sudah punya akun? <a href="/login">Masuk</a></div>
-</div>
+      if (!username || !email || !pass) {
+        showError('Semua field wajib diisi.'); return;
+      }
+      if (username.length < 3) {
+        showError('Username minimal 3 karakter.'); return;
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        showError('Username hanya boleh huruf, angka, dan underscore.'); return;
+      }
+      if (pass.length < 6) {
+        showError('Password minimal 6 karakter.'); return;
+      }
 
-<script>
-function checkStrength(v){
-  var bar=document.getElementById('strengthBar');
-  var text=document.getElementById('strengthText');
-  if(!v){bar.style.background='var(--border2)';bar.style.width='0%';text.textContent='';return;}
-  var score=0;
-  if(v.length>=6)score++;if(v.length>=10)score++;if(/[A-Z]/.test(v))score++;if(/[0-9]/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;
-  var colors=['#e8415a','#ff9800','#f5c518','#00e676','#00c853'];
-  var labels=['Sangat Lemah','Lemah','Cukup','Kuat','Sangat Kuat'];
-  var idx=Math.min(score,4);
-  bar.style.background=colors[idx];
-  bar.style.width=((idx+1)*20)+'%';
-  text.textContent=labels[idx];
-  text.style.color=colors[idx];
-}
-function showError(msg){var b=document.getElementById('errorBox');b.textContent=msg;b.classList.add('show');document.getElementById('successBox').classList.remove('show');}
-function showSuccess(msg){var b=document.getElementById('successBox');b.textContent=msg;b.classList.add('show');document.getElementById('errorBox').classList.remove('show');}
-function doRegister(){
-  var name=document.getElementById('regName').value.trim();
-  var email=document.getElementById('regEmail').value.trim();
-  var pass=document.getElementById('regPassword').value;
-  var conf=document.getElementById('regConfirm').value;
-  if(!name||!email||!pass){showError('Semua kolom wajib diisi.');return;}
-  if(pass!==conf){showError('Password tidak cocok.');return;}
-  if(pass.length<6){showError('Password minimal 6 karakter.');return;}
-  var btn=document.getElementById('registerBtn');
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Mendaftarkan...';
-  fetch('/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:name,email,password:pass})})
-    .then(r=>r.json()).then(d=>{
-      if(d.success){showSuccess('✓ Akun berhasil dibuat! Redirecting...');setTimeout(()=>window.location.href='/',1500);}
-      else{showError(d.message||'Gagal mendaftar.');btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Daftar Sekarang';}
-    }).catch(()=>{
-      var f=document.createElement('form');f.method='POST';f.action='/register';
-      [['username',name],['email',email],['password',pass]].forEach(function(p){var i=document.createElement('input');i.type='hidden';i.name=p[0];i.value=p[1];f.appendChild(i);});
-      document.body.appendChild(f);f.submit();
+      setLoading(true);
+      fetch('/auth/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username: username, email: email, password: pass})
+      }).then(function(r){ return r.json(); }).then(function(d) {
+        if (d.ok) {
+          showSuccess('Akun berhasil dibuat! Mengalihkan...');
+          setTimeout(function() {
+            window.location.href = d.redirect || '/home';
+          }, 1000);
+        } else {
+          showError(d.error || 'Pendaftaran gagal.');
+          setLoading(false);
+        }
+      }).catch(function() {
+        showError('Koneksi bermasalah, coba lagi.');
+        setLoading(false);
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doRegister();
     });
-}
-</script>
+  </script>
 </body>
 </html>
