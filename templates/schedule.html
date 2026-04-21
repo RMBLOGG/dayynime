@@ -1,128 +1,162 @@
 {% extends "base.html" %}
-{% block title %}Jadwal Anime - Dayynime{% endblock %}
+{% block title %}Jadwal Anime — DayyNime{% endblock %}
 {% block content %}
-
 <style>
-.sch-page { padding: 20px 16px 100px; background: #0d0d0f; min-height: 100vh; }
+.sch-page { padding: 0 0 100px; }
+.sch-header { padding: 18px 16px 14px; }
+.sch-title-row { display:flex;align-items:center;gap:10px;margin-bottom:4px; }
+.sch-title-icon { width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#000; }
+.sch-title { font-size:20px;font-weight:900;color:var(--text); }
+.sch-sub { font-size:12px;color:var(--text2);margin-bottom:14px; }
 
-/* Header */
-.sch-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
-.sch-heading-icon { width: 32px; height: 32px; background: linear-gradient(135deg,#e8415a,#ff6b6b); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; flex-shrink: 0; }
-.sch-title { font-size: 20px; font-weight: 900; color: #fff; }
-.sch-subtitle { font-size: 12px; color: rgba(255,255,255,0.35); padding-left: 42px; margin-bottom: 20px; }
+/* DAY TABS */
+.sch-day-tabs { display:flex;gap:8px;overflow-x:auto;padding:0 16px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch; }
+.sch-day-tabs::-webkit-scrollbar { display:none; }
+.sch-day-tab { flex-shrink:0;padding:8px 16px;border-radius:50px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all 0.2s;font-family:inherit;background:var(--bg2);border:1.5px solid var(--border2);color:var(--text2); }
+.sch-day-tab.active { background:var(--accent);border-color:var(--accent);color:#000;box-shadow:0 3px 12px var(--accent-glow); }
+.sch-day-tab.today-tab:not(.active) { border-color:var(--accent-glow);color:var(--accent); }
 
-/* Day tabs */
-.sch-day-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; margin-bottom: 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-.sch-day-tabs::-webkit-scrollbar { display: none; }
-.sch-day-tab { flex-shrink: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); color: rgba(255,255,255,0.45); padding: 7px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: inherit; -webkit-tap-highlight-color: transparent; }
-.sch-day-tab.active { background: #e8415a; border-color: #e8415a; color: #fff; box-shadow: 0 3px 12px rgba(232,65,90,0.4); }
-.sch-day-tab.today-tab { border-color: rgba(232,65,90,0.4); color: #e8415a; }
-.sch-day-tab.today-tab.active { background: #e8415a; color: #fff; }
+/* PANELS */
+.sch-panel { display:none;flex-direction:column;gap:10px;padding:16px; }
+.sch-panel.active { display:flex; }
 
-/* Panels */
-.sch-panel { display: none; }
-.sch-panel.active { display: flex; flex-direction: column; gap: 10px; }
+/* CARD */
+.sch-card { display:flex;align-items:center;gap:13px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:12px 14px;text-decoration:none;transition:border-color 0.2s; }
+.sch-card:active { border-color:var(--accent-glow);background:var(--bg3); }
+.sch-card-thumb { width:48px;height:66px;border-radius:9px;overflow:hidden;flex-shrink:0; }
+.sch-card-thumb img { width:100%;height:100%;object-fit:cover;display:block; }
+.sch-card-body { flex:1;min-width:0; }
+.sch-card-title { font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:7px; }
+.sch-card-meta { display:flex;align-items:center;gap:7px;flex-wrap:wrap; }
+.sch-card-time { display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:var(--accent);background:var(--accent-dim);border:1px solid var(--accent-glow);padding:2px 9px;border-radius:50px; }
+.sch-card-type { font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.3px; }
+.sch-card-chevron { color:var(--text3);font-size:11px;flex-shrink:0; }
+.sch-card-mylist { width:32px;height:32px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:13px;cursor:pointer;flex-shrink:0;transition:all 0.2s; }
+.sch-card-mylist.active { background:var(--accent-dim);border-color:var(--accent-glow);color:var(--accent); }
 
-/* Anime row card */
-.sch-card { display: flex; align-items: center; gap: 13px; background: #16161a; border-radius: 14px; border: 1px solid rgba(255,255,255,0.07); padding: 11px 13px; text-decoration: none; -webkit-tap-highlight-color: transparent; transition: border-color 0.2s; }
-.sch-card:active { border-color: rgba(232,65,90,0.4); }
-.sch-card-thumb { width: 46px; height: 64px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #111; }
-.sch-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.sch-card-body { flex: 1; min-width: 0; }
-.sch-card-title { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
-.sch-card-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.sch-card-time { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; color: #e8415a; background: rgba(232,65,90,0.12); border: 1px solid rgba(232,65,90,0.2); padding: 2px 9px; border-radius: 50px; }
-.sch-card-type { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.3px; }
-.sch-card-chevron { color: rgba(255,255,255,0.2); font-size: 11px; flex-shrink: 0; }
-
-/* Empty */
-.sch-empty { text-align: center; padding: 50px 20px; }
-.sch-empty i { font-size: 2rem; color: rgba(255,255,255,0.1); display: block; margin-bottom: 12px; }
-.sch-empty p { font-size: 13px; color: rgba(255,255,255,0.25); font-weight: 600; }
+/* EMPTY */
+.sch-empty { display:flex;flex-direction:column;align-items:center;padding:50px 20px;text-align:center; }
+.sch-empty-icon { font-size:48px;margin-bottom:14px; }
+.sch-empty-title { font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px; }
+.sch-empty-sub { font-size:12px;color:var(--text2); }
 </style>
 
 <div class="sch-page">
-
-  <!-- Header -->
-  <div class="sch-heading">
-    <div class="sch-heading-icon"><i class="fas fa-calendar-week"></i></div>
-    <span class="sch-title">Jadwal Rilis</span>
+  <div class="sch-header">
+    <div class="sch-title-row">
+      <div class="sch-title-icon"><i class="fas fa-calendar-week"></i></div>
+      <span class="sch-title">Jadwal Rilis</span>
+    </div>
+    <div class="sch-sub">Anime yang tayang minggu ini</div>
   </div>
-  <div class="sch-subtitle">Anime yang tayang minggu ini</div>
 
   {% if data and data.schedule %}
-
-  <!-- Day Tabs -->
+  <!-- DAY TABS -->
   <div class="sch-day-tabs" id="schDayTabs">
     {% for day in data.schedule.keys() %}
-    <button class="sch-day-tab" data-tab="{{ day }}">{{ day }}</button>
+    <button class="sch-day-tab" data-tab="{{ day }}" onclick="switchDay('{{ day }}',this)">{{ day }}</button>
     {% endfor %}
   </div>
 
-  <!-- Panels -->
-  {% for day, animes in data.schedule.items() %}
-  <div class="sch-panel" id="panel-{{ day }}">
-    {% if animes %}
+  <!-- PANELS -->
+  <div style="margin-top:12px;">
+    {% for day, animes in data.schedule.items() %}
+    <div class="sch-panel" id="panel-{{ day }}" data-day="{{ day }}">
+      {% if animes %}
       {% for anime in animes %}
       <a href="/anime/{{ anime.slug }}" class="sch-card">
         <div class="sch-card-thumb">
-          <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
+          <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'" loading="lazy">
         </div>
         <div class="sch-card-body">
           <div class="sch-card-title">{{ anime.title }}</div>
           <div class="sch-card-meta">
-            {% if anime.time %}
-            <span class="sch-card-time"><i class="fas fa-clock" style="font-size:8px;"></i> {{ anime.time }}</span>
-            {% endif %}
-            {% if anime.type %}
-            <span class="sch-card-type">{{ anime.type }}</span>
-            {% endif %}
+            {% if anime.time %}<span class="sch-card-time"><i class="fas fa-clock" style="font-size:9px;"></i> {{ anime.time }}</span>{% endif %}
+            {% if anime.type %}<span class="sch-card-type">{{ anime.type }}</span>{% endif %}
+            {% if anime.episode %}<span class="sch-card-type">Eps {{ anime.episode }}</span>{% endif %}
           </div>
         </div>
+        <button class="sch-card-mylist" onclick="event.preventDefault();toggleSchMyList(this,'{{ anime.slug }}','{{ anime.title }}')" title="My List"><i class="fas fa-plus"></i></button>
         <i class="fas fa-chevron-right sch-card-chevron"></i>
       </a>
       {% endfor %}
-    {% else %}
-    <div class="sch-empty">
-      <i class="fas fa-moon"></i>
-      <p>Tidak ada anime hari ini</p>
+      {% else %}
+      <div class="sch-empty">
+        <div class="sch-empty-icon">📅</div>
+        <div class="sch-empty-title">Tidak ada jadwal</div>
+        <div class="sch-empty-sub">Belum ada anime yang tayang hari ini</div>
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
+    {% endfor %}
   </div>
-  {% endfor %}
 
   {% else %}
-  <div class="sch-empty"><i class="fas fa-calendar"></i><p>Jadwal tidak tersedia</p></div>
+  <div class="sch-empty" style="padding:70px 20px;">
+    <div class="sch-empty-icon">📅</div>
+    <div class="sch-empty-title">Jadwal tidak tersedia</div>
+    <div class="sch-empty-sub">Data jadwal belum bisa dimuat</div>
+  </div>
   {% endif %}
-
 </div>
 
 <script>
-(function(){
-  var tabs = document.querySelectorAll('.sch-day-tab');
-  var panels = document.querySelectorAll('.sch-panel');
-  var today = new Date().toLocaleDateString('id-ID',{weekday:'long'});
+var activeDay = '';
 
-  function activate(tab){
-    tabs.forEach(function(t){ t.classList.remove('active'); });
-    panels.forEach(function(p){ p.classList.remove('active'); });
-    tab.classList.add('active');
-    var panel = document.getElementById('panel-' + tab.dataset.tab);
-    if(panel) panel.classList.add('active');
-    tab.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+function switchDay(day, btn){
+  document.querySelectorAll('.sch-day-tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.sch-panel').forEach(function(p){p.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  var panel = document.getElementById('panel-' + day);
+  if(panel) panel.classList.add('active');
+  activeDay = day;
+}
+
+function toggleSchMyList(btn, slug, title){
+  var list = JSON.parse(localStorage.getItem('mylist') || '[]');
+  var idx = list.findIndex(function(i){return i.slug === slug;});
+  if(idx >= 0){
+    list.splice(idx,1);
+    btn.classList.remove('active');
+    btn.innerHTML = '<i class="fas fa-plus"></i>';
+    showToast('Dihapus dari My List');
+  } else {
+    list.push({slug:slug,title:title});
+    btn.classList.add('active');
+    btn.innerHTML = '<i class="fas fa-check"></i>';
+    showToast('✓ Ditambahkan ke My List','green');
   }
+  localStorage.setItem('mylist',JSON.stringify(list));
+}
 
-  tabs.forEach(function(tab){
-    if(tab.dataset.tab === today) tab.classList.add('today-tab');
-    tab.addEventListener('click', function(){ activate(tab); });
+// Auto-select today
+(function(){
+  var days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var today = days[new Date().getDay()];
+  var tabs = document.querySelectorAll('.sch-day-tab');
+  var found = false;
+  tabs.forEach(function(t){
+    if(t.getAttribute('data-tab') === today){
+      t.classList.add('today-tab');
+      switchDay(today, t);
+      found = true;
+      t.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    }
   });
-
-  // Auto-select today
-  var activated = false;
-  tabs.forEach(function(tab){
-    if(tab.dataset.tab === today){ activate(tab); activated = true; }
+  if(!found && tabs.length > 0){
+    switchDay(tabs[0].getAttribute('data-tab'), tabs[0]);
+  }
+  // Restore mylist state
+  var list = JSON.parse(localStorage.getItem('mylist') || '[]');
+  document.querySelectorAll('.sch-card-mylist').forEach(function(btn){
+    // btn is inside sch-card which has href
+    var card = btn.closest('.sch-card');
+    if(card){
+      var slug = card.getAttribute('href').replace('/anime/','');
+      var inList = list.some(function(i){return i.slug===slug;});
+      if(inList){btn.classList.add('active');btn.innerHTML='<i class="fas fa-check"></i>';}
+    }
   });
-  if(!activated && tabs.length > 0) activate(tabs[0]);
 })();
 </script>
 {% endblock %}

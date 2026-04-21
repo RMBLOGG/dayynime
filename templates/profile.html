@@ -1,171 +1,193 @@
 {% extends "base.html" %}
-{% block title %}Profil Saya - Dayynime{% endblock %}
+{% block title %}Profil — DayyNime{% endblock %}
 {% block content %}
+<style>
+.profile-page { padding-bottom:100px; }
+.profile-hero { background:linear-gradient(135deg,var(--bg2),var(--bg3));padding:28px 16px 20px;position:relative;overflow:hidden; }
+.profile-hero::before { content:'';position:absolute;top:-60px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--accent-glow),transparent 70%);pointer-events:none; }
+.profile-avatar { width:72px;height:72px;border-radius:50%;background:var(--bg3);border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:14px;position:relative; }
+.profile-avatar img { width:100%;height:100%;object-fit:cover;display:block; }
+.profile-avatar i { font-size:28px;color:var(--text3); }
+.profile-name { font-size:20px;font-weight:900;color:var(--text);margin-bottom:3px; }
+.profile-email { font-size:13px;color:var(--text2); }
+.profile-premium-badge { display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f5c518,#ff9800);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:900;color:#000;margin-top:10px; }
 
-<div style="padding:20px 14px 100px;">
+/* STATS */
+.profile-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border); }
+.stat-item { padding:16px;text-align:center;position:relative; }
+.stat-item:not(:last-child)::after { content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:var(--border); }
+.stat-num { font-size:20px;font-weight:900;color:var(--accent); }
+.stat-label { font-size:10px;font-weight:700;color:var(--text2);margin-top:2px;text-transform:uppercase;letter-spacing:0.3px; }
 
-  <!-- Profile Card -->
-  <div style="background:var(--bg2);border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:16px;text-align:center;" id="profileCard">
-    <!-- Avatar -->
-    <div style="position:relative;display:inline-block;margin-bottom:14px;">
-      <div style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:2.5px solid var(--accent);margin:0 auto;">
-        <img id="userAvatar" src="" alt="Avatar" style="width:100%;height:100%;object-fit:cover;display:none;">
-        <div id="avatarFallback" style="width:100%;height:100%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;">
-          <i class="fas fa-user" style="color:var(--accent);font-size:28px;"></i>
-        </div>
-      </div>
-      <!-- Premium badge -->
-      <div id="premiumBadge" style="display:none;position:absolute;bottom:-2px;right:-2px;background:var(--accent);border-radius:50%;width:22px;height:22px;display:none;align-items:center;justify-content:center;border:2px solid var(--bg2);">
-        <i class="fas fa-crown" style="font-size:9px;color:#fff;"></i>
-      </div>
-    </div>
+/* MENU */
+.menu-section { padding:6px 0; }
+.menu-section-title { font-size:11px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px 6px; }
+.menu-item { display:flex;align-items:center;gap:14px;padding:14px 16px;text-decoration:none;color:inherit;border-bottom:1px solid var(--border);transition:background 0.15s; }
+.menu-item:active { background:var(--bg2); }
+.menu-item-icon { width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0; }
+.menu-item-icon.green { background:var(--accent-dim);border:1px solid var(--accent-glow);color:var(--accent); }
+.menu-item-icon.gold { background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.2);color:#f5c518; }
+.menu-item-icon.blue { background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2);color:#60a5fa; }
+.menu-item-icon.gray { background:var(--bg3);border:1px solid var(--border2);color:var(--text2); }
+.menu-item-icon.red { background:rgba(232,65,90,0.1);border:1px solid rgba(232,65,90,0.2);color:#e8415a; }
+.menu-item-label { flex:1;font-size:14px;font-weight:700;color:var(--text); }
+.menu-item-right { font-size:13px;color:var(--text3); }
+.menu-item-badge { background:var(--accent);color:#000;font-size:9px;font-weight:900;padding:2px 7px;border-radius:20px; }
+.menu-toggle { width:44px;height:24px;border-radius:12px;background:var(--bg3);border:1.5px solid var(--border2);position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0; }
+.menu-toggle.on { background:var(--accent);border-color:var(--accent); }
+.menu-toggle::after { content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s; }
+.menu-toggle.on::after { transform:translateX(20px); }
 
-    <div id="userNameEl" style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:4px;">—</div>
-    <div id="userEmailEl" style="font-size:11px;color:var(--text3);margin-bottom:14px;">—</div>
+/* NOT LOGGED IN */
+.login-cta { padding:40px 20px;text-align:center; }
+.login-cta-icon { width:80px;height:80px;border-radius:20px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text3);margin:0 auto 18px; }
+.login-cta-title { font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px; }
+.login-cta-sub { font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px; }
+.login-cta-btn { display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#000;font-weight:900;font-size:14px;padding:14px 32px;border-radius:50px;text-decoration:none;box-shadow:0 4px 18px var(--accent-glow); }
+</style>
 
-    <!-- Premium Status -->
-    <div id="premiumStatus" style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:50px;font-size:11px;font-weight:700;background:var(--bg3);color:var(--text3);border:1px solid var(--border);">
-      <i class="fas fa-spinner fa-spin" style="font-size:10px;"></i> Mengecek status...
-    </div>
+<div class="profile-page">
+
+{% if user %}
+<!-- LOGGED IN -->
+<div class="profile-hero">
+  <div class="profile-avatar">
+    {% if user.avatar %}<img src="{{ user.avatar }}" alt="{{ user.username }}">{% else %}<i class="fas fa-user"></i>{% endif %}
+  </div>
+  <div class="profile-name">{{ user.username or 'Pengguna' }}</div>
+  <div class="profile-email">{{ user.email or '' }}</div>
+  {% if user.is_premium %}<div class="profile-premium-badge"><i class="fas fa-crown"></i> Premium Member</div>{% endif %}
+</div>
+
+<!-- STATS -->
+<div class="profile-stats">
+  <div class="stat-item">
+    <div class="stat-num" id="statWatchlist">0</div>
+    <div class="stat-label">Watchlist</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="statMyList">0</div>
+    <div class="stat-label">My List</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">{{ user.days_member or '—' }}</div>
+    <div class="stat-label">Hari</div>
+  </div>
+</div>
+
+<!-- MENUS -->
+<div class="menu-section">
+  <div class="menu-section-title">Akun</div>
+
+  {% if not user.is_premium %}
+  <a href="/premium" class="menu-item">
+    <div class="menu-item-icon gold"><i class="fas fa-crown"></i></div>
+    <span class="menu-item-label">Upgrade Premium</span>
+    <span class="menu-item-badge">BARU</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+  {% endif %}
+
+  <a href="/koleksi" class="menu-item">
+    <div class="menu-item-icon green"><i class="fas fa-bookmark"></i></div>
+    <span class="menu-item-label">Koleksi Saya</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+
+  <a href="/profile/edit" class="menu-item">
+    <div class="menu-item-icon gray"><i class="fas fa-user-edit"></i></div>
+    <span class="menu-item-label">Edit Profil</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+</div>
+
+<div class="menu-section">
+  <div class="menu-section-title">Preferensi</div>
+
+  <div class="menu-item">
+    <div class="menu-item-icon gray"><i class="fas fa-moon"></i></div>
+    <span class="menu-item-label">Dark Mode</span>
+    <div class="menu-toggle on" id="darkModeToggle" onclick="this.classList.toggle('on')"></div>
   </div>
 
-  <!-- Menu Items -->
-  <div style="background:var(--bg2);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px;">
-    <a href="/koleksi" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);-webkit-tap-highlight-color:transparent;">
-      <div style="width:34px;height:34px;border-radius:8px;background:rgba(244,117,33,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="fas fa-bookmark" style="color:var(--accent);font-size:14px;"></i>
-      </div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;color:var(--text);">Koleksi Saya</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:1px;">Anime yang tersimpan</div>
-      </div>
-      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:12px;"></i>
-    </a>
-
-    <a href="/premium" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);-webkit-tap-highlight-color:transparent;">
-      <div style="width:34px;height:34px;border-radius:8px;background:rgba(251,191,36,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="fas fa-crown" style="color:#fbbf24;font-size:14px;"></i>
-      </div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;color:var(--text);">Upgrade Premium</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:1px;">Akses semua episode tanpa batas</div>
-      </div>
-      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:12px;"></i>
-    </a>
-
-    <a href="/jadwal" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);-webkit-tap-highlight-color:transparent;">
-      <div style="width:34px;height:34px;border-radius:8px;background:rgba(96,165,250,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="fas fa-calendar-week" style="color:#60a5fa;font-size:14px;"></i>
-      </div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;color:var(--text);">Jadwal Tayang</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:1px;">Anime minggu ini</div>
-      </div>
-      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:12px;"></i>
-    </a>
-
-    <a href="/animelist" style="display:flex;align-items:center;gap:12px;padding:14px 16px;-webkit-tap-highlight-color:transparent;">
-      <div style="width:34px;height:34px;border-radius:8px;background:rgba(167,139,250,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="fas fa-list-ul" style="color:#a78bfa;font-size:14px;"></i>
-      </div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;color:var(--text);">Daftar Anime A-Z</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:1px;">Semua anime tersedia</div>
-      </div>
-      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:12px;"></i>
-    </a>
+  <div class="menu-item">
+    <div class="menu-item-icon gray"><i class="fas fa-bell"></i></div>
+    <span class="menu-item-label">Notifikasi</span>
+    <div class="menu-toggle on" id="notifToggle" onclick="this.classList.toggle('on')"></div>
   </div>
 
-  <!-- Auth section -->
-  <div id="authSection" style="background:var(--bg2);border-radius:14px;border:1px solid var(--border);overflow:hidden;">
-    <!-- Logged in: logout -->
-    <div id="logoutSection" style="display:none;">
-      <button onclick="doLogout()" style="
-        display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;
-        background:none;border:none;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
-      ">
-        <div style="width:34px;height:34px;border-radius:8px;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fas fa-sign-out-alt" style="color:#ef4444;font-size:14px;"></i>
-        </div>
-        <div style="font-size:13px;font-weight:700;color:#ef4444;">Keluar</div>
-      </button>
-    </div>
-    <!-- Not logged in: login prompt -->
-    <div id="loginSection" style="display:none;padding:20px;text-align:center;">
-      <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Login untuk akses fitur lengkap</p>
-      <a href="/auth/login" style="display:inline-block;background:var(--accent);color:#fff;padding:9px 24px;border-radius:50px;font-size:13px;font-weight:700;">Login Sekarang</a>
-    </div>
-  </div>
+  <a href="/jadwal" class="menu-item">
+    <div class="menu-item-icon blue"><i class="fas fa-calendar-alt"></i></div>
+    <span class="menu-item-label">Jadwal Rilis</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+</div>
 
-  <!-- App Info -->
-  <div style="text-align:center;margin-top:20px;">
-    <div style="font-size:11px;color:var(--text3);">Dayynime &mdash; v1.0</div>
-    <div style="font-size:10px;color:var(--text3);margin-top:2px;opacity:0.5;">Made with ❤️ for anime lovers</div>
+<div class="menu-section">
+  <div class="menu-section-title">Bantuan</div>
+
+  <a href="/help" class="menu-item">
+    <div class="menu-item-icon gray"><i class="fas fa-question-circle"></i></div>
+    <span class="menu-item-label">Pusat Bantuan</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+
+  <a href="/about" class="menu-item">
+    <div class="menu-item-icon gray"><i class="fas fa-info-circle"></i></div>
+    <span class="menu-item-label">Tentang DayyNime</span>
+    <span class="menu-item-right" style="font-size:11px;">v1.0</span>
+  </a>
+
+  <a href="/logout" class="menu-item" onclick="return confirm('Yakin ingin logout?')">
+    <div class="menu-item-icon red"><i class="fas fa-sign-out-alt"></i></div>
+    <span class="menu-item-label" style="color:#e8415a;">Logout</span>
+  </a>
+</div>
+
+{% else %}
+<!-- NOT LOGGED IN -->
+<div class="profile-hero" style="align-items:center;display:flex;flex-direction:column;text-align:center;">
+  <div class="profile-avatar" style="margin:0 auto 14px;">
+    <i class="fas fa-user"></i>
   </div>
+  <div class="profile-name">Tamu</div>
+  <div class="profile-email">Belum login</div>
+</div>
+
+<div class="login-cta">
+  <div class="login-cta-icon"><i class="fas fa-user-circle"></i></div>
+  <div class="login-cta-title">Login untuk Fitur Lengkap</div>
+  <div class="login-cta-sub">Simpan koleksi, pantau episode terbaru, dan nikmati semua fitur DayyNime.</div>
+  <a href="/login" class="login-cta-btn"><i class="fas fa-sign-in-alt"></i> Login Sekarang</a>
+</div>
+
+<div class="menu-section">
+  <a href="/premium" class="menu-item">
+    <div class="menu-item-icon gold"><i class="fas fa-crown"></i></div>
+    <span class="menu-item-label">Premium</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+  <a href="/jadwal" class="menu-item">
+    <div class="menu-item-icon blue"><i class="fas fa-calendar-alt"></i></div>
+    <span class="menu-item-label">Jadwal Rilis</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+  <a href="/genres" class="menu-item">
+    <div class="menu-item-icon gray"><i class="fas fa-tags"></i></div>
+    <span class="menu-item-label">Browse Genre</span>
+    <i class="fas fa-chevron-right menu-item-right"></i>
+  </a>
+</div>
+{% endif %}
 
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Load user info from /api/me
-  fetch('/api/me')
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var user = d.user;
-      if(user) {
-        // Avatar
-        if(user.avatar) {
-          var img = document.getElementById('userAvatar');
-          img.src = user.avatar;
-          img.style.display = 'block';
-          document.getElementById('avatarFallback').style.display = 'none';
-        }
-        document.getElementById('userNameEl').textContent = user.name || 'Pengguna';
-        document.getElementById('userEmailEl').textContent = user.email || '';
-        document.getElementById('logoutSection').style.display = 'block';
-        document.getElementById('loginSection').style.display = 'none';
-
-        // Check premium
-        fetch('/api/premium/status')
-          .then(function(r){ return r.json(); })
-          .then(function(p){
-            var badge = document.getElementById('premiumStatus');
-            var pBadge = document.getElementById('premiumBadge');
-            if(p.premium) {
-              badge.innerHTML = '<i class="fas fa-crown" style="font-size:10px;color:#fbbf24;"></i> <span>Premium Aktif</span>';
-              badge.style.background = 'rgba(251,191,36,0.15)';
-              badge.style.color = '#fbbf24';
-              badge.style.borderColor = 'rgba(251,191,36,0.3)';
-              if(pBadge) { pBadge.style.display = 'flex'; }
-            } else {
-              badge.innerHTML = '<i class="fas fa-user" style="font-size:10px;"></i> <span>Akun Gratis</span>';
-              badge.style.background = 'var(--bg3)';
-              badge.style.color = 'var(--text3)';
-            }
-          })
-          .catch(function(){
-            document.getElementById('premiumStatus').innerHTML = '<i class="fas fa-user" style="font-size:10px;"></i> <span>Akun Gratis</span>';
-          });
-      } else {
-        document.getElementById('userNameEl').textContent = 'Tamu';
-        document.getElementById('userEmailEl').textContent = 'Belum login';
-        document.getElementById('premiumStatus').innerHTML = '<i class="fas fa-user" style="font-size:10px;"></i> <span>Belum Login</span>';
-        document.getElementById('logoutSection').style.display = 'none';
-        document.getElementById('loginSection').style.display = 'block';
-      }
-    })
-    .catch(function(){
-      document.getElementById('loginSection').style.display = 'block';
-      document.getElementById('userNameEl').textContent = 'Tamu';
-      document.getElementById('premiumStatus').innerHTML = '<i class="fas fa-user" style="font-size:10px;"></i> <span>Belum Login</span>';
-    });
-});
-
-function doLogout() {
-  if(!confirm('Yakin mau keluar?')) return;
-  fetch('/auth/logout', {method:'POST'})
-    .then(function(){ window.location.href = '/'; })
-    .catch(function(){ window.location.href = '/'; });
-}
+// Load stats from localStorage
+(function(){
+  var list = JSON.parse(localStorage.getItem('mylist') || '[]');
+  var el = document.getElementById('statMyList');
+  if(el) el.textContent = list.length;
+})();
 </script>
 {% endblock %}

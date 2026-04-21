@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Dayynime — Nonton Anime Sub Indo{% endblock %}
+{% block header %}{% endblock %}
 {% block content %}
 
 {% set banner_animes = [] %}
@@ -7,111 +8,133 @@
   {% for a in popular.animes[:8] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 {% if banner_animes|length < 3 and data and data.ongoing %}
-  {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+  {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 6 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 
 <style>
-.idx-page { padding-bottom: 100px; }
-/* Hide base.html header di halaman home karena punya header sendiri */
-.app-header { display: none !important; }
-body { padding-top: 0 !important; }
-.idx-header { display:flex;align-items:center;gap:10px;padding:14px 14px 12px; }
-.idx-header-user { flex:1;display:flex;align-items:center;gap:12px;background:#161618;border-radius:14px;padding:10px 14px;border:1px solid rgba(255,255,255,0.06);text-decoration:none;color:inherit; }
-.idx-header-avatar { width:38px;height:38px;border-radius:10px;background:#1e1e21;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
-.idx-header-btn { width:44px;height:44px;border-radius:12px;background:rgba(140,20,50,0.8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:17px;-webkit-tap-highlight-color:transparent; }
-.idx-discover { margin:0 14px 14px;background:#161618;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.06); }
-.idx-discover-icon { width:44px;height:44px;border-radius:10px;background:rgba(232,65,90,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;color:#e8415a; }
-.idx-trending-pill { display:inline-flex;align-items:center;gap:6px;background:#e8415a;border-radius:20px;padding:6px 14px;font-size:13px;font-weight:900;color:#fff; }
-.idx-slider { display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 14px 2px; }
-.idx-slider::-webkit-scrollbar { display:none; }
-.idx-slide { flex-shrink:0;width:calc(100% - 60px);scroll-snap-align:center;border-radius:16px;overflow:hidden;position:relative;aspect-ratio:3/2;cursor:pointer;background:#161618;text-decoration:none;display:block; }
-@media (min-width:768px) { .idx-slide { width:420px;aspect-ratio:16/9; } .idx-slider { padding:0 20px 2px; } }
-.idx-slide img { width:100%;height:100%;object-fit:cover;display:block; }
-.idx-slide-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.15) 55%,transparent 100%); }
-.idx-slide-content { position:absolute;bottom:0;left:0;right:0;padding:12px 14px 14px; }
-.idx-slide-title { font-size:17px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.2; }
-.idx-slide-chips { display:flex;gap:8px;flex-wrap:wrap; }
-.idx-slide-chip { display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:#fff; }
-.idx-slide-score { position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.85);border-radius:8px;padding:4px 9px;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900;color:#f5c518;backdrop-filter:blur(4px); }
-.idx-dots { display:flex;justify-content:center;gap:5px;margin-top:10px; }
-.idx-dot { height:7px;border-radius:4px;cursor:pointer;border:none;padding:0;background:rgba(255,255,255,0.2);transition:all 0.3s; }
-.idx-dot.active { width:22px;background:#e8415a; }
-.idx-dot:not(.active) { width:7px; }
-.idx-sec-head { display:flex;align-items:center;justify-content:space-between;padding:16px 14px 12px; }
-.idx-sec-title { font-size:18px;font-weight:900;color:#fff; }
-.idx-sec-more { font-size:12px;color:#e8415a;font-weight:700;text-decoration:none; }
-.idx-cards { display:flex;gap:12px;overflow-x:auto;padding:0 14px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch; }
-.idx-cards::-webkit-scrollbar { display:none; }
-.idx-card { flex-shrink:0;width:150px;border-radius:12px;overflow:hidden;cursor:pointer;background:#161618;text-decoration:none;color:inherit;transition:transform 0.2s; }
-.idx-card:active { transform:scale(0.97); }
-.idx-card-poster { position:relative;aspect-ratio:2/3;overflow:hidden; }
-.idx-card-poster img { width:100%;height:100%;object-fit:cover;display:block; }
-.idx-card-score { position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.85);border-radius:8px;padding:3px 8px;display:flex;align-items:center;gap:3px;font-size:12px;font-weight:900;color:#f5c518;backdrop-filter:blur(4px); }
-.idx-card-score i { font-size:10px; }
-.idx-card-bottom { position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,transparent 100%);padding:28px 8px 8px; }
-.idx-card-btitle { font-size:11px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
-.idx-card-eps { display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,0.7); }
-.genre-visible { opacity:1 !important; transform:scale(1) !important; transition:opacity 0.3s ease,transform 0.3s ease; }
-.idx-sday.active { background:rgba(232,65,90,0.12) !important; border-color:rgba(232,65,90,0.3) !important; color:#e8415a !important; }
-.idx-sday.active div:last-child { background:#e8415a !important; }
+.home-page { padding-bottom: 100px; }
+
+/* HOME HEADER */
+.home-header { display:flex;align-items:center;gap:10px;padding:14px 16px 12px; position:sticky;top:0;z-index:100;background:var(--bg); border-bottom:1px solid var(--border); }
+.home-header-logo { display:flex;align-items:center;gap:8px;flex:1; text-decoration:none; }
+.home-logo-icon { width:36px;height:36px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center; }
+.home-logo-icon svg { width:20px;height:20px; }
+.home-logo-text { font-size:18px;font-weight:900;color:var(--text); }
+.home-logo-text span { color:var(--accent); }
+.home-header-btn { width:42px;height:42px;border-radius:var(--radius-sm);background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;text-decoration:none; }
+.home-header-btn:active { background:var(--accent-dim);color:var(--accent); }
+
+/* HERO SLIDER */
+.hero-slider { display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch; }
+.hero-slider::-webkit-scrollbar { display:none; }
+.hero-slide { flex-shrink:0;width:100%;scroll-snap-align:start;position:relative;height:280px;overflow:hidden; }
+.hero-slide-img { width:100%;height:100%;object-fit:cover;display:block; }
+.hero-slide-overlay { position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,10,0.1) 0%,rgba(10,14,10,0.4) 40%,rgba(10,14,10,0.97) 100%); }
+.hero-slide-content { position:absolute;bottom:0;left:0;right:0;padding:0 16px 18px; }
+.hero-slide-genres { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px; }
+.hero-slide-genre { font-size:10px;font-weight:700;color:var(--text2); }
+.hero-slide-genre::after { content:' •'; color:var(--text3); }
+.hero-slide-genre:last-child::after { content:''; }
+.hero-slide-title { font-size:20px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:10px; }
+.hero-slide-actions { display:flex;gap:10px;align-items:center; }
+.hero-play-btn { display:flex;align-items:center;gap:7px;background:var(--accent);color:#000;font-weight:900;font-size:13px;padding:10px 20px;border-radius:50px;text-decoration:none;border:none;cursor:pointer;font-family:inherit; }
+.hero-mylist-btn { display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.12);color:#fff;font-weight:800;font-size:13px;padding:10px 18px;border-radius:50px;text-decoration:none;border:1.5px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px); }
+.hero-score-badge { position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border-radius:8px;padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900;color:var(--gold); }
+
+/* SLIDER DOTS */
+.hero-dots { display:flex;justify-content:center;gap:5px;padding:10px 0 6px; }
+.hero-dot { height:6px;border-radius:3px;cursor:pointer;border:none;padding:0;background:rgba(255,255,255,0.15);transition:all 0.3s; }
+.hero-dot.active { width:20px;background:var(--accent); }
+.hero-dot:not(.active) { width:6px; }
+
+/* QUICK NAV PILLS */
+.quick-nav { display:flex;gap:8px;overflow-x:auto;padding:12px 16px 0;scrollbar-width:none; }
+.quick-nav::-webkit-scrollbar { display:none; }
+.quick-pill { flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;text-decoration:none;font-size:11px;font-weight:800;color:var(--text2);white-space:nowrap;transition:all 0.2s; }
+.quick-pill:active,.quick-pill.active { background:var(--accent-dim);border-color:var(--accent-glow);color:var(--accent); }
+.quick-pill-dot { width:6px;height:6px;border-radius:50%;flex-shrink:0; }
+
+/* ONGOING LIST */
+.ong-item { display:flex;align-items:center;gap:12px;padding:11px 16px;text-decoration:none;color:inherit;border-bottom:1px solid var(--border);transition:background 0.15s; }
+.ong-item:active { background:var(--bg2); }
+.ong-rank { font-size:13px;font-weight:900;color:var(--text3);width:22px;flex-shrink:0;text-align:center; }
+.ong-thumb { width:56px;height:76px;border-radius:10px;overflow:hidden;flex-shrink:0;position:relative; }
+.ong-thumb img { width:100%;height:100%;object-fit:cover;display:block; }
+.ong-info { flex:1;min-width:0; }
+.ong-title { font-size:13px;font-weight:800;color:var(--text);line-height:1.35;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.ong-meta { display:flex;gap:6px;align-items:center;flex-wrap:wrap; }
+.ong-score { display:flex;align-items:center;gap:3px;font-size:11px;font-weight:900;color:var(--gold); }
+.ong-eps { font-size:11px;color:var(--text2); }
+.ong-new-badge { background:var(--accent);color:#000;font-size:9px;font-weight:900;padding:2px 6px;border-radius:4px; }
+.ong-chevron { color:var(--text3);font-size:11px;flex-shrink:0; }
+
+/* SCHEDULE */
+.sched-days { display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none; }
+.sched-days::-webkit-scrollbar { display:none; }
+.sched-day { flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;cursor:pointer;transition:all 0.2s; }
+.sched-day.active { background:var(--accent-dim);border-color:var(--accent-glow); }
+.sched-day-label { font-size:10px;font-weight:800;color:var(--text3); }
+.sched-day.active .sched-day-label { color:var(--accent); }
+.sched-day-num { font-size:16px;font-weight:900;color:var(--text); }
+.sched-day.active .sched-day-num { color:var(--accent); }
+.sched-day-dot { width:5px;height:5px;border-radius:50%;background:transparent; }
+.sched-day.active .sched-day-dot { background:var(--accent); }
+
+/* FEATURED GENRE */
+.genre-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px; }
+.genre-card { border-radius:12px;overflow:hidden;position:relative;aspect-ratio:4/3;text-decoration:none;cursor:pointer;background:var(--bg2); }
+.genre-card-bg { width:100%;height:100%;object-fit:cover;display:block;opacity:0.5; }
+.genre-card-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 60%); }
+.genre-card-name { position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;font-weight:900;color:#fff; }
 </style>
 
-<div class="idx-page">
+<div class="home-page">
 
-<!-- Header -->
-<div class="idx-header">
-  <a href="/profile" class="idx-header-user">
-    <div class="idx-header-avatar"><i class="fas fa-user" style="color:#666;font-size:16px;"></i></div>
-    <div>
-      <div style="font-size:11px;color:#888;">Welcome!</div>
-      <div style="font-size:16px;font-weight:900;color:#fff;" id="idxHeaderName">Guest</div>
+<!-- HOME HEADER -->
+<div class="home-header">
+  <a href="/" class="home-header-logo">
+    <div class="home-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L3 8v13h6v-7h6v7h6V8L12 2z" fill="#000" opacity="0.9"/>
+      </svg>
     </div>
+    <span class="home-logo-text">Dayy<span>Nime</span></span>
   </a>
-  <button onclick="openHeaderSearch()" class="idx-header-btn"><i class="fas fa-search"></i></button>
-  <button onclick="openSidebar()" class="idx-header-btn" style="margin-left:6px;"><i class="fas fa-cog"></i></button>
+  <a href="/search" class="home-header-btn"><i class="fas fa-search"></i></a>
+  <button class="home-header-btn" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
 </div>
 
-<!-- Discover -->
-<a href="/animelist" style="text-decoration:none;" class="idx-discover">
-  <div class="idx-discover-icon"><i class="fas fa-compass"></i></div>
-  <div style="flex:1;"><div style="font-size:15px;font-weight:900;color:#fff;">Discover Anime</div><div style="font-size:11px;color:#888;">Find your next favorite series</div></div>
-  <div style="display:flex;align-items:center;gap:8px;"><div style="background:#e8415a;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:900;color:#fff;">96</div><i class="fas fa-chevron-right" style="color:#666;font-size:13px;"></i></div>
-</a>
-
-<!-- Trending label -->
-<div style="padding:0 14px 12px;"><div class="idx-trending-pill"><i class="fas fa-star"></i> Trending {% if banner_animes %}{{ banner_animes|length }}{% else %}25{% endif %}</div></div>
-
-<!-- Hero Slider -->
+<!-- HERO SLIDER -->
 {% if banner_animes %}
-<div style="margin-bottom:6px;">
-  <div class="idx-slider" id="idxSlider">
+<div style="position:relative;">
+  <div class="hero-slider" id="heroSlider">
     {% for anime in banner_animes[:6] %}
-    <a href="/anime/{{ anime.slug }}" class="idx-slide">
-      <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'">
-      <div class="idx-slide-overlay"></div>
-      {% if anime.score %}<div class="idx-slide-score" style="position:absolute;top:10px;right:10px;left:auto;background:rgba(232,65,90,0.92);border-radius:10px;padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900;color:#fff;backdrop-filter:blur(4px);"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
-      <div class="idx-slide-content">
-        <div class="idx-slide-title">{{ anime.title }}</div>
-        <div class="idx-slide-chips">
-          {% if anime.episode %}<div class="idx-slide-chip"><i class="fas fa-th-list" style="font-size:10px;"></i> {{ anime.episode }} Episodes</div>{% endif %}
-          {% if anime.duration %}<div class="idx-slide-chip"><i class="fas fa-clock" style="font-size:10px;"></i> {{ anime.duration }}</div>{% elif anime.episode %}<div class="idx-slide-chip"><i class="fas fa-clock" style="font-size:10px;"></i> 24 min</div>{% endif %}
-          {% if anime.type %}<div class="idx-slide-chip"><i class="fas fa-tv" style="font-size:10px;"></i> {{ anime.type }}</div>{% endif %}
+    <div class="hero-slide">
+      <img class="hero-slide-img" src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'">
+      <div class="hero-slide-overlay"></div>
+      {% if anime.score %}<div class="hero-score-badge"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
+      <div class="hero-slide-content">
+        {% if anime.genres %}<div class="hero-slide-genres">{% for g in anime.genres[:3] %}<span class="hero-slide-genre">{{ g }}</span>{% endfor %}</div>{% endif %}
+        <div class="hero-slide-title">{{ anime.title }}</div>
+        <div class="hero-slide-actions">
+          <a href="/anime/{{ anime.slug }}" class="hero-play-btn"><i class="fas fa-play"></i> Tonton</a>
+          <button class="hero-mylist-btn" onclick="addToList('{{ anime.slug }}','{{ anime.title }}')"><i class="fas fa-plus"></i> My List</button>
         </div>
       </div>
-    </a>
+    </div>
     {% endfor %}
   </div>
-  <div class="idx-dots" id="idxDots">
-    {% for anime in banner_animes[:6] %}<button class="idx-dot {% if loop.first %}active{% endif %}" data-i="{{ loop.index0 }}"></button>{% endfor %}
+  <div class="hero-dots" id="heroDots">
+    {% for anime in banner_animes[:6] %}<button class="hero-dot {% if loop.first %}active{% endif %}" data-i="{{ loop.index0 }}"></button>{% endfor %}
   </div>
 </div>
 <script>
 (function(){
-  var s=document.getElementById('idxSlider');
-  var dots=document.querySelectorAll('#idxDots .idx-dot');
+  var s=document.getElementById('heroSlider');
+  var dots=document.querySelectorAll('#heroDots .hero-dot');
   if(!s)return;
-  var cur=0,total=s.querySelectorAll('.idx-slide').length,timer=null,isDragging=false;
-  function getW(){return s.firstElementChild?(s.firstElementChild.offsetWidth+12):0;}
+  var cur=0,total=s.querySelectorAll('.hero-slide').length,timer=null,isDragging=false;
+  function getW(){return s.clientWidth||window.innerWidth;}
   function goTo(n){
     cur=(n+total)%total;
     s.scrollTo({left:cur*getW(),behavior:'smooth'});
@@ -119,15 +142,12 @@ body { padding-top: 0 !important; }
   }
   function startAuto(){timer=setInterval(function(){goTo(cur+1);},5000);}
   function resetAuto(){clearInterval(timer);startAuto();}
-  /* sync dots on manual scroll */
   s.addEventListener('scroll',function(){
     if(isDragging)return;
     var i=Math.round(s.scrollLeft/getW());
     if(i!==cur){cur=i;dots.forEach(function(d,j){d.classList.toggle('active',j===cur);});}
   },{passive:true});
-  /* dot click */
   dots.forEach(function(d){d.addEventListener('click',function(){goTo(parseInt(this.getAttribute('data-i')));resetAuto();});});
-  /* pause on touch */
   s.addEventListener('touchstart',function(){clearInterval(timer);isDragging=true;},{passive:true});
   s.addEventListener('touchend',function(){isDragging=false;resetAuto();},{passive:true});
   startAuto();
@@ -135,872 +155,126 @@ body { padding-top: 0 !important; }
 </script>
 {% endif %}
 
-<!-- Quick Nav -->
-<div style="padding:10px 14px 4px;">
-  <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px;">
-    <a href="/ongoing" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;flex-shrink:0;"></span> Ongoing</a>
-    <a href="/completed" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#60a5fa;display:inline-block;flex-shrink:0;"></span> Completed</a>
-    <a href="/movies" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-film" style="font-size:10px;color:#e8415a;"></i> Movie</a>
-    <a href="/popular" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-fire" style="font-size:10px;color:#e8415a;"></i> Populer</a>
-    <a href="/jadwal" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-calendar-alt" style="font-size:10px;color:#10B981;"></i> Jadwal</a>
-    <a href="/animelist" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-list" style="font-size:10px;color:#888;"></i> A-Z List</a>
-  </div>
+<!-- QUICK NAV -->
+<div class="quick-nav">
+  <a href="/ongoing" class="quick-pill"><span class="quick-pill-dot" style="background:#00e676;"></span> Ongoing</a>
+  <a href="/completed" class="quick-pill"><span class="quick-pill-dot" style="background:#60a5fa;"></span> Completed</a>
+  <a href="/movies" class="quick-pill"><i class="fas fa-film" style="font-size:10px;color:#e8415a;"></i> Movie</a>
+  <a href="/popular" class="quick-pill"><i class="fas fa-fire" style="font-size:10px;color:#ff9800;"></i> Populer</a>
+  <a href="/jadwal" class="quick-pill"><i class="fas fa-calendar-alt" style="font-size:10px;color:#00e676;"></i> Jadwal</a>
+  <a href="/animelist" class="quick-pill"><i class="fas fa-list" style="font-size:10px;color:var(--text3);"></i> A-Z List</a>
 </div>
 
-<!-- PWA Install Banner -->
-<div id="pwaBannerSection" style="margin:10px 14px 0;display:none;">
-  <div style="background:#161618;border:1px solid rgba(232,65,90,0.2);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;">
-    <img src="/static/icon.png" style="width:44px;height:44px;border-radius:11px;flex-shrink:0;">
-    <div style="flex:1;min-width:0;">
-      <div style="font-weight:900;font-size:13px;color:#fff;">Install Dayynime</div>
-      <div style="font-size:11px;color:#888;margin-top:2px;">Nonton anime lebih nyaman</div>
-    </div>
-    <button onclick="installPWA()" style="background:#e8415a;border:none;border-radius:10px;color:#fff;font-weight:900;font-size:12px;padding:9px 14px;cursor:pointer;flex-shrink:0;font-family:inherit;">Install</button>
-  </div>
-</div>
-<script>window.addEventListener('beforeinstallprompt',function(){var b=document.getElementById('pwaBannerSection');if(b)b.style.display='block';});</script>
-
-<!-- Server Switcher Section -->
-<style>
-@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.srv-section { padding: 14px 14px 4px; }
-.srv-section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-.srv-section-title { font-size:13px; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; }
-.srv-section-title i { color:#e8415a; font-size:11px; }
-.srv-section-sub { font-size:10px; color:#888; font-weight:400; margin-top:1px; }
-.srv-cards { display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
-.srv-cards::-webkit-scrollbar { display:none; }
-.srv-card {
-  flex-shrink:0; width:140px;
-  background:#161618; border:1.5px solid rgba(255,255,255,0.07);
-  border-radius:14px; padding:12px;
-  display:flex; flex-direction:column; gap:6px;
-  cursor:pointer; -webkit-tap-highlight-color:transparent;
-  transition:border-color 0.2s, background 0.2s;
-  position:relative; overflow:hidden;
-}
-.srv-card.active {
-  border-color:rgba(232,65,90,0.6);
-  background:linear-gradient(135deg,rgba(232,65,90,0.1),rgba(22,22,24,1));
-}
-.srv-card.active::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg,#e8415a,#ff7043);
-}
-.srv-card-badge {
-  display:inline-flex; align-items:center; gap:4px;
-  font-size:9px; font-weight:900; padding:3px 7px;
-  border-radius:5px; width:fit-content; letter-spacing:0.3px;
-}
-.srv-card-name { font-size:12px; font-weight:900; color:#fff; }
-.srv-card-desc { font-size:10px; color:#888; line-height:1.4; }
-.srv-card-check {
-  position:absolute; top:8px; right:8px;
-  width:18px; height:18px; border-radius:50%;
-  background:#e8415a; display:none;
-  align-items:center; justify-content:center;
-  font-size:9px; color:#fff;
-}
-.srv-card.active .srv-card-check { display:flex; }
-.srv-card-footer { margin-top:2px; display:flex; align-items:center; gap:4px; }
-.srv-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
-.srv-status { font-size:9px; color:#888; }
-</style>
-
-<div class="srv-section">
-  <div class="srv-section-head">
-    <div>
-      <div class="srv-section-title"><i class="fas fa-server"></i> Pilih Server</div>
-      <div class="srv-section-sub">Setiap server punya koleksi anime berbeda</div>
-    </div>
-  </div>
-  <div class="srv-cards">
-
-    <!-- v1 Samehadaku -->
-    <div class="srv-card {% if active_source == 'samehadaku' %}active{% endif %}" onclick="switchSource('samehadaku', this)">
-      <div class="srv-card-check"><i class="fas fa-check"></i></div>
-      <div class="srv-card-badge" style="background:rgba(232,65,90,0.15);color:#e8415a;">
-        <i class="fas fa-circle" style="font-size:6px;"></i> v1
-      </div>
-      <div class="srv-card-name">Dayynime-v1</div>
-
-      <div class="srv-card-footer">
-        <div class="srv-dot" style="background:#10B981;"></div>
-        <div class="srv-status">Aktif</div>
-      </div>
-    </div>
-
-    <!-- v2 Animasu -->
-    <div class="srv-card {% if active_source == 'animasu' %}active{% endif %}" onclick="switchSource('animasu', this)">
-      <div class="srv-card-check"><i class="fas fa-check"></i></div>
-      <div class="srv-card-badge" style="background:rgba(16,185,129,0.15);color:#10B981;">
-        <i class="fas fa-circle" style="font-size:6px;"></i> v2
-      </div>
-      <div class="srv-card-name">Dayynime-v2</div>
-
-      <div class="srv-card-footer">
-        <div class="srv-dot" style="background:#10B981;"></div>
-        <div class="srv-status">Aktif</div>
-      </div>
-    </div>
-
-    <!-- v3 Otakudesu -->
-    <div class="srv-card {% if active_source == 'otakudesu' %}active{% endif %}" onclick="switchSource('otakudesu', this)">
-      <div class="srv-card-check"><i class="fas fa-check"></i></div>
-      <div class="srv-card-badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;">
-        <i class="fas fa-circle" style="font-size:6px;"></i> v3
-      </div>
-      <div class="srv-card-name">Dayynime-v3</div>
-
-      <div class="srv-card-footer">
-        <div class="srv-dot" style="background:#10B981;"></div>
-        <div class="srv-status">Aktif</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script>
-function switchSource(src, el) {
-  var cards = document.querySelectorAll('.srv-card');
-  cards.forEach(function(c){ c.classList.remove('active'); });
-  el.classList.add('active');
-  fetch('/api/source/switch', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({source: src})
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if (d.ok) { setTimeout(function(){ location.reload(); }, 300); }
-  }).catch(function(){});
-}
-</script>
-
-<!-- Lanjutkan Nonton -->
-<div id="cwSection" style="display:none;padding:4px 0 0;">
-  <div class="idx-sec-head"><div class="idx-sec-title">Lanjutkan Nonton</div><button onclick="clearAllHistory()" style="font-size:12px;color:#e8415a;background:none;border:none;cursor:pointer;font-family:inherit;">Hapus ›</button></div>
-  <div class="cw-strip" id="cwList"></div>
-</div>
-
-<!-- Trending / Ongoing -->
-{% if data and data.ongoing %}
-<div>
-  <div class="idx-sec-head"><div class="idx-sec-title">Anime Ongoing</div><a href="/ongoing" class="idx-sec-more">Lihat Semua ›</a></div>
-  <div class="idx-cards">
-    {% for anime in data.ongoing[:12] %}
-    <a href="/anime/{{ anime.slug }}" class="idx-card" data-anime-slug="{{ anime.slug }}">
-      <div class="idx-card-poster">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.score %}<div class="idx-card-score"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
-        <div class="idx-card-bottom">
-          <div class="idx-card-btitle">{{ anime.title }}</div>
-          <div class="idx-card-eps"><i class="fas fa-play-circle" style="font-size:9px;"></i> {% if anime.episode %}Ep {{ anime.episode }}{% else %}{{ anime.type or 'Anime' }}{% endif %}</div>
-        </div>
-        <div class="acard-viewers" id="viewers-{{ anime.slug }}"><span class="acard-viewers-dot"></span><span class="acard-viewers-count" id="viewers-count-{{ anime.slug }}">0</span><span>nonton</span></div>
-      </div>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-
-<!-- Popular -->
+<!-- TOP HITS -->
 {% if popular and popular.animes %}
-<div>
-  <div class="idx-sec-head"><div class="idx-sec-title">Popular Anime</div><a href="/popular" class="idx-sec-more">Lihat Semua ›</a></div>
-  <div class="idx-cards">
-    {% for anime in popular.animes[:10] %}
-    <a href="/anime/{{ anime.slug }}" class="idx-card" data-anime-slug="{{ anime.slug }}">
-      <div class="idx-card-poster">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.score %}<div class="idx-card-score"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
-        <div class="idx-card-bottom">
-          <div class="idx-card-btitle">{{ anime.title }}</div>
-          <div class="idx-card-eps"><i class="fas fa-play-circle" style="font-size:9px;"></i> {{ anime.episode or anime.type or 'Anime' }}</div>
-        </div>
-      </div>
-    </a>
-    {% endfor %}
-  </div>
+<div class="sec-head">
+  <span class="sec-title">🔥 Top Hits</span>
+  <a href="/popular" class="sec-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
 </div>
-{% endif %}
-
-
-
-<!-- Recent Comments -->
-<div id="recentCommentsSec" style="padding:0 14px 28px;display:none;">
-  <div class="idx-sec-head">
-    <div class="idx-sec-title"><i class="fas fa-comments" style="color:#e8415a;margin-right:6px;font-size:13px;"></i>Komentar Terbaru</div>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:14px;">
-    <button class="rc-tab active" id="rcTabNewest" onclick="rcSwitchTab('newest')">Terbaru</button>
-    <button class="rc-tab" id="rcTabTop" onclick="rcSwitchTab('top')">Terpopuler</button>
-  </div>
-  <div id="rcList" style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:4px;"></div>
-</div>
-
-<!-- Baru Ditambahkan -->
-{% if data and data.recent %}
-<div>
-  <div class="idx-sec-head"><div class="idx-sec-title">Baru Ditambahkan</div><a href="/completed" class="idx-sec-more">Lihat Semua ›</a></div>
-  <div class="idx-cards">
-    {% for anime in data.recent[:10] %}
-    <a href="/anime/{{ anime.slug }}" class="idx-card">
-      <div class="idx-card-poster">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        <div class="idx-card-bottom">
-          <div class="idx-card-btitle">{{ anime.title }}</div>
-          <div class="idx-card-eps"><i class="fas fa-play-circle" style="font-size:9px;"></i> {{ anime.type or 'Anime' }}</div>
-        </div>
-      </div>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-
-
-
-<!-- Genre -->
-{% set genre_icons = {
-  'Action':'fas fa-fist-raised','Adventure':'fas fa-map-marked-alt',
-  'Comedy':'fas fa-laugh-beam','Drama':'fas fa-theater-masks',
-  'Fantasy':'fas fa-hat-wizard','Horror':'fas fa-skull',
-  'Magic':'fas fa-magic','Mecha':'fas fa-robot',
-  'Mystery':'fas fa-search','Psychological':'fas fa-brain',
-  'Romance':'fas fa-heart','School':'fas fa-graduation-cap',
-  'Sci-Fi':'fas fa-atom','Shounen':'fas fa-fire',
-  'Slice of Life':'fas fa-coffee','Sports':'fas fa-running',
-  'Supernatural':'fas fa-ghost','Thriller':'fas fa-bolt',
-  'Music':'fas fa-music','Isekai':'fas fa-door-open',
-  'Demons':'fas fa-dragon','Game':'fas fa-gamepad',
-  'Historical':'fas fa-landmark','Space':'fas fa-rocket',
-  'Vampire':'fas fa-tint','Aksi':'fas fa-fist-raised',
-  'Petualangan':'fas fa-map-marked-alt','Komedi':'fas fa-laugh-beam',
-  'Romansa':'fas fa-heart','Misteri':'fas fa-search','Sekolah':'fas fa-graduation-cap'
-} %}
-{% set fallback_genres = [
-  {'name':'Action','slug':'action'},{'name':'Adventure','slug':'adventure'},
-  {'name':'Comedy','slug':'comedy'},{'name':'Drama','slug':'drama'},
-  {'name':'Fantasy','slug':'fantasy'},{'name':'Horror','slug':'horror'},
-  {'name':'Isekai','slug':'isekai'},{'name':'Magic','slug':'magic'},
-  {'name':'Mecha','slug':'mecha'},{'name':'Mystery','slug':'mystery'},
-  {'name':'Psychological','slug':'psychological'},{'name':'Romance','slug':'romance'},
-  {'name':'School','slug':'school'},{'name':'Sci-Fi','slug':'sci-fi'},
-  {'name':'Shounen','slug':'shounen'},{'name':'Slice of Life','slug':'slice-of-life'},
-  {'name':'Sports','slug':'sports'},{'name':'Supernatural','slug':'supernatural'}
-] %}
-{% set genre_data = genres if genres else fallback_genres %}
-
-<!-- ══ SURVEY RESULT SECTION ══ -->
-<div id="surveySectionWrap" style="padding:14px 14px 4px;">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <div style="display:flex;align-items:center;gap:7px;">
-      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#e8415a,#c0183a);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">⭐</div>
-      <div>
-        <div style="font-size:14px;font-weight:900;color:#fff;">Suara Pengguna</div>
-        <div id="svsTotal" style="font-size:10px;color:#888;font-weight:600;margin-top:1px;">Memuat...</div>
+<div class="cards-scroll">
+  {% for anime in popular.animes[:10] %}
+  <a href="/anime/{{ anime.slug }}" class="anime-card">
+    <div class="anime-card-poster">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'" loading="lazy">
+      {% if anime.score %}<div class="anime-card-score"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
+      <div class="anime-card-rank">{{ loop.index }}</div>
+      <div class="anime-card-bottom">
+        <div class="anime-card-btitle">{{ anime.title }}</div>
+        {% if anime.episode %}<div class="anime-card-eps"><span class="anime-card-ep-badge"><i class="fas fa-film"></i> {{ anime.episode }} Eps</span></div>{% endif %}
       </div>
     </div>
-    <button id="svsTakeSurveyBtn" onclick="window.openSurvey&&openSurvey()" style="display:none;background:#e8415a;border:none;border-radius:10px;color:#fff;font-weight:900;font-size:11px;padding:7px 12px;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;">Isi Survey</button>
-  </div>
-  <!-- tabs -->
-  <div id="svsTabs" style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px;-webkit-overflow-scrolling:touch;"></div>
-  <!-- bars -->
-  <div id="svsBars" style="background:#16161a;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:12px 14px;margin-top:0;"></div>
-</div>
-<style>
-.svs-tab{flex-shrink:0;padding:5px 12px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#888;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:all 0.2s;white-space:nowrap;}
-.svs-tab.active{background:rgba(232,65,90,0.15);border-color:rgba(232,65,90,0.4);color:#e8415a;}
-.svs-bar-wrap{height:5px;border-radius:3px;background:rgba(255,255,255,0.07);overflow:hidden;flex:1;}
-.svs-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,#e8415a,#ff7043);width:0%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);}
-</style>
-<script>
-(function(){
-  var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';
-  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
-  var TABLE='dayynime_survey';
-  var CATS=[
-    {key:'rating',label:'⭐ Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['😤','😕','😐','👍','🔥']},
-    {key:'fitur',label:'🎯 Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['🎬','🖥️','▶️','🔖','📅','💬']},
-    {key:'streaming',label:'📺 Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['🚀','👍','⏳','😤']},
-    {key:'tampilan',label:'🎨 Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['🔥','✨','😐','🛠️']},
-    {key:'saran',label:'💡 Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['⬇️','🔔','📱','🎵','🪟','👏']}
-  ];
-  var allRows=null,activeCat=0;
-
-  function renderSectionBars(cat,rows,total){
-    var el=document.getElementById('svsBars');
-    if(!el)return;
-    el.innerHTML='';
-    var counts={};cat.options.forEach(function(o){counts[o]=0;});
-    if(rows){rows.forEach(function(row){var val=row[cat.key];if(cat.isNumeric&&typeof val==='number')val='Bintang '+val;if(val&&counts.hasOwnProperty(val))counts[val]++;});}
-    cat.options.forEach(function(opt,oi){
-      var cnt=counts[opt]||0,pct=total>0?Math.round(cnt/total*100):0;
-      var d=document.createElement('div');
-      d.style.cssText='margin-bottom:10px;';
-      d.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
-        +'<div style="font-size:12px;font-weight:700;color:#c0c0c8;">'+(cat.icons[oi]||'')+' '+opt+'</div>'
-        +'<div style="font-size:11px;font-weight:900;color:'+(pct>=50?'#e8415a':'#888')+';">'+pct+'%</div>'
-        +'</div>'
-        +'<div style="display:flex;align-items:center;gap:8px;">'
-        +'<div class="svs-bar-wrap"><div class="svs-bar" id="svsBar_'+oi+'"></div></div>'
-        +'<div style="font-size:9px;color:#555;white-space:nowrap;font-weight:600;">'+cnt+'/'+total+'</div>'
-        +'</div>';
-      el.appendChild(d);
-      setTimeout(function(){var b=document.getElementById('svsBar_'+oi);if(b)b.style.width=pct+'%';},60+oi*70);
-    });
-  }
-
-  function buildTabs(){
-    var tabsEl=document.getElementById('svsTabs');
-    if(!tabsEl)return;
-    tabsEl.innerHTML='';
-    CATS.forEach(function(cat,ci){
-      var t=document.createElement('button');
-      t.className='svs-tab'+(ci===0?' active':'');
-      t.textContent=cat.label;
-      t.onclick=function(){
-        document.querySelectorAll('.svs-tab').forEach(function(x){x.classList.remove('active');});
-        t.classList.add('active');
-        activeCat=ci;
-        renderSectionBars(CATS[ci],allRows,allRows?allRows.length:0);
-      };
-      tabsEl.appendChild(t);
-    });
-  }
-
-  fetch(SUPABASE_URL+'/rest/v1/'+TABLE+'?select=rating,fitur,streaming,tampilan,saran',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
-  .then(function(r){return r.json();})
-  .then(function(rows){
-    allRows=rows||[];
-    var total=allRows.length;
-    var tot=document.getElementById('svsTotal');
-    if(tot)tot.textContent=total+' responden telah mengisi survey';
-    buildTabs();
-    renderSectionBars(CATS[0],allRows,total);
-  })
-  .catch(function(){
-    var tot=document.getElementById('svsTotal');
-    if(tot)tot.textContent='Gagal memuat data';
-  });
-})();
-</script>
-
-<div>
-  <div class="idx-sec-head"><div class="idx-sec-title">Genre</div><a href="/genres" class="idx-sec-more">Semua ›</a></div>
-  <div style="display:flex;gap:8px;overflow-x:auto;padding:0 14px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
-    {% for g in genre_data %}
-    <a href="/genre/{{ g.slug }}" class="idx-genre-chip" style="display:inline-flex;align-items:center;gap:6px;background:#161618;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:7px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#C0C0C8;white-space:nowrap;flex-shrink:0;opacity:0;transform:scale(0.9);">
-      <i class="{{ genre_icons.get(g.name, 'fas fa-play') }}" style="font-size:11px;color:#e8415a;opacity:0.8;"></i>
-      <span>{{ g.name }}</span>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-
-<!-- Top Populer -->
-{% if popular and popular.animes %}
-<div style="margin-top:8px;">
-  <div class="idx-sec-head">
-    <div style="display:flex;align-items:center;gap:8px;"><div class="idx-sec-title">Top Populer</div><div style="background:rgba(245,197,24,0.12);color:#f5c518;font-size:9px;font-weight:900;padding:3px 8px;border-radius:10px;letter-spacing:0.3px;">CHART</div></div>
-    <a href="/popular" class="idx-sec-more">Lihat Semua ›</a>
-  </div>
-  <div style="padding:0 14px;">
-    {% for anime in popular.animes[:8] %}
-    <a href="/anime/{{ anime.slug }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none;color:inherit;" class="idx-rank-item">
-      <div style="width:28px;text-align:center;flex-shrink:0;font-size:{% if loop.index <= 3 %}17{% else %}14{% endif %}px;font-weight:900;color:{% if loop.index == 1 %}#f5c518{% elif loop.index == 2 %}#C0C0C8{% elif loop.index == 3 %}#cd7f32{% else %}#555{% endif %};">{{ loop.index }}</div>
-      <div style="width:44px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#1e1e21;">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
-      </div>
-      <div style="flex:1;min-width:0;" class="idx-rank-info">
-        <div style="font-size:13px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;" class="idx-rank-title">{{ anime.title }}</div>
-        <div style="display:flex;align-items:center;gap:8px;" class="idx-rank-score">
-          <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;" class="idx-rank-score-bar">
-            <div style="height:100%;background:linear-gradient(90deg,#e8415a,#ff6b6b);border-radius:4px;width:{{ ((anime.score|float / 10) * 100)|int if anime.score else (90 - loop.index * 5) }}%;" class="idx-rank-score-fill"></div>
-          </div>
-          <span style="font-size:11px;font-weight:900;color:#f5c518;flex-shrink:0;" class="idx-rank-score-num">{{ anime.score or '—' }}</span>
-        </div>
-      </div>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-
-<!-- Jadwal Rilis -->
-{% if schedule and schedule.schedule %}
-<div style="margin-top:8px;">
-  <div class="idx-sec-head"><div class="idx-sec-title">Jadwal Rilis</div><a href="/jadwal" class="idx-sec-more" style="color:#10B981;">Lengkap ›</a></div>
-  <div style="display:flex;gap:8px;overflow-x:auto;padding:0 14px 12px;scrollbar-width:none;">
-    {% for day in schedule.schedule.keys() %}
-    <button class="idx-sday" data-sday="{{ day }}" style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;background:#161618;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:8px 12px;cursor:pointer;font-family:inherit;color:#888;font-size:10px;font-weight:700;transition:all 0.2s;min-width:52px;">
-      <div style="font-size:12px;font-weight:900;">{{ day[:3] }}</div>
-      <div style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.15);"></div>
-    </button>
-    {% endfor %}
-  </div>
-  {% for day, animes in schedule.schedule.items() %}
-  <div class="idx-schedule-panel" id="idx-panel-{{ day }}" style="display:none;padding:0 14px;">
-    {% for anime in animes[:8] %}
-    <a href="/anime/{{ anime.slug }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none;color:inherit;" class="idx-schedule-item">
-      <div style="width:48px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#1e1e21;">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ anime.title }}</div>
-        {% if anime.episode %}<div style="font-size:11px;color:#888;">Episode {{ anime.episode }}</div>{% endif %}
-        {% if anime.time %}<div style="font-size:10px;color:#10B981;margin-top:3px;"><i class="fas fa-clock"></i> {{ anime.time }}</div>{% endif %}
-      </div>
-    </a>
-    {% endfor %}
-  </div>
+  </a>
   {% endfor %}
 </div>
-<script>
-(function(){
-  var days=document.querySelectorAll('.idx-sday'),panels=document.querySelectorAll('.idx-schedule-panel');
-  function activate(dayEl){
-    days.forEach(function(d){d.classList.remove('active');});
-    panels.forEach(function(p){p.style.display='none';});
-    dayEl.classList.add('active');
-    var panel=document.getElementById('idx-panel-'+dayEl.getAttribute('data-sday'));
-    if(panel)panel.style.display='block';
-  }
-  days.forEach(function(d){d.addEventListener('click',function(){activate(d);});});
-  var today=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][new Date().getDay()];
-  var todayEl=document.querySelector('[data-sday="'+today+'"]');
-  if(todayEl){activate(todayEl);}else if(days[0]){activate(days[0]);}
-})();
-</script>
 {% endif %}
 
-<!-- Komunitas -->
-<div style="padding:0 14px 28px;">
-  <div style="background:#161618;border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.06);">
-    <div style="font-size:12px;font-weight:900;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
-    <div style="display:flex;gap:8px;">
-      <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-facebook-f"></i> FB Page</a>
-      <a href="https://facebook.com/groups/1569311164620890/" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fas fa-users"></i> Grup FB</a>
-      <a href="https://discord.gg/bChVdNUzh" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#7983f5;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-discord"></i> Discord</a>
+<!-- ONGOING TERBARU -->
+{% if data and data.ongoing %}
+<div class="sec-head">
+  <span class="sec-title">🟢 Episode Terbaru</span>
+  <a href="/ongoing" class="sec-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
+</div>
+<div>
+  {% for anime in data.ongoing[:10] %}
+  <a href="/anime/{{ anime.slug }}" class="ong-item">
+    <span class="ong-rank">{{ loop.index }}</span>
+    <div class="ong-thumb">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'" loading="lazy">
     </div>
-  </div>
+    <div class="ong-info">
+      <div class="ong-title">{{ anime.title }}</div>
+      <div class="ong-meta">
+        {% if anime.score %}<div class="ong-score"><i class="fas fa-star" style="font-size:10px;"></i> {{ anime.score }}</div>{% endif %}
+        {% if anime.episode %}<span class="ong-eps">Eps {{ anime.episode }}</span>{% endif %}
+        {% if loop.index <= 3 %}<span class="ong-new-badge">BARU</span>{% endif %}
+      </div>
+    </div>
+    <i class="fas fa-chevron-right ong-chevron"></i>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- COMPLETED -->
+{% if data and data.completed %}
+<div class="sec-head">
+  <span class="sec-title">✅ Completed</span>
+  <a href="/completed" class="sec-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
+</div>
+<div class="cards-scroll">
+  {% for anime in data.completed[:8] %}
+  <a href="/anime/{{ anime.slug }}" class="anime-card">
+    <div class="anime-card-poster">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'" loading="lazy">
+      {% if anime.score %}<div class="anime-card-score"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
+      <div class="anime-card-bottom">
+        <div class="anime-card-btitle">{{ anime.title }}</div>
+        {% if anime.episode %}<div class="anime-card-eps"><span class="anime-card-ep-badge"><i class="fas fa-check"></i> {{ anime.episode }} Eps</span></div>{% endif %}
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- MOVIES -->
+{% if data and data.movies %}
+<div class="sec-head">
+  <span class="sec-title">🎬 Movie</span>
+  <a href="/movies" class="sec-more">Lihat Semua <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
+</div>
+<div class="cards-scroll">
+  {% for anime in data.movies[:8] %}
+  <a href="/anime/{{ anime.slug }}" class="anime-card">
+    <div class="anime-card-poster">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'" loading="lazy">
+      {% if anime.score %}<div class="anime-card-score"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
+      <div class="anime-card-bottom">
+        <div class="anime-card-btitle">{{ anime.title }}</div>
+        <div class="anime-card-eps"><span class="anime-card-ep-badge"><i class="fas fa-film"></i> Movie</span></div>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
 </div>
 
 <script>
-(function(){fetch('/api/me').then(function(r){return r.json();}).then(function(d){if(d.user&&d.user.name){var el=document.getElementById('idxHeaderName');if(el)el.textContent=d.user.name;}}).catch(function(){});})();
-(function(){function timeAgo(iso){var diff=(Date.now()-new Date(iso).getTime())/1000;if(diff<60)return'Baru saja';if(diff<3600)return Math.floor(diff/60)+' menit lalu';if(diff<86400)return Math.floor(diff/3600)+' jam lalu';return Math.floor(diff/86400)+' hari lalu';}function renderHistory(history){var sec=document.getElementById('cwSection');var list=document.getElementById('cwList');if(!sec||!list)return;if(!history||!history.length){sec.style.display='none';return;}list.innerHTML=history.map(function(item){var epNum=parseInt((item.ep_name||'').match(/\d+/)||[1])||1;var pct=Math.min(92,Math.max(6,(epNum%24)/24*100));return'<a href="/episode/'+item.ep_slug+'?anime='+item.anime_slug+'" class="cw-card"><div class="cw-thumb"><img src="'+(item.anime_poster||'/static/no-image.svg')+'" loading="lazy" onerror="this.src=\'/static/no-image.svg\'"><div class="cw-play-overlay"><i class="fas fa-play" style="font-size:9px;"></i></div><div class="cw-progress-bar"><div class="cw-progress-fill" style="width:'+pct+'%"></div></div></div><div class="cw-info"><div class="cw-title">'+(item.anime_title||'Anime')+'</div><div class="cw-ep-name">'+(item.ep_name||'Episode')+'</div><div class="cw-meta"><i class="fas fa-clock"></i>'+timeAgo(item.watched_at)+'</div></div><button class="cw-del" title="Hapus" onclick="event.preventDefault();event.stopPropagation();delHistory(\''+item.anime_slug+'\')">×</button></a>';}).join('');sec.style.display='';}function loadHistory(){fetch('/api/history?limit=10').then(function(r){return r.json();}).then(function(d){if(!d.ok||!d.history||!d.history.length)return;renderHistory(d.history);}).catch(function(){});}window.delHistory=function(slug){fetch('/api/history/'+slug,{method:'DELETE'}).then(function(){loadHistory();}).catch(function(){});};window.clearAllHistory=function(){if(!confirm('Hapus semua riwayat nonton?'))return;fetch('/api/history/all',{method:'DELETE'}).then(function(){document.getElementById('cwSection').style.display='none';}).catch(function(){});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',loadHistory);else loadHistory();})();
+function addToList(slug, title){
+  // Simpan ke localStorage
+  var list = JSON.parse(localStorage.getItem('mylist') || '[]');
+  var idx = list.findIndex(function(i){return i.slug===slug;});
+  if(idx >= 0){
+    list.splice(idx,1);
+    showToast('Dihapus dari My List');
+  } else {
+    list.push({slug:slug,title:title});
+    showToast('✓ Ditambahkan ke My List','green');
+  }
+  localStorage.setItem('mylist',JSON.stringify(list));
+}
 </script>
-
-<script>
-/* RANK BARS ANIMATION */
-(function(){
-  var bars=document.querySelectorAll('.idx-rank-score-fill');
-  if(!bars.length)return;
-  bars.forEach(function(bar){bar._tw=bar.style.width||'70%';bar.style.width='0%';bar.style.transition='none';});
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if(!entry.isIntersecting)return;
-      var bar=entry.target,i=Array.from(bars).indexOf(bar);
-      setTimeout(function(){bar.style.transition='width 0.9s cubic-bezier(0.4,0,0.2,1)';bar.style.width=bar._tw;},200+i*80);
-      obs.unobserve(bar);
-    });
-  },{threshold:0.4});
-  bars.forEach(function(b){obs.observe(b);});
-})();
-/* GENRE CHIP REVEAL */
-(function(){
-  var chips=document.querySelectorAll('.idx-genre-chip');
-  if(!chips.length)return;
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if(!entry.isIntersecting)return;
-      var el=entry.target,idx=parseInt(el.getAttribute('data-gi'))||0;
-      setTimeout(function(){el.classList.add('genre-visible');},idx*40);
-      obs.unobserve(el);
-    });
-  },{threshold:0.1});
-  chips.forEach(function(chip,i){chip.setAttribute('data-gi',i);obs.observe(chip);});
-})();
-</script>
-<style>
-.rc-tab { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); color:rgba(255,255,255,0.45); padding:6px 14px; border-radius:50px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; -webkit-tap-highlight-color:transparent; transition:all 0.2s; }
-.rc-tab.active { background:#e8415a; border-color:#e8415a; color:#fff; box-shadow:0 3px 10px rgba(232,65,90,0.35); }
-.rc-card { flex-shrink:0; width:240px; background:#16161a; border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:border-color 0.2s; }
-.rc-card:active { border-color:rgba(232,65,90,0.4); }
-.rc-card-top { display:flex; align-items:center; gap:8px; }
-.rc-avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0; background:#222; }
-.rc-avatar-placeholder { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#e8415a,#ff6b6b); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; color:#fff; flex-shrink:0; }
-.rc-user { font-size:12px; font-weight:800; color:#fff; }
-.rc-time { font-size:10px; color:rgba(255,255,255,0.3); margin-top:1px; }
-.rc-content { font-size:12px; color:rgba(255,255,255,0.7); line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; flex:1; }
-.rc-anime-link { display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:rgba(255,255,255,0.3); border-top:1px solid rgba(255,255,255,0.06); padding-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.rc-anime-link i { color:#e8415a; flex-shrink:0; }
-</style>
-<script>
-(function(){
-  var allComments=[], currentTab='newest';
-  function timeAgoRc(iso){
-    var diff=(Date.now()-new Date(iso).getTime())/1000;
-    if(diff<60)return'Baru saja';
-    if(diff<3600)return Math.floor(diff/60)+' menit lalu';
-    if(diff<86400)return Math.floor(diff/3600)+' jam lalu';
-    return Math.floor(diff/86400)+' hari lalu';
-  }
-  function renderRc(comments){
-    var list=document.getElementById('rcList');
-    if(!list)return;
-    if(!comments||!comments.length){
-      list.innerHTML='<div style="color:rgba(255,255,255,0.2);font-size:12px;padding:20px 0;">Belum ada komentar</div>';
-      return;
-    }
-    list.innerHTML=comments.map(function(c){
-      var initial=(c.user_name||'?')[0].toUpperCase();
-      var avatar=c.user_avatar
-        ?'<img class="rc-avatar" src="'+c.user_avatar+'" onerror="this.outerHTML=\'<div class=rc-avatar-placeholder>'+initial+'</div>\'">'
-        :'<div class="rc-avatar-placeholder">'+initial+'</div>';
-      var slug=c.anime_slug||'';
-      var animeName=slug.replace(/-/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase();});
-      return '<div class="rc-card" onclick="location.href=\'/anime/'+slug+'\'">'
-        +'<div class="rc-card-top">'+avatar
-        +'<div><div class="rc-user">'+(c.user_name||'User')+'</div><div class="rc-time">'+timeAgoRc(c.created_at)+'</div></div></div>'
-        +'<div class="rc-content">'+(c.content||'')+'</div>'
-        +'<div class="rc-anime-link"><i class="fas fa-file-alt"></i>'+animeName+'</div>'
-        +'</div>';
-    }).join('');
-  }
-  window.rcSwitchTab=function(tab){
-    currentTab=tab;
-    document.getElementById('rcTabNewest').classList.toggle('active',tab==='newest');
-    document.getElementById('rcTabTop').classList.toggle('active',tab==='top');
-    var sorted=allComments.slice();
-    if(tab==='top'){sorted.sort(function(a,b){return(b.likes||0)-(a.likes||0);});}
-    renderRc(sorted.slice(0,10));
-  };
-  fetch('/api/comments/recent').then(function(r){return r.json();}).then(function(data){
-    if(!data||!data.length)return;
-    allComments=data;
-    document.getElementById('recentCommentsSec').style.display='';
-    renderRc(data.slice(0,10));
-  }).catch(function(){});
-})();
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-(function(){var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';var client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);var slugs=[];document.querySelectorAll('.idx-card[data-anime-slug]').forEach(function(el){var s=el.getAttribute('data-anime-slug');if(s&&slugs.indexOf(s)===-1)slugs.push(s);});var uid=sessionStorage.getItem('dyn_uid');if(!uid){uid='u_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();sessionStorage.setItem('dyn_uid',uid);}var channels={};function updateBadge(slug,count){var badge=document.getElementById('viewers-'+slug);var countEl=document.getElementById('viewers-count-'+slug);if(!badge||!countEl)return;if(count>=1){countEl.textContent=count;badge.classList.add('visible');}else{badge.classList.remove('visible');}}function subscribeToSlug(slug){if(channels[slug])return;var ch=client.channel('anime-viewers:'+slug,{config:{presence:{key:uid}}});ch.on('presence',{event:'sync'},function(){updateBadge(slug,Object.keys(ch.presenceState()).length);});ch.subscribe();channels[slug]=ch;}slugs.forEach(subscribeToSlug);window.addEventListener('beforeunload',function(){Object.values(channels).forEach(function(ch){try{client.removeChannel(ch);}catch(e){}});});})();
-</script>
-
-<!-- ══════════════════════════════════════════════════════════
-     SURVEY POPUP — "Gimana Dayynime?"
-     ══════════════════════════════════════════════════════════ -->
-<style>
-#surveyOverlay{display:none;position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;padding:0;opacity:0;transition:opacity 0.3s ease;}
-#surveyOverlay.open{opacity:1;}
-#surveySheet{width:100%;max-width:480px;background:linear-gradient(160deg,#1a1a1e 0%,#161618 100%);border-radius:24px 24px 0 0;border:1px solid rgba(232,65,90,0.18);border-bottom:none;box-shadow:0 -12px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(232,65,90,0.08);transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.28,0.64,1);max-height:92vh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,16px);}
-#surveyOverlay.open #surveySheet{transform:translateY(0);}
-.sv-handle{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);margin:12px auto 0;}
-.sv-header{padding:16px 20px 14px;display:flex;align-items:center;justify-content:space-between;}
-.sv-logo{display:flex;align-items:center;gap:8px;}
-.sv-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#e8415a,#c0183a);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;box-shadow:0 4px 16px rgba(232,65,90,0.45);}
-.sv-logo-text{font-size:14px;font-weight:900;color:#fff;}
-.sv-logo-text span{color:#e8415a;}
-.sv-close-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#888;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.sv-close-btn:active{background:rgba(232,65,90,0.2);color:#e8415a;}
-.sv-steps{display:flex;gap:5px;padding:0 20px 16px;}
-.sv-step-dot{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.1);transition:background 0.35s;}
-.sv-step-dot.done{background:#e8415a;}
-.sv-step-dot.active{background:#ff6b9d;}
-.sv-question{padding:0 20px 16px;display:none;animation:svSlideIn 0.3s ease both;}
-.sv-question.active{display:block;}
-@keyframes svSlideIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
-.sv-q-emoji{font-size:32px;margin-bottom:8px;line-height:1;}
-.sv-q-label{font-size:11px;font-weight:900;color:#e8415a;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;}
-.sv-q-text{font-size:17px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:16px;}
-.sv-options{display:flex;flex-direction:column;gap:8px;}
-.sv-options.grid-2{flex-direction:row;flex-wrap:wrap;}
-.sv-options.grid-2 .sv-opt{width:calc(50% - 4px);}
-.sv-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:all 0.2s;color:#c0c0c8;font-size:13px;font-weight:700;-webkit-tap-highlight-color:transparent;}
-.sv-opt:active{transform:scale(0.97);}
-.sv-opt.selected{background:rgba(232,65,90,0.12);border-color:rgba(232,65,90,0.55);color:#fff;}
-.sv-opt.selected .sv-opt-icon{color:#e8415a;}
-.sv-opt-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;transition:color 0.2s;}
-.sv-opt-check{margin-left:auto;width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;flex-shrink:0;transition:all 0.2s;}
-.sv-opt.selected .sv-opt-check{background:#e8415a;border-color:#e8415a;color:#fff;}
-.sv-stars{display:flex;gap:8px;justify-content:center;padding:8px 0 16px;}
-.sv-star{font-size:36px;cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.2s;-webkit-tap-highlight-color:transparent;line-height:1;}
-.sv-star.lit{color:#f5c518;transform:scale(1.1);}
-.sv-star:active{transform:scale(0.9);}
-.sv-star-label{text-align:center;font-size:12px;font-weight:700;color:#888;margin-top:4px;min-height:18px;transition:color 0.2s;}
-.sv-footer{display:flex;align-items:center;gap:10px;padding:14px 20px 20px;}
-.sv-btn-back{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.08);color:#888;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
-.sv-btn-back:active{background:rgba(255,255,255,0.1);}
-.sv-btn-next{flex:1;height:44px;border-radius:12px;background:linear-gradient(135deg,#e8415a,#c0183a);border:none;color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(232,65,90,0.45);transition:all 0.2s;font-family:inherit;letter-spacing:0.2px;}
-.sv-btn-next:active{transform:scale(0.97);box-shadow:0 2px 10px rgba(232,65,90,0.3);}
-.sv-btn-next:disabled{opacity:0.4;pointer-events:none;}
-#svResultScreen{display:none;padding:0 20px 24px;}
-#svResultScreen.active{display:block;animation:svSlideIn 0.35s ease both;}
-.sv-result-hero{text-align:center;padding:20px 0 18px;}
-.sv-result-trophy{font-size:52px;line-height:1;margin-bottom:10px;animation:svBounce 0.6s cubic-bezier(0.34,1.56,0.64,1) both;}
-@keyframes svBounce{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
-.sv-result-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;}
-.sv-result-sub{font-size:12px;color:#888;font-weight:600;}
-.sv-result-total{font-size:11px;color:#e8415a;font-weight:800;margin-top:6px;letter-spacing:0.5px;}
-.sv-stats{margin-top:6px;}
-.sv-stat-item{margin-bottom:14px;}
-.sv-stat-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.sv-stat-name{font-size:12px;font-weight:800;color:#c0c0c8;display:flex;align-items:center;gap:5px;}
-.sv-stat-pct{font-size:12px;font-weight:900;color:#e8415a;}
-.sv-stat-bar-wrap{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;}
-.sv-stat-bar{height:100%;border-radius:4px;width:0%;background:linear-gradient(90deg,#e8415a,#ff6b9d);transition:width 0.8s cubic-bezier(0.4,0,0.2,1);}
-.sv-stat-votes{font-size:10px;color:#555;font-weight:600;margin-top:3px;}
-.sv-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
-.sv-tabs::-webkit-scrollbar{display:none;}
-.sv-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.08);color:#888;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
-.sv-tab.active{background:rgba(232,65,90,0.15);border-color:rgba(232,65,90,0.4);color:#e8415a;}
-.sv-done-btn{width:100%;height:46px;border-radius:14px;margin-top:18px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);color:#c0c0c8;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:all 0.2s;}
-.sv-done-btn:active{background:rgba(255,255,255,0.1);}
-</style>
-
-<div id="surveyOverlay" onclick="if(event.target===this)closeSurvey()">
-  <div id="surveySheet">
-    <div class="sv-handle"></div>
-    <div class="sv-header">
-      <div class="sv-logo">
-        <div class="sv-logo-icon"><i class="fas fa-star"></i></div>
-        <div class="sv-logo-text">Dayy<span>nime</span> Survey</div>
-      </div>
-      <button class="sv-close-btn" onclick="closeSurvey()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="sv-steps" id="svStepDots"></div>
-
-    <!-- Q1: Bintang -->
-    <div class="sv-question active" data-q="0">
-      <div class="sv-q-emoji">⭐</div>
-      <div class="sv-q-label">Pertanyaan 1 dari 5</div>
-      <div class="sv-q-text">Seberapa puas kamu dengan Dayynime secara keseluruhan?</div>
-      <div class="sv-stars" id="svStars">
-        <span class="sv-star" data-val="1">★</span>
-        <span class="sv-star" data-val="2">★</span>
-        <span class="sv-star" data-val="3">★</span>
-        <span class="sv-star" data-val="4">★</span>
-        <span class="sv-star" data-val="5">★</span>
-      </div>
-      <div class="sv-star-label" id="svStarLabel">Tap bintang untuk memberi nilai</div>
-    </div>
-
-    <!-- Q2: Fitur -->
-    <div class="sv-question" data-q="1">
-      <div class="sv-q-emoji">🎯</div>
-      <div class="sv-q-label">Pertanyaan 2 dari 5</div>
-      <div class="sv-q-text">Fitur apa yang paling sering kamu pakai?</div>
-      <div class="sv-options grid-2">
-        <div class="sv-opt" data-val="Hero Slider"><span class="sv-opt-icon">🎬</span>Hero Slider<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Pilih Server"><span class="sv-opt-icon">🖥️</span>Pilih Server<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Lanjut Nonton"><span class="sv-opt-icon">▶️</span>Lanjut Nonton<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Koleksi"><span class="sv-opt-icon">🔖</span>Koleksi<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Jadwal Rilis"><span class="sv-opt-icon">📅</span>Jadwal Rilis<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Ruang Ngobrol"><span class="sv-opt-icon">💬</span>Ruang Ngobrol<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-      </div>
-    </div>
-
-    <!-- Q3: Streaming -->
-    <div class="sv-question" data-q="2">
-      <div class="sv-q-emoji">📺</div>
-      <div class="sv-q-label">Pertanyaan 3 dari 5</div>
-      <div class="sv-q-text">Gimana kualitas video & kecepatan streaming di Dayynime?</div>
-      <div class="sv-options">
-        <div class="sv-opt" data-val="Sangat Lancar"><span class="sv-opt-icon">🚀</span>Sangat lancar, tanpa buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Cukup Baik"><span class="sv-opt-icon">👍</span>Cukup baik, sesekali buffering<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Sering Buffering"><span class="sv-opt-icon">⏳</span>Sering buffering, agak lambat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Susah Diputar"><span class="sv-opt-icon">😤</span>Susah diputar / error melulu<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-      </div>
-    </div>
-
-    <!-- Q4: Tampilan -->
-    <div class="sv-question" data-q="3">
-      <div class="sv-q-emoji">🎨</div>
-      <div class="sv-q-label">Pertanyaan 4 dari 5</div>
-      <div class="sv-q-text">Gimana menurut kamu tampilan & desain Dayynime?</div>
-      <div class="sv-options">
-        <div class="sv-opt" data-val="Keren Banget"><span class="sv-opt-icon">🔥</span>Keren banget, enak dilihat<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Lumayan Bagus"><span class="sv-opt-icon">✨</span>Lumayan bagus<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Biasa Aja"><span class="sv-opt-icon">😐</span>Biasa aja, perlu perbaikan<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Perlu Dirombak"><span class="sv-opt-icon">🛠️</span>Perlu dirombak total<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-      </div>
-    </div>
-
-    <!-- Q5: Saran -->
-    <div class="sv-question" data-q="4">
-      <div class="sv-q-emoji">💡</div>
-      <div class="sv-q-label">Pertanyaan 5 dari 5</div>
-      <div class="sv-q-text">Ada fitur yang pengen kamu minta buat Dayynime?</div>
-      <div class="sv-options grid-2">
-        <div class="sv-opt" data-val="Download Anime"><span class="sv-opt-icon">⬇️</span>Download anime<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Notif Anime Baru"><span class="sv-opt-icon">🔔</span>Notifikasi baru<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Mode Offline"><span class="sv-opt-icon">📱</span>Mode offline<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Subtitle Karaoke"><span class="sv-opt-icon">🎵</span>Subtitle karaoke<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Mini Player"><span class="sv-opt-icon">🪟</span>Mini player<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-        <div class="sv-opt" data-val="Sudah Bagus"><span class="sv-opt-icon">👏</span>Udah bagus!<span class="sv-opt-check"><i class="fas fa-check"></i></span></div>
-      </div>
-    </div>
-
-    <div class="sv-footer" id="svFooter">
-      <button class="sv-btn-back" id="svBtnBack" onclick="surveyBack()" style="display:none"><i class="fas fa-arrow-left"></i></button>
-      <button class="sv-btn-next" id="svBtnNext" onclick="surveyNext()" disabled>
-        Lanjut <i class="fas fa-arrow-right"></i>
-      </button>
-    </div>
-
-    <!-- Hasil Screen -->
-    <div id="svResultScreen">
-      <div class="sv-result-hero">
-        <div class="sv-result-trophy">🎉</div>
-        <div class="sv-result-title">Makasih feedbacknya!</div>
-        <div class="sv-result-sub">Ini hasil keseluruhan dari pengguna Dayynime</div>
-        <div class="sv-result-total" id="svTotalResponden"></div>
-      </div>
-      <div class="sv-tabs" id="svResultTabs"></div>
-      <div class="sv-stats" id="svResultBars"></div>
-      <button class="sv-done-btn" onclick="closeSurvey()"><i class="fas fa-check-circle"></i> Tutup</button>
-    </div>
-  </div>
-</div>
-
-<script>
-(function(){
-  var SUPABASE_URL='https://mafnnqttvkdgqqxczqyt.supabase.co';
-  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZm5ucXR0dmtkZ3FxeGN6cXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzQyMDEsImV4cCI6MjA4NzQ1MDIwMX0.YRh1oWVKnn4tyQNRbcPhlSyvr7V_1LseWN7VjcImb-Y';
-  var TABLE='dayynime_survey';
-  var STORAGE_KEY='dayy_survey_done';
-  var SESSION_KEY='dayy_survey_session';
-
-  /* Cek per session — kalau udah survey (localStorage) jangan popup lagi */
-  var alreadyDone=localStorage.getItem(STORAGE_KEY);
-  if(alreadyDone){return;}
-  /* Cek session — kalau session ini sudah ditampilkan, skip */
-  if(sessionStorage.getItem(SESSION_KEY))return;
-  sessionStorage.setItem(SESSION_KEY,'1');
-
-  /* Tampilkan tombol "Isi Survey" di section */
-  var takeBtn=document.getElementById('svsTakeSurveyBtn');
-  if(takeBtn)takeBtn.style.display='block';
-
-  var currentQ=0,TOTAL_Q=5,answers={},starVal=0;
-  var starLabels=['','Sangat Buruk 😤','Buruk 😕','Biasa Aja 😐','Bagus 👍','Sangat Bagus 🔥'];
-
-  /* Init dots */
-  var dotsEl=document.getElementById('svStepDots');
-  for(var i=0;i<TOTAL_Q;i++){var d=document.createElement('div');d.className='sv-step-dot'+(i===0?' active':'');d.id='svDot'+i;dotsEl.appendChild(d);}
-
-  /* Stars */
-  var stars=document.querySelectorAll('.sv-star'),starLabel=document.getElementById('svStarLabel');
-  function setStars(val){starVal=val;stars.forEach(function(s){s.classList.toggle('lit',parseInt(s.getAttribute('data-val'))<=val);});starLabel.textContent=starLabels[val]||'Tap bintang untuk memberi nilai';starLabel.style.color=val?'#f5c518':'#888';answers[0]='Bintang '+val;updateNextBtn();}
-  stars.forEach(function(s){s.addEventListener('click',function(){setStars(parseInt(this.getAttribute('data-val')));});});
-
-  /* Options */
-  document.querySelectorAll('.sv-opt').forEach(function(opt){
-    opt.addEventListener('click',function(){
-      var q=parseInt(this.closest('.sv-question').getAttribute('data-q'));
-      this.closest('.sv-options').querySelectorAll('.sv-opt').forEach(function(o){o.classList.remove('selected');});
-      this.classList.add('selected');
-      answers[q]=this.getAttribute('data-val');
-      updateNextBtn();
-    });
-  });
-
-  function updateNextBtn(){
-    var btn=document.getElementById('svBtnNext');
-    btn.disabled=!(currentQ===0?starVal>0:!!answers[currentQ]);
-    btn.innerHTML=currentQ===TOTAL_Q-1?'<i class="fas fa-paper-plane"></i> Kirim Jawaban':'Lanjut <i class="fas fa-arrow-right"></i>';
-  }
-
-  function goToQ(idx){
-    document.querySelectorAll('.sv-question').forEach(function(q){q.classList.remove('active');});
-    var t=document.querySelector('.sv-question[data-q="'+idx+'"]');
-    if(t)t.classList.add('active');
-    for(var i=0;i<TOTAL_Q;i++){var dot=document.getElementById('svDot'+i);if(!dot)continue;dot.className='sv-step-dot';if(i<idx)dot.classList.add('done');else if(i===idx)dot.classList.add('active');}
-    document.getElementById('svBtnBack').style.display=idx>0?'flex':'none';
-    currentQ=idx;updateNextBtn();
-  }
-
-  window.surveyNext=function(){if(currentQ<TOTAL_Q-1){goToQ(currentQ+1);}else{submitSurvey();}};
-  window.surveyBack=function(){if(currentQ>0)goToQ(currentQ-1);};
-
-  function submitSurvey(){
-    var btn=document.getElementById('svBtnNext');
-    btn.disabled=true;btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> Menyimpan...';
-    var payload={rating:parseInt((answers[0]||'Bintang 3').replace('Bintang ','')),fitur:answers[1]||null,streaming:answers[2]||null,tampilan:answers[3]||null,saran:answers[4]||null,created_at:new Date().toISOString()};
-    fetch(SUPABASE_URL+'/rest/v1/'+TABLE,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)})
-    .then(function(r){if(!r.ok)throw new Error('err');localStorage.setItem(STORAGE_KEY,Date.now().toString());loadAndShowResults();})
-    .catch(function(){localStorage.setItem(STORAGE_KEY,Date.now().toString());showResultFallback();});
-  }
-
-  function loadAndShowResults(){
-    fetch(SUPABASE_URL+'/rest/v1/'+TABLE+'?select=rating,fitur,streaming,tampilan,saran',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
-    .then(function(r){return r.json();}).then(function(rows){if(!rows||!rows.length){showResultFallback();return;}renderResults(rows);}).catch(showResultFallback);
-  }
-
-  function showResultFallback(){renderResults(null);}
-
-  var CATS=[
-    {key:'rating',label:'⭐ Rating',isNumeric:true,options:['Bintang 1','Bintang 2','Bintang 3','Bintang 4','Bintang 5'],icons:['😤','😕','😐','👍','🔥']},
-    {key:'fitur',label:'🎯 Fitur',options:['Hero Slider','Pilih Server','Lanjut Nonton','Koleksi','Jadwal Rilis','Ruang Ngobrol'],icons:['🎬','🖥️','▶️','🔖','📅','💬']},
-    {key:'streaming',label:'📺 Streaming',options:['Sangat Lancar','Cukup Baik','Sering Buffering','Susah Diputar'],icons:['🚀','👍','⏳','😤']},
-    {key:'tampilan',label:'🎨 Tampilan',options:['Keren Banget','Lumayan Bagus','Biasa Aja','Perlu Dirombak'],icons:['🔥','✨','😐','🛠️']},
-    {key:'saran',label:'💡 Saran',options:['Download Anime','Notif Anime Baru','Mode Offline','Subtitle Karaoke','Mini Player','Sudah Bagus'],icons:['⬇️','🔔','📱','🎵','🪟','👏']}
-  ];
-
-  function renderResults(rows){
-    document.querySelectorAll('.sv-question').forEach(function(q){q.style.display='none';});
-    document.getElementById('svFooter').style.display='none';
-    document.getElementById('svStepDots').style.display='none';
-    var total=rows?rows.length:1;
-    document.getElementById('svTotalResponden').textContent=total+' responden telah mengisi survey ini';
-    var tabsEl=document.getElementById('svResultTabs');tabsEl.innerHTML='';
-    CATS.forEach(function(cat,ci){
-      var t=document.createElement('div');t.className='sv-tab'+(ci===0?' active':'');t.textContent=cat.label;t.setAttribute('data-ci',ci);
-      t.addEventListener('click',function(){document.querySelectorAll('.sv-tab').forEach(function(x){x.classList.remove('active');});this.classList.add('active');renderBars(CATS[parseInt(this.getAttribute('data-ci'))],rows,total);});
-      tabsEl.appendChild(t);
-    });
-    renderBars(CATS[0],rows,total);
-    var rs=document.getElementById('svResultScreen');rs.style.display='block';setTimeout(function(){rs.classList.add('active');},50);
-  }
-
-  function renderBars(cat,rows,total){
-    var barsEl=document.getElementById('svResultBars');barsEl.innerHTML='';
-    var counts={};cat.options.forEach(function(o){counts[o]=0;});
-    if(rows){rows.forEach(function(row){var val=row[cat.key];if(cat.isNumeric&&typeof val==='number')val='Bintang '+val;if(val&&counts.hasOwnProperty(val))counts[val]++;});}
-    cat.options.forEach(function(opt,oi){
-      var cnt=counts[opt]||0,pct=total>0?Math.round(cnt/total*100):0;
-      var item=document.createElement('div');item.className='sv-stat-item';
-      item.innerHTML='<div class="sv-stat-label"><div class="sv-stat-name">'+(cat.icons[oi]||'')+' '+opt+'</div><div class="sv-stat-pct">'+pct+'%</div></div><div class="sv-stat-bar-wrap"><div class="sv-stat-bar" id="svBar_'+oi+'"></div></div><div class="sv-stat-votes">'+cnt+' dari '+total+' responden</div>';
-      barsEl.appendChild(item);
-      setTimeout(function(){var b=document.getElementById('svBar_'+oi);if(b)b.style.width=pct+'%';},80+oi*60);
-    });
-  }
-
-  window.openSurvey=function(){
-    var o=document.getElementById('surveyOverlay');o.style.display='flex';
-    requestAnimationFrame(function(){requestAnimationFrame(function(){o.classList.add('open');});});
-    document.body.style.overflow='hidden';
-  };
-  window.closeSurvey=function(){
-    var o=document.getElementById('surveyOverlay');o.classList.remove('open');
-    setTimeout(function(){
-      o.style.display='none';document.body.style.overflow='';
-      /* Tampilkan donasi popup setelah survey ditutup, sekali per session */
-      if(!sessionStorage.getItem('dayy_donasi_shown')){
-        sessionStorage.setItem('dayy_donasi_shown','1');
-        setTimeout(function(){if(window.openTrakteer)openTrakteer();},400);
-      }
-    },350);
-  };
-
-  var _triggered=false;
-  function _onScroll(){if(_triggered)return;if(window.scrollY>120){_triggered=true;window.removeEventListener("scroll",_onScroll);setTimeout(openSurvey,400);}}
-  window.addEventListener("scroll",_onScroll,{passive:true});
-})();
-</script>
-
 
 {% endblock %}

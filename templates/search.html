@@ -1,143 +1,139 @@
 {% extends "base.html" %}
-{% block title %}{% if query %}{{ query }} - {% endif %}Cari Anime - Dayynime{% endblock %}
+{% block title %}Cari Anime — DayyNime{% endblock %}
+{% block header %}{% endblock %}
 {% block content %}
-
 <style>
-.srch-page { padding: 16px 16px 100px; background: #0d0d0f; min-height: 100vh; }
+.search-page { padding-bottom: 100px; }
+.search-header { padding: 14px 16px 12px; display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;background:var(--bg); border-bottom:1px solid var(--border); }
+.search-back { width:40px;height:40px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;text-decoration:none; }
+.search-input-wrap { flex:1;position:relative; }
+.search-input { width:100%;padding:11px 14px 11px 42px;background:var(--bg2);border:1.5px solid var(--border);border-radius:50px;color:var(--text);font-size:14px;font-family:'Nunito',sans-serif;outline:none;transition:border-color 0.2s; }
+.search-input:focus { border-color:var(--accent); }
+.search-input::placeholder { color:var(--text3); }
+.search-icon { position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none; }
+.search-clear { position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;background:none;border:none;cursor:pointer;padding:4px;display:none; }
 
-/* Search bar */
-.srch-bar-wrap { display: flex; align-items: center; gap: 10px; background: #16161a; border-radius: 14px; padding: 0 16px; height: 48px; border: 1.5px solid {% if query %}rgba(232,65,90,0.5){% else %}rgba(255,255,255,0.08){% endif %}; margin-bottom: 20px; transition: border-color 0.2s; }
-.srch-bar-wrap:focus-within { border-color: rgba(232,65,90,0.6); }
-.srch-bar-wrap i { color: #e8415a; font-size: 14px; flex-shrink: 0; }
-.srch-input { flex: 1; background: none; border: none; outline: none; color: #fff; font-size: 14px; font-family: inherit; font-weight: 600; }
-.srch-input::placeholder { color: rgba(255,255,255,0.25); font-weight: 500; }
-.srch-clear { color: rgba(255,255,255,0.3); font-size: 14px; flex-shrink: 0; padding: 4px; -webkit-tap-highlight-color: transparent; }
+/* TOP SEARCHES */
+.top-search-item { display:flex;align-items:center;gap:12px;padding:11px 16px;text-decoration:none;color:inherit;border-bottom:1px solid var(--border);transition:background 0.15s; }
+.top-search-item:active { background:var(--bg2); }
+.top-search-rank { font-size:14px;font-weight:900;color:var(--text3);width:24px;flex-shrink:0;text-align:center; }
+.top-search-thumb { width:50px;height:68px;border-radius:8px;overflow:hidden;flex-shrink:0; }
+.top-search-thumb img { width:100%;height:100%;object-fit:cover;display:block; }
+.top-search-title { font-size:13px;font-weight:800;color:var(--text);flex:1;min-width:0; }
+.top-search-chevron { color:var(--text3);font-size:11px; }
 
-/* Result header */
-.srch-result-hdr { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
-.srch-result-count { font-size: 13px; font-weight: 800; color: #e8415a; }
-.srch-result-label { font-size: 13px; color: rgba(255,255,255,0.4); font-weight: 600; }
-.srch-result-q { color: #fff; font-weight: 800; }
+/* RESULTS */
+.results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px; }
+.results-grid .anime-card { width:100%; }
 
-/* Grid */
-.srch-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-.srch-card { position: relative; border-radius: 12px; overflow: hidden; background: #16161a; display: block; -webkit-tap-highlight-color: transparent; transition: transform 0.15s; }
-.srch-card:active { transform: scale(0.96); }
-.srch-card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
-.srch-card-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 70%; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.55) 55%, transparent 100%); pointer-events: none; }
-.srch-card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 8px 9px; }
-.srch-card-type { display: inline-block; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.12); margin-bottom: 4px; }
-.srch-card-title { font-size: 10.5px; font-weight: 800; color: #fff; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.35; }
+/* FILTER CHIPS */
+.filter-row { display:flex;gap:8px;overflow-x:auto;padding:10px 16px;scrollbar-width:none; }
+.filter-row::-webkit-scrollbar { display:none; }
+.filter-chip { flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:800;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all 0.2s; }
+.filter-chip.active,.filter-chip:active { background:var(--accent-dim);border-color:var(--accent-glow);color:var(--accent); }
 
-/* Empty not found */
-.srch-notfound { text-align: center; padding: 60px 20px; }
-.srch-notfound-icon { width: 72px; height: 72px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; color: rgba(255,255,255,0.15); margin-bottom: 18px; }
-.srch-notfound h3 { font-size: 15px; font-weight: 900; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
-.srch-notfound p { font-size: 13px; color: rgba(255,255,255,0.25); line-height: 1.6; margin-bottom: 22px; }
-.srch-notfound-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.srch-btn-primary { padding: 10px 22px; background: #e8415a; color: #fff; border-radius: 50px; font-size: 13px; font-weight: 800; text-decoration: none; box-shadow: 0 3px 12px rgba(232,65,90,0.4); }
-.srch-btn-sec { padding: 10px 22px; background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6); border-radius: 50px; font-size: 13px; font-weight: 800; text-decoration: none; border: 1px solid rgba(255,255,255,0.09); }
-
-/* No query state */
-.srch-section-label { font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-.srch-section-label i { color: #e8415a; }
-.srch-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-.srch-tag { padding: 7px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 50px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.55); -webkit-tap-highlight-color: transparent; transition: all 0.2s; }
-.srch-tag:active { background: rgba(232,65,90,0.15); border-color: rgba(232,65,90,0.35); color: #e8415a; }
-
-/* Browse cards */
-.srch-browse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.srch-browse-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: #16161a; border-radius: 14px; border: 1px solid rgba(255,255,255,0.07); -webkit-tap-highlight-color: transparent; transition: border-color 0.2s; }
-.srch-browse-card:active { border-color: rgba(232,65,90,0.4); }
-.srch-browse-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
-.srch-browse-label { font-size: 13px; font-weight: 800; color: #fff; }
-.srch-browse-sub { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+/* 404 State */
+.not-found { display:flex;flex-direction:column;align-items:center;padding:60px 20px;text-align:center; }
+.not-found-num { font-size:72px;font-weight:900;color:var(--bg3);line-height:1; }
+.not-found-title { font-size:16px;font-weight:800;color:var(--text);margin-top:8px;margin-bottom:6px; }
+.not-found-sub { font-size:13px;color:var(--text2);line-height:1.6; }
 </style>
 
-<div class="srch-page">
-
-  <!-- Search Bar -->
-  <form action="/search" method="get">
-    <div class="srch-bar-wrap">
-      <i class="fas fa-search"></i>
-      <input class="srch-input" type="text" name="q" value="{{ query }}" placeholder="Cari judul anime..." autocomplete="off" autofocus>
-      {% if query %}
-      <a href="/search" class="srch-clear"><i class="fas fa-times"></i></a>
-      {% endif %}
+<div class="search-page">
+  <!-- SEARCH HEADER -->
+  <div class="search-header">
+    <a href="/" class="search-back"><i class="fas fa-arrow-left"></i></a>
+    <div class="search-input-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-input" id="searchInput" placeholder="Cari anime..." autocomplete="off"
+        value="{{ query or '' }}" oninput="onSearchInput(this.value)">
+      <button class="search-clear" id="searchClear" onclick="clearSearch()"><i class="fas fa-times"></i></button>
     </div>
-  </form>
+  </div>
 
-  {% if query %}
-
-    {% if data and data.animes %}
-    <!-- Result header -->
-    <div class="srch-result-hdr">
-      <span class="srch-result-count">{{ data.animes|length }}</span>
-      <span class="srch-result-label">hasil untuk</span>
-      <span class="srch-result-q">"{{ query }}"</span>
-    </div>
-
-    <!-- Grid -->
-    <div class="srch-grid">
-      {% for anime in data.animes %}
-      <a href="/anime/{{ anime.slug }}" class="srch-card">
-        <img class="srch-card-img" src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        <div class="srch-card-gradient"></div>
-        <div class="srch-card-info">
-          {% if anime.type %}<span class="srch-card-type">{{ anime.type }}</span>{% endif %}
-          <div class="srch-card-title">{{ anime.title }}</div>
+  {% if query and results %}
+  <!-- FILTER ROW -->
+  <div class="filter-row">
+    <div class="filter-chip active">Semua</div>
+    <div class="filter-chip" onclick="filterBy(this,'TV')">TV Series</div>
+    <div class="filter-chip" onclick="filterBy(this,'Movie')">Movie</div>
+    <div class="filter-chip" onclick="filterBy(this,'OVA')">OVA</div>
+    <div class="filter-chip" onclick="filterBy(this,'Ongoing')">Ongoing</div>
+  </div>
+  <div class="sec-head">
+    <span class="sec-title">Hasil untuk "<span style="color:var(--accent);">{{ query }}</span>"</span>
+    <span style="font-size:12px;color:var(--text2);">{{ results|length }} hasil</span>
+  </div>
+  <div class="results-grid">
+    {% for anime in results %}
+    <a href="/anime/{{ anime.slug }}" class="anime-card">
+      <div class="anime-card-poster">
+        <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'" loading="lazy">
+        {% if anime.score %}<div class="anime-card-score"><i class="fas fa-star"></i> {{ anime.score }}</div>{% endif %}
+        <div class="anime-card-bottom">
+          <div class="anime-card-btitle">{{ anime.title }}</div>
+          {% if anime.type %}<div class="anime-card-eps"><span class="anime-card-ep-badge">{{ anime.type }}</span></div>{% endif %}
         </div>
-      </a>
-      {% endfor %}
-    </div>
-
-    {% else %}
-    <!-- Not found -->
-    <div class="srch-notfound">
-      <div class="srch-notfound-icon"><i class="fas fa-search"></i></div>
-      <h3>Anime Tidak Ditemukan</h3>
-      <p>Coba kata kunci lain atau<br>periksa ejaan judul anime</p>
-      <div class="srch-notfound-btns">
-        <a href="/home" class="srch-btn-primary">Ke Beranda</a>
-        <a href="/genres" class="srch-btn-sec">Jelajahi Genre</a>
       </div>
-    </div>
-    {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+
+  {% elif query and not results %}
+  <!-- NOT FOUND -->
+  <div class="not-found">
+    <div class="not-found-num">404</div>
+    <div class="not-found-title">Tidak ditemukan</div>
+    <div class="not-found-sub">Keyword "<strong>{{ query }}</strong>" tidak ditemukan.<br>Coba kata kunci lain.</div>
+  </div>
 
   {% else %}
-  <!-- No query: populer + browse -->
-  <div class="srch-section-label"><i class="fas fa-fire"></i> Populer</div>
-  <div class="srch-tags">
-    <a href="/search?q=one+piece" class="srch-tag">One Piece</a>
-    <a href="/search?q=naruto" class="srch-tag">Naruto</a>
-    <a href="/search?q=demon+slayer" class="srch-tag">Demon Slayer</a>
-    <a href="/search?q=attack+on+titan" class="srch-tag">Attack on Titan</a>
-    <a href="/search?q=jujutsu+kaisen" class="srch-tag">Jujutsu Kaisen</a>
-    <a href="/search?q=bleach" class="srch-tag">Bleach</a>
-    <a href="/search?q=dragon+ball" class="srch-tag">Dragon Ball</a>
-    <a href="/search?q=sword+art+online" class="srch-tag">SAO</a>
+  <!-- DEFAULT: TOP SEARCHES -->
+  <div class="sec-head">
+    <span class="sec-title">Pencarian Populer</span>
   </div>
-
-  <div class="srch-section-label"><i class="fas fa-compass"></i> Jelajahi</div>
-  <div class="srch-browse-grid">
-    <a href="/ongoing" class="srch-browse-card">
-      <div class="srch-browse-icon" style="background:rgba(74,222,128,0.12);"><i class="fas fa-circle" style="color:#4ade80;font-size:10px;"></i></div>
-      <div><div class="srch-browse-label">Ongoing</div><div class="srch-browse-sub">Sedang tayang</div></div>
-    </a>
-    <a href="/completed" class="srch-browse-card">
-      <div class="srch-browse-icon" style="background:rgba(96,165,250,0.12);"><i class="fas fa-check-circle" style="color:#60a5fa;"></i></div>
-      <div><div class="srch-browse-label">Completed</div><div class="srch-browse-sub">Sudah tamat</div></div>
-    </a>
-    <a href="/movies" class="srch-browse-card">
-      <div class="srch-browse-icon" style="background:rgba(232,65,90,0.12);"><i class="fas fa-film" style="color:#e8415a;"></i></div>
-      <div><div class="srch-browse-label">Movie</div><div class="srch-browse-sub">Film anime</div></div>
-    </a>
-    <a href="/genres" class="srch-browse-card">
-      <div class="srch-browse-icon" style="background:rgba(167,139,250,0.12);"><i class="fas fa-tags" style="color:#a78bfa;"></i></div>
-      <div><div class="srch-browse-label">Genre</div><div class="srch-browse-sub">Filter genre</div></div>
-    </a>
-  </div>
+  {% if popular and popular.animes %}
+  {% for anime in popular.animes[:8] %}
+  <a href="/anime/{{ anime.slug }}" class="top-search-item">
+    <span class="top-search-rank">{{ loop.index }}</span>
+    <div class="top-search-thumb">
+      <img src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'" loading="lazy">
+    </div>
+    <span class="top-search-title">{{ anime.title }}</span>
+    <i class="fas fa-chevron-right top-search-chevron"></i>
+  </a>
+  {% endfor %}
   {% endif %}
-
+  {% endif %}
 </div>
+
+<script>
+var searchTimeout;
+function onSearchInput(val){
+  var clearBtn = document.getElementById('searchClear');
+  if(clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+  clearTimeout(searchTimeout);
+  if(val.length >= 2){
+    searchTimeout = setTimeout(function(){
+      window.location.href = '/search?q=' + encodeURIComponent(val);
+    }, 800);
+  }
+}
+function clearSearch(){
+  var input = document.getElementById('searchInput');
+  input.value = '';
+  document.getElementById('searchClear').style.display = 'none';
+  input.focus();
+}
+function filterBy(el, type){
+  document.querySelectorAll('.filter-chip').forEach(function(c){c.classList.remove('active');});
+  el.classList.add('active');
+}
+// Auto focus
+document.getElementById('searchInput').focus();
+// Show clear if has value
+if(document.getElementById('searchInput').value){
+  document.getElementById('searchClear').style.display = 'block';
+}
+</script>
 {% endblock %}
