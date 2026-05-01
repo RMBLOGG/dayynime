@@ -1357,7 +1357,7 @@ def auth_register():
     payload = {
         "username": username,
         "email":    email,
-        "password": hash_password(password),
+        "password_hash": hash_password(password),
         "avatar":   "",
     }
     try:
