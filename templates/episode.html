@@ -104,6 +104,18 @@
 /* ── DESKTOP SIDEBAR (local override) ── */
 .watch-main { padding-bottom:80px; }
 @media(max-width:899px) { .watch-sidebar { display:none !important; } }
+
+/* ── EPISODE DESKTOP ── */
+@media (min-width:768px) {
+  .page-content-wrap { padding: 0 !important; max-width: 100% !important; }
+  .watch-layout { max-width: 1180px; margin: 0 auto; }
+  .watch-main { padding-bottom: 40px; }
+  .watch-sidebar { width: 320px; }
+}
+@media (min-width:1024px) {
+  .watch-sidebar { width: 360px; }
+  .watch-layout { max-width: 1280px; }
+}
 </style>
 
 <div class="watch-layout">

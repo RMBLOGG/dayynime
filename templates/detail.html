@@ -96,6 +96,28 @@
 .det-empty { padding: 50px 0; text-align: center; color: #444; }
 .det-empty i { font-size: 2rem; display: block; margin-bottom: 12px; }
 .det-empty p { font-size: 13px; }
+
+/* ── DETAIL DESKTOP ── */
+@media (min-width:768px) {
+  .page-content-wrap { padding: 0 !important; max-width: 100% !important; }
+  .det-page { max-width: 1180px; margin: 0 auto; padding-bottom: 60px; }
+  .det-hero { height: 480px !important; }
+  .det-cover { width: 140px !important; height: 190px !important; border-radius: 18px !important; }
+  .det-title { font-size: 22px !important; }
+  .det-info-row { left: 32px !important; right: 32px !important; padding-bottom: 20px !important; }
+  .det-topnav { left: 32px !important; right: 32px !important; }
+  .det-tabs, .det-panels-wrapper { max-width: 860px; margin-left: auto; margin-right: auto; }
+  .live-viewer-bar { max-width: 860px; margin: 12px auto 0; }
+}
+@media (min-width:1024px) {
+  .det-hero { height: 520px !important; }
+  .det-cover { width: 160px !important; height: 215px !important; }
+  .det-title { font-size: 26px !important; }
+  .det-info-row { left: 48px !important; right: 48px !important; }
+  .det-topnav { left: 48px !important; right: 48px !important; }
+  .det-tabs, .det-panels-wrapper { max-width: 960px; }
+  .live-viewer-bar { max-width: 960px; }
+}
 </style>
 
 {% if data and data.detail %}

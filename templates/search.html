@@ -4,6 +4,18 @@
 
 <style>
 .srch-page { padding: 16px 16px 100px; background: #0d0d0f; min-height: 100vh; }
+@media (min-width: 768px) {
+  .srch-page { max-width: 1180px; margin: 0 auto; padding: 28px 0 60px; }
+  .page-content-wrap { padding: 0 24px !important; max-width: 1180px !important; margin: 0 auto !important; }
+  .srch-card { transition: transform 0.2s, box-shadow 0.2s; }
+  .srch-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
+  .srch-card-img { transition: transform 0.3s; }
+  .srch-card:hover .srch-card-img { transform: scale(1.04); }
+  .srch-tag:hover { background: rgba(232,65,90,0.15); border-color: rgba(232,65,90,0.35); color: #e8415a; }
+  .srch-browse-card:hover { border-color: rgba(232,65,90,0.35); }
+}
+@media (min-width: 1024px) { .page-content-wrap { padding: 0 40px !important; } }
+@media (min-width: 1280px) { .srch-page { max-width: 1280px; } }
 
 /* Search bar */
 .srch-bar-wrap { display: flex; align-items: center; gap: 10px; background: #16161a; border-radius: 14px; padding: 0 16px; height: 48px; border: 1.5px solid {% if query %}rgba(232,65,90,0.5){% else %}rgba(255,255,255,0.08){% endif %}; margin-bottom: 20px; transition: border-color 0.2s; }
@@ -21,6 +33,12 @@
 
 /* Grid */
 .srch-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+@media (min-width: 480px) { .srch-grid { grid-template-columns: repeat(4,1fr); } }
+@media (min-width: 768px) { .srch-grid { grid-template-columns: repeat(5,1fr); gap: 14px; } }
+@media (min-width: 1024px) { .srch-grid { grid-template-columns: repeat(6,1fr); gap: 16px; } }
+@media (min-width: 1280px) { .srch-grid { grid-template-columns: repeat(7,1fr); } }
+@media (min-width: 768px) { .srch-browse-grid { grid-template-columns: repeat(3,1fr); } }
+@media (min-width: 1024px) { .srch-browse-grid { grid-template-columns: repeat(4,1fr); } }
 .srch-card { position: relative; border-radius: 12px; overflow: hidden; background: #16161a; display: block; -webkit-tap-highlight-color: transparent; transition: transform 0.15s; }
 .srch-card:active { transform: scale(0.96); }
 .srch-card-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }

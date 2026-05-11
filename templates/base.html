@@ -24,7 +24,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DayyNime">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=21">
   <style>
   :root {
     --bg:           #0d0d0f;
@@ -640,7 +640,9 @@
   <button onclick="closeHeaderSearch()" style="background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:6px;white-space:nowrap;">Batal</button>
 </div>
 
+<div class="page-content-wrap">
 {% block content %}{% endblock %}
+</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
