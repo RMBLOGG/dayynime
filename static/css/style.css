@@ -1071,3 +1071,415 @@ button { font-family:inherit; cursor:pointer; }
 .an-recent-title { font-size: 11px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .an-recent-ep { font-size: 10px; color: var(--text3); margin-top: 1px; }
 .an-recent-time { font-size: 9px; color: var(--text3); flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════════════
+   DAYYNIME — RESPONSIVE DESKTOP OVERHAUL
+   Breakpoints: 768px (tablet), 1024px (desktop), 1280px (wide)
+   ══════════════════════════════════════════════════════════ */
+
+/* ── ROOT: Desktop container & spacing ──────────────────── */
+@media (min-width: 768px) {
+  :root {
+    --page-pad:  24px;
+    --container: 1180px;
+    --nav-h:     60px;
+    --bottom-h:  0px;
+  }
+  body {
+    padding-top: var(--nav-h);
+    padding-bottom: 0;
+  }
+
+  /* Semua page wrapper diberi max-width */
+  .idx-page,
+  .det-page,
+  .search-page,
+  [class$="-page"] {
+    max-width: var(--container);
+    margin: 0 auto;
+  }
+}
+
+/* ── INDEX PAGE ─────────────────────────────────────────── */
+@media (min-width: 768px) {
+
+  /* Header index → sembunyikan, pakai top-header dari base */
+  .idx-header { display: none !important; }
+  body.idx-body { padding-top: var(--nav-h) !important; }
+
+  /* Banner slider → 2-kolom: slider kiri, sale card kanan */
+  .idx-page { padding: 20px 24px 40px; }
+
+  /* Slider hero jadi lebih lebar */
+  .idx-slider { padding: 0 0 2px !important; gap: 14px; }
+  .idx-slide  { width: 480px !important; aspect-ratio: 16/9 !important; border-radius: 18px !important; }
+
+  /* Sale / discover card */
+  .idx-discover { margin: 0 0 20px !important; border-radius: 16px !important; }
+
+  /* Section head padding */
+  .idx-sec-head { padding: 20px 0 14px !important; }
+
+  /* Card rows: jadi grid kalau ada class khusus, tetap scroll kalau belum */
+  .idx-cards { padding: 0 0 4px !important; }
+  .idx-card  { width: 160px !important; }
+
+  /* Trending pill area */
+  .idx-page > div[style*="padding:0 14px"] { padding: 0 !important; }
+}
+
+@media (min-width: 1024px) {
+  .idx-page { padding: 24px 40px 60px; }
+  .idx-card  { width: 175px !important; }
+  .idx-slide { width: 540px !important; }
+
+  /* 2-section layout: slider + sidebar cta */
+  .idx-hero-wrap {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .idx-page { max-width: 1280px; }
+  .idx-card  { width: 185px !important; }
+}
+
+/* ── INDEX: Section kartu jadi GRID di desktop (bukan scroll) ── */
+@media (min-width: 1024px) {
+  /* Semua .idx-cards jadi grid 6 kolom */
+  .idx-cards {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    overflow-x: visible !important;
+    padding: 0 !important;
+    gap: 14px !important;
+  }
+  .idx-cards .idx-card {
+    width: 100% !important;
+    flex-shrink: unset !important;
+  }
+  /* Sembunyikan card ke-7+ supaya rapi (6 per baris) */
+  /* — tidak disembunyikan, biarkan wrap ke baris baru */
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet: 4 kolom */
+  .idx-cards {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    overflow-x: visible !important;
+    padding: 0 !important;
+    gap: 12px !important;
+  }
+  .idx-cards .idx-card { width: 100% !important; flex-shrink: unset !important; }
+}
+
+/* ── DETAIL PAGE ─────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .det-page { padding-bottom: 60px; }
+
+  /* Hero lebih tinggi di desktop */
+  .det-hero { height: 460px !important; }
+  .det-cover { width: 140px !important; height: 190px !important; border-radius: 18px !important; }
+  .det-title { font-size: 24px !important; }
+  .det-info-row { left: 32px !important; right: 32px !important; }
+  .det-topnav  { left: 32px !important; right: 32px !important; }
+
+  /* 2-kolom layout: info kiri, episode kanan */
+  .det-panels-wrapper,
+  .det-tabs {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .det-hero { height: 520px !important; }
+  .det-cover { width: 160px !important; height: 215px !important; }
+  .det-title { font-size: 28px !important; }
+  .det-info-row { left: 48px !important; right: 48px !important; }
+  .det-topnav  { left: 48px !important; right: 48px !important; }
+  .det-panels-wrapper, .det-tabs { max-width: 1000px; }
+}
+
+/* ── EPISODE PAGE ────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .watch-sidebar { display: flex !important; width: 320px; }
+  .mob-ep-toggle { display: none; }
+}
+
+@media (min-width: 1024px) {
+  .watch-sidebar { width: 360px; }
+}
+
+/* ── SCROLL ROW → bisa hover, cursor pointer di desktop ─── */
+@media (min-width: 768px) {
+  .scroll-row  { padding-left: 0 !important; }
+  .section-head { padding: 0 !important; }
+  .page-head   { padding: 20px 0 14px !important; }
+  .anime-grid  { padding: 0 !important; }
+  .genre-grid  { padding: 0 !important; }
+  .az-letter-nav { padding: 0 !important; }
+  .az-list     { padding: 0 !important; }
+  .az-letter-head { padding: 6px 0; }
+  .pagination  { padding: 20px 0; }
+}
+
+/* ── PAGE WRAPPER: Semua halaman dengan class *-page ────── */
+@media (min-width: 768px) {
+  /* Beri padding horizontal dan max-width ke semua halaman */
+  .det-page,
+  .search-page,
+  .ep-page {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Halaman generic (animelist, profile, dll) */
+  .page-head,
+  .section,
+  .anime-grid,
+  .genre-grid,
+  .az-letter-nav,
+  .az-section,
+  .pagination,
+  .search-hero,
+  .analytics-wrap {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Semua halaman yang tidak punya wrapper diberi max-width via body child */
+  .top-header { max-width: 100%; }
+}
+
+/* ── TOP HEADER: expand di desktop ─────────────────────── */
+@media (min-width: 1024px) {
+  .top-header {
+    padding: 0 40px;
+  }
+  .desktop-search-bar { max-width: 480px; }
+}
+
+/* ── BASE WRAPPER untuk halaman biasa (non-index) ───────── */
+@media (min-width: 768px) {
+  /* Bungkus konten non-fullwidth dengan max-width + center */
+  .page-content-wrap {
+    max-width: var(--container, 1180px);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+}
+@media (min-width: 1024px) {
+  .page-content-wrap { padding: 0 40px; }
+}
+
+/* ── SEARCH PAGE ─────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .search-hero { padding: 20px 0; margin-bottom: 20px; background: transparent; border: none; }
+  .search-hero .search-big { max-width: 600px; }
+}
+
+/* ── PROFILE / LOGIN / REGISTER ─────────────────────────── */
+@media (min-width: 768px) {
+  .login-wrap,
+  .register-wrap,
+  .profile-wrap {
+    max-width: 480px;
+    margin: 40px auto;
+    border-radius: 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 32px;
+  }
+}
+
+/* ── BANNER SLIDER: ukuran proper di desktop ─────────────── */
+@media (min-width: 768px) {
+  .banner-slider { border-radius: 0; }
+  .banner-slide  { aspect-ratio: 16/6 !important; }
+  .banner-content { padding: 0 32px 32px; max-width: var(--container, 1180px); margin: 0 auto; }
+  .banner-title { font-size: 1.6rem !important; }
+  .banner-play  { font-size: 13px !important; padding: 10px 22px !important; }
+}
+@media (min-width: 1024px) {
+  .banner-slide { aspect-ratio: 16/5 !important; }
+  .banner-title { font-size: 2rem !important; }
+}
+
+/* ── ANIME GRID: lebih banyak kolom di desktop ───────────── */
+@media (min-width: 1280px) {
+  .anime-grid { grid-template-columns: repeat(8, 1fr) !important; }
+}
+
+/* ── ACARD: ukuran lebih besar di desktop ────────────────── */
+@media (min-width: 1024px) {
+  .acard { width: 165px; }
+  .scroll-row { gap: 12px; }
+}
+@media (min-width: 1280px) {
+  .acard { width: 180px; }
+}
+
+/* ── GENRE GRID: lebih banyak kolom di desktop ───────────── */
+@media (min-width: 768px) {
+  .genre-grid { grid-template-columns: repeat(5, 1fr) !important; gap: 8px; }
+}
+@media (min-width: 1024px) {
+  .genre-grid { grid-template-columns: repeat(7, 1fr) !important; }
+}
+
+/* ── A-Z LIST: grid 4 kolom di desktop ──────────────────── */
+@media (min-width: 768px) {
+  .az-list { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (min-width: 1024px) {
+  .az-list { grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+/* ── SCHEDULE / DAY TABS ────────────────────────────────── */
+@media (min-width: 768px) {
+  .day-tabs { padding: 0 0 4px; overflow-x: visible; flex-wrap: wrap; gap: 6px; }
+}
+
+/* ── EPISODE GRID (detail) ──────────────────────────────── */
+@media (min-width: 768px) {
+  .ep-grid { grid-template-columns: repeat(6, 1fr) !important; max-height: 320px; }
+  .ep-thumb-grid { padding: 0; }
+}
+@media (min-width: 1024px) {
+  .ep-grid { grid-template-columns: repeat(8, 1fr) !important; }
+}
+
+/* ── SIDEBAR PANEL: wider ───────────────────────────────── */
+@media (min-width: 768px) {
+  #sidebarPanel { max-width: 400px; }
+}
+
+/* ── CHAT FAB: posisi lebih baik di desktop ─────────────── */
+@media (min-width: 1024px) {
+  #chatFab   { bottom: 30px; left: 30px; width: 52px; height: 52px; }
+  #chatPopup { bottom: 94px; left: 30px; max-width: 360px; }
+}
+
+/* ── QUICK NAV: tidak overflow di desktop ───────────────── */
+@media (min-width: 768px) {
+  .quick-nav { overflow-x: visible; flex-wrap: wrap; padding: 0; gap: 8px; }
+}
+
+/* ── IDX-DISCOVER (sale card) ────────────────────────────── */
+@media (min-width: 768px) {
+  .idx-discover { max-width: 560px; }
+}
+
+/* ── SECTION WRAPPER ─────────────────────────────────────── */
+/* Semua halaman: bungkus dalam max-width container di desktop */
+@media (min-width: 768px) {
+  /* Tambahkan ini ke halaman yang pakai {% block content %} tanpa wrapper */
+  .section,
+  .page-head {
+    max-width: var(--container, 1180px);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* ── UTILITY: text selectable di desktop ─────────────────── */
+@media (min-width: 768px) {
+  p, .det-synopsis-text, .synopsis, .det-title, .section-title,
+  h1, h2, h3 {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+}
+
+/* ── FOOTER SPACING ──────────────────────────────────────── */
+@media (min-width: 768px) {
+  .idx-page { padding-bottom: 60px; }
+  .det-page { padding-bottom: 60px; }
+}
+
+
+/* ── PAGE-CONTENT-WRAP: Wrapper utama semua halaman di desktop ── */
+@media (min-width: 768px) {
+  .page-content-wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  /* Section & head di dalam wrapper tidak perlu padding lagi */
+  .page-content-wrap .section-head,
+  .page-content-wrap .page-head,
+  .page-content-wrap .section,
+  .page-content-wrap .anime-grid,
+  .page-content-wrap .genre-grid,
+  .page-content-wrap .az-letter-nav,
+  .page-content-wrap .az-section,
+  .page-content-wrap .pagination,
+  .page-content-wrap .search-hero,
+  .page-content-wrap .search-result-label,
+  .page-content-wrap .analytics-wrap,
+  .page-content-wrap .day-tabs,
+  .page-content-wrap .quick-nav,
+  .page-content-wrap .tab-panel {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100%;
+  }
+  .page-content-wrap .scroll-row {
+    padding-left: 0 !important;
+  }
+}
+@media (min-width: 1024px) {
+  .page-content-wrap { padding: 0 40px; }
+}
+@media (min-width: 1280px) {
+  .page-content-wrap { max-width: 1280px; }
+}
+
+/* ── ANIMELIST / GENRE / SEARCH: layout desktop ── */
+@media (min-width: 768px) {
+  /* A-Z grid lebih banyak kolom */
+  .az-list { grid-template-columns: repeat(3, 1fr) !important; }
+  .az-letter-nav { flex-wrap: wrap; overflow-x: visible; }
+  .genre-grid { grid-template-columns: repeat(6, 1fr) !important; gap: 8px; }
+}
+@media (min-width: 1024px) {
+  .az-list { grid-template-columns: repeat(4, 1fr) !important; }
+  .genre-grid { grid-template-columns: repeat(8, 1fr) !important; }
+  .anime-grid { grid-template-columns: repeat(7, 1fr) !important; }
+}
+
+/* ── PROFILE / LOGIN / REGISTER: centered card ── */
+@media (min-width: 768px) {
+  .auth-wrap, .profile-form-wrap {
+    max-width: 480px;
+    margin: 40px auto;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 36px;
+  }
+}
+
+/* ── SCHEDULE PAGE ── */
+@media (min-width: 768px) {
+  .day-tabs { overflow-x: visible; flex-wrap: wrap; padding: 0; gap: 6px; margin-bottom: 14px; }
+  .day-tab  { border-radius: var(--radius); }
+}
+
+/* ── ADMIN PAGES ── */
+@media (min-width: 768px) {
+  .analytics-wrap { padding: 0 0 24px; }
+  .analytics-grid { grid-template-columns: repeat(4, 1fr) !important; }
+}
+@media (min-width: 1024px) {
+  .analytics-grid { grid-template-columns: repeat(6, 1fr) !important; }
+}
