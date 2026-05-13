@@ -544,6 +544,48 @@ def _norm_paginated(raw, page):
         }
     return {"animes": animes, "pagination": pag_norm}
 
+# ── Maintenance Mode ───────────────────────────────────────────────────────────
+MAINTENANCE_MODE = True  # Website ditutup permanen untuk publik
+
+# Route yang tetap boleh diakses saat maintenance (static, login, api auth)
+MAINTENANCE_WHITELIST = {
+    "/login", "/register", "/logout",
+    "/api/auth/login", "/api/auth/register", "/api/auth/logout",
+    "/api/auth/callback", "/auth/callback",
+    "/maintenance",
+    "/manifest.json", "/sw.js", "/robots.txt", "/sitemap.xml",
+}
+
+@app.before_request
+def check_maintenance():
+    if not MAINTENANCE_MODE:
+        return None  # Normal, lanjut
+
+    # Izinkan static files (CSS, JS, gambar)
+    if request.path.startswith("/static/"):
+        return None
+
+    # Izinkan whitelist
+    if request.path in MAINTENANCE_WHITELIST:
+        return None
+
+    # Cek apakah user adalah admin
+    user = session.get("user")
+    if user and user.get("is_admin"):
+        return None  # Admin boleh akses semua
+
+    # Semua user biasa → redirect ke halaman maintenance
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "Site sedang dalam maintenance. Silakan coba lagi nanti."}), 503
+
+    return redirect("/maintenance")
+
+@app.route("/maintenance")
+def maintenance_page():
+    user = session.get("user")
+    is_admin = bool(user and user.get("is_admin"))
+    return render_template("maintenance.html", is_admin=is_admin), 503
+
 # ── Pages ──────────────────────────────────────────────────────────────────────
 
 @app.route("/manifest.json")
