@@ -185,6 +185,39 @@
     }
     .admin-bar a:hover { background: rgba(34,197,94,.1); }
 
+    /* Donate box */
+    .donate-box {
+      width: 100%;
+      background: var(--bg2); border: 1px solid rgba(232,65,90,.2);
+      border-radius: 12px; padding: 16px; margin-bottom: 12px;
+    }
+    .donate-top {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+    }
+    .donate-icon {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      background: var(--accent-dim); border: 1px solid rgba(232,65,90,.25);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .donate-icon i { font-size: 16px; color: var(--accent); }
+    .donate-title { font-size: 14px; font-weight: 900; color: var(--text); margin-bottom: 3px; }
+    .donate-sub { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .donate-sub strong { color: var(--accent2); }
+    .btn-donate {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--accent); color: #fff;
+      font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 900;
+      border: none; border-radius: 8px; padding: 13px 20px;
+      cursor: pointer; text-decoration: none;
+      transition: filter .15s, transform .15s;
+      box-shadow: 0 4px 20px rgba(232,65,90,.25);
+    }
+    .btn-donate:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-donate i { font-size: 14px; }
+
     /* Footer */
     .footer {
       padding: 18px 16px; text-align: center;
@@ -221,11 +254,32 @@
         Website Ditutup Permanen
       </div>
 
-      <h1>Layanan Telah <span>Dihentikan</span></h1>
+      <h1>Website Sementara <span>Ditutup</span></h1>
       <p class="desc">
-        Website ini sudah tidak beroperasi dan ditutup secara permanen.
-        Terima kasih telah menggunakan Dayynime.
+        Dayynime sedang tidak aktif. Bantu kami untuk menyalakannya kembali
+        dan tetap berjalan tanpa iklan dengan berdonasi.
       </p>
+
+      <div class="divider"></div>
+
+      <p class="section-label">
+        <i class="fa-solid fa-heart" style="margin-right:5px;color:var(--accent)"></i>
+        Dukung Dayynime
+      </p>
+
+      <div class="donate-box">
+        <div class="donate-top">
+          <div class="donate-icon"><i class="fa-solid fa-bolt"></i></div>
+          <div>
+            <div class="donate-title">Hidupkan Kembali Dayynime</div>
+            <div class="donate-sub">Mulai dari <strong>Rp 5.000</strong> &nbsp;·&nbsp; Tanpa iklan &nbsp;·&nbsp; Gratis untuk semua</div>
+          </div>
+        </div>
+        <button onclick="openDonasi()" class="btn-donate">
+          <i class="fa-solid fa-heart"></i>
+          Donasi Sekarang
+        </button>
+      </div>
 
       <div class="divider"></div>
 
@@ -237,8 +291,7 @@
       <div class="source-info">
         <div class="s-title">Dayynime – Anime Streaming Platform</div>
         <div class="s-sub">
-          Platform streaming anime lengkap dengan sistem coin, premium, gacha reward,
-          admin dashboard, dan banyak lagi. Tersedia untuk penggunaan pribadi.
+          Platform streaming anime subtitle Indonesia dengan multi-source, halaman detail & episode, pencarian, jadwal tayang, koleksi, global chat, dan admin dashboard lengkap. Tersedia untuk penggunaan pribadi.
         </div>
         <div class="tags">
           <span class="tag">Flask</span>
@@ -276,5 +329,175 @@
     </footer>
 
   </div>
+  <!-- Donasi Modal -->
+  <div id="donasiModal" class="modal-overlay" onclick="closeDonasi(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-heart" style="color:var(--accent)"></i>
+          Donasi ke Dayynime
+        </div>
+        <button class="modal-close" onclick="closeBtnDonasi()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <iframe
+          id="donasiFrame"
+          src=""
+          data-src="https://sociabuzz.com/dayynime/tribe"
+          title="Donasi Dayynime"
+          frameborder="0"
+          allow="payment"
+        ></iframe>
+        <div class="iframe-loading" id="iframeLoading">
+          <div class="spinner"></div>
+          <span>Memuat halaman donasi…</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="https://sociabuzz.com/dayynime/tribe" target="_blank" rel="noopener" class="modal-open-ext">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          Buka di browser
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(6px);
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      animation: fadeIn .2s ease;
+    }
+    .modal-overlay.open { display: flex; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .modal-box {
+      width: 100%; max-width: 520px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 20px 20px 0 0;
+      display: flex; flex-direction: column;
+      max-height: 90vh;
+      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+      overflow: hidden;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* Desktop — centered modal */
+    @media (min-width: 640px) {
+      .modal-overlay { align-items: center; padding: 20px; }
+      .modal-box {
+        border-radius: 16px; border: 1px solid var(--border);
+        max-height: 85vh;
+      }
+    }
+
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .modal-title {
+      font-size: 15px; font-weight: 900; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px;
+      transition: background .15s, color .15s;
+    }
+    .modal-close:hover { background: var(--accent-dim); color: var(--accent); }
+
+    .modal-body {
+      flex: 1; position: relative; overflow: hidden;
+      min-height: 500px;
+    }
+    .modal-body iframe {
+      width: 100%; height: 100%;
+      position: absolute; inset: 0;
+      border: none; display: block;
+      opacity: 0; transition: opacity .3s;
+    }
+    .modal-body iframe.loaded { opacity: 1; }
+
+    .iframe-loading {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; color: var(--text2); font-size: 13px;
+    }
+    .iframe-loading.hide { display: none; }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 2.5px solid var(--bg4);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: center;
+      flex-shrink: 0;
+    }
+    .modal-open-ext {
+      font-size: 12px; font-weight: 700; color: var(--text3);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+      transition: color .15s;
+    }
+    .modal-open-ext:hover { color: var(--text2); }
+  </style>
+
+  <script>
+    const modal  = document.getElementById('donasiModal');
+    const frame  = document.getElementById('donasiFrame');
+    const loader = document.getElementById('iframeLoading');
+
+    function openDonasi() {
+      // Lazy-load iframe saat modal dibuka
+      if (!frame.src || frame.src === window.location.href) {
+        frame.src = frame.dataset.src;
+        frame.onload = function() {
+          frame.classList.add('loaded');
+          loader.classList.add('hide');
+        };
+      }
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBtnDonasi() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Klik di luar modal box → tutup
+    function closeDonasi(e) {
+      if (e.target === modal) closeBtnDonasi();
+    }
+
+    // ESC key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeBtnDonasi();
+    });
+  </script>
 </body>
 </html>
