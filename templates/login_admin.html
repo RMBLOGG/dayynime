@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Admin – Dayynime</title>
+  <link rel="icon" type="image/png" href="/static/icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    :root {
+      --bg:         #0d0d0f;
+      --bg2:        #161618;
+      --bg3:        #1e1e21;
+      --border:     rgba(255,255,255,0.07);
+      --accent:     #e8415a;
+      --accent-dim: rgba(232,65,90,0.15);
+      --accent-glow:rgba(232,65,90,0.25);
+      --text:       #f0f0f0;
+      --text2:      #a0a0aa;
+      --text3:      #55556a;
+      --red:        #ef4444;
+    }
+    html, body {
+      height: 100%; background: var(--bg);
+      color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px;
+    }
+
+    .blob {
+      position: fixed; border-radius: 50%;
+      filter: blur(120px); z-index: 0; pointer-events: none;
+    }
+    .blob-1 {
+      width: 450px; height: 450px;
+      background: radial-gradient(circle, rgba(232,65,90,.1), transparent 70%);
+      top: -120px; right: -120px;
+    }
+    .blob-2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(232,65,90,.06), transparent 70%);
+      bottom: -80px; left: -80px;
+    }
+
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .card {
+      width: 100%; max-width: 380px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px 24px;
+    }
+
+    /* Header */
+    .card-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 24px;
+    }
+    .card-header img { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); }
+    .card-header .title { font-size: 16px; font-weight: 900; }
+    .card-header .title span { color: var(--accent); }
+    .card-header .badge {
+      margin-left: auto;
+      font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 99px;
+      background: var(--accent-dim); border: 1px solid rgba(232,65,90,.25);
+      color: var(--accent);
+    }
+
+    /* Form */
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 11px; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase;
+      color: var(--text2); margin-bottom: 7px;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap i {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      font-size: 13px; color: var(--text3); pointer-events: none;
+    }
+    .input-wrap input {
+      width: 100%; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 9px; padding: 11px 12px 11px 36px;
+      color: var(--text); font-family: 'Lato', sans-serif; font-size: 14px;
+      outline: none; transition: border-color .15s;
+    }
+    .input-wrap input:focus { border-color: rgba(232,65,90,.5); }
+    .input-wrap input::placeholder { color: var(--text3); }
+
+    /* Show password toggle */
+    .toggle-pw {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--text3); cursor: pointer;
+      font-size: 13px; padding: 0; transition: color .15s;
+    }
+    .toggle-pw:hover { color: var(--text2); }
+
+    /* Error */
+    .error-msg {
+      display: none; align-items: center; gap: 7px;
+      background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2);
+      border-radius: 8px; padding: 10px 12px;
+      font-size: 12px; color: var(--red);
+      margin-bottom: 14px;
+    }
+    .error-msg.show { display: flex; }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%; background: var(--accent); color: #fff;
+      font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 900;
+      border: none; border-radius: 9px; padding: 13px;
+      cursor: pointer; transition: filter .15s, transform .15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .btn-submit:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .btn-submit .spinner {
+      display: none; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin .6s linear infinite;
+    }
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .back-link {
+      display: block; text-align: center; margin-top: 16px;
+      font-size: 12px; color: var(--text3); text-decoration: none;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--text2); }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="page">
+    <div class="card">
+
+      <div class="card-header">
+        <img src="/static/icon.png" alt="Dayynime" />
+        <span class="title">Dayy<span>nime</span></span>
+        <span class="badge">Admin</span>
+      </div>
+
+      <div class="error-msg" id="errorMsg">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="errorText">Token tidak valid.</span>
+      </div>
+
+      <div class="field">
+        <label>Admin Token</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-key"></i>
+          <input
+            type="password"
+            id="tokenInput"
+            placeholder="Masukkan token admin"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          />
+          <button type="button" class="toggle-pw" onclick="togglePw()" id="toggleBtn">
+            <i class="fa-solid fa-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="submitBtn" onclick="doLogin()">
+        <div class="spinner"></div>
+        <span class="btn-text">
+          <i class="fa-solid fa-shield-halved"></i>
+          &nbsp;Masuk sebagai Admin
+        </span>
+      </button>
+
+      <a href="/maintenance" class="back-link">
+        <i class="fa-solid fa-arrow-left" style="margin-right:4px"></i>
+        Kembali
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    const tokenInput = document.getElementById('tokenInput');
+    const submitBtn  = document.getElementById('submitBtn');
+    const errorMsg   = document.getElementById('errorMsg');
+    const errorText  = document.getElementById('errorText');
+
+    // Enter key trigger
+    tokenInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+
+    function togglePw() {
+      const isHidden = tokenInput.type === 'password';
+      tokenInput.type = isHidden ? 'text' : 'password';
+      document.getElementById('eyeIcon').className = isHidden
+        ? 'fa-solid fa-eye-slash'
+        : 'fa-solid fa-eye';
+    }
+
+    async function doLogin() {
+      const token = tokenInput.value.trim();
+      if (!token) {
+        showError('Token tidak boleh kosong.');
+        return;
+      }
+
+      errorMsg.classList.remove('show');
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch('/auth/login/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          window.location.href = data.redirect || '/admin';
+        } else {
+          showError(data.error || 'Token tidak valid.');
+        }
+      } catch (e) {
+        showError('Gagal menghubungi server.');
+      } finally {
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      }
+    }
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorMsg.classList.add('show');
+    }
+  </script>
+</body>
+</html>
