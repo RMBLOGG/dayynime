@@ -552,6 +552,7 @@ MAINTENANCE_WHITELIST = {
     "/login", "/register", "/logout",
     "/api/auth/login", "/api/auth/register", "/api/auth/logout",
     "/api/auth/callback", "/auth/callback",
+    "/auth/login", "/auth/login/admin",
     "/maintenance",
     "/manifest.json", "/sw.js", "/robots.txt", "/sitemap.xml",
 }
@@ -1295,6 +1296,8 @@ def _verify_admin_token(token):
 @app.route("/auth/login", methods=["GET", "POST"])
 def auth_login():
     if request.method == "GET":
+        if request.args.get("mode") == "admin":
+            return render_template("login_admin.html")
         return render_template("login.html")
 
     data = request.get_json() or {}
