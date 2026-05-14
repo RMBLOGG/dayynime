@@ -4,167 +4,225 @@
 
 {% set banner_animes = [] %}
 {% if popular and popular.animes %}
-  {% for a in popular.animes[:8] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+  {% for a in popular.animes[:10] %}{% if a.poster %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 {% if banner_animes|length < 3 and data and data.ongoing %}
-  {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 5 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
+  {% for a in data.ongoing %}{% if a.poster and a not in banner_animes and banner_animes|length < 6 %}{% set _ = banner_animes.append(a) %}{% endif %}{% endfor %}
 {% endif %}
 
 <style>
-/* ─── RESET FOR INDEX PAGE ─── */
 .app-header { display: none !important; }
 body { padding-top: 0 !important; }
 
-:root {
-  --bg-deep:    #0a0a0d;
-  --bg-card:    #12121a;
-  --bg-pill:    #1a1a24;
-  --border-dim: rgba(255,255,255,0.08);
-  --accent:     #e8415a;
-  --gold:       #f5c518;
-  --text:       #f0f0f2;
-  --text2:      #9090a8;
-  --text3:      #50506a;
-  --radius-lg:  18px;
-  --radius-md:  12px;
-  --radius-sm:  8px;
-  --px:         16px;
-}
-
+/* ══════════════════════════════════════════
+   PAGE WRAPPER
+══════════════════════════════════════════ */
 .idx-page {
-  background: var(--bg-deep);
+  background: #0a0a0d;
   min-height: 100vh;
   padding-bottom: 90px;
   overflow-x: hidden;
+  position: relative;
 }
 
-/* ─── HEADER ─── */
+/* ══════════════════════════════════════════
+   BG BLUR — gambar aktif blur di belakang
+══════════════════════════════════════════ */
+.idx-bg-blur {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.idx-bg-blur-img {
+  position: absolute;
+  inset: -40px;
+  background-size: cover;
+  background-position: center top;
+  filter: blur(60px) brightness(0.22) saturate(1.4);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.idx-bg-blur-img.active { opacity: 1; }
+.idx-bg-blur::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(10,10,13,0.15) 0%,
+    rgba(10,10,13,0.6) 55%,
+    rgba(10,10,13,1) 100%
+  );
+}
+
+/* Semua konten di atas blur */
+.idx-page > * { position: relative; z-index: 1; }
+
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
 .idx-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 18px var(--px) 14px;
-}
-.idx-avatar-wrap {
-  position: relative;
-  flex-shrink: 0;
+  padding: 18px 16px 14px;
 }
 .idx-avatar-ring {
-  width: 52px; height: 52px;
+  width: 54px; height: 54px;
   border-radius: 50%;
-  background: conic-gradient(#c084fc 0%, #e8415a 40%, #f97316 60%, #c084fc 100%);
+  background: conic-gradient(#c084fc 0%, #e8415a 40%, #f97316 70%, #c084fc 100%);
   padding: 2.5px;
   display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  text-decoration: none;
 }
 .idx-avatar-inner {
   width: 100%; height: 100%;
   border-radius: 50%;
-  background: var(--bg-card);
+  background: #1a1a24;
   overflow: hidden;
   display: flex; align-items: center; justify-content: center;
 }
 .idx-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
-.idx-avatar-inner i { color: var(--text3); font-size: 20px; }
+.idx-avatar-inner i { color: #50506a; font-size: 20px; }
 .idx-header-info { flex: 1; min-width: 0; }
-.idx-header-greeting { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 2px; }
-.idx-header-name { font-size: 22px; font-weight: 900; color: var(--text); line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.idx-header-badges { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.idx-greeting { font-size: 12px; color: #9090a8; font-weight: 500; margin-bottom: 2px; }
+.idx-username { font-size: 24px; font-weight: 900; color: #f0f0f2; line-height: 1.1; }
+.idx-badges { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
 .idx-badge-lv {
-  background: #2a2a40;
+  background: #23233a;
   color: #a0a0f8;
   font-size: 11px; font-weight: 900;
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.3px;
+  padding: 3px 10px; border-radius: 20px;
 }
-.idx-badge-rank {
-  color: var(--text2);
-  font-size: 12px; font-weight: 700;
-  letter-spacing: 0.5px;
-}
-.idx-header-actions { display: flex; align-items: center; gap: 8px; }
-.idx-icon-btn {
-  width: 40px; height: 40px;
+.idx-badge-rank { color: #9090a8; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+.idx-header-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.idx-hbtn {
+  width: 42px; height: 42px;
   border-radius: 50%;
-  background: var(--bg-pill);
-  border: 1px solid var(--border-dim);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #9090a8; font-size: 16px;
   display: flex; align-items: center; justify-content: center;
-  color: var(--text2); font-size: 15px;
-  cursor: pointer; flex-shrink: 0;
-  text-decoration: none;
+  cursor: pointer; text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.2s;
 }
-.idx-icon-btn:active { background: rgba(232,65,90,0.15); }
+.idx-hbtn:active { background: rgba(232,65,90,0.15); color: #e8415a; }
 
-/* ─── HERO BANNER ─── */
-.idx-hero-wrap { padding: 0 var(--px); margin-bottom: 4px; }
-.idx-banner-track { display: flex; gap: 14px; overflow: hidden; }
-.idx-banner-slide {
-  min-width: 100%; flex-shrink: 0;
-  border-radius: var(--radius-lg);
+/* ══════════════════════════════════════════
+   SELL BANNER
+══════════════════════════════════════════ */
+.idx-sell {
+  margin: 0 16px 20px;
+  background: rgba(18,18,26,0.85);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 13px 14px;
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: inherit;
+  backdrop-filter: blur(10px);
+}
+.idx-sell-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e8415a, #c0183a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(232,65,90,0.4);
+}
+
+/* ══════════════════════════════════════════
+   HERO BANNER — scroll-based slider
+══════════════════════════════════════════ */
+.idx-hero {
+  margin: 0 16px;
+  border-radius: 18px;
   overflow: hidden;
   position: relative;
-  background: var(--bg-card);
-  text-decoration: none; color: #fff;
-  display: block;
 }
-.idx-banner-img {
+
+/* Slider scroll container */
+.idx-slider {
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* KRITIS: tidak boleh ada transform di sini */
+}
+.idx-slider::-webkit-scrollbar { display: none; }
+
+.idx-slide {
+  min-width: 100%;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: #fff;
+  background: #12121a;
+  /* aspect ratio 3:2 ish */
+}
+.idx-slide-img {
   width: 100%;
-  aspect-ratio: 3/2.2;
+  /* tinggi fixed supaya tidak collapse sebelum load */
+  height: 320px;
   object-fit: cover;
   object-position: center top;
   display: block;
 }
-.idx-banner-gradient {
+.idx-slide-grad {
   position: absolute; inset: 0;
   background: linear-gradient(
     to bottom,
     rgba(0,0,0,0) 0%,
-    rgba(0,0,0,0.15) 40%,
-    rgba(0,0,0,0.72) 72%,
-    rgba(0,0,0,0.95) 100%
+    rgba(0,0,0,0.1) 35%,
+    rgba(0,0,0,0.65) 65%,
+    rgba(0,0,0,0.97) 100%
   );
 }
-.idx-banner-body {
+.idx-slide-body {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   padding: 14px 16px 18px;
 }
-.idx-banner-title {
-  font-size: 1.35rem;
+.idx-slide-title {
+  font-size: 1.4rem;
   font-weight: 900;
   line-height: 1.2;
   margin-bottom: 10px;
-  text-shadow: 0 2px 16px rgba(0,0,0,0.8);
+  text-shadow: 0 2px 16px rgba(0,0,0,0.9);
 }
-.idx-banner-chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.idx-banner-chip-star {
+.idx-slide-chips {
+  display: flex; align-items: center; gap: 6px;
+  flex-wrap: wrap; margin-bottom: 9px;
+}
+.chip-star {
   display: inline-flex; align-items: center; gap: 4px;
-  background: var(--gold);
-  color: #000;
+  background: #f5c518; color: #000;
   font-size: 12px; font-weight: 900;
   padding: 5px 10px; border-radius: 8px;
 }
-.idx-banner-chip-ep {
+.chip-ep {
   display: inline-flex; align-items: center;
-  background: transparent;
-  border: 1.5px solid rgba(255,255,255,0.55);
+  border: 1.5px solid rgba(255,255,255,0.6);
   color: #fff;
   font-size: 11px; font-weight: 800;
   padding: 4px 10px; border-radius: 8px;
 }
-.idx-banner-chip-genre {
+.chip-genre {
   display: inline-flex; align-items: center;
   background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
   color: rgba(255,255,255,0.9);
   font-size: 11px; font-weight: 700;
-  padding: 4px 12px; border-radius: 8px;
+  padding: 4px 10px; border-radius: 8px;
 }
-.idx-banner-desc {
+.idx-slide-desc {
   font-size: 12px;
-  color: rgba(255,255,255,0.72);
+  color: rgba(255,255,255,0.7);
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -175,358 +233,479 @@ body { padding-top: 0 !important; }
 /* Dots */
 .idx-dots {
   display: flex; justify-content: center; gap: 5px;
-  padding: 12px 0 6px;
+  padding: 11px 0 5px;
 }
 .idx-dot {
   height: 7px; border-radius: 4px;
-  cursor: pointer; border: none; padding: 0;
-  background: rgba(255,255,255,0.15);
-  transition: all 0.3s;
+  border: none; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,0.18);
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
 }
-.idx-dot.active { width: 22px; background: var(--accent); }
+.idx-dot.active { width: 24px !important; background: #e8415a; }
 .idx-dot:not(.active) { width: 7px; }
 
-/* ─── SECTION HEADER ─── */
+/* ══════════════════════════════════════════
+   SECTION HEADER
+══════════════════════════════════════════ */
 .idx-sec-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px var(--px) 12px;
+  padding: 22px 16px 12px;
 }
-.idx-sec-title-wrap { display: flex; align-items: center; gap: 10px; }
-.idx-sec-bar { width: 3px; height: 22px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
-.idx-sec-title { font-size: 20px; font-weight: 900; color: var(--text); }
-.idx-sec-more { font-size: 14px; color: var(--text2); font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 3px; }
+.idx-sec-left { display: flex; align-items: center; gap: 10px; }
+.idx-sec-bar { width: 3px; height: 24px; background: #e8415a; border-radius: 2px; flex-shrink: 0; }
+.idx-sec-bar.green { background: #10B981; }
+.idx-sec-title { font-size: 20px; font-weight: 900; color: #f0f0f2; }
+.idx-sec-more {
+  font-size: 14px; color: #9090a8; font-weight: 600;
+  text-decoration: none; display: flex; align-items: center; gap: 3px;
+}
 .idx-sec-more i { font-size: 10px; }
 
-/* ─── LANJUT NONTON (2-col grid 16:9) ─── */
-.idx-cw-grid {
+/* ══════════════════════════════════════════
+   LANJUT NONTON — 2 col 16:9
+══════════════════════════════════════════ */
+.cw-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  padding: 0 var(--px);
+  padding: 0 16px;
 }
-.idx-cw-card {
-  border-radius: var(--radius-md);
+.cw-card {
+  border-radius: 12px;
   overflow: hidden;
-  background: var(--bg-card);
-  position: relative;
+  background: #12121a;
   text-decoration: none;
   display: block;
   -webkit-tap-highlight-color: transparent;
 }
-.idx-cw-thumb {
+.cw-thumb {
   position: relative;
   aspect-ratio: 16/10;
   overflow: hidden;
-  background: var(--bg-card);
+  background: #1a1a24;
 }
-.idx-cw-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
-.idx-cw-card:active .idx-cw-thumb img { transform: scale(1.04); }
-.idx-cw-progress {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 3px;
-  background: rgba(255,255,255,0.12);
+.cw-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.3s;
 }
-.idx-cw-progress-fill { height: 100%; background: var(--accent); }
-.idx-cw-ep-label {
-  position: absolute; bottom: 8px; left: 8px;
-  background: rgba(0,0,0,0.75);
+.cw-card:active .cw-thumb img { transform: scale(1.04); }
+.cw-ep-label {
+  position: absolute; bottom: 7px; left: 7px;
+  background: rgba(0,0,0,0.8);
   color: #fff; font-size: 11px; font-weight: 800;
-  padding: 3px 9px; border-radius: 6px;
+  padding: 3px 8px; border-radius: 6px;
 }
-.idx-cw-accent-line {
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent), #f97316);
+.cw-progress {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: rgba(255,255,255,0.1);
 }
+.cw-progress-fill { height: 100%; background: #e8415a; }
+.cw-accent-line { height: 3px; background: linear-gradient(90deg,#e8415a,#f97316); }
 
-/* ─── GENRE PILLS ─── */
-.idx-genre-wrap {
-  padding: 4px var(--px) 8px;
+/* ══════════════════════════════════════════
+   GENRE PILLS
+══════════════════════════════════════════ */
+.genre-scroll {
   display: flex; gap: 8px;
   overflow-x: auto; scrollbar-width: none;
+  padding: 0 16px 4px;
   -webkit-overflow-scrolling: touch;
 }
-.idx-genre-wrap::-webkit-scrollbar { display: none; }
-.idx-genre-pill {
+.genre-scroll::-webkit-scrollbar { display: none; }
+.genre-pill {
   flex-shrink: 0;
-  background: var(--bg-pill);
-  border: 1px solid var(--border-dim);
-  color: var(--text);
+  background: #1a1a24;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #f0f0f2;
   font-size: 13px; font-weight: 700;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 24px;
   text-decoration: none;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.2s, border-color 0.2s;
 }
-.idx-genre-pill:active { background: rgba(232,65,90,0.15); border-color: rgba(232,65,90,0.4); color: var(--accent); }
+.genre-pill:active { background: rgba(232,65,90,0.15); border-color: rgba(232,65,90,0.4); color: #e8415a; }
 
-/* ─── CARD ROW ─── */
-.idx-cards { display: flex; gap: 10px; overflow-x: auto; padding: 0 var(--px) 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.idx-cards::-webkit-scrollbar { display: none; }
-.idx-card { flex-shrink: 0; width: 130px; text-decoration: none; color: inherit; -webkit-tap-highlight-color: transparent; }
-.idx-card-poster { position: relative; aspect-ratio: 2/3; border-radius: var(--radius-md); overflow: hidden; background: var(--bg-card); margin-bottom: 7px; }
-.idx-card-poster img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-.idx-card:active .idx-card-poster img { transform: scale(1.04); }
-.idx-card-score {
-  position: absolute; top: 7px; left: 7px;
-  background: rgba(0,0,0,0.8); color: var(--gold);
+/* ══════════════════════════════════════════
+   CARD ROW (ongoing, popular)
+══════════════════════════════════════════ */
+.card-row {
+  display: flex; gap: 10px;
+  overflow-x: auto; scrollbar-width: none;
+  padding: 0 16px 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.card-row::-webkit-scrollbar { display: none; }
+.acard {
+  flex-shrink: 0; width: 128px;
+  text-decoration: none; color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.acard-poster {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #12121a;
+  margin-bottom: 7px;
+}
+.acard-poster img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.acard:active .acard-poster img { transform: scale(1.04); }
+.acard-score {
+  position: absolute; top: 6px; left: 6px;
+  background: rgba(0,0,0,0.82);
+  color: #f5c518;
   font-size: 10px; font-weight: 900;
   padding: 3px 7px; border-radius: 6px;
   display: flex; align-items: center; gap: 3px;
   backdrop-filter: blur(4px);
 }
-.idx-card-bottom {
+.acard-bottom {
   position: absolute; bottom: 0; left: 0; right: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-  padding: 22px 8px 8px;
+  padding: 24px 8px 8px;
 }
-.idx-card-btitle {
+.acard-title {
   font-size: 11px; font-weight: 800; color: #fff;
   line-height: 1.3;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.idx-card-eps { font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 3px; display: flex; align-items: center; gap: 3px; }
+.acard-ep { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 3px; display: flex; align-items: center; gap: 3px; }
 
-/* ─── DISCOVER BANNER ─── */
-.idx-discover {
-  margin: 8px var(--px) 0;
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  padding: 13px 14px;
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none; color: inherit;
-  border: 1px solid var(--border-dim);
+/* ══════════════════════════════════════════
+   SERVER CARDS
+══════════════════════════════════════════ */
+.srv-row {
+  display: flex; gap: 10px;
+  overflow-x: auto; scrollbar-width: none;
+  padding: 0 16px 4px;
+  -webkit-overflow-scrolling: touch;
 }
-
-/* ─── SERVER CARDS ─── */
-.srv-section { padding: 8px 0 0; }
-.srv-cards { display: flex; gap: 10px; overflow-x: auto; padding: 0 var(--px) 4px; scrollbar-width: none; }
-.srv-cards::-webkit-scrollbar { display: none; }
+.srv-row::-webkit-scrollbar { display: none; }
 .srv-card {
   flex-shrink: 0; min-width: 130px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-dim);
-  border-radius: var(--radius-md);
-  padding: 12px;
+  background: #12121a;
+  border: 1.5px solid rgba(255,255,255,0.07);
+  border-radius: 12px; padding: 12px;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: border-color 0.2s, background 0.2s;
   position: relative; overflow: hidden;
 }
-.srv-card.active { border-color: rgba(232,65,90,0.55); background: rgba(232,65,90,0.07); }
-.srv-card.active::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg,var(--accent),#f97316); }
-.srv-card-check { position:absolute; top:8px; right:8px; width:17px; height:17px; border-radius:50%; background:var(--accent); display:none; align-items:center; justify-content:center; font-size:8px; color:#fff; }
-.srv-card.active .srv-card-check { display:flex; }
+.srv-card.active {
+  border-color: rgba(232,65,90,0.55);
+  background: rgba(232,65,90,0.07);
+}
+.srv-card.active::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height: 2px; background: linear-gradient(90deg,#e8415a,#f97316);
+}
+.srv-check {
+  position: absolute; top: 8px; right: 8px;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: #e8415a; display: none;
+  align-items: center; justify-content: center;
+  font-size: 8px; color: #fff;
+}
+.srv-card.active .srv-check { display: flex; }
 
-/* ─── RANK LIST ─── */
-.idx-rank-item { display:flex; align-items:center; gap:12px; padding:10px var(--px); text-decoration:none; color:inherit; border-radius:var(--radius-sm); transition:background 0.15s; }
-.idx-rank-item:active { background:var(--bg-card); }
+/* ══════════════════════════════════════════
+   RANK LIST
+══════════════════════════════════════════ */
+.rank-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  text-decoration: none; color: inherit;
+  transition: background 0.15s; border-radius: 8px;
+}
+.rank-item:active { background: rgba(255,255,255,0.04); }
 
-/* ─── DESKTOP ─── */
-@media(min-width:768px) {
+/* ══════════════════════════════════════════
+   SCHEDULE
+══════════════════════════════════════════ */
+.sday {
+  flex-shrink: 0; display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  background: #12121a; border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px; padding: 8px 12px;
+  cursor: pointer; font-family: inherit;
+  color: #9090a8; font-size: 10px; font-weight: 700;
+  transition: all 0.2s; min-width: 52px;
+}
+.sday.active {
+  background: rgba(232,65,90,0.1);
+  border-color: rgba(232,65,90,0.35);
+  color: #e8415a;
+}
+
+/* ══════════════════════════════════════════
+   DESKTOP
+══════════════════════════════════════════ */
+@media(min-width:768px){
   body { padding-top: 60px !important; }
   .idx-header { display: none !important; }
-  .idx-page { max-width: 1180px; margin: 0 auto; padding: 20px 24px 80px; }
-  .page-content-wrap { padding: 0 !important; max-width: 100% !important; }
-  :root { --px: 0px; }
-  .idx-hero-wrap { padding: 0; }
-  .idx-cw-grid { grid-template-columns: repeat(4, 1fr); }
+  .idx-page { max-width:1180px; margin:0 auto; padding:20px 24px 80px; }
+  .page-content-wrap { padding:0 !important; max-width:100% !important; }
+  .idx-hero, .idx-sell { margin-left:0; margin-right:0; }
+  .cw-grid { grid-template-columns: repeat(4,1fr); padding:0; }
+  .idx-sec-head { padding-left:0; padding-right:0; }
+  .card-row { padding-left:0; padding-right:0; }
+  .genre-scroll { padding-left:0; padding-right:0; }
+  .srv-row { padding-left:0; padding-right:0; }
 }
 </style>
 
+<!-- ══════════════════════════════════════════
+     BACKGROUND BLUR
+══════════════════════════════════════════ -->
+<div class="idx-bg-blur" id="idxBgBlur">
+  {% for anime in banner_animes[:10] %}
+  <div class="idx-bg-blur-img {% if loop.first %}active{% endif %}" id="bgBlur{{ loop.index0 }}" style="background-image:url('{{ anime.poster }}');"></div>
+  {% endfor %}
+</div>
+
 <div class="idx-page">
 
-<!-- ═══════════════ HEADER ═══════════════ -->
+<!-- ══════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════ -->
 <div class="idx-header">
-  <a href="/profile" class="idx-avatar-wrap" style="text-decoration:none;">
-    <div class="idx-avatar-ring">
-      <div class="idx-avatar-inner">
-        <img id="idxAvatarImg" src="" alt="" style="display:none;">
-        <i id="idxAvatarIcon" class="fas fa-user"></i>
-      </div>
+  <a href="/profile" class="idx-avatar-ring">
+    <div class="idx-avatar-inner">
+      <img id="idxAvatarImg" src="" alt="" style="display:none;">
+      <i id="idxAvatarIcon" class="fas fa-user"></i>
     </div>
   </a>
   <div class="idx-header-info">
-    <div class="idx-header-greeting" id="idxGreeting">Selamat Datang</div>
-    <div class="idx-header-name" id="idxHeaderName">Guest</div>
-    <div class="idx-header-badges">
+    <div class="idx-greeting" id="idxGreeting">Selamat Malam</div>
+    <div class="idx-username" id="idxUsername">Admin</div>
+    <div class="idx-badges">
       <span class="idx-badge-lv" id="idxLvBadge">Lv.1</span>
       <span class="idx-badge-rank" id="idxRankBadge">RANK F</span>
     </div>
   </div>
-  <div class="idx-header-actions">
-    <button class="idx-icon-btn" onclick="openHeaderSearch()"><i class="fas fa-search"></i></button>
-    <button class="idx-icon-btn" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
+  <div class="idx-header-btns">
+    <button class="idx-hbtn" onclick="openHeaderSearch()"><i class="fas fa-search"></i></button>
+    <button class="idx-hbtn" onclick="openSidebar()"><i class="fas fa-bars"></i></button>
   </div>
 </div>
 
-<!-- Sell Banner -->
-<a href="https://wa.me/6282320781747" target="_blank" rel="noopener" class="idx-discover">
-  <div style="width:42px;height:42px;border-radius:10px;background:rgba(232,65,90,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔥</div>
+<!-- ══════════════════════════════════════════
+     SELL BANNER
+══════════════════════════════════════════ -->
+<a href="https://wa.me/6282320781747" target="_blank" rel="noopener" class="idx-sell">
+  <div class="idx-sell-icon">🔥</div>
   <div style="flex:1;">
-    <div style="font-size:13px;font-weight:900;color:var(--accent);">Website / Source Code Dijual!</div>
-    <div style="font-size:11px;color:var(--text2);margin-top:2px;">WA: <span style="color:#fff;font-weight:700;">082320781747</span></div>
+    <div style="font-size:14px;font-weight:900;color:#e8415a;">Website / Source Code Dijual!</div>
+    <div style="font-size:12px;color:#9090a8;margin-top:2px;">WA: <span style="color:#fff;font-weight:700;">082320781747</span></div>
   </div>
-  <i class="fab fa-whatsapp" style="color:#25d366;font-size:20px;flex-shrink:0;"></i>
+  <i class="fab fa-whatsapp" style="color:#25d366;font-size:22px;flex-shrink:0;"></i>
 </a>
 
-<!-- ═══════════════ HERO BANNER ═══════════════ -->
+<!-- ══════════════════════════════════════════
+     HERO BANNER
+══════════════════════════════════════════ -->
 {% if banner_animes %}
-<div style="margin-top:18px;">
-  <div class="idx-hero-wrap">
-    <div class="idx-banner-track" id="idxBannerTrack" style="transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);">
+<div>
+  <div class="idx-hero">
+    <div class="idx-slider" id="idxSlider">
       {% for anime in banner_animes[:10] %}
-      <a href="/anime/{{ anime.slug }}" class="idx-banner-slide">
-        <img class="idx-banner-img" src="{{ anime.poster }}" alt="{{ anime.title }}" onerror="this.src='/static/no-image.svg'">
-        <div class="idx-banner-gradient"></div>
-        <div class="idx-banner-body">
-          <div class="idx-banner-title">{{ anime.title }}</div>
-          <div class="idx-banner-chips">
+      <a href="/anime/{{ anime.slug }}" class="idx-slide">
+        <img
+          class="idx-slide-img"
+          src="{{ anime.poster }}"
+          alt="{{ anime.title }}"
+          loading="{% if loop.first %}eager{% else %}lazy{% endif %}"
+          onerror="this.src='/static/no-image.svg'"
+        >
+        <div class="idx-slide-grad"></div>
+        <div class="idx-slide-body">
+          <div class="idx-slide-title">{{ anime.title }}</div>
+          <div class="idx-slide-chips">
             {% if anime.score %}
-            <span class="idx-banner-chip-star">
-              <i class="fas fa-star" style="font-size:10px;"></i> {{ anime.score }}
-            </span>
+            <span class="chip-star"><i class="fas fa-star" style="font-size:10px;"></i> {{ anime.score }}</span>
             {% endif %}
             {% if anime.episode %}
-            <span class="idx-banner-chip-ep">EPISODE {{ anime.episode }}</span>
+            <span class="chip-ep">EPISODE {{ anime.episode }}</span>
             {% endif %}
-            {% for genre in (anime.genres or [])[:2] %}
-            <span class="idx-banner-chip-genre">{{ genre }}</span>
+            {% for g in (anime.genres or [])[:2] %}
+            <span class="chip-genre">{{ g }}</span>
             {% endfor %}
           </div>
-          {% if anime.synopsis or anime.description %}
-          <div class="idx-banner-desc">{{ anime.synopsis or anime.description }}</div>
+          {% if anime.synopsis %}
+          <div class="idx-slide-desc">{{ anime.synopsis }}</div>
+          {% elif anime.description %}
+          <div class="idx-slide-desc">{{ anime.description }}</div>
           {% endif %}
         </div>
       </a>
       {% endfor %}
     </div>
   </div>
+
   <div class="idx-dots" id="idxDots">
     {% for anime in banner_animes[:10] %}
     <button class="idx-dot {% if loop.first %}active{% endif %}" data-i="{{ loop.index0 }}"></button>
     {% endfor %}
   </div>
 </div>
+
 <script>
 (function(){
-  var track = document.getElementById('idxBannerTrack');
-  var dots = document.querySelectorAll('#idxDots .idx-dot');
-  var slides = track ? track.querySelectorAll('.idx-banner-slide') : [];
-  var total = slides.length, cur = 0, timer = null;
-  if (!track || total < 2) return;
+  var slider   = document.getElementById('idxSlider');
+  var dots     = document.querySelectorAll('#idxDots .idx-dot');
+  var blurs    = document.querySelectorAll('.idx-bg-blur-img');
+  var total    = dots.length;
+  var cur      = 0;
+  var timer    = null;
+  var touching = false;
 
-  function goTo(n) {
+  if (!slider || total < 1) return;
+
+  function setCur(n) {
     cur = (n + total) % total;
-    track.style.transform = 'translateX(calc(-' + cur + ' * (100% + 14px)))';
-    dots.forEach(function(d, j) { d.classList.toggle('active', j === cur); });
-  }
-  function startAuto() { timer = setInterval(function(){ goTo(cur + 1); }, 4500); }
-  function resetAuto() { clearInterval(timer); startAuto(); }
 
+    /* Scroll tanpa transform */
+    slider.scrollTo({ left: cur * slider.offsetWidth, behavior: 'smooth' });
+
+    /* Dots */
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === cur); });
+
+    /* Background blur */
+    blurs.forEach(function(b, i) { b.classList.toggle('active', i === cur); });
+  }
+
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(function(){ if(!touching) setCur(cur + 1); }, 4500);
+  }
+
+  /* Dot click */
   dots.forEach(function(d) {
-    d.addEventListener('click', function() { goTo(parseInt(this.getAttribute('data-i'))); resetAuto(); });
+    d.addEventListener('click', function() {
+      setCur(parseInt(this.getAttribute('data-i')));
+      startAuto();
+    });
   });
 
-  var sx = 0, sy = 0;
-  track.addEventListener('touchstart', function(e) {
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; clearInterval(timer);
-  }, {passive: true});
-  track.addEventListener('touchend', function(e) {
-    var dx = sx - e.changedTouches[0].clientX;
-    var dy = sy - e.changedTouches[0].clientY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      goTo(dx > 0 ? cur + 1 : cur - 1);
+  /* Sync dots on native scroll */
+  slider.addEventListener('scroll', function() {
+    if (touching) return;
+    var idx = Math.round(slider.scrollLeft / slider.offsetWidth);
+    if (idx !== cur && idx >= 0 && idx < total) {
+      cur = idx;
+      dots.forEach(function(d, i) { d.classList.toggle('active', i === cur); });
+      blurs.forEach(function(b, i) { b.classList.toggle('active', i === cur); });
     }
-    resetAuto();
-  }, {passive: true});
+  }, { passive: true });
+
+  /* Touch: pause auto */
+  slider.addEventListener('touchstart', function(){ touching = true; clearInterval(timer); }, { passive: true });
+  slider.addEventListener('touchend',   function(){
+    touching = false;
+    /* Snap setelah touch — baca posisi setelah browser selesai scroll */
+    setTimeout(function(){
+      var idx = Math.round(slider.scrollLeft / slider.offsetWidth);
+      if (idx >= 0 && idx < total) {
+        cur = idx;
+        dots.forEach(function(d, i) { d.classList.toggle('active', i === cur); });
+        blurs.forEach(function(b, i) { b.classList.toggle('active', i === cur); });
+      }
+      startAuto();
+    }, 300);
+  }, { passive: true });
 
   startAuto();
 })();
 </script>
 {% endif %}
 
-<!-- ═══════════════ LANJUT NONTON ═══════════════ -->
+<!-- ══════════════════════════════════════════
+     LANJUT NONTON
+══════════════════════════════════════════ -->
 <div id="cwSection" style="display:none;">
   <div class="idx-sec-head">
-    <div class="idx-sec-title-wrap">
+    <div class="idx-sec-left">
       <div class="idx-sec-bar"></div>
       <div class="idx-sec-title">Lanjut Nonton</div>
     </div>
-    <a href="#" onclick="clearAllHistory();return false;" class="idx-sec-more">Hapus <i class="fas fa-chevron-right"></i></a>
+    <a href="#" onclick="clearAllHistory();return false;" class="idx-sec-more">Lihat Semua <i class="fas fa-chevron-right"></i></a>
   </div>
-  <div class="idx-cw-grid" id="cwList"></div>
+  <div class="cw-grid" id="cwList"></div>
 </div>
 
-<!-- ═══════════════ QUICK NAV ═══════════════ -->
-<div style="padding:20px var(--px) 6px;">
+<!-- ══════════════════════════════════════════
+     QUICK NAV
+══════════════════════════════════════════ -->
+<div style="padding:16px 16px 6px;">
   <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px;">
-    <a href="/ongoing" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--bg-pill);border:1px solid var(--border-dim);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;"></span> Ongoing</a>
-    <a href="/completed" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--bg-pill);border:1px solid var(--border-dim);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#60a5fa;display:inline-block;"></span> Completed</a>
-    <a href="/movies" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--bg-pill);border:1px solid var(--border-dim);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-film" style="font-size:10px;color:var(--accent);"></i> Movie</a>
-    <a href="/popular" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--bg-pill);border:1px solid var(--border-dim);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-fire" style="font-size:10px;color:var(--accent);"></i> Populer</a>
-    <a href="/jadwal" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--bg-pill);border:1px solid var(--border-dim);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-calendar-alt" style="font-size:10px;color:#10B981;"></i> Jadwal</a>
-    <a href="/animelist" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--bg-pill);border:1px solid var(--border-dim);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-list" style="font-size:10px;color:var(--text3);"></i> A-Z</a>
+    <a href="/ongoing" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#1a1a24;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;"></span> Ongoing</a>
+    <a href="/completed" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#1a1a24;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:#60a5fa;display:inline-block;"></span> Completed</a>
+    <a href="/movies" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#1a1a24;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-film" style="font-size:10px;color:#e8415a;"></i> Movie</a>
+    <a href="/popular" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#1a1a24;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-fire" style="font-size:10px;color:#e8415a;"></i> Populer</a>
+    <a href="/jadwal" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#1a1a24;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-calendar-alt" style="font-size:10px;color:#10B981;"></i> Jadwal</a>
+    <a href="/animelist" style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:#1a1a24;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:8px 14px;text-decoration:none;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;"><i class="fas fa-list" style="font-size:10px;color:#50506a;"></i> A-Z</a>
   </div>
 </div>
 
-<!-- ═══════════════ SERVER SWITCHER ═══════════════ -->
-<div class="srv-section">
-  <div style="padding:0 var(--px) 10px;display:flex;align-items:center;gap:6px;">
-    <div style="font-size:14px;font-weight:900;color:#fff;"><i class="fas fa-server" style="color:var(--accent);font-size:12px;margin-right:5px;"></i>Pilih Server</div>
-    <div style="font-size:11px;color:var(--text3);">— koleksi berbeda tiap server</div>
+<!-- ══════════════════════════════════════════
+     SERVER
+══════════════════════════════════════════ -->
+<div>
+  <div style="padding:8px 16px 10px;display:flex;align-items:center;gap:8px;">
+    <div style="font-size:14px;font-weight:900;color:#fff;"><i class="fas fa-server" style="color:#e8415a;font-size:12px;margin-right:5px;"></i>Pilih Server</div>
+    <div style="font-size:11px;color:#50506a;">— koleksi berbeda tiap server</div>
   </div>
-  <div class="srv-cards">
-    <div class="srv-card {% if active_source == 'samehadaku' %}active{% endif %}" onclick="switchSource('samehadaku',this)">
-      <div class="srv-card-check"><i class="fas fa-check"></i></div>
-      <div style="font-size:9px;font-weight:900;color:var(--accent);background:rgba(232,65,90,0.12);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:5px;">v1</div>
+  <div class="srv-row">
+    <div class="srv-card {% if active_source == 'samehadaku' %}active{% endif %}" onclick="doSwitchSource('samehadaku',this)">
+      <div class="srv-check"><i class="fas fa-check"></i></div>
+      <div style="font-size:9px;font-weight:900;color:#e8415a;background:rgba(232,65,90,0.12);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:5px;">v1</div>
       <div style="font-size:13px;font-weight:900;color:#fff;">Dayynime-v1</div>
-      <div style="display:flex;align-items:center;gap:4px;margin-top:5px;"><div style="width:5px;height:5px;border-radius:50%;background:#10B981;"></div><span style="font-size:10px;color:var(--text3);">Aktif</span></div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:5px;"><div style="width:5px;height:5px;border-radius:50%;background:#10B981;"></div><span style="font-size:10px;color:#50506a;">Aktif</span></div>
     </div>
-    <div class="srv-card {% if active_source == 'animasu' %}active{% endif %}" onclick="switchSource('animasu',this)">
-      <div class="srv-card-check"><i class="fas fa-check"></i></div>
+    <div class="srv-card {% if active_source == 'animasu' %}active{% endif %}" onclick="doSwitchSource('animasu',this)">
+      <div class="srv-check"><i class="fas fa-check"></i></div>
       <div style="font-size:9px;font-weight:900;color:#10B981;background:rgba(16,185,129,0.12);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:5px;">v2</div>
       <div style="font-size:13px;font-weight:900;color:#fff;">Dayynime-v2</div>
-      <div style="display:flex;align-items:center;gap:4px;margin-top:5px;"><div style="width:5px;height:5px;border-radius:50%;background:#10B981;"></div><span style="font-size:10px;color:var(--text3);">Aktif</span></div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:5px;"><div style="width:5px;height:5px;border-radius:50%;background:#10B981;"></div><span style="font-size:10px;color:#50506a;">Aktif</span></div>
     </div>
-    <div class="srv-card {% if active_source == 'otakudesu' %}active{% endif %}" onclick="switchSource('otakudesu',this)">
-      <div class="srv-card-check"><i class="fas fa-check"></i></div>
+    <div class="srv-card {% if active_source == 'otakudesu' %}active{% endif %}" onclick="doSwitchSource('otakudesu',this)">
+      <div class="srv-check"><i class="fas fa-check"></i></div>
       <div style="font-size:9px;font-weight:900;color:#60a5fa;background:rgba(96,165,250,0.12);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:5px;">v3</div>
       <div style="font-size:13px;font-weight:900;color:#fff;">Dayynime-v3</div>
-      <div style="display:flex;align-items:center;gap:4px;margin-top:5px;"><div style="width:5px;height:5px;border-radius:50%;background:#10B981;"></div><span style="font-size:10px;color:var(--text3);">Aktif</span></div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:5px;"><div style="width:5px;height:5px;border-radius:50%;background:#10B981;"></div><span style="font-size:10px;color:#50506a;">Aktif</span></div>
     </div>
   </div>
 </div>
 <script>
-function switchSource(src, el) {
-  var cards = document.querySelectorAll('.srv-card');
-  cards.forEach(function(c){ c.classList.remove('active'); });
+function doSwitchSource(src, el) {
+  document.querySelectorAll('.srv-card').forEach(function(c){ c.classList.remove('active'); });
   el.classList.add('active');
-  fetch('/api/source/switch', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:src})})
-    .then(function(r){ return r.json(); }).then(function(d){ if(d.ok) setTimeout(function(){ location.reload(); }, 300); }).catch(function(){});
+  fetch('/api/source/switch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:src})})
+    .then(function(r){return r.json();}).then(function(d){if(d.ok)setTimeout(function(){location.reload();},300);}).catch(function(){});
 }
 </script>
 
-<!-- ═══════════════ ONGOING ═══════════════ -->
+<!-- ══════════════════════════════════════════
+     ONGOING
+══════════════════════════════════════════ -->
 {% if data and data.ongoing %}
 <div>
   <div class="idx-sec-head">
-    <div class="idx-sec-title-wrap">
-      <div class="idx-sec-bar"></div>
-      <div class="idx-sec-title">Anime Ongoing</div>
-    </div>
+    <div class="idx-sec-left"><div class="idx-sec-bar"></div><div class="idx-sec-title">Anime Ongoing</div></div>
     <a href="/ongoing" class="idx-sec-more">Lihat Semua <i class="fas fa-chevron-right"></i></a>
   </div>
-  <div class="idx-cards">
+  <div class="card-row">
     {% for anime in data.ongoing[:12] %}
-    <a href="/anime/{{ anime.slug }}" class="idx-card">
-      <div class="idx-card-poster">
+    <a href="/anime/{{ anime.slug }}" class="acard">
+      <div class="acard-poster">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.score %}<div class="idx-card-score"><i class="fas fa-star" style="font-size:8px;"></i> {{ anime.score }}</div>{% endif %}
-        <div class="idx-card-bottom">
-          <div class="idx-card-btitle">{{ anime.title }}</div>
-          <div class="idx-card-eps"><i class="fas fa-play-circle" style="font-size:9px;color:var(--accent);"></i> {% if anime.episode %}Ep {{ anime.episode }}{% else %}{{ anime.type or 'Anime' }}{% endif %}</div>
+        {% if anime.score %}<div class="acard-score"><i class="fas fa-star" style="font-size:8px;"></i> {{ anime.score }}</div>{% endif %}
+        <div class="acard-bottom">
+          <div class="acard-title">{{ anime.title }}</div>
+          <div class="acard-ep"><i class="fas fa-play-circle" style="font-size:9px;color:#e8415a;"></i> {% if anime.episode %}Ep {{ anime.episode }}{% else %}{{ anime.type or 'Anime' }}{% endif %}</div>
         </div>
       </div>
     </a>
@@ -535,25 +714,24 @@ function switchSource(src, el) {
 </div>
 {% endif %}
 
-<!-- ═══════════════ POPULAR ═══════════════ -->
+<!-- ══════════════════════════════════════════
+     POPULAR
+══════════════════════════════════════════ -->
 {% if popular and popular.animes %}
 <div>
   <div class="idx-sec-head">
-    <div class="idx-sec-title-wrap">
-      <div class="idx-sec-bar"></div>
-      <div class="idx-sec-title">Popular Anime</div>
-    </div>
+    <div class="idx-sec-left"><div class="idx-sec-bar"></div><div class="idx-sec-title">Popular Anime</div></div>
     <a href="/popular" class="idx-sec-more">Lihat Semua <i class="fas fa-chevron-right"></i></a>
   </div>
-  <div class="idx-cards">
+  <div class="card-row">
     {% for anime in popular.animes[:10] %}
-    <a href="/anime/{{ anime.slug }}" class="idx-card">
-      <div class="idx-card-poster">
+    <a href="/anime/{{ anime.slug }}" class="acard">
+      <div class="acard-poster">
         <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'">
-        {% if anime.score %}<div class="idx-card-score"><i class="fas fa-star" style="font-size:8px;"></i> {{ anime.score }}</div>{% endif %}
-        <div class="idx-card-bottom">
-          <div class="idx-card-btitle">{{ anime.title }}</div>
-          <div class="idx-card-eps"><i class="fas fa-play-circle" style="font-size:9px;color:var(--accent);"></i> {{ anime.episode or anime.type or 'Anime' }}</div>
+        {% if anime.score %}<div class="acard-score"><i class="fas fa-star" style="font-size:8px;"></i> {{ anime.score }}</div>{% endif %}
+        <div class="acard-bottom">
+          <div class="acard-title">{{ anime.title }}</div>
+          <div class="acard-ep"><i class="fas fa-play-circle" style="font-size:9px;color:#e8415a;"></i> {{ anime.episode or anime.type or 'Anime' }}</div>
         </div>
       </div>
     </a>
@@ -562,16 +740,9 @@ function switchSource(src, el) {
 </div>
 {% endif %}
 
-<!-- ═══════════════ GENRE PILLS ═══════════════ -->
-{% set genre_icons = {
-  'Action':'fas fa-fist-raised','Adventure':'fas fa-map-marked-alt',
-  'Comedy':'fas fa-laugh-beam','Drama':'fas fa-theater-masks',
-  'Fantasy':'fas fa-hat-wizard','Horror':'fas fa-skull',
-  'Isekai':'fas fa-door-open','Magic':'fas fa-magic',
-  'Romance':'fas fa-heart','School':'fas fa-graduation-cap',
-  'Sci-Fi':'fas fa-atom','Shounen':'fas fa-fire',
-  'Slice of Life':'fas fa-coffee','Sports':'fas fa-running'
-} %}
+<!-- ══════════════════════════════════════════
+     GENRE PILLS
+══════════════════════════════════════════ -->
 {% set fallback_genres = [
   {'name':'Action','slug':'action'},{'name':'Adventure','slug':'adventure'},
   {'name':'Comedy','slug':'comedy'},{'name':'Drama','slug':'drama'},
@@ -585,43 +756,39 @@ function switchSource(src, el) {
 
 <div>
   <div class="idx-sec-head" style="padding-bottom:10px;">
-    <div class="idx-sec-title-wrap">
-      <div class="idx-sec-bar"></div>
-      <div class="idx-sec-title">Genre</div>
-    </div>
+    <div class="idx-sec-left"><div class="idx-sec-bar"></div><div class="idx-sec-title">Genre</div></div>
     <a href="/genres" class="idx-sec-more">Semua <i class="fas fa-chevron-right"></i></a>
   </div>
-  <div class="idx-genre-wrap">
+  <div class="genre-scroll">
     {% for g in genre_data %}
-    <a href="/genre/{{ g.slug }}" class="idx-genre-pill">{{ g.name }}</a>
+    <a href="/genre/{{ g.slug }}" class="genre-pill">{{ g.name }}</a>
     {% endfor %}
   </div>
 </div>
 
-<!-- ═══════════════ TOP POPULER ═══════════════ -->
+<!-- ══════════════════════════════════════════
+     TOP POPULER
+══════════════════════════════════════════ -->
 {% if popular and popular.animes %}
 <div style="margin-top:6px;">
   <div class="idx-sec-head">
-    <div class="idx-sec-title-wrap">
-      <div class="idx-sec-bar"></div>
-      <div class="idx-sec-title">Top Populer</div>
-    </div>
+    <div class="idx-sec-left"><div class="idx-sec-bar"></div><div class="idx-sec-title">Top Populer</div></div>
     <a href="/popular" class="idx-sec-more">Lihat Semua <i class="fas fa-chevron-right"></i></a>
   </div>
-  <div style="padding:0 var(--px);">
+  <div>
     {% for anime in popular.animes[:8] %}
-    <a href="/anime/{{ anime.slug }}" class="idx-rank-item">
+    <a href="/anime/{{ anime.slug }}" class="rank-item">
       <div style="width:28px;text-align:center;flex-shrink:0;font-size:{% if loop.index<=3 %}17{% else %}14{% endif %}px;font-weight:900;color:{% if loop.index==1 %}#f5c518{% elif loop.index==2 %}#C0C0C8{% elif loop.index==3 %}#cd7f32{% else %}#404060{% endif %};">{{ loop.index }}</div>
-      <div style="width:44px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--bg-card);">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <div style="width:44px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#12121a;">
+        <img src="{{ anime.poster }}" alt="" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight:800;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:6px;">{{ anime.title }}</div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <div style="flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
-            <div style="height:100%;background:linear-gradient(90deg,var(--accent),#f97316);border-radius:2px;width:{{ ((anime.score|float/10)*100)|int if anime.score else (90-loop.index*5) }}%;"></div>
+          <div style="flex:1;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+            <div style="height:100%;background:linear-gradient(90deg,#e8415a,#f97316);border-radius:2px;width:{{ ((anime.score|float/10)*100)|int if anime.score else (90-loop.index*5) }}%;"></div>
           </div>
-          <span style="font-size:11px;font-weight:900;color:var(--gold);flex-shrink:0;">{{ anime.score or '—' }}</span>
+          <span style="font-size:11px;font-weight:900;color:#f5c518;flex-shrink:0;">{{ anime.score or '—' }}</span>
         </div>
       </div>
     </a>
@@ -630,34 +797,33 @@ function switchSource(src, el) {
 </div>
 {% endif %}
 
-<!-- ═══════════════ JADWAL ═══════════════ -->
+<!-- ══════════════════════════════════════════
+     JADWAL
+══════════════════════════════════════════ -->
 {% if schedule and schedule.schedule %}
 <div style="margin-top:8px;">
   <div class="idx-sec-head">
-    <div class="idx-sec-title-wrap">
-      <div class="idx-sec-bar" style="background:#10B981;"></div>
-      <div class="idx-sec-title">Jadwal Rilis</div>
-    </div>
+    <div class="idx-sec-left"><div class="idx-sec-bar green"></div><div class="idx-sec-title">Jadwal Rilis</div></div>
     <a href="/jadwal" class="idx-sec-more" style="color:#10B981;">Lengkap <i class="fas fa-chevron-right"></i></a>
   </div>
-  <div style="display:flex;gap:8px;overflow-x:auto;padding:0 var(--px) 12px;scrollbar-width:none;">
+  <div style="display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none;">
     {% for day in schedule.schedule.keys() %}
-    <button class="idx-sday" data-sday="{{ day }}" style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--bg-card);border:1px solid var(--border-dim);border-radius:12px;padding:8px 12px;cursor:pointer;font-family:inherit;color:var(--text2);font-size:10px;font-weight:700;transition:all 0.2s;min-width:52px;">
+    <button class="sday" data-sday="{{ day }}">
       <div style="font-size:12px;font-weight:900;">{{ day[:3] }}</div>
       <div style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.15);"></div>
     </button>
     {% endfor %}
   </div>
   {% for day, animes in schedule.schedule.items() %}
-  <div class="idx-schedule-panel" id="idx-panel-{{ day }}" style="display:none;padding:0 var(--px);">
+  <div class="schedule-panel" id="panel-{{ day }}" style="display:none;padding:0 16px;">
     {% for anime in animes[:8] %}
     <a href="/anime/{{ anime.slug }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none;color:inherit;">
-      <div style="width:48px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--bg-card);">
-        <img src="{{ anime.poster }}" alt="{{ anime.title }}" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <div style="width:48px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#12121a;">
+        <img src="{{ anime.poster }}" alt="" loading="lazy" onerror="this.src='/static/no-image.svg'" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight:800;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px;">{{ anime.title }}</div>
-        {% if anime.episode %}<div style="font-size:11px;color:var(--text2);">Episode {{ anime.episode }}</div>{% endif %}
+        {% if anime.episode %}<div style="font-size:11px;color:#9090a8;">Episode {{ anime.episode }}</div>{% endif %}
         {% if anime.time %}<div style="font-size:10px;color:#10B981;margin-top:3px;"><i class="fas fa-clock"></i> {{ anime.time }}</div>{% endif %}
       </div>
     </a>
@@ -667,30 +833,32 @@ function switchSource(src, el) {
 </div>
 <script>
 (function(){
-  var days=document.querySelectorAll('.idx-sday'),panels=document.querySelectorAll('.idx-schedule-panel');
+  var days=document.querySelectorAll('.sday'),panels=document.querySelectorAll('.schedule-panel');
   function activate(d){
-    days.forEach(function(x){x.classList.remove('active');x.style.background='var(--bg-card)';x.style.borderColor='var(--border-dim)';x.style.color='var(--text2)';});
+    days.forEach(function(x){x.classList.remove('active');});
     panels.forEach(function(p){p.style.display='none';});
-    d.classList.add('active'); d.style.background='rgba(232,65,90,0.1)'; d.style.borderColor='rgba(232,65,90,0.35)'; d.style.color='var(--accent)';
-    var panel=document.getElementById('idx-panel-'+d.getAttribute('data-sday'));
-    if(panel)panel.style.display='block';
+    d.classList.add('active');
+    var p=document.getElementById('panel-'+d.getAttribute('data-sday'));
+    if(p)p.style.display='block';
   }
   days.forEach(function(d){d.addEventListener('click',function(){activate(d);});});
   var today=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][new Date().getDay()];
-  var todayEl=document.querySelector('[data-sday="'+today+'"]');
-  if(todayEl)activate(todayEl); else if(days[0])activate(days[0]);
+  var el=document.querySelector('[data-sday="'+today+'"]');
+  if(el)activate(el); else if(days[0])activate(days[0]);
 })();
 </script>
 {% endif %}
 
-<!-- ═══════════════ KOMUNITAS ═══════════════ -->
-<div style="padding:12px var(--px) 28px;">
-  <div style="background:var(--bg-card);border-radius:var(--radius-md);padding:16px;border:1px solid var(--border-dim);">
-    <div style="font-size:12px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
+<!-- ══════════════════════════════════════════
+     KOMUNITAS
+══════════════════════════════════════════ -->
+<div style="padding:12px 16px 32px;">
+  <div style="background:#12121a;border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.06);">
+    <div style="font-size:11px;font-weight:900;color:#50506a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
     <div style="display:flex;gap:8px;">
-      <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-facebook-f"></i> FB</a>
-      <a href="https://facebook.com/groups/1569311164620890/" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fas fa-users"></i> Grup</a>
-      <a href="https://discord.gg/bChVdNUzh" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#7983f5;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-discord"></i> DC</a>
+      <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;"><i class="fab fa-facebook-f"></i> FB</a>
+      <a href="https://facebook.com/groups/1569311164620890/" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;"><i class="fas fa-users"></i> Grup</a>
+      <a href="https://discord.gg/bChVdNUzh" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#7983f5;text-transform:uppercase;"><i class="fab fa-discord"></i> DC</a>
     </div>
   </div>
 </div>
@@ -698,43 +866,33 @@ function switchSource(src, el) {
 </div><!-- .idx-page -->
 
 <script>
-/* ─── DYNAMIC HEADER ─── */
+/* ─── HEADER DYNAMIC ─── */
 (function(){
-  function getGreeting(){
-    var h=new Date().getHours();
-    if(h>=5&&h<12)return'Selamat Pagi';
-    if(h>=12&&h<15)return'Selamat Siang';
-    if(h>=15&&h<18)return'Selamat Sore';
-    return'Selamat Malam';
-  }
-  var greetEl=document.getElementById('idxGreeting');
-  if(greetEl)greetEl.textContent=getGreeting();
+  var h = new Date().getHours();
+  var greet = h>=5&&h<12 ? 'Selamat Pagi' : h>=12&&h<15 ? 'Selamat Siang' : h>=15&&h<18 ? 'Selamat Sore' : 'Selamat Malam';
+  var el = document.getElementById('idxGreeting');
+  if(el) el.textContent = greet;
 
-  fetch('/api/me').then(function(r){return r.json();}).then(function(d){
-    var user=d.user;
-    var nameEl=document.getElementById('idxHeaderName');
-    if(!user){if(nameEl)nameEl.textContent='Guest';return;}
-    if(nameEl)nameEl.textContent=user.name||'User';
+  fetch('/api/me').then(function(r){ return r.json(); }).then(function(d){
+    var user = d.user;
+    if(!user) return;
+    var nameEl = document.getElementById('idxUsername');
+    if(nameEl) nameEl.textContent = user.name || 'Guest';
 
-    /* Level & rank berdasarkan poin/lama join */
-    var lvEl=document.getElementById('idxLvBadge');
-    var rankEl=document.getElementById('idxRankBadge');
-    if(lvEl&&user.points!==undefined){
-      var lv=Math.floor((user.points||0)/100)+1;
-      lvEl.textContent='Lv.'+Math.min(lv,999);
-    }
-    if(rankEl&&user.points!==undefined){
-      var p=user.points||0;
-      var rank=p>=5000?'RANK SSS':p>=2000?'RANK SS':p>=1000?'RANK S':p>=500?'RANK A':p>=200?'RANK B':p>=50?'RANK C':'RANK F';
-      rankEl.textContent=rank;
-    }
+    var pts = user.points || 0;
+    var lv  = Math.min(Math.floor(pts/100)+1, 999);
+    var rank = pts>=5000?'RANK SSS':pts>=2000?'RANK SS':pts>=1000?'RANK S':pts>=500?'RANK A':pts>=200?'RANK B':pts>=50?'RANK C':'RANK F';
 
-    var avatarImg=document.getElementById('idxAvatarImg');
-    var avatarIcon=document.getElementById('idxAvatarIcon');
-    if(user.avatar&&avatarImg){
-      avatarImg.src=user.avatar;
-      avatarImg.style.display='block';
-      if(avatarIcon)avatarIcon.style.display='none';
+    var lvEl = document.getElementById('idxLvBadge');
+    var rkEl = document.getElementById('idxRankBadge');
+    if(lvEl) lvEl.textContent = 'Lv.' + lv;
+    if(rkEl) rkEl.textContent = rank;
+
+    if(user.avatar){
+      var img  = document.getElementById('idxAvatarImg');
+      var icon = document.getElementById('idxAvatarIcon');
+      if(img){ img.src = user.avatar; img.style.display = 'block'; }
+      if(icon) icon.style.display = 'none';
     }
   }).catch(function(){});
 })();
@@ -742,45 +900,44 @@ function switchSource(src, el) {
 /* ─── LANJUT NONTON ─── */
 (function(){
   function timeAgo(iso){
-    var diff=(Date.now()-new Date(iso).getTime())/1000;
-    if(diff<60)return'Baru saja';
-    if(diff<3600)return Math.floor(diff/60)+' menit lalu';
-    if(diff<86400)return Math.floor(diff/3600)+' jam lalu';
-    return Math.floor(diff/86400)+' hari lalu';
+    var s=(Date.now()-new Date(iso))/1000;
+    if(s<60)return'Baru saja';
+    if(s<3600)return Math.floor(s/60)+' menit lalu';
+    if(s<86400)return Math.floor(s/3600)+' jam lalu';
+    return Math.floor(s/86400)+' hari lalu';
   }
-  function renderHistory(history){
-    var sec=document.getElementById('cwSection');
-    var list=document.getElementById('cwList');
-    if(!sec||!list)return;
-    if(!history||!history.length){sec.style.display='none';return;}
-    list.innerHTML=history.slice(0,4).map(function(item){
-      var epNum=parseInt((item.ep_name||'').match(/\d+/)||[1])||1;
-      var pct=Math.min(92,Math.max(6,(epNum%24)/24*100));
-      return '<a href="/episode/'+item.ep_slug+'?anime='+item.anime_slug+'" class="idx-cw-card">'
-        +'<div class="idx-cw-thumb">'
+  function render(list){
+    var sec = document.getElementById('cwSection');
+    var el  = document.getElementById('cwList');
+    if(!sec||!el) return;
+    if(!list||!list.length){ sec.style.display='none'; return; }
+    el.innerHTML = list.slice(0,4).map(function(item){
+      var ep   = parseInt((item.ep_name||'').match(/\d+/)||[1]) || 1;
+      var pct  = Math.min(92, Math.max(6, (ep%24)/24*100));
+      return '<a href="/episode/'+item.ep_slug+'?anime='+item.anime_slug+'" class="cw-card">'
+        +'<div class="cw-thumb">'
         +'<img src="'+(item.anime_poster||'/static/no-image.svg')+'" loading="lazy" onerror="this.src=\'/static/no-image.svg\'">'
-        +'<div class="idx-cw-ep-label">'+(item.ep_name||'Episode')+'</div>'
-        +'<div class="idx-cw-progress"><div class="idx-cw-progress-fill" style="width:'+pct+'%"></div></div>'
+        +'<div class="cw-ep-label">'+(item.ep_name||'Episode')+'</div>'
+        +'<div class="cw-progress"><div class="cw-progress-fill" style="width:'+pct+'%"></div></div>'
         +'</div>'
-        +'<div class="idx-cw-accent-line"></div>'
+        +'<div class="cw-accent-line"></div>'
         +'</a>';
     }).join('');
-    sec.style.display='';
+    sec.style.display = '';
   }
-  function loadHistory(){
+  function load(){
     fetch('/api/history?limit=4').then(function(r){return r.json();}).then(function(d){
-      if(!d.ok||!d.history||!d.history.length)return;
-      renderHistory(d.history);
+      if(d.ok && d.history && d.history.length) render(d.history);
     }).catch(function(){});
   }
-  window.clearAllHistory=function(){
-    if(!confirm('Hapus semua riwayat nonton?'))return;
+  window.clearAllHistory = function(){
+    if(!confirm('Hapus semua riwayat nonton?')) return;
     fetch('/api/history/all',{method:'DELETE'}).then(function(){
-      document.getElementById('cwSection').style.display='none';
+      document.getElementById('cwSection').style.display = 'none';
     }).catch(function(){});
   };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',loadHistory);
-  else loadHistory();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', load);
+  else load();
 })();
 </script>
 
