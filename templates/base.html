@@ -791,5 +791,133 @@ function openTrakteer(){var m=document.getElementById('trakteerModal');m.style.d
 function closeTrakteer(el){if(el&&el.id==='trakteerModal'&&event&&event.target!==el)return;var m=document.getElementById('trakteerModal');m.classList.remove('open');setTimeout(function(){m.style.display='none';document.body.style.overflow='';},260);}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTrakteer();});
 </script>
+
+<!-- ── Premium Toast Notification ─────────────────── -->
+<style>
+#premiumToast {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  width: 300px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 16px;
+  padding: 14px 14px 14px 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,158,11,0.1);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transform: translateX(calc(100% + 24px));
+  opacity: 0;
+  transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#premiumToast.show { transform: translateX(0); opacity: 1; }
+#premiumToast.hide { transform: translateX(calc(100% + 24px)); opacity: 0; }
+#premiumToast .pt-icon {
+  width: 42px; height: 42px; min-width: 42px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(245,158,11,0.4);
+}
+#premiumToast .pt-body { flex: 1; min-width: 0; }
+#premiumToast .pt-title {
+  font-size: 13px; font-weight: 800; color: #f59e0b;
+  letter-spacing: 0.3px; margin-bottom: 3px;
+  display: flex; align-items: center; gap: 6px;
+}
+#premiumToast .pt-title .pt-badge {
+  font-size: 9px; background: rgba(245,158,11,0.2); color: #f59e0b;
+  border: 1px solid rgba(245,158,11,0.4); border-radius: 4px;
+  padding: 1px 5px; font-weight: 700; letter-spacing: 0.5px;
+}
+#premiumToast .pt-desc {
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  line-height: 1.5; margin-bottom: 10px;
+}
+#premiumToast .pt-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000; font-size: 11px; font-weight: 800;
+  padding: 6px 14px; border-radius: 8px;
+  text-decoration: none; letter-spacing: 0.3px;
+  box-shadow: 0 3px 10px rgba(245,158,11,0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+#premiumToast .pt-btn:active { transform: scale(0.96); }
+#premiumToast .pt-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+#premiumToast .pt-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+#premiumToast .pt-progress {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px; background: linear-gradient(90deg, #f59e0b, #d97706);
+  border-radius: 0 0 16px 16px; width: 100%;
+  transform-origin: left;
+  animation: ptProgress 6s linear forwards;
+}
+@keyframes ptProgress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@media (max-width: 400px) { #premiumToast { width: calc(100vw - 32px); right: 16px; } }
+</style>
+
+<div id="premiumToast" style="display:none;">
+  <div class="pt-icon">&#x1F451;</div>
+  <div class="pt-body">
+    <div class="pt-title">DayyNime Premium <span class="pt-badge">NEW</span></div>
+    <div class="pt-desc">Akses <strong style="color:#fff;">semua episode</strong> tanpa batas. Dukung kami &amp; nikmati konten penuh!</div>
+    <a href="/premium" class="pt-btn" onclick="closePremiumToast()">Lihat Premium &#8594;</a>
+  </div>
+  <div class="pt-close" onclick="closePremiumToast(event)">&#x2715;</div>
+  <div class="pt-progress" id="ptProgress"></div>
+</div>
+
+<script>
+(function(){
+  var TOAST_KEY = 'pt_dismissed';
+  var toast = document.getElementById('premiumToast');
+  var autoTimer;
+
+  function showToast(){
+    toast.style.display = 'flex';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ toast.classList.add('show'); });
+    });
+    autoTimer = setTimeout(function(){ dismissToast(); }, 6000);
+  }
+
+  function dismissToast(){
+    clearTimeout(autoTimer);
+    toast.classList.add('hide');
+    toast.classList.remove('show');
+    setTimeout(function(){ toast.style.display = 'none'; }, 450);
+  }
+
+  window.closePremiumToast = function(e){
+    if(e) e.stopPropagation();
+    sessionStorage.setItem(TOAST_KEY, '1');
+    dismissToast();
+  };
+
+  if(sessionStorage.getItem(TOAST_KEY)) return;
+  if(window.location.pathname === '/premium') return;
+
+  fetch('/api/premium/status').then(function(r){ return r.json(); }).then(function(p){
+    if(p.premium) return;
+    setTimeout(showToast, 4000);
+  }).catch(function(){
+    setTimeout(showToast, 4000);
+  });
+})();
+</script>
 </body>
 </html>
