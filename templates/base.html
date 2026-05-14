@@ -423,44 +423,44 @@
   .quick-nav-item .dot { width:6px; height:6px; border-radius:50%; display:inline-block; }
   .quick-nav-item:active { background:var(--accent-dim); color:var(--accent); }
 
-  /* BOTTOM NAV — Pill style */
+  /* BOTTOM NAV — reference photo style */
   .bottom-nav {
-    position:fixed; bottom:12px;
-    left:50%; transform:translateX(-50%);
+    position:fixed; bottom:0; left:0; right:0;
     z-index:200;
-    background:rgba(20,20,22,0.55);
-    backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-    border:1.5px solid rgba(232,65,90,0.5);
-    border-radius:32px;
-    display:flex; align-items:center;
-    height:62px; padding:0 10px; gap:0;
-    box-shadow:0 8px 40px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
-    min-width:min(340px,calc(100vw - 28px));
-    max-width:calc(100vw - 28px);
+    background:rgba(10,10,14,0.88);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-top:1px solid rgba(255,255,255,0.07);
+    display:flex; align-items:center; justify-content:space-around;
+    height:68px; padding:0 4px 6px;
   }
   .bnav-item {
     flex:1; display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    gap:4px; color:rgba(255,255,255,0.45);
-    font-size:9px; font-weight:700; letter-spacing:0.3px; text-transform:uppercase;
+    gap:5px; color:rgba(255,255,255,0.35);
+    font-size:10px; font-weight:700; letter-spacing:0.2px;
     border:none; background:none;
-    padding:6px 4px; border-radius:22px;
-    cursor:pointer; transition:all 0.2s; min-height:46px;
+    padding:4px; border-radius:14px;
+    cursor:pointer; transition:all 0.2s; min-height:52px;
     text-decoration:none;
   }
-  .bnav-item i { font-size:17px; transition:transform 0.2s; }
-  .bnav-item.active { color:#e8415a; }
-  .bnav-item.active i { transform:scale(1.15); }
-  .bnav-home-pill {
-    width:72px; height:46px;
-    background:#e8415a;
-    border-radius:23px; display:flex; align-items:center; justify-content:center;
-    color:#fff; font-size:22px; border:none; cursor:pointer;
-    box-shadow:0 4px 20px rgba(232,65,90,0.6);
-    flex-shrink:0; transition:transform 0.2s,box-shadow 0.2s;
+  .bnav-item i { font-size:20px; transition:transform 0.2s; }
+  .bnav-item.active { color:rgba(255,255,255,0.9); }
+  .bnav-item.active i { transform:scale(1.05); }
+  /* Home active = circle with dark bg */
+  .bnav-home {
+    width:46px; height:46px;
+    background:#1a1a24;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:#e8415a; font-size:22px;
+    border:none; cursor:pointer;
+    flex-shrink:0;
     text-decoration:none;
+    transition:background 0.2s, transform 0.2s;
+    margin-bottom:2px;
   }
-  .bnav-home-pill:active { transform:scale(0.93); box-shadow:0 2px 10px rgba(232,65,90,0.4); }
+  .bnav-home.active { background:rgba(232,65,90,0.15); }
+  .bnav-home:active { transform:scale(0.92); }
 
   /* SIDEBAR */
   #sidebarOverlay { display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
@@ -646,19 +646,26 @@
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <a href="/home" class="bnav-item" data-href="/home">
-    <i class="fas fa-home"></i><span>Home</span>
+  <a href="/home" class="bnav-item" data-href="/home" style="flex:1.2;">
+    <div class="bnav-home" id="bnavHomeCircle"><i class="fas fa-home"></i></div>
+    <span>Home</span>
   </a>
-  <a href="/ongoing" class="bnav-item" data-href="/ongoing"><i class="fas fa-play-circle"></i><span>Ongoing</span></a>
-  <button class="bnav-item bnav-trakteer" onclick="openTrakteer()"><div class="bnav-tr-pill"><img src="https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025" alt="" style="width:16px;height:16px;object-fit:contain;filter:brightness(0) invert(1);"></div><span>Support</span></button>
-  <a href="/ruang-ngobrol" class="bnav-item" data-href="/ruang-ngobrol">
-    <span style="position:relative;display:inline-block;">
-      <i class="fas fa-comments"></i>
-      <span id="chatUnreadDot" style="display:none;position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#e53e3e;border:1.5px solid var(--bg);animation:chatDotPulse 1.5s ease-in-out infinite;"></span>
-    </span>
-    <span>Obrolan</span>
+  <a href="/jadwal" class="bnav-item" data-href="/jadwal">
+    <i class="fas fa-calendar-alt"></i>
+    <span>Schedule</span>
   </a>
-  <button class="bnav-item" onclick="openSidebar()"><i class="fas fa-bars"></i><span>Menu</span></button>
+  <a href="/genres" class="bnav-item" data-href="/genres">
+    <i class="fas fa-layer-group"></i>
+    <span>All</span>
+  </a>
+  <a href="/koleksi" class="bnav-item" data-href="/koleksi">
+    <i class="fas fa-bookmark"></i>
+    <span>Library</span>
+  </a>
+  <a href="/profile" class="bnav-item" data-href="/profile">
+    <i class="fas fa-user"></i>
+    <span>Profile</span>
+  </a>
 </nav>
 
 <!-- TRAKTEER SUPPORT BUTTON -->
@@ -767,7 +774,7 @@ function openSidebar(){document.getElementById('sidebarOverlay').style.display='
 function closeSidebar(){document.getElementById('sidebarOverlay').style.display='none';document.getElementById('sidebarPanel').style.left='-290px';document.body.style.overflow='';}
 (function(){var p=document.getElementById('sidebarPanel'),sx=0;p.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});p.addEventListener('touchend',function(e){if(sx-e.changedTouches[0].clientX>60)closeSidebar();},{passive:true});})();
 function switchSource(key){var btns=document.querySelectorAll('.sb-src-btn');btns.forEach(function(b){b.style.opacity='0.5';b.disabled=true;});fetch('/api/source/switch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:key})}).then(function(r){return r.json();}).then(function(d){if(d.ok){var lbl=document.getElementById('srcActiveLabel');if(lbl)lbl.textContent=d.label;setTimeout(function(){location.reload();},400);}else{btns.forEach(function(b){b.style.opacity='1';b.disabled=false;});}}).catch(function(){btns.forEach(function(b){b.style.opacity='1';b.disabled=false;});});}
-(function(){var path=location.pathname;function isActive(href){if(!href)return false;if(href==='/home')return path==='/'||path==='/home';return path===href||(href!=='/'&&path.startsWith(href));}document.querySelectorAll('.bnav-item[data-href]').forEach(function(item){if(isActive(item.getAttribute('data-href')))item.classList.add('active');});document.querySelectorAll('.desktop-nav-item[data-href]').forEach(function(item){if(isActive(item.getAttribute('data-href')))item.classList.add('active');});})();
+(function(){var path=location.pathname;function isActive(href){if(!href)return false;if(href==='/home')return path==='/'||path==='/home';return path===href||(href!=='/'&&path.startsWith(href));}document.querySelectorAll('.bnav-item[data-href]').forEach(function(item){if(isActive(item.getAttribute('data-href'))){item.classList.add('active');var circle=item.querySelector('.bnav-home');if(circle)circle.classList.add('active');}});document.querySelectorAll('.desktop-nav-item[data-href]').forEach(function(item){if(isActive(item.getAttribute('data-href')))item.classList.add('active');});})();
 </script>
 <script>
 (function(){fetch('/api/me').then(function(r){return r.json();}).then(function(d){var user=d.user,btn=document.getElementById('headerUserBtn');if(!user){if(btn)btn.href='/auth/login';var sbOut=document.getElementById('sbLoggedOut'),sbIn=document.getElementById('sbLoggedIn');if(sbOut)sbOut.style.display='block';if(sbIn)sbIn.style.display='none';return;}var sbOut=document.getElementById('sbLoggedOut'),sbIn=document.getElementById('sbLoggedIn');if(sbOut)sbOut.style.display='none';if(sbIn)sbIn.style.display='block';var sbName=document.getElementById('sbUsername');if(sbName)sbName.textContent=user.name||'Profile';var nameEl=document.getElementById('headerUsername');if(nameEl)nameEl.textContent=user.name||'User';var avatar=document.getElementById('headerAvatar'),fallback=document.getElementById('headerAvatarFallback');if(user.avatar&&avatar){avatar.src=user.avatar;avatar.style.display='block';if(fallback)fallback.style.display='none';}fetch('/api/premium/status').then(function(r){return r.json();}).then(function(p){if(p.premium){var dot=document.getElementById('headerPremiumDot');if(dot)dot.style.display='block';}}).catch(function(){});}).catch(function(){var sbOut=document.getElementById('sbLoggedOut');if(sbOut)sbOut.style.display='block';var btn=document.getElementById('headerUserBtn');if(btn)btn.href='/auth/login';});})();
