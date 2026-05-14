@@ -562,11 +562,11 @@ body { padding-top: 0 !important; }
             {% endif %}
             {% if anime.genres %}
               {% for g in anime.genres[:2] %}
-              <span class="chip-genre">{{ g }}</span>
+              <span class="chip-genre">{{ g.name if g is mapping else g }}</span>
               {% endfor %}
             {% elif anime.genre %}
               {% for g in anime.genre[:2] %}
-              <span class="chip-genre">{{ g }}</span>
+              <span class="chip-genre">{{ g.name if g is mapping else g }}</span>
               {% endfor %}
             {% endif %}
           </div>
