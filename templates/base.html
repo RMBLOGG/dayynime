@@ -796,7 +796,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTraktee
 <style>
 #premiumToast {
   position: fixed;
-  bottom: 80px;
+  top: 70px;
   right: 16px;
   width: 300px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -859,14 +859,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTraktee
   transition: background 0.2s ease, color 0.2s ease;
 }
 #premiumToast .pt-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
-#premiumToast .pt-progress {
-  position: absolute; bottom: 0; left: 0;
-  height: 3px; background: linear-gradient(90deg, #f59e0b, #d97706);
-  border-radius: 0 0 16px 16px; width: 100%;
-  transform-origin: left;
-  animation: ptProgress 6s linear forwards;
-}
-@keyframes ptProgress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 @media (max-width: 400px) { #premiumToast { width: calc(100vw - 32px); right: 16px; } }
 </style>
 
@@ -878,7 +870,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTraktee
     <a href="/premium" class="pt-btn" onclick="closePremiumToast()">Lihat Premium &#8594;</a>
   </div>
   <div class="pt-close" onclick="closePremiumToast(event)">&#x2715;</div>
-  <div class="pt-progress" id="ptProgress"></div>
+
 </div>
 
 <script>
@@ -892,7 +884,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTraktee
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){ toast.classList.add('show'); });
     });
-    autoTimer = setTimeout(function(){ dismissToast(); }, 6000);
+    // no auto dismiss
   }
 
   function dismissToast(){
