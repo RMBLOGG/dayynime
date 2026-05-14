@@ -1,11 +1,3 @@
-/* ── Monetag Multitag ─────────────────────────────── */
-self.options = {
-    "domain": "3nbf4.com",
-    "zoneId": 11007289
-}
-self.lary = ""
-importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
-
 /* =====================================================
    DayyNime — Service Worker
    Cache shell statis, fallback offline
