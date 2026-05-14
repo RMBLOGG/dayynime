@@ -190,6 +190,13 @@ def fetch(path, params=None):
 def norm_anime(anime):
     if not anime:
         return anime
+    raw_genres = anime.get("genreList", anime.get("genres", anime.get("genre", [])))
+    genres = []
+    for g in (raw_genres or []):
+        if isinstance(g, dict):
+            genres.append({"name": g.get("title", g.get("name", "")), "slug": g.get("genreId", g.get("slug", ""))})
+        elif isinstance(g, str):
+            genres.append({"name": g, "slug": g.lower()})
     return {
         "slug":          anime.get("animeId", anime.get("slug", "")),
         "title":         anime.get("title", ""),
@@ -199,6 +206,8 @@ def norm_anime(anime):
         "type":          anime.get("type", ""),
         "score":         anime.get("score", ""),
         "rank":          anime.get("rank", None),
+        "genres":        genres,
+        "synopsis":      anime.get("synopsis", anime.get("description", "")),
     }
 
 def norm_list(animes):
@@ -231,6 +240,13 @@ def animasu_norm_anime(a):
     """Normalize satu item anime dari animasu ke format internal."""
     if not a:
         return a
+    raw_genres = a.get("genreList", a.get("genres", a.get("genre", [])))
+    genres = []
+    for g in (raw_genres or []):
+        if isinstance(g, dict):
+            genres.append({"name": g.get("title", g.get("name", "")), "slug": g.get("genreId", g.get("slug", ""))})
+        elif isinstance(g, str):
+            genres.append({"name": g, "slug": g.lower()})
     return {
         "slug":          a.get("slug", ""),
         "title":         a.get("title", ""),
@@ -240,6 +256,8 @@ def animasu_norm_anime(a):
         "type":          a.get("type", ""),
         "score":         a.get("score", ""),
         "rank":          a.get("rank", None),
+        "genres":        genres,
+        "synopsis":      a.get("synopsis", a.get("description", "")),
     }
 
 def animasu_norm_list(animes):
