@@ -190,13 +190,6 @@ def fetch(path, params=None):
 def norm_anime(anime):
     if not anime:
         return anime
-    raw_genres = anime.get("genreList", anime.get("genres", anime.get("genre", [])))
-    genres = []
-    for g in (raw_genres or []):
-        if isinstance(g, dict):
-            genres.append({"name": g.get("title", g.get("name", "")), "slug": g.get("genreId", g.get("slug", ""))})
-        elif isinstance(g, str):
-            genres.append({"name": g, "slug": g.lower()})
     return {
         "slug":          anime.get("animeId", anime.get("slug", "")),
         "title":         anime.get("title", ""),
@@ -206,8 +199,6 @@ def norm_anime(anime):
         "type":          anime.get("type", ""),
         "score":         anime.get("score", ""),
         "rank":          anime.get("rank", None),
-        "genres":        genres,
-        "synopsis":      anime.get("synopsis", anime.get("description", "")),
     }
 
 def norm_list(animes):
@@ -240,13 +231,6 @@ def animasu_norm_anime(a):
     """Normalize satu item anime dari animasu ke format internal."""
     if not a:
         return a
-    raw_genres = a.get("genreList", a.get("genres", a.get("genre", [])))
-    genres = []
-    for g in (raw_genres or []):
-        if isinstance(g, dict):
-            genres.append({"name": g.get("title", g.get("name", "")), "slug": g.get("genreId", g.get("slug", ""))})
-        elif isinstance(g, str):
-            genres.append({"name": g, "slug": g.lower()})
     return {
         "slug":          a.get("slug", ""),
         "title":         a.get("title", ""),
@@ -256,8 +240,6 @@ def animasu_norm_anime(a):
         "type":          a.get("type", ""),
         "score":         a.get("score", ""),
         "rank":          a.get("rank", None),
-        "genres":        genres,
-        "synopsis":      a.get("synopsis", a.get("description", "")),
     }
 
 def animasu_norm_list(animes):
@@ -561,49 +543,6 @@ def _norm_paginated(raw, page):
             "currentPage": pagination.get("currentPage", page),
         }
     return {"animes": animes, "pagination": pag_norm}
-
-# ── Maintenance Mode ───────────────────────────────────────────────────────────
-MAINTENANCE_MODE = True  # Website ditutup permanen untuk publik
-
-# Route yang tetap boleh diakses saat maintenance (static, login, api auth)
-MAINTENANCE_WHITELIST = {
-    "/login", "/register", "/logout",
-    "/api/auth/login", "/api/auth/register", "/api/auth/logout",
-    "/api/auth/callback", "/auth/callback",
-    "/auth/login", "/auth/login/admin",
-    "/maintenance",
-    "/manifest.json", "/sw.js", "/robots.txt", "/sitemap.xml",
-}
-
-@app.before_request
-def check_maintenance():
-    if not MAINTENANCE_MODE:
-        return None  # Normal, lanjut
-
-    # Izinkan static files (CSS, JS, gambar)
-    if request.path.startswith("/static/"):
-        return None
-
-    # Izinkan whitelist
-    if request.path in MAINTENANCE_WHITELIST:
-        return None
-
-    # Cek apakah user adalah admin
-    user = session.get("user")
-    if user and user.get("is_admin"):
-        return None  # Admin boleh akses semua
-
-    # Semua user biasa → redirect ke halaman maintenance
-    if request.path.startswith("/api/"):
-        return jsonify({"error": "Site sedang dalam maintenance. Silakan coba lagi nanti."}), 503
-
-    return redirect("/maintenance")
-
-@app.route("/maintenance")
-def maintenance_page():
-    user = session.get("user")
-    is_admin = bool(user and user.get("is_admin"))
-    return render_template("maintenance.html", is_admin=is_admin), 503
 
 # ── Pages ──────────────────────────────────────────────────────────────────────
 
@@ -1314,8 +1253,6 @@ def _verify_admin_token(token):
 @app.route("/auth/login", methods=["GET", "POST"])
 def auth_login():
     if request.method == "GET":
-        if request.args.get("mode") == "admin":
-            return render_template("login_admin.html")
         return render_template("login.html")
 
     data = request.get_json() or {}
