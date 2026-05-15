@@ -223,7 +223,7 @@
     <div class="det-ep-thumb">
       <img src="{{ d.poster }}" alt="" onerror="this.style.display='none'">
       <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;"><i class="fas fa-lock" style="color:#e8415a;font-size:14px;"></i></div>
-      <span class="det-ep-thumb-num">{{ loop.index }}</span>
+      <span class="det-ep-thumb-num">{{ loop.revindex }}</span>
     </div>
     <div style="flex:1;min-width:0;"><div class="det-ep-title">{{ ep.name|replace('Episode','Ep') }}</div><div class="det-ep-sub" style="color:#e8415a;">👑 Premium Only</div></div>
   </div>
@@ -231,7 +231,7 @@
   <a href="/episode/{{ ep.slug }}?anime={{ slug }}" class="det-ep-item" {% if loop.index > 20 %}data-hidden style="display:none;"{% endif %}>
     <div class="det-ep-thumb">
       <img src="{{ d.poster }}" alt="" onerror="this.style.display='none'">
-      <span class="det-ep-thumb-num">{{ loop.index }}</span>
+      <span class="det-ep-thumb-num">{{ loop.revindex }}</span>
     </div>
     <div style="flex:1;min-width:0;"><div class="det-ep-title">{{ ep.name|replace('Episode','Ep') }}</div><div class="det-ep-sub">{{ d.title }}</div></div>
     <i class="fas fa-chevron-right det-ep-chevron"></i>
