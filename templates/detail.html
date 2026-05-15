@@ -278,7 +278,18 @@ function switchTab(name,btn){
   if(btn)btn.classList.add('active');
   else{document.querySelectorAll('.det-tab').forEach(function(t){if(t.getAttribute('data-tab')===name)t.classList.add('active');});}
   var track=document.getElementById('detPanelsTrack');
-  if(track)track.style.transform='translateX(-'+idx+'00%)';
+  if(track){
+    track.style.transform='translateX(-'+idx+'00%)';
+    // Set height wrapper sesuai panel aktif
+    var panels=track.querySelectorAll('.det-panel');
+    var wrapper=track.parentElement;
+    if(panels[idx]){
+      // Reset dulu biar bisa ukur
+      wrapper.style.height='';
+      var h=panels[idx].scrollHeight;
+      wrapper.style.height=h+'px';
+    }
+  }
 }
 /* Swipe antar tab — smooth */
 (function(){
