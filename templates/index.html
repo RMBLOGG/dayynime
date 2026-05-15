@@ -11,7 +11,7 @@
 {% endif %}
 
 <style>
-.idx-page { padding-bottom: 100px; }
+.idx-page { padding-bottom: 0; }
 /* Hide base.html header di halaman home karena punya header sendiri */
 .app-header { display: none !important; }
 body { padding-top: 0 !important; }
@@ -623,17 +623,7 @@ function switchSource(src, el) {
 </script>
 {% endif %}
 
-<!-- Komunitas -->
-<div style="padding:0 14px 28px;">
-  <div style="background:#161618;border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.06);">
-    <div style="font-size:12px;font-weight:900;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Komunitas Dayynime</div>
-    <div style="display:flex;gap:8px;">
-      <a href="https://www.facebook.com/profile.php?id=61588359607423" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-facebook-f"></i> FB Page</a>
-      <a href="https://facebook.com/groups/1569311164620890/" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#4e9af1;text-transform:uppercase;letter-spacing:0.3px;"><i class="fas fa-users"></i> Grup FB</a>
-      <a href="https://discord.gg/bChVdNUzh" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.2);border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;color:#7983f5;text-transform:uppercase;letter-spacing:0.3px;"><i class="fab fa-discord"></i> Discord</a>
-    </div>
-  </div>
-</div>
+
 
 <script>
 (function(){fetch('/api/me').then(function(r){return r.json();}).then(function(d){if(d.user&&d.user.name){var el=document.getElementById('idxHeaderName');if(el)el.textContent=d.user.name;}}).catch(function(){});})();
