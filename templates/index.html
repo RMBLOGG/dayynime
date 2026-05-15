@@ -1043,106 +1043,131 @@ function switchSource(src, el) {
 <!-- ── Footer ─────────────────────────────────────── -->
 <style>
 .site-footer {
-  margin-top: 40px;
-  background: linear-gradient(180deg, transparent 0%, #0d0d0d 30%);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 32px 20px 100px;
-  color: rgba(255,255,255,0.5);
-  font-size: 13px;
+  margin-top: 48px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background: #0d0d0d;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  overflow: hidden;
 }
-.site-footer .ft-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+.site-footer .ft-glow {
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, #e11d48, transparent);
+}
+.site-footer .ft-inner {
+  padding: 32px 20px 24px;
+}
+.site-footer .ft-brand-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .site-footer .ft-logo {
-  width: 38px; height: 38px; border-radius: 10px;
+  width: 44px; height: 44px; border-radius: 12px;
   object-fit: cover;
+  box-shadow: 0 4px 16px rgba(225,29,72,0.3);
 }
 .site-footer .ft-brand {
-  font-size: 18px; font-weight: 900;
-  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  font-size: 20px; font-weight: 900; line-height: 1;
+  background: linear-gradient(135deg, #e11d48, #fb7185);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
-  line-height: 1;
 }
 .site-footer .ft-tagline {
-  font-size: 11px; color: rgba(255,255,255,0.35);
-  margin-top: 2px; letter-spacing: 0.3px;
+  font-size: 11px; color: rgba(255,255,255,0.3);
+  margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase;
 }
-.site-footer .ft-links {
-  display: flex; flex-wrap: wrap; gap: 8px 16px;
-  margin-bottom: 20px;
+.site-footer .ft-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-bottom: 24px;
 }
-.site-footer .ft-links a {
-  color: rgba(255,255,255,0.5); text-decoration: none;
-  font-size: 12px;
+.site-footer .ft-nav a {
+  display: flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.45); text-decoration: none;
+  font-size: 12px; font-weight: 500;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
   transition: color 0.2s ease;
 }
-.site-footer .ft-links a:hover { color: #fff; }
-.site-footer .ft-divider {
-  height: 1px; background: rgba(255,255,255,0.06);
-  margin-bottom: 16px;
+.site-footer .ft-nav a:hover { color: #fff; }
+.site-footer .ft-nav a i {
+  width: 16px; text-align: center;
+  font-size: 11px; color: rgba(255,255,255,0.2);
+}
+.site-footer .ft-nav a.ft-premium { color: #f59e0b; }
+.site-footer .ft-nav a.ft-premium i { color: #f59e0b; }
+.site-footer .ft-disclaimer {
+  font-size: 11px; color: rgba(255,255,255,0.18);
+  line-height: 1.7; margin-bottom: 20px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 .site-footer .ft-bottom {
   display: flex; align-items: center;
-  justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
 }
 .site-footer .ft-copy {
-  font-size: 11px; color: rgba(255,255,255,0.25);
-}
-.site-footer .ft-socials {
-  display: flex; gap: 10px;
-}
-.site-footer .ft-socials a {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: rgba(255,255,255,0.06);
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,0.5); font-size: 13px;
-  text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-.site-footer .ft-socials a:hover {
-  background: rgba(225,29,72,0.2); color: #e11d48;
-}
-.site-footer .ft-disclaimer {
   font-size: 11px; color: rgba(255,255,255,0.2);
-  line-height: 1.6; margin-bottom: 16px;
 }
+.site-footer .ft-socials { display: flex; gap: 8px; }
+.site-footer .ft-socials a {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.4); font-size: 13px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.site-footer .ft-socials a.tg:hover { background: rgba(0,136,204,0.2); color: #0088cc; border-color: rgba(0,136,204,0.3); }
+.site-footer .ft-socials a.wa:hover { background: rgba(37,211,102,0.2); color: #25d366; border-color: rgba(37,211,102,0.3); }
 </style>
 
 <footer class="site-footer">
-  <div class="ft-top">
-    <img src="/static/icon.png" class="ft-logo" alt="Dayynime">
-    <div>
-      <div class="ft-brand">Dayynime</div>
-      <div class="ft-tagline">Nonton Anime Sub Indo</div>
+  <div class="ft-glow"></div>
+  <div class="ft-inner">
+    <div class="ft-brand-row">
+      <img src="/static/icon.png" class="ft-logo" alt="Dayynime">
+      <div>
+        <div class="ft-brand">Dayynime</div>
+        <div class="ft-tagline">Nonton Anime Sub Indo</div>
+      </div>
     </div>
-  </div>
 
-  <div class="ft-links">
-    <a href="/home">Beranda</a>
-    <a href="/ongoing">Ongoing</a>
-    <a href="/completed">Completed</a>
-    <a href="/movie">Movie</a>
-    <a href="/populer">Populer</a>
-    <a href="/jadwal">Jadwal</a>
-    <a href="/premium">&#x1F451; Premium</a>
-    <a href="/ruang-ngobrol">Ruang Ngobrol</a>
-  </div>
+    <div class="ft-nav">
+      <a href="/home"><i class="fas fa-home"></i> Beranda</a>
+      <a href="/ongoing"><i class="fas fa-circle" style="color:#22c55e;font-size:7px;"></i> Ongoing</a>
+      <a href="/completed"><i class="fas fa-circle" style="color:#3b82f6;font-size:7px;"></i> Completed</a>
+      <a href="/movie"><i class="fas fa-film"></i> Movie</a>
+      <a href="/populer"><i class="fas fa-fire"></i> Populer</a>
+      <a href="/jadwal"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="/ruang-ngobrol"><i class="fas fa-comments"></i> Ruang Ngobrol</a>
+      <a href="/premium" class="ft-premium"><i class="fas fa-crown"></i> Premium</a>
+    </div>
 
-  <div class="ft-disclaimer">
-    Dayynime tidak menyimpan file video apapun di server kami. Semua konten berasal dari pihak ketiga dan hanya disematkan untuk keperluan edukasi dan hiburan.
-  </div>
+    <div class="ft-disclaimer">
+      Dayynime tidak menyimpan file video apapun di server kami. Semua konten berasal dari pihak ketiga dan hanya disematkan untuk keperluan hiburan semata.
+    </div>
 
-  <div class="ft-divider"></div>
-
-  <div class="ft-bottom">
-    <div class="ft-copy">&copy; 2026 Dayynime. All rights reserved.</div>
-    <div class="ft-socials">
-      <a href="https://t.me/Dayysky" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
-      <a href="https://wa.me/6282320781747" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <div class="ft-bottom">
+      <div class="ft-copy">&copy; 2026 Dayynime</div>
+      <div class="ft-socials">
+        <a href="https://t.me/Dayysky" target="_blank" class="tg"><i class="fab fa-telegram"></i></a>
+        <a href="https://wa.me/6282320781747" target="_blank" class="wa"><i class="fab fa-whatsapp"></i></a>
+      </div>
     </div>
   </div>
 </footer>
