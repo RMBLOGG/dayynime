@@ -57,8 +57,9 @@
 .det-panels-wrapper { position: relative; }
 .det-panels-track { display: block; }
 /* Panels */
-.det-panel { width: 100%; padding: 18px 16px 0; box-sizing: border-box; display: none; }
-.det-panel.active { display: block; }
+.det-panel { width: 100%; padding: 18px 16px 0; box-sizing: border-box; display: none; opacity: 0; transform: translateY(8px); }
+.det-panel.active { display: block; animation: panelFadeIn 0.25s ease forwards; }
+@keyframes panelFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Synopsis */
 .det-section-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 12px; }
