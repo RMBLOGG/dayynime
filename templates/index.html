@@ -120,7 +120,7 @@ body { padding-top: 0 !important; }
 <a href="https://wa.me/6282320781747" target="_blank" rel="noopener" style="text-decoration:none;" class="idx-discover">
   <div class="idx-discover-icon" style="background:rgba(232,65,90,0.25);font-size:22px;">🔥</div>
   <div style="flex:1;">
-    <div style="font-size:14px;font-weight:900;color:#e8415a;">Source Code Dijual!</div>
+    <div style="font-size:14px;font-weight:900;color:#e8415a;">Website / Source Code Dijual!</div>
     <div style="font-size:11px;color:#aaa;">Hubungi: <span style="color:#fff;font-weight:700;">082320781747</span> (WhatsApp)</div>
   </div>
   <i class="fab fa-whatsapp" style="color:#25d366;font-size:20px;flex-shrink:0;"></i>
@@ -1050,5 +1050,111 @@ function switchSource(src, el) {
 })();
 </script>
 
+<!-- ── Footer ─────────────────────────────────────── -->
+<style>
+.site-footer {
+  margin-top: 40px;
+  background: linear-gradient(180deg, transparent 0%, #0d0d0d 30%);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 32px 20px 100px;
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+}
+.site-footer .ft-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.site-footer .ft-logo {
+  width: 38px; height: 38px; border-radius: 10px;
+  object-fit: cover;
+}
+.site-footer .ft-brand {
+  font-size: 18px; font-weight: 900;
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.site-footer .ft-tagline {
+  font-size: 11px; color: rgba(255,255,255,0.35);
+  margin-top: 2px; letter-spacing: 0.3px;
+}
+.site-footer .ft-links {
+  display: flex; flex-wrap: wrap; gap: 8px 16px;
+  margin-bottom: 20px;
+}
+.site-footer .ft-links a {
+  color: rgba(255,255,255,0.5); text-decoration: none;
+  font-size: 12px;
+  transition: color 0.2s ease;
+}
+.site-footer .ft-links a:hover { color: #fff; }
+.site-footer .ft-divider {
+  height: 1px; background: rgba(255,255,255,0.06);
+  margin-bottom: 16px;
+}
+.site-footer .ft-bottom {
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.site-footer .ft-copy {
+  font-size: 11px; color: rgba(255,255,255,0.25);
+}
+.site-footer .ft-socials {
+  display: flex; gap: 10px;
+}
+.site-footer .ft-socials a {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5); font-size: 13px;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.site-footer .ft-socials a:hover {
+  background: rgba(225,29,72,0.2); color: #e11d48;
+}
+.site-footer .ft-disclaimer {
+  font-size: 11px; color: rgba(255,255,255,0.2);
+  line-height: 1.6; margin-bottom: 16px;
+}
+</style>
+
+<footer class="site-footer">
+  <div class="ft-top">
+    <img src="/static/icon.png" class="ft-logo" alt="Dayynime">
+    <div>
+      <div class="ft-brand">Dayynime</div>
+      <div class="ft-tagline">Nonton Anime Sub Indo</div>
+    </div>
+  </div>
+
+  <div class="ft-links">
+    <a href="/home">Beranda</a>
+    <a href="/ongoing">Ongoing</a>
+    <a href="/completed">Completed</a>
+    <a href="/movie">Movie</a>
+    <a href="/populer">Populer</a>
+    <a href="/jadwal">Jadwal</a>
+    <a href="/premium">&#x1F451; Premium</a>
+    <a href="/ruang-ngobrol">Ruang Ngobrol</a>
+  </div>
+
+  <div class="ft-disclaimer">
+    Dayynime tidak menyimpan file video apapun di server kami. Semua konten berasal dari pihak ketiga dan hanya disematkan untuk keperluan edukasi dan hiburan.
+  </div>
+
+  <div class="ft-divider"></div>
+
+  <div class="ft-bottom">
+    <div class="ft-copy">&copy; 2026 Dayynime. All rights reserved.</div>
+    <div class="ft-socials">
+      <a href="https://t.me/Dayysky" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
+      <a href="https://wa.me/6282320781747" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    </div>
+  </div>
+</footer>
 
 {% endblock %}
